@@ -1,0 +1,403 @@
+<template>
+  <div class="speech-training">
+    <div class="layout">
+      <!-- 左侧菜单 -->
+      <aside class="side-menu">
+        <h3 class="menu-title">AI对练</h3>
+        <div class="menu-list">
+          <div class="menu-group expanded">
+            <div class="menu-group-title" @click="toggleGroup('speechNew')">
+              <span class="group-icon">🔄</span>
+              <span>话术训练(新)</span>
+              <span class="arrow" :class="{ open: openGroups.speechNew }">▾</span>
+            </div>
+            <div v-if="openGroups.speechNew" class="menu-group-items">
+              <router-link to="/sparring/newmanage" class="menu-item active">话术训练中心</router-link>
+              <router-link to="/sparring/newtemplate" class="menu-item">话术模版</router-link>
+            </div>
+          </div>
+          <div class="menu-item collapsed">
+            <span class="group-icon">🔄</span>
+            <span>话术训练</span>
+            <span class="arrow">▸</span>
+          </div>
+          <div class="menu-item collapsed">
+            <span class="group-icon">👥</span>
+            <span>演讲训练</span>
+            <span class="arrow">▸</span>
+          </div>
+          <div class="menu-item collapsed">
+            <span class="group-icon">⚔️</span>
+            <span>实战演练</span>
+            <span class="arrow">▸</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主内容区 -->
+      <main class="main-content">
+        <!-- 操作栏 -->
+        <div class="action-bar">
+          <div class="action-buttons">
+            <div class="create-dropdown" @mouseenter="showCreateMenu = true" @mouseleave="showCreateMenu = false">
+              <button class="btn btn-primary">
+                创建 <span class="arrow">▾</span>
+              </button>
+              <div v-if="showCreateMenu" class="dropdown-menu">
+                <div class="dropdown-item" @click="goToCreate('train')">
+                  <span class="item-icon">👤</span>
+                  <div class="item-content">
+                    <div class="item-title">日常训练</div>
+                    <div class="item-desc">一对一训练加强话术标准程度</div>
+                  </div>
+                </div>
+                <div class="dropdown-item" @click="goToCreate('examine')">
+                  <span class="item-icon">🎯</span>
+                  <div class="item-content">
+                    <div class="item-title">通关考核</div>
+                    <div class="item-desc">考察学员在话术标准程度上是否达标</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-default">导出</button>
+          </div>
+          <div class="filter-bar">
+            <select class="filter-select" v-model="filters.responsible">
+              <option value="">我负责的</option>
+              <option value="mine">我负责的</option>
+            </select>
+            <select class="filter-select" v-model="filters.status" @change="fetchProjects">
+              <option value="">全部状态</option>
+              <option value="0">未发布</option>
+              <option value="1">已发布</option>
+            </select>
+            <select class="filter-select" v-model="filters.projectType" @change="fetchProjects">
+              <option value="">全部类型</option>
+              <option value="0">日常训练</option>
+              <option value="1">通关考试</option>
+            </select>
+            <input type="text" class="filter-input" v-model="filters.keyword" placeholder="请输入名称搜索" @keyup.enter="fetchProjects" />
+          </div>
+        </div>
+
+        <!-- 项目卡片网格 -->
+        <div class="card-grid">
+          <div v-for="project in projects" :key="project.id" class="project-card" @click="goToConsole(project.id)">
+            <div class="card-cover">
+              <span class="cover-tag" :class="project.assignType === 'project' ? 'tag-project' : 'tag-single'">
+                {{ project.assignType === 'project' ? '项目安排' : '单独安排' }}
+              </span>
+              <span class="cover-status" :class="project.status === 'published' ? 'status-published' : 'status-draft'">
+                {{ project.status === 'published' ? '已发布' : '未发布' }}
+              </span>
+            </div>
+            <div class="card-content">
+              <div class="card-tags">
+                <span class="type-tag" :class="project.type === 'train' ? 'tag-train' : 'tag-examine'">
+                  {{ project.type === 'train' ? '训' : '考' }}
+                </span>
+              </div>
+              <h4 class="card-title">{{ project.name }}</h4>
+              <p class="card-time">{{ project.startTime }} 至 {{ project.endTime }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分页器 -->
+        <div class="pagination">
+          <span class="total">共 {{ pagination.total }} 条</span>
+          <div class="page-buttons">
+            <button class="page-btn" disabled>&lt;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">&gt;</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getProjectList } from '@/api/project'
+import { toProjectCard } from '@/utils/convert'
+import type { ProjectCard } from '@/utils/convert'
+
+const router = useRouter()
+const showCreateMenu = ref(false)
+const openGroups = reactive({ speechNew: true })
+const loading = ref(false)
+const pagination = ref({ page: 1, pageSize: 20, total: 0 })
+const projects = ref<ProjectCard[]>([])
+const filters = ref({
+  responsible: '',
+  status: '' as '' | '0' | '1',
+  projectType: '' as '' | '0' | '1',
+  keyword: ''
+})
+
+const fetchProjects = async () => {
+  loading.value = true
+  try {
+    const params: any = {
+      page: pagination.value.page,
+      pageSize: pagination.value.pageSize
+    }
+    if (filters.value.status !== '') params.status = Number(filters.value.status)
+    if (filters.value.projectType !== '') params.projectType = Number(filters.value.projectType)
+    if (filters.value.keyword.trim()) params.keyword = filters.value.keyword.trim()
+    if (filters.value.responsible === 'mine') {
+      // 人员功能未完成，先不带此参数；切换条件时不主动调用，下面独立处理
+    }
+    const res: any = await getProjectList(params)
+    projects.value = (res.records || []).map(toProjectCard)
+    pagination.value.total = res.total || 0
+  } catch { /* handled by interceptor */ }
+  finally { loading.value = false }
+}
+
+onMounted(fetchProjects)
+
+const toggleGroup = (key: string) => {
+  (openGroups as any)[key] = !(openGroups as any)[key]
+}
+
+const goToCreate = (type: string) => {
+  showCreateMenu.value = false
+  router.push({ path: '/sparring/newmanage/edit2', query: { type } })
+}
+
+const goToConsole = (id: string) => {
+  router.push(`/sparring/newmanage/console/${id}`)
+}
+</script>
+
+<style scoped lang="scss">
+.speech-training { height: 100%; }
+
+.layout {
+  display: flex;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.side-menu {
+  width: 200px;
+  border-right: 1px solid #e8e8e8;
+
+  .menu-title {
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    border-bottom: 1px solid #e8e8e8;
+  }
+}
+
+.menu-list {
+  .menu-group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+
+    &:hover { background: #f5f5f5; }
+    .arrow { font-size: 10px; margin-left: auto; }
+  }
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px 10px 40px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+
+  &:hover { background: #f5f5f5; color: #1890ff; }
+  &.active { background: #e6f7ff; color: #1890ff; border-right: 3px solid #1890ff; }
+  &.collapsed { padding-left: 20px; }
+  .arrow { font-size: 10px; margin-left: auto; }
+  .group-icon { font-size: 16px; }
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.action-buttons { display: flex; gap: 12px; }
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #d9d9d9;
+
+  &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
+  &.btn-default { background: #fff; color: #333; }
+  &:hover { opacity: 0.85; }
+  .arrow { font-size: 10px; margin-left: 4px; }
+}
+
+.create-dropdown {
+  position: relative;
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    min-width: 280px;
+    padding: 8px 0;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover { background: #f5f5f5; }
+
+    .item-icon { font-size: 24px; margin-top: 2px; }
+    .item-content { flex: 1; }
+    .item-title { font-size: 14px; font-weight: 500; color: #333; margin-bottom: 4px; }
+    .item-desc { font-size: 12px; color: #999; }
+  }
+}
+
+.filter-bar { display: flex; gap: 12px; align-items: center; }
+
+.filter-select, .filter-input {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+
+  &:focus { border-color: #1890ff; }
+}
+
+.filter-input { width: 200px; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.project-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); transform: translateY(-2px); }
+
+  .card-cover {
+    height: 160px;
+    background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+
+    .cover-tag {
+      align-self: flex-start;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #fff;
+
+      &.tag-project { background: #1890ff; }
+      &.tag-single { background: #faad14; }
+    }
+
+    .cover-status {
+      align-self: flex-start;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .card-content {
+    padding: 16px;
+    .card-tags { display: flex; gap: 8px; margin-bottom: 8px; }
+    .card-title { font-size: 14px; font-weight: 500; color: #333; margin: 0 0 8px 0; }
+    .card-time { font-size: 12px; color: #999; margin: 0; }
+  }
+}
+
+.type-tag {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+  color: #fff;
+
+  &.tag-train { background: #1890ff; }
+  &.tag-examine { background: #faad14; }
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+
+  .total { font-size: 14px; color: #666; }
+}
+
+.page-buttons { display: flex; gap: 8px; }
+
+.page-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover { color: #1890ff; border-color: #1890ff; }
+  &.active { background: #1890ff; color: #fff; border-color: #1890ff; }
+  &:disabled { color: #d9d9d9; cursor: not-allowed; }
+}
+</style>
