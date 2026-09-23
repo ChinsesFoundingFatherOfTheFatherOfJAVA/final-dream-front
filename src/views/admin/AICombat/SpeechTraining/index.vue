@@ -85,6 +85,7 @@
         <div class="card-grid">
           <div v-for="project in projects" :key="project.id" class="project-card" @click="goToConsole(project.id)">
             <div class="card-cover">
+              <img v-if="project.coverImage" :src="project.coverImage" alt="cover" class="cover-img" />
               <span class="cover-tag" :class="project.assignType === 'project' ? 'tag-project' : 'tag-single'">
                 {{ project.assignType === 'project' ? '项目安排' : '单独安排' }}
               </span>
@@ -169,7 +170,7 @@ const goToCreate = (type: string) => {
   router.push({ path: '/sparring/newmanage/edit2', query: { type } })
 }
 
-const goToConsole = (id: string) => {
+const goToConsole = (id: number) => {
   router.push(`/sparring/newmanage/console/${id}`)
 }
 </script>
@@ -335,12 +336,22 @@ const goToConsole = (id: string) => {
     justify-content: space-between;
     padding: 12px;
 
+    .cover-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .cover-tag {
       align-self: flex-start;
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 12px;
       color: #fff;
+      position: relative;
+      z-index: 1;
 
       &.tag-project { background: #1890ff; }
       &.tag-single { background: #faad14; }
@@ -351,6 +362,9 @@ const goToConsole = (id: string) => {
       color: #fff;
       font-size: 14px;
       font-weight: 500;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
     }
   }
 

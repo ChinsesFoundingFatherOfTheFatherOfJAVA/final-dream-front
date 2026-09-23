@@ -3,7 +3,7 @@
     <!-- 顶部返回栏 -->
     <div class="report-topbar">
       <span class="back-arrow" @click="goBack">‹</span>
-      <span class="topbar-label">话术训练</span>
+      <span class="topbar-label" @click="goBack">话术训练</span>
       <span class="topbar-title">{{ report?.projectName || '训练报告' }}</span>
     </div>
 
@@ -82,18 +82,22 @@
         </div>
       </div>
 
-      <!-- FP-15 雷达图 + 维度得分卡（标题"发送"按原平台保留） -->
+      <!-- FP-15 雷达图 + 维度得分卡 -->
       <div class="white-card">
-        <div class="card-title">发送</div>
+        <div class="card-title">维度得分</div>
         <RadarChart :dimensions="report.dimensions ?? []" :last-dimensions="report.lastDimensions ?? null" />
+        <p v-if="unscoredDimensions.length" class="dim-skip-note">
+          {{ unscoredDimensions.map((d) => d.dimensionName).join('、') }}未参与本次评分——{{ unscoredDimensions[0]?.comment }}
+        </p>
         <div class="score-cards">
           <div v-for="dim in sortedDimensions" :key="dim.dimensionName" class="score-card">
             <div class="score-card-head">
               <span class="dim-name">{{ dim.dimensionName }}</span>
-              <span class="dim-score" :class="{ low: dim.score < 60 }">{{ dim.score }}</span>
+              <span v-if="dim.score == null" class="dim-score dim-score-na">未参与</span>
+              <span v-else class="dim-score" :class="{ low: dim.score < 60 }">{{ dim.score }}</span>
             </div>
             <div class="score-bar">
-              <div class="score-bar-fill" :style="{ width: `${Math.min(100, dim.score)}%` }"></div>
+              <div v-if="dim.score != null" class="score-bar-fill" :style="{ width: `${Math.min(100, dim.score)}%` }"></div>
             </div>
           </div>
         </div>
@@ -104,17 +108,21 @@
         <div class="tabs">
           <span class="tab" :class="{ active: activeTab === 'score' }" @click="activeTab = 'score'">评分明细</span>
           <span class="tab" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">对话记录</span>
+          <!--
+            要点命中详情是"逐轮"数据（接口 4.2 按会话轮次返回），与某个维度叫什么名字无关，
+            因此入口挂在 Tab 行而非某个维度块下：维度改名或新建自定义维度都不会让入口消失。
+          -->
+          <span v-if="reportId" class="consistency-entry" @click="consistencyVisible = true">
+            查看逐轮要点命中详情 ›
+          </span>
         </div>
 
-        <ScoreDetail
-          v-if="activeTab === 'score'"
-          :dimensions="report.dimensions ?? []"
-          @consistency="consistencyVisible = true"
-        />
+        <ScoreDetail v-if="activeTab === 'score'" :dimensions="report.dimensions ?? []" />
         <ChatRecord
           v-else
           :messages="chatMessages"
           :round-suggestions="report.roundSuggestions ?? []"
+          :trainer-avatar="report.trainerAvatar"
         />
       </div>
 
@@ -124,7 +132,7 @@
     <!-- FP-16 话术一致性查看详情弹层 -->
     <ConsistencyDetail
       :visible="consistencyVisible"
-      :report-id="report?.reportId || ''"
+      :report-id="reportId || ''"
       @close="consistencyVisible = false"
     />
   </div>
@@ -165,6 +173,9 @@ const sortedDimensions = computed(() =>
   [...(report.value?.dimensions ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 )
 
+/** 本次未参与评分的维度（如纯文字作答时的语音维度）：不进雷达图也不计入总分，页面需说明原因 */
+const unscoredDimensions = computed(() => sortedDimensions.value.filter((d) => d.score == null))
+
 /** 秒 → mm:ss */
 const formatDuration = (seconds?: number | null) => {
   if (seconds == null) return '--:--'
@@ -173,16 +184,23 @@ const formatDuration = (seconds?: number | null) => {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
+/** 返回学员端 AI对练-话术训练列表，状态筛选定位到"已结束"（本次练习已完成） */
 const goBack = () => {
-  if (window.history.length > 1) router.back()
-  else router.push('/sparring/web/speech/list')
+  router.push('/sparring/web/speech/list?status=finished')
 }
 
 // ===== 轮询（FP-13/21/22）：3s 间隔，超时 5 分钟提示失败 =====
 let pollTimer: number | null = null
 const POLL_INTERVAL = 3000
 const POLL_TIMEOUT = 5 * 60 * 1000
+/** 连续查询失败达到此次数即停止轮询并给出重试入口（此前错误被静默吞掉，会无限转圈） */
+const MAX_POLL_ERRORS = 3
 let pollStartAt = 0
+let pollErrors = 0
+/** 响应序号：慢响应不得覆盖后到的新响应，否则 phase 会从 done 被冲回 waiting */
+let pollSeq = 0
+/** 报告 ID：后端在生成中/失败态也返回，用于"重新生成"（此时 report 尚未填充） */
+const reportId = ref<string | null>(null)
 
 const stopPolling = () => {
   if (pollTimer !== null) {
@@ -192,7 +210,11 @@ const stopPolling = () => {
 }
 
 const fetchReport = async () => {
+  const seq = ++pollSeq
   const data = await getReport(sessionId)
+  if (seq !== pollSeq) return
+
+  if (data.reportId) reportId.value = data.reportId
 
   if (data.reportStatus === 2) {
     report.value = data
@@ -212,11 +234,31 @@ const fetchReport = async () => {
     return
   }
 
-  // 0=未开始 / 1=生成中 → 等待态
+  // 0=未开始 / 1=生成中 → 等待态（超时判定由 tick 负责，不依赖本次请求是否成功）
   phase.value = 'waiting'
+}
+
+/** 单次轮询：先判超时，再发请求；查询异常累计到阈值后落到可重试的状态 */
+const tick = async () => {
   if (Date.now() - pollStartAt > POLL_TIMEOUT) {
     failedHint.value = '报告生成超时，请点击重新生成'
     phase.value = 'failed'
+    stopPolling()
+    return
+  }
+  try {
+    await fetchReport()
+    pollErrors = 0
+  } catch (e: unknown) {
+    pollErrors++
+    if (pollErrors < MAX_POLL_ERRORS) return
+    if (reportId.value) {
+      failedHint.value = '报告状态查询失败，可点击重新生成'
+      phase.value = 'failed'
+    } else {
+      errorMsg.value = e instanceof Error ? e.message : '报告查询失败'
+      phase.value = 'error'
+    }
     stopPolling()
   }
 }
@@ -224,26 +266,24 @@ const fetchReport = async () => {
 const startPolling = () => {
   stopPolling()
   pollStartAt = Date.now()
+  pollErrors = 0
   phase.value = 'waiting'
-  fetchReport().catch((e: unknown) => {
-    errorMsg.value = e instanceof Error ? e.message : '报告查询失败'
-    phase.value = 'error'
-    stopPolling()
-  })
+  void tick()
   pollTimer = window.setInterval(() => {
-    fetchReport().catch(() => undefined)
+    void tick()
   }, POLL_INTERVAL)
 }
 
 /** FP-21 重新生成 */
 const onRegenerate = async () => {
-  if (!report.value?.reportId || retrying.value) return
+  if (!reportId.value || retrying.value) return
   retrying.value = true
   try {
-    await regenerateReport(report.value.reportId)
+    await regenerateReport(reportId.value)
+    failedHint.value = ''
     startPolling()
   } catch {
-    /* request.ts 已 alert */
+    /* 重新生成失败已由 api/request.ts 的 toast 提示，这里只需保留失败态供再次点击 */
   } finally {
     retrying.value = false
   }
@@ -494,6 +534,14 @@ export default { name: 'PracticeReport' }
   margin-bottom: 8px;
 }
 
+/* 未参与评分维度的说明 */
+.dim-skip-note {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.6;
+  margin: 6px 0 2px;
+}
+
 /* 维度得分小卡网格 */
 .score-cards {
   display: grid;
@@ -529,6 +577,12 @@ export default { name: 'PracticeReport' }
         &.low {
           color: #e54545;
         }
+
+        &.dim-score-na {
+          font-size: 12px;
+          font-weight: 400;
+          color: #999;
+        }
       }
     }
 
@@ -551,9 +605,23 @@ export default { name: 'PracticeReport' }
 /* Tab */
 .tabs {
   display: flex;
+  align-items: center;
   gap: 32px;
   border-bottom: 1px solid #ececec;
   margin-bottom: 20px;
+
+  .consistency-entry {
+    margin-left: auto;
+    align-self: center;
+    padding-bottom: 10px;
+    font-size: 13px;
+    color: #2e7cf6;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   .tab {
     padding: 10px 0;

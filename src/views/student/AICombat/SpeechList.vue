@@ -125,11 +125,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { getStudentProjects } from '@/api/student'
+import { resolveAssetUrl } from '@/api/request'
 import type { StudentProjectCard } from '@/types/student'
 
+const route = useRoute()
 const router = useRouter()
 
 const tabsPlaceholder = ['演讲训练', '实战演练']
@@ -213,7 +215,10 @@ async function fetchList() {
       projectType: filter.projectType,
       keyword: appliedKeyword.value || undefined
     })
-    list.value = data.records ?? []
+    list.value = (data.records ?? []).map((item: any) => ({
+      ...item,
+      coverImage: resolveAssetUrl(item.coverImage) || null
+    }))
     total.value = data.total ?? 0
   } catch {
     list.value = []
@@ -236,8 +241,30 @@ const goDetail = (item: StudentProjectCard) => {
 /** 展示时间去掉秒：yyyy-MM-dd HH:mm:ss → yyyy-MM-dd HH:mm（对齐原平台） */
 const fmtTime = (t: string) => (t ? t.slice(0, 16) : '')
 
+/** 从 URL 读取状态参数（如报告页返回时带 status=finished），非法值忽略 */
+const applyStatusFromQuery = () => {
+  const q = route.query.status
+  if (typeof q === 'string' && statusOptions.some((o) => o.value === q)) {
+    filter.status = q as typeof filter.status
+    return true
+  }
+  return false
+}
+
+// 已挂载时若 query 变化（如报告页跳转过来），同步筛选并重新请求
+watch(
+  () => route.query.status,
+  (val, old) => {
+    if (val !== old && applyStatusFromQuery()) {
+      page = 1
+      fetchList()
+    }
+  }
+)
+
 onMounted(() => {
   document.addEventListener('click', closeDropdowns)
+  applyStatusFromQuery()
   fetchList()
 })
 onUnmounted(() => {

@@ -1,4 +1,5 @@
 // 后端 ↔ 前端 数据格式转换工具
+import { resolveAssetUrl } from '@/api/request'
 
 // --- nodeType 数字 ↔ 字符串 ---
 const NODE_TYPE_MAP: Record<number, string> = { 1: 'start', 2: 'trainer_ask', 3: 'student_ask', 4: 'end' }
@@ -30,9 +31,12 @@ const CONDITION_MAP_REVERSE: Record<string, number> = { normal: 1, any_n: 2, spe
 export const toPassConditionType = (t: number | null) => t == null ? 'normal' : (CONDITION_MAP[t] || 'normal')
 export const toPassConditionTypeInt = (s: string) => CONDITION_MAP_REVERSE[s] || 1
 
-// --- 要点解析 (后端存JSON字符串) ---
-export const parseKeyPoints = (raw: string | null | undefined): Array<{ id: string; content: string }> => {
+// --- 要点解析 (后端存JSON字符串；接口返回既可能是JSON字符串也可能是数组) ---
+export const parseKeyPoints = (raw: string | Array<{ id?: string; content: string }> | null | undefined): Array<{ id: string; content: string }> => {
   if (!raw) return []
+  if (Array.isArray(raw)) {
+    return raw.map((p: any) => ({ id: p?.id ?? '', content: p?.content ?? '' }))
+  }
   try { return JSON.parse(raw) } catch { return [] }
 }
 export const stringifyKeyPoints = (points: Array<{ id: string; content: string }> | undefined) => {
@@ -67,7 +71,7 @@ export const toProjectCard = (r: any): ProjectCard => ({
   startTime: formatDate(r.startTime),
   endTime: formatDate(r.endTime),
   responsiblePersonName: r.responsiblePersonName || '',
-  coverImage: r.coverImage
+  coverImage: resolveAssetUrl(r.coverImage)
 })
 
 // --- 后端项目详情 → 前端表单 ---
@@ -101,7 +105,7 @@ export const toProjectForm = (r: any): ProjectFormData => ({
   dialogueMode: toDialogueMode(r.dialogueMode),
   responsiblePerson: r.responsiblePerson || '',
   responsiblePersonName: r.responsiblePersonName || '',
-  coverImage: r.coverImage || ''
+  coverImage: resolveAssetUrl(r.coverImage)
 })
 
 // --- 后端评分维度 → 前端 ---

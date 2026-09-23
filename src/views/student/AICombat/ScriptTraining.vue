@@ -17,7 +17,7 @@
       </div>
       <div class="bar-right">
         <span class="progress-text">进度 {{ store.progressPercent }}%</span>
-        <button class="lang-btn">普通话</button>
+        <span class="lang-badge" title="语音识别与评分一律按普通话处理，不提供语种切换">普通话</span>
         <button class="detail-toggle-btn" @click="toggleDetailPanel">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
@@ -28,38 +28,17 @@
       </div>
     </header>
 
-    <!-- FP-10 三栏主体 -->
-    <div class="main-body">
-      <!-- 左栏：虚拟陪练者 -->
+    <!-- FP-10 三栏主体：会话加载失败时整栏隐藏，改由下方错误卡承接 -->
+    <div v-if="!loadingError" class="main-body">
+      <!-- 左栏：虚拟陪练者（FP-27：生图固定输出 1024×1024 方图，形象卡按 1:1 完整展示，角色名放在图片下方） -->
       <aside class="trainer-panel">
-        <!-- 静态默认占位图（不做数字人视频） -->
         <div class="trainer-figure">
-          <svg viewBox="0 0 280 420" preserveAspectRatio="xMidYMid slice" class="figure-svg">
-            <defs>
-              <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#33406e"/>
-                <stop offset="100%" stop-color="#1d2547"/>
-              </linearGradient>
-              <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#e9edf6"/>
-                <stop offset="100%" stop-color="#c6cfdf"/>
-              </linearGradient>
-            </defs>
-            <rect width="280" height="420" fill="url(#bgGrad)"/>
-            <!-- 背景装饰圆 -->
-            <circle cx="230" cy="70" r="90" fill="#3a4a80" opacity="0.35"/>
-            <circle cx="40" cy="360" r="110" fill="#2a3560" opacity="0.5"/>
-            <!-- 人物 -->
-            <ellipse cx="140" cy="430" rx="110" ry="70" fill="url(#bodyGrad)"/>
-            <circle cx="140" cy="150" r="52" fill="#d9dfeb"/>
-            <path d="M88 150 Q88 92 140 92 Q192 92 192 150 Q192 118 140 112 Q88 118 88 150Z" fill="#b9c2d4"/>
-            <path d="M75 260 Q140 225 205 260 L215 330 Q140 300 65 330 Z" fill="url(#bodyGrad)"/>
-            <path d="M120 210 h40 v20 q-20 12 -40 0 Z" fill="#aab4c8"/>
-          </svg>
-          <div class="trainer-overlay">
-            <p class="overlay-label">AI扮演角色</p>
-            <p class="overlay-name">{{ store.trainerName || '虚拟陪练者' }}</p>
-          </div>
+          <!-- 形象卡：项目配置了形象用生成图，未配置用内置默认形象图；两者都是 1:1，cover 不裁切 -->
+          <img :src="trainerFace(store.trainerAvatar)" alt="" class="figure-img" />
+        </div>
+        <div class="trainer-info">
+          <p class="info-label">AI扮演角色</p>
+          <p class="info-name">{{ store.trainerName || '虚拟陪练者' }}</p>
         </div>
       </aside>
 
@@ -90,6 +69,15 @@
       </aside>
     </div>
 
+    <!-- 会话加载失败：说清原因并给出口，否则只剩三栏空壳，学员不知道下一步做什么 -->
+    <div v-else class="load-error">
+      <p class="load-error-text">{{ loadingError }}</p>
+      <div class="load-error-actions">
+        <button class="error-btn primary" @click="load">重新加载</button>
+        <button class="error-btn" @click="backToDetail">返回项目详情</button>
+      </div>
+    </div>
+
     <!-- 底部声明 -->
     <footer class="page-footer">语音、人像及背景均由AI生成</footer>
 
@@ -104,6 +92,8 @@ import { useRoute, useRouter } from 'vue-router'
 import TrainChat from './TrainChat.vue'
 import TipModal from './TipModal.vue'
 import { exitSession, getSession, getStudentProjectDetail } from '@/api/student'
+import { trainerFace } from './trainerFace'
+import { toast } from '@/utils/toast'
 import { useTrainingStore } from '@/stores/training'
 
 const route = useRoute()
@@ -119,7 +109,15 @@ const loadingError = ref('')
 // 要点提示弹窗
 const tipVisible = ref(false)
 const tipKeyPoints = ref<string[]>([])
+/**
+ * 未通过时的提示：有要点走弹窗；一个要点都没有（节点未配 keyPoints，后端只告警不拦截）
+ * 时弹窗只剩一句空话，改用轻提示说清"要重新说"。
+ */
 const showTip = (keyPoints: string[]) => {
+  if (!keyPoints.length) {
+    toast.warn('这次回答没有答到该轮要点，请参照话术再说一遍')
+    return
+  }
   tipKeyPoints.value = keyPoints
   tipVisible.value = true
 }
@@ -145,8 +143,9 @@ const onExit = async () => {
   }
 }
 
-onMounted(async () => {
+const load = async () => {
   store.reset()
+  loadingError.value = ''
 
   if (!sessionId) {
     loadingError.value = '缺少会话参数，请从项目详情页点击"开始"进入训练'
@@ -173,13 +172,15 @@ onMounted(async () => {
       trainerName: detail.trainerName,
       status: detail.status,
       totalRounds: detail.totalRounds,
-      finishedRounds: detail.finishedRounds
+      finishedRounds: detail.finishedRounds,
+      dialogueMode: detail.dialogueMode ?? 1,
+      trainerAvatar: detail.trainerAvatar ?? null
     })
     store.setMessages(detail.messages ?? [])
 
-    // 右栏说明取项目 description
+    // 右栏说明取项目 description（失败只留空说明，不该弹提示打断训练）
     try {
-      const project = await getStudentProjectDetail(projectId)
+      const project = await getStudentProjectDetail(projectId, { silent: true })
       description.value = project.description ?? ''
     } catch {
       /* 说明获取失败不阻塞训练 */
@@ -187,7 +188,11 @@ onMounted(async () => {
   } catch (e: unknown) {
     loadingError.value = e instanceof Error ? e.message : '会话加载失败'
   }
-})
+}
+
+const backToDetail = () => router.replace(`/sparring/web/script/detail/${projectId}`)
+
+onMounted(load)
 </script>
 
 <script lang="ts">
@@ -272,7 +277,8 @@ export default { name: 'ScriptTraining' }
     color: #aab4cf;
   }
 
-  .lang-btn,
+  /* 语种是识别口径而非可切换功能，故为静态标记而非按钮 */
+  .lang-badge,
   .detail-toggle-btn {
     height: 32px;
     padding: 0 14px;
@@ -286,6 +292,16 @@ export default { name: 'ScriptTraining' }
 
     &:hover {
       background: rgba(255, 255, 255, 0.12);
+    }
+  }
+
+  .lang-badge {
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
   }
 
@@ -306,42 +322,94 @@ export default { name: 'ScriptTraining' }
 }
 
 /* 左栏 陪练者 */
+/* 会话加载失败卡：与三栏互斥出现，给出原因 + 重试/返回两个出口 */
+.load-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 0 18px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  .load-error-text {
+    margin: 0;
+    font-size: 15px;
+    color: #e8ecf7;
+    text-align: center;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .load-error-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .error-btn {
+    height: 36px;
+    padding: 0 22px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: transparent;
+    color: #cdd5e8;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    &.primary {
+      border-color: transparent;
+      background: linear-gradient(90deg, #7a6cf0 0%, #4a7dff 100%);
+      color: #fff;
+    }
+  }
+}
+
 .trainer-panel {
   width: 280px;
   flex-shrink: 0;
 }
 
+/* 形象卡：与生图输出同为 1:1，图片完整显示不裁切 */
 .trainer-figure {
-  position: relative;
-  height: 100%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   background: #1d2547;
 
-  .figure-svg {
+  .figure-img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
     display: block;
   }
+}
 
-  .trainer-overlay {
-    position: absolute;
-    left: 14px;
-    bottom: 14px;
+/* 图片下方信息区：AI 扮演角色与角色名（原先叠在图片底部，现随图片变方移出） */
+.trainer-info {
+  padding: 14px 4px 0;
 
-    .overlay-label {
-      margin: 0;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.6);
-    }
+  .info-label {
+    margin: 0;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+  }
 
-    .overlay-name {
-      margin: 2px 0 0;
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    }
+  .info-name {
+    margin: 2px 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    word-break: break-all;
   }
 }
 

@@ -13,6 +13,10 @@ export const useTrainingStore = defineStore('training', () => {
   const projectName = ref<string>('')
   const trainerName = ref<string>('')
   const sessionStatus = ref<number>(0) // 0=进行中 1=已完成 2=未完成退出
+  /** 对话方式：0=语音对话 1=文字对话（v1.1，FP-24） */
+  const dialogueMode = ref<0 | 1>(1)
+  /** 陪练者形象图片 URL（v1.1，FP-27；空=左栏显示默认占位图） */
+  const trainerAvatar = ref<string>('')
 
   // 进度
   const totalRounds = ref<number>(0)
@@ -38,6 +42,10 @@ export const useTrainingStore = defineStore('training', () => {
     status: number
     totalRounds: number
     finishedRounds: number
+    /** v1.1 可选：0=语音 1=文字 */
+    dialogueMode?: 0 | 1
+    /** v1.1 可选：陪练者形象图片 URL */
+    trainerAvatar?: string | null
   }) {
     sessionId.value = detail.sessionId
     projectId.value = detail.projectId
@@ -46,6 +54,8 @@ export const useTrainingStore = defineStore('training', () => {
     sessionStatus.value = detail.status
     totalRounds.value = detail.totalRounds
     finishedRounds.value = detail.finishedRounds
+    dialogueMode.value = detail.dialogueMode ?? 1
+    trainerAvatar.value = detail.trainerAvatar ?? ''
     updateProgress()
   }
 
@@ -58,15 +68,14 @@ export const useTrainingStore = defineStore('training', () => {
     messages.value.push(msg)
   }
 
-  /** 撤回末尾学员消息（未通过流转时） */
-  function withdrawLastStudentMessage() {
-    for (let i = messages.value.length - 1; i >= 0; i--) {
-      const msg = messages.value[i]
-      if (msg && msg.role === 2) {
-        messages.value.splice(i, 1)
-        return
-      }
-    }
+  /**
+   * 撤回指定的那条学员消息（未通过流转 / 请求失败时回滚乐观气泡）。
+   * <p>按对象身份删除而不是"删最后一条学员消息"：占位气泡可能已被别的路径移除，
+   * 位置式删除会连带删掉上一条**已通过**的合法回答，进度与消息列表从此对不上。
+   */
+  function withdrawMessage(target: SessionMessage) {
+    const idx = messages.value.indexOf(target)
+    if (idx >= 0) messages.value.splice(idx, 1)
   }
 
   function updateProgress(finished?: number, total?: number) {
@@ -82,6 +91,8 @@ export const useTrainingStore = defineStore('training', () => {
     projectName.value = ''
     trainerName.value = ''
     sessionStatus.value = 0
+    dialogueMode.value = 1
+    trainerAvatar.value = ''
     totalRounds.value = 0
     finishedRounds.value = 0
     messages.value = []
@@ -96,6 +107,8 @@ export const useTrainingStore = defineStore('training', () => {
     projectName,
     trainerName,
     sessionStatus,
+    dialogueMode,
+    trainerAvatar,
     totalRounds,
     finishedRounds,
     progressPercent,
@@ -105,7 +118,7 @@ export const useTrainingStore = defineStore('training', () => {
     setSession,
     setMessages,
     appendMessage,
-    withdrawLastStudentMessage,
+    withdrawMessage,
     updateProgress,
     reset
   }

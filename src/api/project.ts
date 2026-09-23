@@ -13,7 +13,8 @@ export function createProject(data: any) {
 }
 
 export function createProjectWithFile(formData: FormData) {
-  return request.post('/admin/training-project', formData, {
+  // 响应拦截器已剥壳，运行时返回新建项目 ID（后端 ApiResponse<Long>）
+  return request.post<unknown, number>('/admin/training-project', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
@@ -23,7 +24,7 @@ export function updateProject(id: number, data: any) {
 }
 
 export function updateProjectWithFile(id: number, formData: FormData) {
-  return request.put(`/admin/training-project/${id}`, formData, {
+  return request.put<unknown, null>(`/admin/training-project/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }

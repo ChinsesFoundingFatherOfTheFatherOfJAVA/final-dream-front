@@ -123,7 +123,7 @@ const emit = defineEmits<{
 
 const isStudent = computed(() => props.subType === 'student')
 
-const createLocal = (): FlowNodeData => ({
+const createLocal = (): LocalNodeData => ({
   nodeName: props.nodeData.nodeName || '',
   trainerQuestion: props.nodeData.trainerQuestion || '',
   standardScript: props.nodeData.standardScript || '',
@@ -136,7 +136,14 @@ const createLocal = (): FlowNodeData => ({
   }
 })
 
-const localData = reactive<FlowNodeData>(createLocal())
+/**
+ * FlowNodeData 里 keyPoints / passCondition 是可选的（后端存量数据可能没有），
+ * 但 createLocal 一律补齐了默认值，故本地草稿用收紧后的类型，模板不必每处写 `!`。
+ */
+type LocalNodeData = Omit<FlowNodeData, 'keyPoints' | 'passCondition'> &
+  Required<Pick<FlowNodeData, 'keyPoints' | 'passCondition'>>
+
+const localData = reactive<LocalNodeData>(createLocal())
 
 watch(
   () => [props.nodeData, props.subType],
@@ -145,17 +152,17 @@ watch(
 )
 
 const addKeypoint = () => {
-  localData.keyPoints!.push({ id: `kp-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, content: '' })
+  localData.keyPoints.push({ id: `kp-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, content: '' })
 }
 
 const removeKeypoint = (index: number) => {
-  const removed = localData.keyPoints![index]
-  localData.keyPoints!.splice(index, 1)
-  if (localData.passCondition) {
-    localData.passCondition.specifiedPointIds = (localData.passCondition.specifiedPointIds || []).filter(
-      (id) => id !== removed.id
-    )
-  }
+  const removed = localData.keyPoints[index]
+  if (!removed) return
+  localData.keyPoints.splice(index, 1)
+  // 删掉的要点可能还勾在流转条件里，不清理会让条件指向不存在的要点
+  localData.passCondition.specifiedPointIds = (localData.passCondition.specifiedPointIds || []).filter(
+    (id) => id !== removed.id
+  )
 }
 
 const handleSave = () => {

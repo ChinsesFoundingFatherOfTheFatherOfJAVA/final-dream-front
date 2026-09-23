@@ -27,7 +27,30 @@
             :disabled="generating"
           />
         </div>
-        <p class="dialog-tip">生成后将自动创建一条由「学员问陪练者说」节点组成的完整流程。</p>
+        <div class="form-item">
+          <label class="form-label required">谁先说</label>
+          <div class="radio-group">
+            <label
+              v-for="opt in speakerOptions"
+              :key="opt.value"
+              class="radio-item"
+              :class="{ active: firstSpeaker === opt.value, disabled: generating }"
+            >
+              <input
+                type="radio"
+                :value="opt.value"
+                v-model="firstSpeaker"
+                :disabled="generating"
+              />
+              <span>{{ opt.label }}</span>
+            </label>
+          </div>
+        </div>
+        <p class="dialog-tip">
+          生成后将自动创建一条完整流程：开始节点 →
+          {{ firstSpeaker === 'student' ? '「学员问陪练者说」' : '「陪练者问学员说」' }}大节点（共
+          {{ rounds }} 轮）→ 结束节点。
+        </p>
       </div>
       <div class="dialog-footer">
         <button class="btn btn-default" :disabled="generating" @click="handleCancel">取消</button>
@@ -48,11 +71,18 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  generate: [scene: string, rounds: number]
+  generate: [scene: string, rounds: number, firstSpeaker: string]
 }>()
 
 const scene = ref('')
 const rounds = ref(5)
+/** trainer=陪练者先说（大节点为"陪练者问学员说"），student=学员先说（大节点为"学员问陪练者说"） */
+const firstSpeaker = ref<'trainer' | 'student'>('trainer')
+
+const speakerOptions = [
+  { value: 'trainer', label: '陪练者先说' },
+  { value: 'student', label: '学员先说' }
+] as const
 
 // 当外部生成结束（generating 变为 false）但用户未填场景，自动关闭
 watch(
@@ -69,7 +99,7 @@ const handleGenerate = () => {
     alert('请输入对话场景')
     return
   }
-  emit('generate', scene.value, rounds.value)
+  emit('generate', scene.value, rounds.value, firstSpeaker.value)
 }
 
 const handleCancel = () => {
@@ -151,6 +181,36 @@ const handleCancel = () => {
 }
 
 .form-textarea { resize: vertical; min-height: 90px; }
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+}
+
+.radio-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+
+  input { cursor: pointer; margin: 0; }
+
+  &:hover { border-color: #1890ff; }
+
+  &.active {
+    border-color: #1890ff;
+    background: #e6f7ff;
+    color: #1890ff;
+  }
+
+  &.disabled { opacity: 0.6; cursor: not-allowed; }
+}
 
 .dialog-footer {
   display: flex;

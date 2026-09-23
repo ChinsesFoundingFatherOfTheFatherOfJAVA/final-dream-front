@@ -1,10 +1,15 @@
 <template>
-  <div ref="chartRef" class="radar-chart"></div>
+  <div class="radar-wrap">
+    <div ref="chartRef" class="radar-chart"></div>
+    <p v-if="empty" class="radar-mask">本次训练没有维度参与评分，暂无可展示的得分</p>
+    <p v-else-if="lastIncomplete" class="radar-note">上次报告缺少本次部分维度的得分，不绘制"上次"对比线</p>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
+import { lastScoresFor, scoredDimensions } from './reportRadar'
 import type { LastDimension, ReportDimension } from '@/types/student'
 
 const props = defineProps<{
@@ -16,20 +21,40 @@ const chartRef = ref<HTMLElement>()
 let chart: echarts.ECharts | null = null
 let resizeHandler: (() => void) | null = null
 
-const render = () => {
-  if (!chartRef.value || !props.dimensions?.length) return
+/** 无任何有分维度：画布留白会被当成"图坏了"，改说一句话 */
+const empty = ref(false)
+/** 上次报告未覆盖本次全部维度：缺的维度补 0 会画出一条假装暴跌的虚线，故整条对比线都不画 */
+const lastIncomplete = ref(false)
+
+const render = async () => {
+  if (!chartRef.value) return
+
+  // 未参与本次评分的维度（无分数）不进雷达图，否则会被画成 0 分
+  const scored = scoredDimensions(props.dimensions)
+  if (!scored.length) {
+    empty.value = true
+    chart?.clear()
+    return
+  }
+  empty.value = false
 
   if (!chart) {
+    // 容器随父级 v-if 挂载，等一帧再 init，否则宽高为 0，雷达图偏到左上角
+    await nextTick()
+    if (!chartRef.value) return
     chart = echarts.init(chartRef.value)
   }
 
-  const indicator = props.dimensions.map((d) => ({
+  const indicator = scored.map((d) => ({
     name: `${d.dimensionName} ${d.score}分`,
     max: 100
   }))
 
-  const currentData = props.dimensions.map((d) => d.score)
-  const hasLast = !!props.lastDimensions?.length
+  const currentData = scored.map((d) => d.score)
+  /** 上次报告未覆盖本次全部维度时，整条"上次"对比线不画（缺失补 0 会画成暴跌） */
+  const last = lastScoresFor(scored, props.lastDimensions)
+  lastIncomplete.value = last.incomplete
+  const hasLast = last.values != null
 
   const seriesData: echarts.RadarSeriesOption['data'] = [
     {
@@ -40,11 +65,9 @@ const render = () => {
       areaStyle: { color: 'rgba(74, 124, 255, 0.18)' }
     }
   ]
-  if (hasLast && props.lastDimensions) {
-    const lastMap = new Map(props.lastDimensions.map((d) => [d.dimensionName, d.score]))
-    const lastValues = props.dimensions.map((d) => lastMap.get(d.dimensionName) ?? 0)
+  if (hasLast && last.values) {
     seriesData.push({
-      value: lastValues,
+      value: last.values,
       name: '上次',
       itemStyle: { color: '#22D3EE' },
       lineStyle: { color: '#22D3EE', width: 2, type: 'dashed' },
@@ -101,10 +124,10 @@ const render = () => {
   )
 }
 
-watch(() => [props.dimensions, props.lastDimensions], render, { deep: true })
+watch(() => [props.dimensions, props.lastDimensions], () => void render(), { deep: true })
 
 onMounted(() => {
-  render()
+  void render()
   resizeHandler = () => chart?.resize()
   window.addEventListener('resize', resizeHandler)
 })
@@ -117,8 +140,31 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
+.radar-wrap {
+  position: relative;
+}
+
 .radar-chart {
   width: 100%;
   height: 360px;
+}
+
+/* 无维度可画时盖在空白画布上，避免"图坏了"的观感 */
+.radar-mask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 13px;
+  color: #999;
+}
+
+.radar-note {
+  margin: -8px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
 }
 </style>

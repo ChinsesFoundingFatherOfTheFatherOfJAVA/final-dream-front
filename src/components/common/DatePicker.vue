@@ -125,10 +125,11 @@ const calendarDays = computed(() => {
 const togglePanel = () => {
   visible.value = !visible.value
   if (visible.value && props.modelValue) {
-    const parts = props.modelValue.split(' ')[0].split('-')
-    if (parts.length === 3) {
-      viewYear.value = parseInt(parts[0])
-      viewMonth.value = parseInt(parts[1]) - 1
+    const [datePart = ''] = props.modelValue.split(' ')
+    const [year, month] = datePart.split('-')
+    if (year && month) {
+      viewYear.value = parseInt(year, 10)
+      viewMonth.value = parseInt(month, 10) - 1
     }
   }
 }

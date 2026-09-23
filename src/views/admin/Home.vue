@@ -16,6 +16,16 @@
             <p class="app-desc">轻松提升沟通技巧</p>
           </div>
         </div>
+        <div class="app-card" @click="goToActualTraining">
+          <div class="app-icon actual-icon">
+            <span class="icon-text">🎯</span>
+            <span class="ai-badge">AI</span>
+          </div>
+          <div class="app-info">
+            <h3 class="app-title">AI实战训练场</h3>
+            <p class="app-desc">围绕真实业务场景展开动态实战训练</p>
+          </div>
+        </div>
         <div class="app-guide">
           <div class="guide-illustration">
             <div class="guide-text">
@@ -273,6 +283,10 @@ const timeOptions = ['上月', '当月', '上季度', '当季度', '上一年', 
 const goToAIPractice = () => {
   router.push('/sparring/newmanage')
 }
+
+const goToActualTraining = () => {
+  router.push('/sparring/freesimulate/topic')
+}
 </script>
 
 <style scoped lang="scss">
@@ -318,8 +332,8 @@ const goToAIPractice = () => {
 // 常用应用
 .apps-content {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  gap: 32px;
 }
 
 .app-card {
@@ -337,6 +351,7 @@ const goToAIPractice = () => {
   }
 
   .app-icon {
+    position: relative;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -345,6 +360,23 @@ const goToAIPractice = () => {
     align-items: center;
     justify-content: center;
     font-size: 24px;
+
+    &.actual-icon {
+      background: linear-gradient(135deg, #6b5ce7 0%, #8b7cf7 100%);
+
+      .ai-badge {
+        position: absolute;
+        top: -4px;
+        right: -6px;
+        padding: 1px 5px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #fff;
+        background: #ff7d45;
+        border-radius: 6px;
+        line-height: 1.4;
+      }
+    }
   }
 
   .app-info {
@@ -354,6 +386,7 @@ const goToAIPractice = () => {
 }
 
 .app-guide {
+  margin-left: auto;
   width: 200px;
   height: 120px;
   background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%);

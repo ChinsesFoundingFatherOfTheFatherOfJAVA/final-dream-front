@@ -1,10 +1,10 @@
 <template>
-  <div class="admin-layout">
+  <div class="admin-layout" :class="{ 'full-bleed-layout': isFullBleed }">
     <AdminTopNav />
-    <main class="main-content">
+    <main class="main-content" :class="{ 'full-bleed': isFullBleed }">
       <router-view />
     </main>
-    <footer class="footer">
+    <footer v-if="!isFullBleed" class="footer">
       <p>2026 杰克数字人陪练</p>
     </footer>
     <div class="floating-tool">
@@ -15,7 +15,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import AdminTopNav from './AdminTopNav.vue'
+
+const route = useRoute()
+// fullBleed 页面（如 AI实战训练场）：内容铺满顶栏以下的整个窗口，自身管理滚动
+const isFullBleed = computed(() => route.meta.fullBleed === true)
 </script>
 
 <style scoped lang="scss">
@@ -23,12 +29,29 @@ import AdminTopNav from './AdminTopNav.vue'
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  // 铺满模式：锁定视口高度（min-height 只是下限，内容高时会被撑破导致整页滚动）
+  &.full-bleed-layout {
+    height: 100vh;
+    min-height: 100vh;
+  }
 }
 
 .main-content {
   flex: 1;
   padding: 24px;
   background: #f5f5f5;
+
+  // 铺满模式：无内边距、占满顶栏以下空间（flex 列容器），由模块内部滚动
+  // 注意不用 height:calc——flex:1 的 flex-basis:0 会覆盖 height，且该高度对子元素百分比不生效
+  &.full-bleed {
+    padding: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .footer {

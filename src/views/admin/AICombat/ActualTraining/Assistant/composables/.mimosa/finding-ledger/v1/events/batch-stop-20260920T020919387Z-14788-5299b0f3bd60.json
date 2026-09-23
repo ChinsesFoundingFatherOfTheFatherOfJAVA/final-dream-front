@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20260920T020919387Z-14788-5299b0f3bd60",
+  "runId": "20260920T020919387Z-14788-5299b0f3bd60",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affectsCompletion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "useAssistantStore.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affectsCompletion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "useAssistantWs.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "useAssistantStore.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "useAssistantWs.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "d7d2c80b0c250a0eae039314cb05fca7bad86c8f",
+  "diffHash": "248025b3ebea6bbe041ccd9bcdb6254849cb328944b2bf9b7eaedf73ef40b0e7",
+  "rulesVersion": "unavailable",
+  "sessionHash": "f02d14d6afb2d3ccff780d83241260d47861dbb4a695a4d20e060cdf4e04173d",
+  "reportRef": ".mimosa/reports/task-review-sess_f687679f-9005-4e66-8c7c-88dbf3464e1d-20260920T020919387Z-14788-5299b0f3bd60.json",
+  "events": [],
+  "observedFindingIds": [],
+  "verifiedFiles": [],
+  "recordedAt": "2026-09-20T02:09:21.153Z"
+}

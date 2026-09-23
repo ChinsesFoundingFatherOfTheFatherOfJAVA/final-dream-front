@@ -6,14 +6,9 @@
       class="msg-row"
       :class="msg.role === 2 ? 'student' : 'trainer'"
     >
-      <!-- 陪练者：左头像 + 浅紫气泡 -->
+      <!-- 陪练者：左头像 + 浅紫气泡（形象与训练页左栏同源，来自报告接口的 trainerAvatar） -->
       <template v-if="msg.role === 1">
-        <span class="avatar trainer-avatar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="9" r="4" fill="#9b8fd6"/>
-            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" fill="#9b8fd6"/>
-          </svg>
-        </span>
+        <img class="avatar trainer-avatar" :src="trainerFace(trainerAvatar)" alt="" />
         <div class="bubble trainer-bubble">{{ msg.content }}</div>
       </template>
 
@@ -55,20 +50,27 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { likeMessage } from '@/api/student'
+import { trainerFace } from './trainerFace'
 import type { RoundSuggestion, SessionMessage } from '@/types/student'
 
 const props = defineProps<{
   messages: SessionMessage[]
   roundSuggestions: RoundSuggestion[]
+  /** 陪练者形象（报告接口带回）；为空时回落内置默认形象 */
+  trainerAvatar?: string | null
 }>()
 
 const expanded = reactive<Record<string, boolean>>({})
 const likedIds = ref(new Set<string>())
 
-/** 学员消息 → 轮次序号（第 N 条通过学员消息 = 第 N 轮） */
-const studentRoundSeqs = (() => {
+/**
+ * 学员消息 → 轮次序号（第 N 条学员消息 = 第 N 轮）。
+ * 必须是 computed：对话记录在报告页是懒加载的，组件挂载时 messages 还可能是空数组，
+ * 一次性求值会让"改进建议"永远找不到轮次。
+ */
+const studentRoundSeqs = computed(() => {
   const map = new Map<string, number>()
   let round = 0
   for (const m of props.messages ?? []) {
@@ -78,10 +80,10 @@ const studentRoundSeqs = (() => {
     }
   }
   return map
-})()
+})
 
 const suggestionOf = (msg: SessionMessage): string | undefined => {
-  const round = studentRoundSeqs.get(msg.messageId)
+  const round = studentRoundSeqs.value.get(msg.messageId)
   if (!round) return undefined
   return props.roundSuggestions?.find((s) => s.seq === round)?.suggestion
 }
@@ -134,6 +136,7 @@ const onLike = async (msg: SessionMessage) => {
 
 .trainer-avatar {
   background: #ece9fb;
+  object-fit: cover;
   overflow: hidden;
 }
 

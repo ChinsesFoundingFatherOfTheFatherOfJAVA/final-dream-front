@@ -146,6 +146,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProjectDetail } from '@/api/project'
+import { resolveAssetUrl } from '@/api/request'
 
 const route = useRoute()
 const projectId = Number(route.params.id)
@@ -235,7 +236,7 @@ const loadDetail = async () => {
       responsiblePersonText: res.responsiblePersonName
         ? `${res.responsiblePersonName}(${res.responsiblePerson || ''})`
         : '',
-      coverImage: res.coverImage || null,
+      coverImage: resolveAssetUrl(res.coverImage) || null,
       dialogueMode: res.dialogueMode ?? 0,
       trainer: res.virtualTrainer ? {
         name: res.virtualTrainer.trainerName || '',

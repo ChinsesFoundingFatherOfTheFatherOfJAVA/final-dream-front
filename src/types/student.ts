@@ -60,6 +60,12 @@ export interface SessionMessage {
   passed: 0 | 1 | null
   withdrawn: 0 | 1
   likeCount: number
+  /** 消息音频 URL（陪练者=TTS 合成结果；学员=上传的录音），v1.1 */
+  audioUrl?: string | null
+  /** 音频时长（毫秒），v1.1 */
+  audioDurationMs?: number | null
+  /** 输入方式：1=文字 2=语音（学员消息），v1.1 */
+  inputMode?: 1 | 2 | null
 }
 
 export interface StartSessionResp {
@@ -67,6 +73,10 @@ export interface StartSessionResp {
   trainerName: string
   totalRounds: number
   finishedRounds: number
+  /** 0=语音对话 1=文字对话，v1.1 */
+  dialogueMode?: 0 | 1
+  /** 陪练者形象图片 URL；null 显示默认占位图，v1.1 */
+  trainerAvatar?: string | null
   messages: SessionMessage[]
 }
 
@@ -78,17 +88,42 @@ export interface SessionDetailResp {
   trainerName: string
   totalRounds: number
   finishedRounds: number
+  /** 0=语音对话 1=文字对话，v1.1 */
+  dialogueMode?: 0 | 1
+  /** 陪练者形象图片 URL；null 显示默认占位图，v1.1 */
+  trainerAvatar?: string | null
   messages: SessionMessage[]
 }
 
 export interface SendMessageResp {
   withdrawn: boolean
+  /**
+   * true=语音输入没被识别出内容（"没听到"），此时 keyPoints 必为空，
+   * 前端提示重说而不是弹要点弹窗（v1.2）
+   */
+  noSpeech: boolean
   keyPoints: string[]
   passed: boolean
   finished: boolean
   finishedRounds: number
   totalRounds: number
   nextTrainerMessage: SessionMessage | null
+}
+
+/** FP-24/28 学员语音消息响应（接口 5.2）：流转字段与 SendMessageResp 同构，附加语音字段 */
+export interface SendVoiceMessageResp extends SendMessageResp {
+  recognizedText: string
+  messageId: ID
+  audioUrl: string
+  audioDurationMs: number
+}
+
+/** FP-24/28 TTS 合成响应（接口 5.1） */
+export interface TtsResp {
+  messageId: ID
+  audioUrl: string
+  durationMs: number
+  cached: boolean
 }
 
 // ===== 3. 练习记录模块 =====
@@ -107,7 +142,8 @@ export interface PracticeRecord {
 export interface ReportDimension {
   dimensionName: string
   weight: number
-  score: number
+  /** null = 本次训练该维度未参与评分（如纯文字作答时的语音维度），comment 说明原因 */
+  score: number | null
   comment: string
   goodPoints: string[]
   improvements: string[]
@@ -132,6 +168,8 @@ export interface ReportResp {
   projectName?: string
   projectType?: number
   studentName?: string
+  /** 陪练者形象图片 URL（与训练页左栏同源）；null 显示内置默认形象，v1.2 */
+  trainerAvatar?: string | null
   totalScore?: number
   rankNo?: number
   exceedPercent?: number

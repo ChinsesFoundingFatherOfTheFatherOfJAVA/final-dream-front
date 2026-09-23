@@ -7,34 +7,32 @@
         <span class="dim-name">{{ dim.dimensionName }}</span>
         <span class="dim-help" title="评分说明由AI生成，仅供参考">?</span>
         <span class="dim-weight">权重 {{ dim.weight }}%</span>
-        <span class="dim-score" :class="{ low: dim.score < 60 }">{{ dim.score }} 分</span>
+        <span v-if="dim.score == null" class="dim-score dim-score-na">未参与评分</span>
+        <span v-else class="dim-score" :class="{ low: dim.score < 60 }">{{ dim.score }} 分</span>
       </div>
 
       <!-- 总评 -->
       <p class="dim-comment">{{ dim.comment || '暂无总评' }}</p>
 
-      <!-- 做得好的点 -->
-      <div class="dim-section">
-        <p class="section-title">做得好的点:</p>
-        <ul v-if="dim.goodPoints?.length" class="point-list">
-          <li v-for="(point, i) in dim.goodPoints" :key="i">{{ point }}</li>
-        </ul>
-        <p v-else class="empty-hint">暂无</p>
-      </div>
+      <template v-if="dim.score != null">
+        <!-- 做得好的点 -->
+        <div class="dim-section">
+          <p class="section-title">做得好的点:</p>
+          <ul v-if="dim.goodPoints?.length" class="point-list">
+            <li v-for="(point, i) in dim.goodPoints" :key="i">{{ point }}</li>
+          </ul>
+          <p v-else class="empty-hint">暂无</p>
+        </div>
 
-      <!-- 待改进点与建议 -->
-      <div class="dim-section">
-        <p class="section-title">待改进点与建议:</p>
-        <ul v-if="dim.improvements?.length" class="point-list">
-          <li v-for="(item, i) in dim.improvements" :key="i">{{ item }}</li>
-        </ul>
-        <p v-else class="empty-hint">暂无</p>
-      </div>
-
-      <!-- 话术一致性：查看详情 -->
-      <div v-if="dim.dimensionName === '话术一致性'" class="consistency-link">
-        <span @click="emit('consistency')">查看详情 ›</span>
-      </div>
+        <!-- 待改进点与建议 -->
+        <div class="dim-section">
+          <p class="section-title">待改进点与建议:</p>
+          <ul v-if="dim.improvements?.length" class="point-list">
+            <li v-for="(item, i) in dim.improvements" :key="i">{{ item }}</li>
+          </ul>
+          <p v-else class="empty-hint">暂无</p>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -46,8 +44,6 @@ import type { ReportDimension } from '@/types/student'
 const props = defineProps<{
   dimensions: ReportDimension[]
 }>()
-
-const emit = defineEmits<{ consistency: [] }>()
 
 const sortedDimensions = computed(() =>
   [...(props.dimensions ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
@@ -112,6 +108,12 @@ const sortedDimensions = computed(() =>
       &.low {
         color: #e54545;
       }
+
+      &.dim-score-na {
+        font-size: 13px;
+        font-weight: 400;
+        color: #999;
+      }
     }
   }
 
@@ -148,20 +150,6 @@ const sortedDimensions = computed(() =>
       font-size: 13px;
       color: #aaa;
       margin: 0;
-    }
-  }
-
-  .consistency-link {
-    margin: 4px 0 0 12px;
-
-    span {
-      color: #2e7cf6;
-      font-size: 13px;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
     }
   }
 }

@@ -4,7 +4,8 @@
     <div class="project-header">
       <div class="project-info">
         <div class="project-cover">
-          <span class="cover-icon">📚</span>
+          <img v-if="project.coverImage" :src="project.coverImage" alt="cover" class="cover-img" />
+          <span v-else class="cover-icon">📚</span>
         </div>
         <div class="project-details">
           <h1 class="project-name">{{ project.name }}</h1>
@@ -58,6 +59,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getProjectDetail, publishProject, withdrawProject, deleteProject } from '@/api/project'
+import { resolveAssetUrl } from '@/api/request'
 import { toProjectForm, toStatus, toProjectType, toAssignType } from '@/utils/convert'
 
 const router = useRouter()
@@ -81,7 +83,8 @@ const project = ref({
   responsiblePerson: '',
   responsiblePersonName: '',
   startTime: '',
-  endTime: ''
+  endTime: '',
+  coverImage: null as string | null
 })
 
 const loadProject = async () => {
@@ -96,7 +99,8 @@ const loadProject = async () => {
       responsiblePerson: res.responsiblePerson || '',
       responsiblePersonName: res.responsiblePersonName || '',
       startTime: (res.startTime || '').replace('T', ' ').slice(0, 16),
-      endTime: (res.endTime || '').replace('T', ' ').slice(0, 16)
+      endTime: (res.endTime || '').replace('T', ' ').slice(0, 16),
+      coverImage: resolveAssetUrl(res.coverImage) || null
     }
   } catch { /* handled */ }
 }
@@ -153,8 +157,11 @@ onMounted(loadProject)
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 
   .cover-icon { font-size: 28px; }
+
+  .cover-img { width: 100%; height: 100%; object-fit: cover; }
 }
 
 .project-details {

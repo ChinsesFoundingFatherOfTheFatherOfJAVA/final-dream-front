@@ -353,7 +353,7 @@ const handleNodeSave = (newData: FlowNodeData) => {
 const handleSave = async () => {
   const idMap: Record<string, number> = {}
   flowNodes.value.forEach((n: any, i: number) => { idMap[n.id] = i + 1 })
-  const backendNodes = flowNodes.value.map((n: any) => toBackendNode(n, idMap[n.id]))
+  const backendNodes = flowNodes.value.map((n: any, i: number) => toBackendNode(n, i + 1))
   const backendEdges = flowEdges.value.map((e: any) => toBackendEdge(e, idMap))
   try {
     await saveTemplateFlow(templateId, { nodes: backendNodes, edges: backendEdges })
@@ -362,15 +362,27 @@ const handleSave = async () => {
   } catch { /* handled */ }
 }
 
-const handleAIGenerate = async (scene: string, rounds: number) => {
+const openAIDialog = () => {
+  showAIDialog.value = true
+}
+
+const handleAIGenerate = async (scene: string, rounds: number, firstSpeaker: string) => {
   if (aiGenerating.value) return
   aiGenerating.value = true
   try {
-    const res: any = await generateScript({ description: scene, rounds })
+    const res: any = await generateScript({ description: scene, rounds, firstSpeaker })
     const backendNodes = res.nodes || []
     const backendEdges = res.edges || []
-    const nodes = backendNodes.map((n: any, i: number) => { n.id = n.id || (i + 1); return toVfNode(n) })
-    const edges = backendEdges.map((e: any) => toVfEdge(e))
+    // AI 返回的节点没有后端 id，按数组下标补齐临时 id
+    const tempIds = backendNodes.map((n: any, i: number) => (n.id != null ? n.id : i + 1))
+    const nodes = backendNodes.map((n: any, i: number) => toVfNode({ ...n, id: tempIds[i] }))
+    // AI 的 edges 用 source/target 表示节点数组下标，这里换算成画布需要的 sourceNodeId/targetNodeId
+    const edges = backendEdges.map((e: any, i: number) => toVfEdge({
+      id: e.id ?? `ai-${i}`,
+      sourceNodeId: tempIds[e.source],
+      targetNodeId: tempIds[e.target],
+      weight: e.weight
+    }))
     flowNodes.value = nodes
     flowEdges.value = edges
     hasFlow.value = true

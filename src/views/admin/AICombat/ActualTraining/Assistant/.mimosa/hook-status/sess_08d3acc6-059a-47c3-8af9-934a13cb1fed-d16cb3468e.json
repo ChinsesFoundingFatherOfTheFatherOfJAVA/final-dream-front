@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-09-20T08:21:52.419Z",
+  "sessionId": "sess_08d3acc6-059a-47c3-8af9-934a13cb1fed",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "D:/JACK/final_dream/after-end/AtualCombatTraining/src/main/java/jack/digityhuman/atualcombattraining/websocket/WsFrameEncoder.java",
+  "outcome": "inconclusive",
+  "coverage": "partial",
+  "findingCount": 0,
+  "durationMs": 33,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

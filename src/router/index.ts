@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   // 管理端路由
   {
     path: '/',
@@ -69,6 +70,33 @@ const routes = [
         name: 'TemplateConsole',
         component: () => import('@/views/admin/AICombat/SpeechTemplate/TemplateConsole.vue'),
         meta: { title: '模板控制台', activeMenu: 'speech-template' }
+      },
+      // AI实战训练场（铺满窗口：顶栏 + 左菜单 + 内容区内部滚动）
+      {
+        path: 'freesimulate',
+        component: () => import('@/views/admin/AICombat/ActualTraining/index.vue'),
+        redirect: '/sparring/freesimulate/topic',
+        children: [
+          {
+            path: 'topic',
+            name: 'ActualTopicList',
+            component: () => import('@/views/admin/AICombat/ActualTraining/TopicList.vue'),
+            meta: { title: '训练主题', activeMenu: 'actual-training', fullBleed: true }
+          },
+          {
+            path: 'theme/:id',
+            name: 'ActualThemeDetail',
+            component: () => import('@/views/admin/AICombat/ActualTraining/ThemeDetail.vue'),
+            meta: { title: '主题详情', activeMenu: 'actual-training', fullBleed: true }
+          }
+        ]
+      },
+      // AI 设计助手对话页（FP-30）：挂 AdminLayout，铺满窗口自带左右两栏，不经 ActualTraining 左菜单
+      {
+        path: 'freesimulate/assistant/:themeId?',
+        name: 'ActualAssistant',
+        component: () => import('@/views/admin/AICombat/ActualTraining/Assistant/index.vue'),
+        meta: { title: 'AI 设计助手', activeMenu: 'actual-training', fullBleed: true }
       }
     ]
   },
@@ -93,23 +121,27 @@ const routes = [
     ]
   },
   {
-    path: '/sparring',
+    // 学员端页面同样挂在 /sparring 前缀下，但父级路径不能再写一遍 '/sparring'：
+    // 与管理端那条同名记录重复时，vue-router 按注册顺序取第一条匹配，
+    // 只报错在运行期，导航到 /sparring 会命中管理端 AdminLayout 而白屏。这里改用 /sparring/web 作父级，
+    // 子路由拼出来的完整路径与原来完全一致，跳转处不用改。
+    path: '/sparring/web',
     component: () => import('@/components/layout/StudentLayout.vue'),
     children: [
       {
-        path: 'web/speech/list',
+        path: 'speech/list',
         name: 'SpeechList',
         component: () => import('@/views/student/AICombat/SpeechList.vue'),
         meta: { title: 'AI对练', activeMenu: 'speech' }
       },
       {
-        path: 'web/script/detail/:projectId',
+        path: 'script/detail/:projectId',
         name: 'ScriptDetail',
         component: () => import('@/views/student/AICombat/ScriptDetail.vue'),
         meta: { title: '话术训练详情', activeMenu: 'speech' }
       },
       {
-        path: 'web/script/records/:projectId',
+        path: 'script/records/:projectId',
         name: 'PracticeRecords',
         component: () => import('@/views/student/AICombat/PracticeRecords.vue'),
         meta: { title: '练习记录', activeMenu: 'speech' }

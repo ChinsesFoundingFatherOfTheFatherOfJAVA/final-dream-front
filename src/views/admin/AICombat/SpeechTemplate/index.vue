@@ -179,7 +179,7 @@ const getStatusText = (status: string) => {
   return map[status] || status
 }
 
-const goToTemplate = (id: string) => {
+const goToTemplate = (id: number) => {
   router.push(`/sparring/newtemplate/console/${id}`)
 }
 

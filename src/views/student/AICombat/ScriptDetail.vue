@@ -127,6 +127,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getStudentProjectDetail, startSession } from '@/api/student'
+import { resolveAssetUrl } from '@/api/request'
 import type { StudentProjectDetail } from '@/types/student'
 
 const route = useRoute()
@@ -168,7 +169,7 @@ const onStart = async () => {
     const url = `${location.origin}${location.pathname}#/sparring/web/script/training/${projectId}?sessionId=${data.sessionId}`
     window.open(url, '_blank')
   } catch {
-    // request.ts 已 alert 错误信息
+    // 创建会话失败已由 api/request.ts 的 toast 提示，按钮恢复可点即可重试
   } finally {
     starting.value = false
   }
@@ -176,7 +177,8 @@ const onStart = async () => {
 
 onMounted(async () => {
   try {
-    detail.value = await getStudentProjectDetail(projectId)
+    const data: any = await getStudentProjectDetail(projectId)
+    detail.value = { ...data, coverImage: resolveAssetUrl(data.coverImage) || null }
   } catch (e: unknown) {
     errorMsg.value = e instanceof Error ? e.message : ''
   } finally {

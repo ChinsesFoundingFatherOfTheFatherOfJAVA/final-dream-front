@@ -134,6 +134,7 @@
               <div class="col-checkbox"></div>
               <div class="col-name">维度名称</div>
               <div class="col-rule">评分规则</div>
+              <div class="col-evidence">评分依据 / 评分方式</div>
               <div class="col-weight">权重</div>
             </div>
             <div class="table-row" v-for="dim in dimensions" :key="dim.id">
@@ -148,12 +149,29 @@
                 <input v-if="dim.isCustom" type="text" class="dim-edit" v-model="dim.scoringRule" placeholder="请输入评分规则" maxlength="200" />
                 <span v-else>{{ dim.scoringRule }}</span>
               </div>
+              <div class="col-evidence">
+                <select class="dim-select" v-model.number="dim.evidenceType" :disabled="!dim.enabled">
+                  <option :value="1">看文字</option>
+                  <option :value="2">看语音</option>
+                  <option :value="3">文字+语音</option>
+                </select>
+                <select class="dim-select" v-model="dim.metricKey" :disabled="!dim.enabled">
+                  <option value="">AI 评分</option>
+                  <option value="speech_speed">语速规则算分</option>
+                  <option value="forbidden_words">违禁词规则算分</option>
+                </select>
+              </div>
               <div class="col-weight">
                 <input type="number" class="weight-input" v-model.number="dim.weight" min="0" max="100" :disabled="!dim.enabled" />
                 <span>%</span>
               </div>
             </div>
           </div>
+
+          <p class="table-hint">
+            评分依据决定该维度能不能在本次训练里评分：学员全程用文字作答时，"看语音"的维度不计分、也不占权重。<br />
+            评分方式决定分数从哪来：选"规则算分"时分数由后端按公式判定，AI 只负责写评语；选"AI 评分"时分数完全交给大模型。
+          </p>
 
           <div class="weight-total" :class="{ valid: totalWeight === 100 }">
             权重 {{ totalWeight === 100 ? '✓' : '' }} {{ totalWeight }}%
@@ -231,6 +249,16 @@
             <label class="form-label">违禁词</label>
             <input type="text" class="form-input" v-model="form.trainer.forbiddenWords" placeholder="以逗号隔开，最多200字" maxlength="200" />
           </div>
+
+          <!-- FP-26 陪练者形象（v1.1 新增） -->
+          <div class="form-item">
+            <label class="form-label">陪练者形象</label>
+            <AvatarGenField
+              ref="avatarFieldRef"
+              v-model="form.trainer.avatarImage"
+              @file-change="onAvatarFileChange"
+            />
+          </div>
         </div>
 
         <!-- 底部按钮 -->
@@ -274,8 +302,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import DatePicker from '@/components/common/DatePicker.vue'
+import AvatarGenField from '@/components/business/AvatarGenField.vue'
 import { createProject, createProjectWithFile, updateProject, updateProjectWithFile, getProjectDetail } from '@/api/project'
 import { toProjectForm } from '@/utils/convert'
+import { resolveAssetUrl } from '@/api/request'
 
 const router = useRouter()
 const route = useRoute()
@@ -293,6 +323,7 @@ const form = ref({
   completionStandard: 1,
   passScore: 60,
   passStrategy: 'single',
+  passStrategyN: 0,
   dialogueMode: 'voice',
   consistencyRule: 'keypoints',
   coverImage: '',
@@ -302,9 +333,18 @@ const form = ref({
     voiceId: 'voice1',
     speed: 30,
     inputLanguage: ['普通话'],
-    forbiddenWords: ''
+    forbiddenWords: '',
+    /** FP-26 陪练者形象图片 URL（v1.1：AI 生成或本地替换；空=学员端显示默认占位图） */
+    avatarImage: ''
   }
 })
+
+/** FP-26 本地选择的形象图片文件（保存时以文件字段上传，替代 URL） */
+const avatarFieldRef = ref<InstanceType<typeof AvatarGenField>>()
+const avatarFile = ref<File | null>(null)
+const onAvatarFileChange = (file: File | null) => {
+  avatarFile.value = file
+}
 
 const coverInputRef = ref<HTMLInputElement>()
 const coverFile = ref<File | null>(null)
@@ -370,14 +410,18 @@ const passStrategies = [
   { value: 'consecutive', label: '连续达标n次' }
 ]
 
+/**
+ * 默认评分维度。evidenceType：1=看文字，2=看语音，3=文字+语音（决定无语音数据时该维度是否参与评分）
+ * metricKey：非空表示分数由后端规则算、AI 只写评语，空表示完全交给 AI 评分
+ */
 const dimensions = ref([
-  { id: '1', name: '话术一致性', weight: 40, enabled: true, ruleType: 'keypoints', scoringRule: '按照要点表达即可', isCustom: false },
-  { id: '2', name: '表达流利', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', isCustom: false },
-  { id: '3', name: '语速适中', weight: 10, enabled: true, ruleType: 'formula', scoringRule: '公式计算(150-250字/分钟为满分)', isCustom: false },
-  { id: '4', name: '礼貌用语', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', isCustom: false },
-  { id: '5', name: '态度积极', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', isCustom: false },
-  { id: '6', name: '表述清晰', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', isCustom: false },
-  { id: '7', name: '违禁词', weight: 10, enabled: true, ruleType: 'deduction', scoringRule: '扣分制(每出现一次扣N分)', isCustom: false }
+  { id: '1', name: '话术一致性', weight: 40, enabled: true, ruleType: 'keypoints', scoringRule: '按照要点表达即可', evidenceType: 1, metricKey: '', isCustom: false },
+  { id: '2', name: '表达流利', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
+  { id: '3', name: '语速适中', weight: 10, enabled: true, ruleType: 'formula', scoringRule: '公式计算(150-250字/分钟为满分)', evidenceType: 2, metricKey: 'speech_speed', isCustom: false },
+  { id: '4', name: '礼貌用语', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
+  { id: '5', name: '态度积极', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
+  { id: '6', name: '表述清晰', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
+  { id: '7', name: '违禁词', weight: 10, enabled: true, ruleType: 'deduction', scoringRule: '扣分制(每出现一次扣N分)', evidenceType: 1, metricKey: 'forbidden_words', isCustom: false }
 ])
 
 const totalWeight = computed(() => {
@@ -396,12 +440,24 @@ const addCustomDimension = () => {
     enabled: true,
     ruleType: 'grade',
     scoringRule: '分级评分',
+    evidenceType: 1,
+    metricKey: '',
     isCustom: true
   })
 }
 
 const goBack = () => {
   router.push('/sparring/newmanage')
+}
+
+/** 后端 scoring_dimension.rule_type 数字码 → 表单内的字符串标识 */
+const RULE_TYPE_BY_CODE: Record<number, string> = {
+  1: 'exact',
+  2: 'keypoints',
+  3: 'mixed',
+  4: 'grade',
+  5: 'formula',
+  6: 'deduction'
 }
 
 const loadProject = async (id: number) => {
@@ -416,7 +472,33 @@ const loadProject = async (id: number) => {
     form.value.completionStandard = data.completionStandard
     form.value.passScore = data.passScore
     form.value.passStrategy = data.passStrategy
+    form.value.passStrategyN = data.passStrategyN
     form.value.dialogueMode = data.dialogueMode
+    form.value.coverImage = data.coverImage
+    // FP-26 编辑回显：陪练者形象（后端详情返回 virtualTrainer.avatarImage）
+    if (res.virtualTrainer?.avatarImage) {
+      form.value.trainer.avatarImage = resolveAssetUrl(res.virtualTrainer.avatarImage)
+    }
+    // 评分维度回显：以库中已保存的配置为准（含禁用行与自定义维度）。
+    // 之前不回填，任何一次编辑保存都会把维度静默重置成上面 7 条默认值
+    const savedDims: any[] | undefined = res.scoringDimensions
+    if (Array.isArray(savedDims) && savedDims.length) {
+      dimensions.value = savedDims.map((d, i) => ({
+        id: d.id != null ? String(d.id) : `saved_${i}`,
+        name: d.dimensionName || '',
+        weight: d.weight ?? 0,
+        enabled: d.enabled !== 0,
+        ruleType: RULE_TYPE_BY_CODE[Number(d.ruleType)] ?? 'grade',
+        scoringRule: d.scoringRule || '',
+        evidenceType: Number(d.evidenceType ?? 1),
+        metricKey: d.metricKey || '',
+        isCustom: d.isCustom === 1
+      }))
+      const consistency = dimensions.value.find((d) => d.name === '话术一致性')
+      if (consistency && ['exact', 'keypoints', 'mixed'].includes(consistency.ruleType)) {
+        form.value.consistencyRule = consistency.ruleType
+      }
+    }
   } catch { /* handled */ }
 }
 
@@ -446,27 +528,40 @@ const handleSubmit = async () => {
     }
     fd.append('dialogueMode', form.value.dialogueMode === 'voice' ? '0' : '1')
 
-    // 评分维度
+    // 评分维度：未勾选的维度同样提交（enabled=0）。后端保存是删表重建，
+    // 只上传启用行会让被禁用的默认维度永久消失（下次编辑连重新勾选的机会都没有）
     fd.append('scoringDimensions', JSON.stringify(
-      dimensions.value.filter((d) => d.enabled).map((d) => ({
+      dimensions.value.map((d, i) => ({
+        id: /^\d+$/.test(d.id) ? Number(d.id) : undefined,
         dimensionName: d.name,
         weight: d.weight,
-        enabled: 1,
-        ruleType: d.ruleType,
+        enabled: d.enabled ? 1 : 0,
+        // 话术一致性的三种模式由本步骤顶部的单选决定，此前只存在表单里从未落库
+        ruleType: d.name === '话术一致性' ? form.value.consistencyRule : d.ruleType,
         scoringRule: d.scoringRule,
-        isCustom: d.isCustom ? 1 : 0
+        // 评分依据与评分方式：evidenceType=2 的维度在纯文字场次不参与评分；metricKey 非空时分数由后端规则算
+        evidenceType: d.evidenceType,
+        metricKey: d.metricKey,
+        isCustom: d.isCustom ? 1 : 0,
+        sortOrder: i
       }))
     ))
 
-    // 虚拟陪练者
+    // 虚拟陪练者（FP-26：avatarImage 为服务端 URL；本地文件另行以文件字段上传）
     fd.append('virtualTrainer', JSON.stringify({
       trainerName: form.value.trainer.name,
       language: form.value.trainer.language,
       voiceId: form.value.trainer.voiceId,
       speed: form.value.trainer.speed,
       inputLanguage: form.value.trainer.inputLanguage.join(','),
-      forbiddenWords: form.value.trainer.forbiddenWords
+      forbiddenWords: form.value.trainer.forbiddenWords,
+      avatarImage: form.value.trainer.avatarImage?.startsWith('blob:') ? '' : (form.value.trainer.avatarImage || '')
     }))
+
+    // FP-26 本地替换的形象图片：以文件字段上传
+    if (avatarFile.value) {
+      fd.append('avatarImage', avatarFile.value, avatarFile.value.name || 'avatar.png')
+    }
 
     // 封面：用户真实上传的图片作为文件上传；否则不传字段，让后端使用占位图
     if (coverFile.value) {
@@ -769,7 +864,27 @@ const handleSubmit = async () => {
   .col-checkbox { width: 50px; }
   .col-name { width: 120px; }
   .col-rule { flex: 1; }
+  .col-evidence { width: 230px; display: flex; gap: 6px; }
   .col-weight { width: 100px; display: flex; align-items: center; gap: 4px; }
+}
+
+.dim-select {
+  width: 110px;
+  padding: 4px 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  outline: none;
+  &:focus { border-color: #1890ff; }
+  &:disabled { background: #f5f5f5; color: #bfbfbf; }
+}
+
+.table-hint {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.7;
+  margin: -6px 0 14px;
 }
 
 .weight-input {
