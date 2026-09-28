@@ -27,6 +27,44 @@ const routes: RouteRecordRaw[] = [
         name: 'AdminHome',
         component: () => import('@/views/admin/Home.vue'),
         meta: { title: '首页', activeMenu: 'homepage' }
+      },
+      {
+        path: 'enterprise',
+        component: () => import('@/components/layout/EnterpriseLayout.vue'),
+        redirect: () => {
+          const auth = useAuthStore()
+          if (auth.hasPermission('org:employee')) return '/enterprise/staff'
+          if (auth.hasPermission('org:department')) return '/enterprise/departments'
+          if (auth.hasPermission('role:mgmt')) return '/enterprise/roles'
+          return '/403'
+        },
+        meta: { title: '我的企业', activeMenu: 'enterprise', fullBleed: true },
+        children: [
+          {
+            path: 'staff',
+            name: 'EnterpriseStaff',
+            component: () => import('@/views/admin/Enterprise/index.vue'),
+            meta: { title: '员工名册', permission: 'org:employee' }
+          },
+          {
+            path: 'departments',
+            name: 'EnterpriseDepartments',
+            component: () => import('@/views/admin/EnterpriseDepartments/index.vue'),
+            meta: { title: '部门管理', permission: 'org:department' }
+          },
+          {
+            path: 'roles',
+            name: 'RoleManagement',
+            component: () => import('@/views/admin/RoleMgmt/index.vue'),
+            meta: { title: '角色权限', permission: 'role:mgmt' }
+          },
+          {
+            path: 'roles/users/:id',
+            name: 'RoleUsers',
+            component: () => import('@/views/admin/RoleUsers/index.vue'),
+            meta: { title: '角色人员管理', permission: 'role:mgmt' }
+          }
+        ]
       }
     ]
   },
@@ -225,7 +263,15 @@ router.beforeEach(async (to) => {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
 
-  if (to.meta.requiresAdmin === true && !auth.hasPermission('sparring:manage')) {
+  if (to.meta.permission && !auth.hasPermission(String(to.meta.permission))) {
+    return { path: '/403' }
+  }
+
+  if (
+    to.meta.requiresAdmin === true &&
+    !auth.isSuperAdmin &&
+    auth.permissions.length === 0
+  ) {
     return { path: '/403' }
   }
 

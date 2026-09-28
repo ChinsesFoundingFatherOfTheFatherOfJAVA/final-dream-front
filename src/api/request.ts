@@ -57,13 +57,13 @@ request.interceptors.response.use(
     const { code, message, data } = response.data
     if (code === 0) return data
     const text = message || '请求失败'
-    if (code === 401001) {
+    if (code === 40101 || code === 401001) {
       clearStoredAuth()
       if (!response.config?.silent) toast.error(text)
       redirectToLogin()
       return Promise.reject(new Error(text))
     }
-    if (code === 403001 || code === 403002) {
+    if (code === 40301 || code === 403001 || code === 403002) {
       if (!response.config?.silent) toast.error(text)
       redirectToForbidden()
       return Promise.reject(new Error(text))

@@ -9,21 +9,16 @@
 
         <div class="dialog-content">
           <aside class="dept-panel">
-            <div class="panel-title">部门</div>
-            <button type="button" class="dept-row" :class="{ active: !deptId }" @click="selectDept('')">
-              全部部门
-            </button>
-            <button
-              v-for="dept in flatDepartments"
-              :key="dept.node.deptCode || dept.node.deptId"
-              type="button"
-              class="dept-row"
-              :class="{ active: deptId === dept.node.deptCode }"
-              :style="{ paddingLeft: `${14 + dept.depth * 16}px` }"
-              @click="selectDept(dept.node.deptCode)"
-            >
-              {{ dept.node.deptName }}
-            </button>
+            <DeptTree
+              v-model="deptId"
+              :data="departments"
+              mode="single"
+              searchable
+              include-all
+              show-count
+              search-placeholder="搜索部门"
+              @change="selectDept(String($event))"
+            />
           </aside>
 
           <main class="candidate-panel">
@@ -104,6 +99,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import DeptTree from '@/components/common/DeptTree.vue'
 import { getDepartmentTree, getStudentCandidates, inviteProjectStudents } from '@/api/speechAdmin'
 import type { CandidateRow, DepartmentNode } from '@/types/speechAdmin'
 import { toast } from '@/utils/toast'
@@ -117,11 +113,6 @@ const emit = defineEmits<{
   close: []
   invited: [count: number]
 }>()
-
-interface FlatDepartment {
-  node: DepartmentNode
-  depth: number
-}
 
 const departments = ref<DepartmentNode[]>([])
 const candidates = ref<CandidateRow[]>([])
@@ -138,26 +129,6 @@ const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize))
 const pageAllSelected = computed(
   () => candidates.value.length > 0 && candidates.value.every((row) => selectedIds.value.includes(row.userId))
 )
-
-const flatDepartments = computed<FlatDepartment[]>(() => {
-  const byParent = new Map<string, DepartmentNode[]>()
-  const codes = new Set(departments.value.map((dept) => dept.deptCode))
-  for (const dept of departments.value) {
-    const parent = dept.parentCode && codes.has(dept.parentCode) ? dept.parentCode : ''
-    const list = byParent.get(parent) ?? []
-    list.push(dept)
-    byParent.set(parent, list)
-  }
-  const result: FlatDepartment[] = []
-  const visit = (parentCode: string, depth: number) => {
-    for (const node of byParent.get(parentCode) ?? []) {
-      result.push({ node, depth })
-      visit(node.deptCode, depth + 1)
-    }
-  }
-  visit('', 0)
-  return result
-})
 
 const loadDepartments = async () => {
   try {
@@ -307,36 +278,6 @@ watch(
   overflow-y: auto;
   border-right: 1px solid #eef0f5;
   background: #fafbfd;
-}
-
-.panel-title {
-  padding: 8px 12px;
-  color: #8a92a5;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.dept-row {
-  display: block;
-  width: 100%;
-  min-height: 36px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 7px;
-  background: transparent;
-  color: #4d5568;
-  font-size: 13px;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &:hover,
-  &.active {
-    background: #eaf2ff;
-    color: #2e7cf6;
-  }
 }
 
 .candidate-panel {

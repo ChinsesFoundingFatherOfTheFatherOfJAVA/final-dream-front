@@ -1,8 +1,8 @@
 import request from './request'
+import { getDepartmentTree } from './sm'
 import type {
   ActiveItem,
   CandidateRow,
-  DepartmentNode,
   DeptStatRow,
   PageData,
   PositionOption,
@@ -148,9 +148,7 @@ export async function getStudentAttendRecords(
   return normalizePage(data)
 }
 
-export function getDepartmentTree() {
-  return request.get<unknown, { list: DepartmentNode[] }>('/sm/admin/departments/tree')
-}
+export { getDepartmentTree }
 
 export function getPositionOptions(params?: { page?: number; size?: number; keyword?: string }) {
   return request.get<

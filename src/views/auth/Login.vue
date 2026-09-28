@@ -57,7 +57,7 @@ const targetAfterLogin = () => {
   if (redirect.value && !redirect.value.startsWith('/login') && !redirect.value.startsWith('/403')) {
     return redirect.value
   }
-  return auth.hasPermission('sparring:manage') ? '/sparring/newmanage' : '/sparring/web/speech/list'
+  return auth.isSuperAdmin || auth.permissions.length > 0 ? '/homepage' : '/study/home'
 }
 
 const submit = async () => {

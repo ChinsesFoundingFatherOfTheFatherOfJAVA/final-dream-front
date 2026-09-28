@@ -1,4 +1,5 @@
 import type { ReportResp, SessionMessage, ConsistencyResp } from './student'
+import type { EnterpriseDepartment } from '@/api/sm'
 
 export interface PageData<T> {
   records: T[]
@@ -106,13 +107,7 @@ export interface AttendRecordRow {
   dimScores: Record<string, number>
 }
 
-export interface DepartmentNode {
-  deptId: string
-  deptCode: string
-  deptName: string
-  parentCode: string | null
-  userCount: number
-}
+export type DepartmentNode = EnterpriseDepartment
 
 export interface PositionOption {
   positionName: string

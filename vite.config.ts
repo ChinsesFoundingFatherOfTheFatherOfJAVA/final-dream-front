@@ -27,9 +27,14 @@ export default defineConfig({
         ws: true, // 关键：显式开启才会转发 Upgrade 握手
         changeOrigin: true,
       },
+      // 用户与权限中心可单独指向 StaffManagement；未配置时仍与其余请求一起走网关
+      '/api/sm': {
+        target: process.env.VITE_SM_PROXY_TARGET || process.env.VITE_PROXY_TARGET || 'http://localhost:8080',
+        changeOrigin: true,
+      },
       // 其余 HTTP 仍走网关
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:8080',
         changeOrigin: true,
       },
     },

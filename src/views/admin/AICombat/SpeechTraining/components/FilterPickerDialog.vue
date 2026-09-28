@@ -8,7 +8,7 @@
         </header>
 
         <div class="picker-toolbar">
-          <label>
+          <label v-if="mode === 'position'">
             <input
               type="checkbox"
               :checked="allChecked"
@@ -20,18 +20,27 @@
         </div>
 
         <div class="picker-body">
-          <label v-for="item in options" :key="item.value" class="option-row">
-            <input
-              type="checkbox"
-              :checked="selected.includes(item.value)"
-              @change="toggle(item.value)"
-            />
-            <span class="option-label" :style="{ paddingLeft: `${item.depth * 18}px` }">
-              {{ item.label }}
-            </span>
-            <span v-if="item.count != null" class="option-count">{{ item.count }}人</span>
-          </label>
-          <p v-if="!options.length" class="empty-hint">暂无可选项</p>
+          <DeptTree
+            v-if="mode === 'dept'"
+            v-model="selected"
+            :data="departments"
+            mode="check"
+            searchable
+            show-count
+            search-placeholder="搜索部门"
+          />
+          <template v-else>
+            <label v-for="item in options" :key="item.value" class="option-row">
+              <input
+                type="checkbox"
+                :checked="selected.includes(item.value)"
+                @change="toggle(item.value)"
+              />
+              <span class="option-label">{{ item.label }}</span>
+              <span v-if="item.count != null" class="option-count">{{ item.count }}人</span>
+            </label>
+            <p v-if="!options.length" class="empty-hint">暂无可选项</p>
+          </template>
         </div>
 
         <footer class="picker-footer">
@@ -45,12 +54,12 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import DeptTree from '@/components/common/DeptTree.vue'
 import type { DepartmentNode, PositionOption } from '@/types/speechAdmin'
 
 interface OptionRow {
   value: string
   label: string
-  depth: number
   count?: number
 }
 
@@ -70,38 +79,11 @@ const emit = defineEmits<{
 
 const selected = ref<string[]>([])
 
-const deptOptions = computed(() => {
-  const byParent = new Map<string, DepartmentNode[]>()
-  const codes = new Set(props.departments.map((dept) => dept.deptCode))
-  for (const dept of props.departments) {
-    const parent = dept.parentCode && codes.has(dept.parentCode) ? dept.parentCode : ''
-    const list = byParent.get(parent) ?? []
-    list.push(dept)
-    byParent.set(parent, list)
-  }
-
-  const rows: OptionRow[] = []
-  const visit = (parentCode: string, depth: number) => {
-    for (const dept of byParent.get(parentCode) ?? []) {
-      rows.push({
-        value: dept.deptCode || dept.deptId,
-        label: dept.deptName,
-        depth,
-        count: dept.userCount
-      })
-      visit(dept.deptCode, depth + 1)
-    }
-  }
-  visit('', 0)
-  return rows
-})
-
 const options = computed<OptionRow[]>(() => {
-  if (props.mode === 'dept') return deptOptions.value
+  if (props.mode === 'dept') return []
   return props.positions.map((position) => ({
     value: position.positionName,
     label: position.positionName,
-    depth: 0,
     count: position.userCount
   }))
 })

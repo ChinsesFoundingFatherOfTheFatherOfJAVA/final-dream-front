@@ -23,7 +23,14 @@
           </div>
         </div>
         <router-link to="/operation" class="nav-item">平台运营</router-link>
-        <router-link to="/enterprise" class="nav-item">我的企业</router-link>
+        <router-link
+          v-if="hasEnterpriseAccess"
+          to="/enterprise"
+          class="nav-item"
+          :class="{ active: currentRoute.startsWith('/enterprise') }"
+        >
+          我的企业
+        </router-link>
         <router-link to="/report" class="nav-item">报表中心</router-link>
       </nav>
     </div>
@@ -40,6 +47,7 @@
         <div v-if="activeDropdown === 'user'" class="dropdown-menu user-menu" @mouseenter="keepDropdown('user')" @mouseleave="closeDropdown('user')">
           <div class="dropdown-item" @click="goToStudent">前往学员端</div>
           <div class="dropdown-item">用户中心</div>
+          <div class="dropdown-item" @click="openChangePassword">修改密码</div>
           <div class="dropdown-item has-sub">显示语言 <span class="arrow-right">›</span></div>
           <div class="dropdown-divider"></div>
           <div class="dropdown-item" @click="logout">退出登录</div>
@@ -50,22 +58,69 @@
       </span>
     </div>
   </header>
+
+  <teleport to="body">
+    <div v-if="passwordVisible" class="password-overlay" @click.self="passwordVisible = false">
+      <form class="password-dialog" @submit.prevent="submitPassword">
+        <header>
+          <h3>修改密码</h3>
+          <button type="button" aria-label="关闭" @click="passwordVisible = false">×</button>
+        </header>
+        <label>
+          <span>原密码</span>
+          <input v-model="passwordForm.oldPassword" type="password" autocomplete="current-password" />
+        </label>
+        <label>
+          <span>新密码</span>
+          <input v-model="passwordForm.newPassword" type="password" autocomplete="new-password" />
+        </label>
+        <label>
+          <span>确认新密码</span>
+          <input v-model="passwordForm.confirmPassword" type="password" autocomplete="new-password" />
+        </label>
+        <p v-if="passwordError" class="password-error">{{ passwordError }}</p>
+        <footer>
+          <button type="button" class="plain" @click="passwordVisible = false">取消</button>
+          <button type="submit" class="primary" :disabled="passwordSubmitting">
+            {{ passwordSubmitting ? '提交中...' : '确认修改' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </teleport>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { mockApps } from '@/mock/data'
+import { changePassword } from '@/api/sm'
 import { useAuthStore } from '@/stores/auth'
+import { toast } from '@/utils/toast'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
 const activeDropdown = ref<string | null>(null)
+const passwordVisible = ref(false)
+const passwordSubmitting = ref(false)
+const passwordError = ref('')
+const passwordForm = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
 let closeTimer: number | null = null
 
 const allApps = mockApps
+const hasEnterpriseAccess = computed(
+  () =>
+    auth.isSuperAdmin ||
+    auth.permissions.includes('org:employee') ||
+    auth.permissions.includes('org:department') ||
+    auth.permissions.includes('role:mgmt')
+)
 
 const openDropdown = (name: string) => {
   if (closeTimer) {
@@ -106,6 +161,40 @@ const logout = () => {
   activeDropdown.value = null
   auth.logout()
   router.replace('/login')
+}
+
+const openChangePassword = () => {
+  activeDropdown.value = null
+  passwordForm.value = { oldPassword: '', newPassword: '', confirmPassword: '' }
+  passwordError.value = ''
+  passwordVisible.value = true
+}
+
+const submitPassword = async () => {
+  const { oldPassword, newPassword, confirmPassword } = passwordForm.value
+  if (!oldPassword || !newPassword) {
+    passwordError.value = '请填写原密码和新密码'
+    return
+  }
+  if (newPassword.length < 6 || newPassword.length > 32) {
+    passwordError.value = '新密码长度须为 6-32 位'
+    return
+  }
+  if (newPassword !== confirmPassword) {
+    passwordError.value = '两次输入的新密码不一致'
+    return
+  }
+  passwordSubmitting.value = true
+  passwordError.value = ''
+  try {
+    await changePassword(oldPassword, newPassword)
+    passwordVisible.value = false
+    toast.info('密码修改成功，当前登录仍有效')
+  } catch (error) {
+    passwordError.value = error instanceof Error ? error.message : '密码修改失败'
+  } finally {
+    passwordSubmitting.value = false
+  }
 }
 </script>
 
@@ -328,6 +417,111 @@ const logout = () => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.password-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3600;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.password-dialog {
+  width: 420px;
+  max-width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 20px 56px rgba(15, 23, 42, 0.22);
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+
+    h3 {
+      margin: 0;
+      color: #1f2937;
+      font-size: 17px;
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      color: #8a92a5;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+
+    span {
+      color: #4d5568;
+      font-size: 13px;
+    }
+
+    input {
+      height: 38px;
+      padding: 0 11px;
+      border: 1px solid #d9deea;
+      border-radius: 7px;
+      color: #253047;
+      font-size: 14px;
+      outline: none;
+
+      &:focus {
+        border-color: #2e7cf6;
+        box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.1);
+      }
+    }
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 18px;
+
+    button {
+      min-width: 82px;
+      height: 36px;
+      border-radius: 7px;
+      font-size: 14px;
+      cursor: pointer;
+
+      &.plain {
+        border: 1px solid #d9deea;
+        background: #fff;
+        color: #4d5568;
+      }
+
+      &.primary {
+        border: none;
+        background: #2e7cf6;
+        color: #fff;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.password-error {
+  margin: 0;
+  color: #d94a4a;
+  font-size: 13px;
 }
 
 @media (max-width: 760px) {
