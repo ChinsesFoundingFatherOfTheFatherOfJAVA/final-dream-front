@@ -33,8 +33,8 @@
       <span class="nav-icon">🔔</span>
       <div class="user-dropdown" @mouseenter="openDropdown('user')" @mouseleave="closeDropdown('user')">
         <span class="user-info">
-          <span class="user-avatar">{{ userInitial }}</span>
-          <span>管理员</span>
+          <span class="user-avatar">{{ auth.userInitial }}</span>
+          <span class="user-name">{{ auth.displayName }}</span>
           <span class="arrow">▾</span>
         </span>
         <div v-if="activeDropdown === 'user'" class="dropdown-menu user-menu" @mouseenter="keepDropdown('user')" @mouseleave="closeDropdown('user')">
@@ -42,7 +42,7 @@
           <div class="dropdown-item">用户中心</div>
           <div class="dropdown-item has-sub">显示语言 <span class="arrow-right">›</span></div>
           <div class="dropdown-divider"></div>
-          <div class="dropdown-item">退出登录</div>
+          <div class="dropdown-item" @click="logout">退出登录</div>
         </div>
       </div>
       <span class="nav-item workbench">
@@ -56,11 +56,12 @@
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { mockApps } from '@/mock/data'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
-const userInitial = computed(() => '管')
 const activeDropdown = ref<string | null>(null)
 let closeTimer: number | null = null
 
@@ -99,6 +100,12 @@ const handleAppClick = (app: any) => {
 const goToStudent = () => {
   activeDropdown.value = null
   router.push('/study/home')
+}
+
+const logout = () => {
+  activeDropdown.value = null
+  auth.logout()
+  router.replace('/login')
 }
 </script>
 
@@ -188,6 +195,13 @@ const goToStudent = () => {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+}
+
+.user-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-avatar {
@@ -313,6 +327,26 @@ const goToStudent = () => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 760px) {
+  .top-nav {
+    padding: 0 12px;
+  }
+
+  .nav-left {
+    gap: 0;
+  }
+
+  .nav-menu,
+  .nav-right .nav-icon,
+  .nav-right > .nav-item {
+    display: none;
+  }
+
+  .nav-right {
+    gap: 8px;
   }
 }
 </style>

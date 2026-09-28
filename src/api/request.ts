@@ -1,5 +1,11 @@
 import axios from 'axios'
 import { toast } from '@/utils/toast'
+import {
+  clearStoredAuth,
+  getStoredToken,
+  redirectToForbidden,
+  redirectToLogin
+} from '@/utils/auth'
 
 /** 请求级配置扩展：silent=true 时拦截器不弹全局提示，由调用方自己处理失败 */
 declare module 'axios' {
@@ -28,6 +34,14 @@ const request = axios.create({
   timeout: 15000
 })
 
+request.interceptors.request.use((config) => {
+  const token = getStoredToken()
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 /**
  * 将后端返回的资源相对路径（如 /coverImage/xxx.png）补全为可直接访问的 URL。
  * 已是完整 URL（http/https/data/blob）时原样返回。
@@ -43,10 +57,27 @@ request.interceptors.response.use(
     const { code, message, data } = response.data
     if (code === 0) return data
     const text = message || '请求失败'
+    if (code === 401001) {
+      clearStoredAuth()
+      if (!response.config?.silent) toast.error(text)
+      redirectToLogin()
+      return Promise.reject(new Error(text))
+    }
+    if (code === 403001 || code === 403002) {
+      if (!response.config?.silent) toast.error(text)
+      redirectToForbidden()
+      return Promise.reject(new Error(text))
+    }
     if (!response.config?.silent) toast.error(text)
     return Promise.reject(new Error(text))
   },
   (error) => {
+    if (error.response?.status === 401) {
+      clearStoredAuth()
+      redirectToLogin()
+    } else if (error.response?.status === 403) {
+      redirectToForbidden()
+    }
     if (!error.config?.silent) toast.error(error.message || '网络错误')
     return Promise.reject(error)
   }

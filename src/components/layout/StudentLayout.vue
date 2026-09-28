@@ -23,4 +23,10 @@ import StudentTopNav from './StudentTopNav.vue'
   flex: 1;
   padding: 24px;
 }
+
+@media (max-width: 760px) {
+  .main-content {
+    padding: 16px 12px;
+  }
+}
 </style>

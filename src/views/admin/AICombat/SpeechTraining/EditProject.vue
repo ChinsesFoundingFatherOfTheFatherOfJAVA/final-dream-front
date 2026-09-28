@@ -78,8 +78,6 @@
               </div>
               <div class="cover-actions" v-if="!form.coverImage">
                 <button type="button" class="btn-link" @click="triggerCoverUpload">📁 上传图片</button>
-                <span class="action-sep">|</span>
-                <button type="button" class="btn-link" @click="generateCoverByAI">✨ AI生成</button>
               </div>
             </div>
           </div>
@@ -146,20 +144,74 @@
                 <span v-else>{{ dim.name }}</span>
               </div>
               <div class="col-rule">
-                <input v-if="dim.isCustom" type="text" class="dim-edit" v-model="dim.scoringRule" placeholder="请输入评分规则" maxlength="200" />
-                <span v-else>{{ dim.scoringRule }}</span>
+                <textarea
+                  v-if="dim.isCustom"
+                  class="rule-input"
+                  v-model="dim.scoringRule"
+                  :placeholder="rulePlaceholder"
+                  rows="6"
+                  maxlength="1000"
+                ></textarea>
+                <div v-else class="rule-lines">
+                  <div v-for="(line, index) in splitRuleLines(dim.scoringRule)" :key="index" class="rule-line">
+                    <strong v-if="line.level" class="rule-level">{{ line.level }}</strong>
+                    <span class="rule-text">{{ line.text }}</span>
+                  </div>
+                </div>
               </div>
               <div class="col-evidence">
-                <select class="dim-select" v-model.number="dim.evidenceType" :disabled="!dim.enabled">
-                  <option :value="1">看文字</option>
-                  <option :value="2">看语音</option>
-                  <option :value="3">文字+语音</option>
-                </select>
-                <select class="dim-select" v-model="dim.metricKey" :disabled="!dim.enabled">
-                  <option value="">AI 评分</option>
-                  <option value="speech_speed">语速规则算分</option>
-                  <option value="forbidden_words">违禁词规则算分</option>
-                </select>
+                <div class="metric-picker">
+                  <select class="dim-select" v-model.number="dim.evidenceType" :disabled="!dim.enabled">
+                    <option :value="1">看文字</option>
+                    <option :value="2">看语音</option>
+                    <option :value="3">文字+语音</option>
+                  </select>
+                  <select class="dim-select" v-model="dim.metricKey" :disabled="!dim.enabled" @change="handleMetricKeyChange(dim)">
+                    <option value="">AI 评分</option>
+                    <option value="speech_speed">语速规则算分</option>
+                    <option value="forbidden_words">违禁词规则算分</option>
+                    <option value="tone">音频模型评语气</option>
+                  </select>
+                </div>
+                <div v-if="dim.metricKey === 'speech_speed'" class="metric-params">
+                  <input
+                    type="number"
+                    class="metric-param-input"
+                    v-model.number="dim.metricParams.bestMin"
+                    placeholder="150"
+                    :disabled="!dim.enabled"
+                  />
+                  <span>~</span>
+                  <input
+                    type="number"
+                    class="metric-param-input"
+                    v-model.number="dim.metricParams.bestMax"
+                    placeholder="250"
+                    :disabled="!dim.enabled"
+                  />
+                  <span>字/分</span>
+                </div>
+                <div v-else-if="dim.metricKey === 'forbidden_words'" class="metric-params">
+                  <input
+                    type="number"
+                    class="metric-param-input"
+                    v-model.number="dim.metricParams.deductPerHit"
+                    placeholder="20"
+                    :disabled="!dim.enabled"
+                  />
+                  <span>分/次</span>
+                </div>
+                <div v-else-if="dim.metricKey === 'tone'" class="metric-params">
+                  <span>评什么角度</span>
+                  <input
+                    type="text"
+                    class="metric-aspect-input"
+                    v-model="dim.metricAspect"
+                    placeholder="热情"
+                    maxlength="6"
+                    :disabled="!dim.enabled"
+                  />
+                </div>
               </div>
               <div class="col-weight">
                 <input type="number" class="weight-input" v-model.number="dim.weight" min="0" max="100" :disabled="!dim.enabled" />
@@ -169,7 +221,7 @@
           </div>
 
           <p class="table-hint">
-            评分依据决定该维度能不能在本次训练里评分：学员全程用文字作答时，"看语音"的维度不计分、也不占权重。<br />
+            评分依据决定该维度能不能在本次训练里评分：学员全程用文字作答时，"看语音"的维度不计入该维度自身得分，但权重照占并按 0 分计入总分。<br />
             评分方式决定分数从哪来：选"规则算分"时分数由后端按公式判定，AI 只负责写评语；选"AI 评分"时分数完全交给大模型。
           </p>
 
@@ -306,6 +358,7 @@ import AvatarGenField from '@/components/business/AvatarGenField.vue'
 import { createProject, createProjectWithFile, updateProject, updateProjectWithFile, getProjectDetail } from '@/api/project'
 import { toProjectForm } from '@/utils/convert'
 import { resolveAssetUrl } from '@/api/request'
+import { toast } from '@/utils/toast'
 
 const router = useRouter()
 const route = useRoute()
@@ -313,6 +366,41 @@ const isTrain = computed(() => route.query.type === 'train')
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const currentStep = ref(1)
 const saving = ref(false)
+
+type MetricParams = {
+  bestMin: number | null
+  bestMax: number | null
+  deductPerHit: number | null
+}
+
+type DimensionForm = {
+  id: string
+  name: string
+  weight: number
+  enabled: boolean
+  ruleType: string
+  scoringRule: string
+  evidenceType: number
+  metricKey: string
+  metricAspect: string
+  metricParams: MetricParams
+  isCustom: boolean
+}
+
+const emptyMetricParams = (): MetricParams => ({
+  bestMin: null,
+  bestMax: null,
+  deductPerHit: null
+})
+
+const rulePlaceholder = '100分：…\n80分：…\n60分：…\n40分：…\n0分：…'
+
+const splitRuleLines = (rule: string) => (rule || '').split(/\r?\n/).map((line) => {
+  const match = line.match(/^((?:100|80|60|40|0)分：)(.*)$/)
+  return match ? { level: match[1], text: match[2] } : { level: '', text: line }
+})
+
+const ruleText = (...lines: string[]) => lines.join('\n')
 
 const form = ref({
   name: '',
@@ -349,29 +437,6 @@ const onAvatarFileChange = (file: File | null) => {
 const coverInputRef = ref<HTMLInputElement>()
 const coverFile = ref<File | null>(null)
 
-// 默认封面：渐进色 + 对话气泡 SVG
-const buildDefaultCover = () => {
-  const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1890ff"/>
-      <stop offset="100%" stop-color="#40a9ff"/>
-    </linearGradient>
-  </defs>
-  <rect width="240" height="160" fill="url(#g)"/>
-  <g transform="translate(40,30)" fill="#fff" opacity="0.95">
-    <rect x="0" y="0" width="100" height="70" rx="10"/>
-    <polygon points="22,70 32,82 38,70"/>
-    <rect x="70" y="22" width="100" height="60" rx="10"/>
-    <polygon points="138,82 148,68 154,82"/>
-  </g>
-  <circle cx="60" cy="50" r="4" fill="#1890ff"/>
-  <circle cx="80" cy="50" r="4" fill="#1890ff"/>
-</svg>`
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
-}
-
 const triggerCoverUpload = () => {
   coverInputRef.value?.click()
 }
@@ -393,13 +458,6 @@ const removeCover = () => {
   form.value.coverImage = ''
 }
 
-const generateCoverByAI = () => {
-  // AI 生成走默认占位图（也是 data URL，不上传服务器）
-  if (form.value.coverImage?.startsWith('blob:')) URL.revokeObjectURL(form.value.coverImage)
-  coverFile.value = null
-  form.value.coverImage = buildDefaultCover()
-}
-
 onMounted(() => {
   if (editId.value) loadProject(editId.value)
 })
@@ -411,17 +469,132 @@ const passStrategies = [
 ]
 
 /**
- * 默认评分维度。evidenceType：1=看文字，2=看语音，3=文字+语音（决定无语音数据时该维度是否参与评分）
+ * 默认评分维度。evidenceType：1=看文字，2=看语音，3=文字+语音
+ * （语音依据维度在无语音数据时 score=null，但权重仍按 0 分计入总分）
  * metricKey：非空表示分数由后端规则算、AI 只写评语，空表示完全交给 AI 评分
  */
-const dimensions = ref([
-  { id: '1', name: '话术一致性', weight: 40, enabled: true, ruleType: 'keypoints', scoringRule: '按照要点表达即可', evidenceType: 1, metricKey: '', isCustom: false },
-  { id: '2', name: '表达流利', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
-  { id: '3', name: '语速适中', weight: 10, enabled: true, ruleType: 'formula', scoringRule: '公式计算(150-250字/分钟为满分)', evidenceType: 2, metricKey: 'speech_speed', isCustom: false },
-  { id: '4', name: '礼貌用语', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
-  { id: '5', name: '态度积极', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
-  { id: '6', name: '表述清晰', weight: 10, enabled: true, ruleType: 'grade', scoringRule: '分级评分(0/40/60/80/100)', evidenceType: 1, metricKey: '', isCustom: false },
-  { id: '7', name: '违禁词', weight: 10, enabled: true, ruleType: 'deduction', scoringRule: '扣分制(每出现一次扣N分)', evidenceType: 1, metricKey: 'forbidden_words', isCustom: false }
+const dimensions = ref<DimensionForm[]>([
+  {
+    id: '1',
+    name: '话术一致性',
+    weight: 40,
+    enabled: true,
+    ruleType: 'keypoints',
+    scoringRule: ruleText(
+      '按照标准话术的要点表达即可。',
+      '无需与标准话术完全一致，仅需表达出对应的要点即可。按照要点命中比例得分。'
+    ),
+    evidenceType: 1,
+    metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '2',
+    name: '表达流利',
+    weight: 10,
+    enabled: true,
+    ruleType: 'grade',
+    scoringRule: ruleText(
+      '100分：表达如行云流水，几乎未出现口头禅。',
+      '80分：表述整体流畅，有极少量卡顿或口头禅，但不影响沟通节奏和理解。',
+      '60分：表述存在少量卡顿或重复，口头禅出现频率稍高，但能完成基本沟通。',
+      '40分：表达不连贯，卡顿和重复较多，频繁使用口头禅，显得紧张或准备不足，影响沟通效率。',
+      '0分：表述非常困难，长时间停顿，句子破碎，几乎无法顺畅传递信息，沟通难以进行。'
+    ),
+    evidenceType: 3,
+    metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '3',
+    name: '语速适中',
+    weight: 10,
+    enabled: true,
+    ruleType: 'formula',
+    scoringRule: ruleText(
+      '以学员录音的净发声时长折算语速（字/分钟）：150-250字/分钟为满分，每偏离区间10字/分钟扣5分，扣完为止。该维度由系统按录音自动计算。',
+      '参考分档——100分：语速处于150-250字/分钟的理想区间；80分：偏离区间约40字/分钟以内；60分：偏离约80字/分钟以内；40分：偏离约120字/分钟以内；更低：语速明显过快或过慢，已影响信息接收。'
+    ),
+    evidenceType: 2,
+    metricKey: 'speech_speed',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '4',
+    name: '礼貌用语',
+    weight: 10,
+    enabled: true,
+    ruleType: 'grade',
+    scoringRule: ruleText(
+      '100分：用词得体周到，敬语与礼貌表达贯穿全程（如"您好""请""感谢"），语气令人舒适。',
+      '80分：整体礼貌规范，偶有直白表述但不失分寸。',
+      '60分：基本使用文明用语，但礼貌表达时有时无，个别语句生硬。',
+      '40分：多处用语生硬直白，缺少基本敬语，给人冷淡感。',
+      '0分：出现不礼貌甚至冒犯性表达。'
+    ),
+    evidenceType: 1,
+    metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '5',
+    name: '态度积极',
+    weight: 10,
+    enabled: true,
+    ruleType: 'grade',
+    scoringRule: ruleText(
+      '100分：全程保持高度热情和耐心，能主动挖掘需求，积极提供解决方案。面对抱怨或拒绝时，能保持积极心态并有效引导。',
+      '80分：态度友好、有耐心，能积极响应需求。但在面对极端挑战时，积极性或耐心可能略有下降。',
+      '60分：态度中立、平和，能完成问答，但缺乏主动意识，多为被动响应，热情不足。',
+      '40分：态度略显消极或不耐烦，对问题反应被动，甚至出现辩解或推诿的倾向。',
+      '0分：态度消极、冷漠，甚至带有抵触情绪。'
+    ),
+    evidenceType: 1,
+    metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '6',
+    name: '表述清晰',
+    weight: 10,
+    enabled: true,
+    ruleType: 'grade',
+    scoringRule: ruleText(
+      '100分：表述逻辑性极强，善用结构词（如"首先、其次"），重点突出，用词精准，毫无歧义。',
+      '80分：表述基本清晰，逻辑通顺，但偶尔信息组织不够完美，重点不够突出。',
+      '60分：能表达清楚基本意思，但逻辑性稍弱，有时会绕圈子或信息点混乱，需要费力理解。',
+      '40分：表述混乱，逻辑不清，前后矛盾，或使用过多专业术语，导致较难理解。',
+      '0分：表述完全无法理解，语言混乱。'
+    ),
+    evidenceType: 1,
+    metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  },
+  {
+    id: '7',
+    name: '违禁词',
+    weight: 10,
+    enabled: true,
+    ruleType: 'deduction',
+    scoringRule: ruleText('命中项目配置的违禁词即扣分，每次命中扣20分，扣完为止；未命中任何违禁词得100分。该维度由系统按识别文本自动判定。'),
+    evidenceType: 1,
+    metricKey: 'forbidden_words',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
+    isCustom: false
+  }
 ])
 
 const totalWeight = computed(() => {
@@ -442,6 +615,8 @@ const addCustomDimension = () => {
     scoringRule: '分级评分',
     evidenceType: 1,
     metricKey: '',
+    metricAspect: '',
+    metricParams: emptyMetricParams(),
     isCustom: true
   })
 }
@@ -458,6 +633,68 @@ const RULE_TYPE_BY_CODE: Record<number, string> = {
   4: 'grade',
   5: 'formula',
   6: 'deduction'
+}
+
+const metricParamInt = (value: unknown): number | null => {
+  if (value == null || value === '') return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? Math.trunc(parsed) : null
+}
+
+/** 回显优先取后端反解后的 metricParams，兼容详情只返回原始 metricConfig JSON 的情况。 */
+const parseMetricParams = (dim: any): MetricParams => {
+  let raw = dim?.metricParams
+  if ((!raw || typeof raw !== 'object') && typeof dim?.metricConfig === 'string') {
+    try {
+      raw = JSON.parse(dim.metricConfig)?.params
+    } catch {
+      raw = null
+    }
+  }
+  return {
+    bestMin: metricParamInt(raw?.bestMin),
+    bestMax: metricParamInt(raw?.bestMax),
+    deductPerHit: metricParamInt(raw?.deductPerHit)
+  }
+}
+
+/** 只提交当前规则支持的参数，空值由 JSON.stringify 自动省略，后端再按白名单兜底。 */
+const cleanMetricParams = (dim: DimensionForm) => {
+  if (dim.metricKey === 'speech_speed') {
+    return {
+      bestMin: metricParamInt(dim.metricParams.bestMin) ?? undefined,
+      bestMax: metricParamInt(dim.metricParams.bestMax) ?? undefined
+    }
+  }
+  if (dim.metricKey === 'forbidden_words') {
+    return { deductPerHit: metricParamInt(dim.metricParams.deductPerHit) ?? undefined }
+  }
+  return undefined
+}
+
+/** tone 角度优先取独立字段；兼容详情只返回 metricConfig JSON 的情况。 */
+const parseMetricAspect = (dim: any): string => {
+  let value = typeof dim?.metricAspect === 'string' ? dim.metricAspect.trim() : ''
+  if (!value && typeof dim?.metricConfig === 'string') {
+    try {
+      const aspect = JSON.parse(dim.metricConfig)?.params?.aspect
+      value = typeof aspect === 'string' ? aspect.trim() : ''
+    } catch {
+      value = ''
+    }
+  }
+  return value
+}
+
+const isValidToneAspect = (value: string) => {
+  const length = (value || '').trim().length
+  return length >= 2 && length <= 6
+}
+
+const handleMetricKeyChange = (dim: DimensionForm) => {
+  if (dim.metricKey === 'tone' && !dim.metricAspect.trim()) {
+    dim.metricAspect = '热情'
+  }
 }
 
 const loadProject = async (id: number) => {
@@ -492,6 +729,8 @@ const loadProject = async (id: number) => {
         scoringRule: d.scoringRule || '',
         evidenceType: Number(d.evidenceType ?? 1),
         metricKey: d.metricKey || '',
+        metricAspect: parseMetricAspect(d),
+        metricParams: parseMetricParams(d),
         isCustom: d.isCustom === 1
       }))
       const consistency = dimensions.value.find((d) => d.name === '话术一致性')
@@ -499,7 +738,9 @@ const loadProject = async (id: number) => {
         form.value.consistencyRule = consistency.ruleType
       }
     }
-  } catch { /* handled */ }
+  } catch {
+    toast.error('项目加载失败，请重试')
+  }
 }
 
 const handleSubmit = async () => {
@@ -507,6 +748,8 @@ const handleSubmit = async () => {
   if (!form.value.startTime || !form.value.endTime) { alert('请选择起止时间'); return }
   if (!form.value.description) { alert('请输入说明信息'); return }
   if (totalWeight.value !== 100) { alert('权重之和必须等于100%'); return }
+  const invalidTone = dimensions.value.find((d) => d.metricKey === 'tone' && !isValidToneAspect(d.metricAspect))
+  if (invalidTone) { alert('评什么角度需为2~6个字'); return }
 
   saving.value = true
   try {
@@ -542,6 +785,8 @@ const handleSubmit = async () => {
         // 评分依据与评分方式：evidenceType=2 的维度在纯文字场次不参与评分；metricKey 非空时分数由后端规则算
         evidenceType: d.evidenceType,
         metricKey: d.metricKey,
+        metricAspect: d.metricKey === 'tone' ? d.metricAspect.trim() : undefined,
+        metricParams: cleanMetricParams(d),
         isCustom: d.isCustom ? 1 : 0,
         sortOrder: i
       }))
@@ -821,8 +1066,6 @@ const handleSubmit = async () => {
     padding: 4px;
     &:hover { text-decoration: underline; }
   }
-
-  .action-sep { color: #d9d9d9; }
 }
 
 .radio-group, .checkbox-group {
@@ -856,16 +1099,53 @@ const handleSubmit = async () => {
     display: flex;
     padding: 12px;
     border-bottom: 1px solid #e8e8e8;
-    align-items: center;
+    align-items: flex-start;
 
     &:last-child { border-bottom: none; }
   }
 
   .col-checkbox { width: 50px; }
   .col-name { width: 120px; }
-  .col-rule { flex: 1; }
-  .col-evidence { width: 230px; display: flex; gap: 6px; }
+  .col-rule { flex: 1; min-width: 0; }
+  .col-evidence { width: 260px; display: flex; flex-direction: column; gap: 6px; }
   .col-weight { width: 100px; display: flex; align-items: center; gap: 4px; }
+}
+
+.rule-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rule-line {
+  display: flex;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #666;
+  word-break: break-word;
+}
+
+.rule-level {
+  flex-shrink: 0;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.rule-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 6px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  outline: none;
+  resize: vertical;
+
+  &:focus { border-color: #1890ff; }
 }
 
 .dim-select {
@@ -876,6 +1156,42 @@ const handleSubmit = async () => {
   font-size: 13px;
   background: #fff;
   outline: none;
+  &:focus { border-color: #1890ff; }
+  &:disabled { background: #f5f5f5; color: #bfbfbf; }
+}
+
+.metric-picker,
+.metric-params {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metric-params {
+  font-size: 12px;
+  color: #666;
+}
+
+.metric-param-input {
+  width: 62px;
+  padding: 4px 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+
+  &:focus { border-color: #1890ff; }
+  &:disabled { background: #f5f5f5; color: #bfbfbf; }
+}
+
+.metric-aspect-input {
+  width: 88px;
+  padding: 4px 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+
   &:focus { border-color: #1890ff; }
   &:disabled { background: #f5f5f5; color: #bfbfbf; }
 }

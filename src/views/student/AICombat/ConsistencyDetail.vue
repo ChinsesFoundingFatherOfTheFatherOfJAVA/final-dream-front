@@ -44,6 +44,7 @@ import type { ConsistencyRound } from '@/types/student'
 const props = defineProps<{
   visible: boolean
   reportId: string
+  userId?: string
 }>()
 
 const emit = defineEmits<{ close: [] }>()
@@ -62,7 +63,7 @@ watch(
     error.value = ''
     rounds.value = []
     try {
-      const data = await getConsistency(props.reportId)
+      const data = await getConsistency(props.reportId, { userId: props.userId })
       rounds.value = data?.rounds ?? []
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : '加载失败'

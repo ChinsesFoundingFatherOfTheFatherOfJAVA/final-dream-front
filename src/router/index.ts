@@ -1,12 +1,26 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/auth/Login.vue'),
+    meta: { title: '登录', public: true }
+  },
+  {
+    path: '/403',
+    name: 'Forbidden',
+    component: () => import('@/views/auth/Forbidden.vue'),
+    meta: { title: '无权限', public: true }
+  },
   // 管理端路由
   {
     path: '/',
     component: () => import('@/components/layout/AdminLayout.vue'),
     redirect: '/homepage',
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       {
         path: 'homepage',
@@ -20,6 +34,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/sparring',
     component: () => import('@/components/layout/AdminLayout.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       {
         path: 'newmanage',
@@ -38,6 +53,7 @@ const routes: RouteRecordRaw[] = [
         name: 'ProjectConsole',
         component: () => import('@/views/admin/AICombat/SpeechTraining/Console.vue'),
         redirect: (to) => ({ path: `${to.path}/flow`, query: to.query }),
+        meta: { requiresAuth: true, requiresAdmin: true },
         children: [
           {
             path: 'overview',
@@ -56,6 +72,18 @@ const routes: RouteRecordRaw[] = [
             name: 'ProjectBasic',
             component: () => import('@/views/admin/AICombat/SpeechTraining/ProjectBasic.vue'),
             meta: { title: '基本信息' }
+          },
+          {
+            path: 'student',
+            name: 'ProjectStudents',
+            component: () => import('@/views/admin/AICombat/SpeechTraining/ProjectStudents.vue'),
+            meta: { title: '学员管理' }
+          },
+          {
+            path: 'studentdetail',
+            name: 'AdminStudentDetail',
+            component: () => import('@/views/admin/AICombat/SpeechTraining/StudentReportPage.vue'),
+            meta: { title: '学员详情' }
           }
         ]
       },
@@ -105,6 +133,7 @@ const routes: RouteRecordRaw[] = [
     path: '/study',
     component: () => import('@/components/layout/StudentLayout.vue'),
     redirect: '/study/userhome',
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'home',
@@ -127,6 +156,7 @@ const routes: RouteRecordRaw[] = [
     // 子路由拼出来的完整路径与原来完全一致，跳转处不用改。
     path: '/sparring/web',
     component: () => import('@/components/layout/StudentLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'speech/list',
@@ -145,6 +175,12 @@ const routes: RouteRecordRaw[] = [
         name: 'PracticeRecords',
         component: () => import('@/views/student/AICombat/PracticeRecords.vue'),
         meta: { title: '练习记录', activeMenu: 'speech' }
+      },
+      {
+        path: 'studentReport',
+        name: 'StudentReport',
+        component: () => import('@/views/admin/AICombat/SpeechTraining/StudentReportPage.vue'),
+        meta: { title: '训练记录', activeMenu: 'speech' }
       }
     ]
   },
@@ -153,20 +189,47 @@ const routes: RouteRecordRaw[] = [
     path: '/sparring/web/script/training/:projectId',
     name: 'ScriptTraining',
     component: () => import('@/views/student/AICombat/ScriptTraining.vue'),
-    meta: { title: '训练' }
+    meta: { title: '训练', requiresAuth: true }
   },
   // 训练报告页：全屏独立页（无顶部导航，按原平台截图 05）
   {
     path: '/sparring/standpracticereport',
     name: 'PracticeReport',
     component: () => import('@/views/student/AICombat/PracticeReport.vue'),
-    meta: { title: '训练报告' }
+    meta: { title: '训练报告', requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+
+  if (to.meta.public === true) {
+    return true
+  }
+
+  if (!auth.isAuthenticated) {
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+
+  try {
+    if (!auth.identityLoaded) {
+      await auth.loadMe()
+    }
+  } catch {
+    auth.logout()
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+
+  if (to.meta.requiresAdmin === true && !auth.hasPermission('sparring:manage')) {
+    return { path: '/403' }
+  }
+
+  return true
 })
 
 export default router

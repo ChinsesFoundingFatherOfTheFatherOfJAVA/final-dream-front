@@ -414,4 +414,49 @@ const goToConsole = (id: number) => {
   &.active { background: #1890ff; color: #fff; border-color: #1890ff; }
   &:disabled { color: #d9d9d9; cursor: not-allowed; }
 }
+
+@media (max-width: 760px) {
+  .side-menu {
+    display: none;
+  }
+
+  .main-content {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    overflow-y: visible;
+  }
+
+  .action-bar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+
+  .filter-select {
+    flex: 1 1 96px;
+    min-width: 0;
+  }
+
+  .filter-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    justify-content: space-between;
+  }
+}
 </style>

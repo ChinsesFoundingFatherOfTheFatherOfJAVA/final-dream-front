@@ -14,7 +14,7 @@
         {{ generating ? '生成中...' : 'AI生成' }}
       </button>
     </div>
-    <p v-if="generating" class="gen-hint">形象生成约需 10~30 秒，请耐心等待</p>
+    <p v-if="generating" class="gen-hint">形象生成最长约需 5 分钟，请耐心等待</p>
 
     <!-- 形象预览（160×160 方形圆角卡片，对齐生图模型的 1024×1024 输出） -->
     <div v-if="modelValue" class="preview-wrap">

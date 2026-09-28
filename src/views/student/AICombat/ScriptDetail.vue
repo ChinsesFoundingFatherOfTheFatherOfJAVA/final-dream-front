@@ -105,8 +105,8 @@
           <div class="record-num">{{ detail.recordCount }}</div>
           <div class="record-label">练习记录 ›</div>
         </div>
-        <div class="record-panel no-click">
-          <div class="record-num">{{ detail.rankNo }}</div>
+        <div class="record-panel" @click="rankVisible = true">
+          <div class="record-num">{{ detail.rankNo ?? '--' }}</div>
           <div class="record-label">个人排名 ›</div>
         </div>
       </div>
@@ -121,6 +121,8 @@
       <button class="back-btn" @click="goList">返回列表</button>
     </template>
   </div>
+
+  <RankDrawer :visible="rankVisible" :project-id="projectId" @close="rankVisible = false" />
 </template>
 
 <script setup lang="ts">
@@ -128,6 +130,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getStudentProjectDetail, startSession } from '@/api/student'
 import { resolveAssetUrl } from '@/api/request'
+import RankDrawer from '@/views/admin/AICombat/SpeechTraining/components/RankDrawer.vue'
 import type { StudentProjectDetail } from '@/types/student'
 
 const route = useRoute()
@@ -138,6 +141,7 @@ const detail = ref<StudentProjectDetail | null>(null)
 const loading = ref(true)
 const errorMsg = ref('')
 const starting = ref(false)
+const rankVisible = ref(false)
 
 const avatarChar = computed(() => '员')
 
@@ -439,14 +443,6 @@ onMounted(async () => {
     background: #f0f4ff;
   }
 
-  &.no-click {
-    cursor: default;
-
-    &:hover {
-      background: #f7f8fa;
-    }
-  }
-
   .record-num {
     font-size: 24px;
     font-weight: 700;
@@ -482,6 +478,56 @@ onMounted(async () => {
     color: #2e7cf6;
     cursor: pointer;
     font-size: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .script-detail {
+    width: 100%;
+  }
+
+  .hero-card {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 18px 16px;
+  }
+
+  .hero-left {
+    align-items: flex-start;
+  }
+
+  .hero-cover {
+    width: 72px;
+    height: 72px;
+  }
+
+  .hero-info .hero-title {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .hero-right {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .practice-panel {
+    min-width: 0;
+  }
+
+  .start-btn {
+    width: 100%;
+  }
+
+  .info-card {
+    padding: 16px;
+  }
+
+  .rule-panel,
+  .record-panel {
+    min-width: 0;
+    padding: 16px 10px;
   }
 }
 </style>

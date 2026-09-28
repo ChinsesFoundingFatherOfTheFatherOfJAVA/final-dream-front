@@ -10,9 +10,9 @@ export function generateScriptWithFile(formData: FormData) {
   })
 }
 
-/** FP-26/28 AI 生成陪练者形象（v1.1，接口 5.3）：调 Dify 生图工作流，返回转存后的图片 URL；生成耗时 10~30s */
+/** FP-26/28 AI 生成陪练者形象（v1.1，接口 5.3）：调 Dify 生图工作流，返回转存后的图片 URL */
 export function generateAvatar(data: { prompt: string }) {
-  return request.post<unknown, { imageUrl: string }>('/admin/ai/generate-avatar', data, {
-    timeout: 60000
+    return request.post<unknown, { imageUrl: string }>('/admin/ai/generate-avatar', data, {
+    timeout: 300000
   })
 }

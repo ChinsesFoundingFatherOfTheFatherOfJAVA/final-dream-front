@@ -91,4 +91,10 @@ const isFullBleed = computed(() => route.meta.fullBleed === true)
     line-height: 1.4;
   }
 }
+
+@media (max-width: 760px) {
+  .main-content {
+    padding: 16px 12px;
+  }
+}
 </style>

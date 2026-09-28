@@ -2,6 +2,7 @@ import request from './request'
 import type {
   ConsistencyResp,
   PracticeRecord,
+  ProjectRankResp,
   ReportResp,
   SendMessageResp,
   SendVoiceMessageResp,
@@ -101,20 +102,38 @@ export function getPracticeRecords(projectId: string) {
  * FP-13/21/22 查询训练报告（含轮询）。
  * 轮询期间单次失败由页面的"连续失败 N 次"逻辑兜底，不弹全局提示，故默认静默。
  */
-export function getReport(sessionId: string, opts?: { silent?: boolean }) {
+export function getReport(sessionId: string, opts?: { silent?: boolean; userId?: string }) {
   return request.get<unknown, ReportResp>(`/student/reports/session/${sessionId}`, {
-    silent: opts?.silent ?? true
+    silent: opts?.silent ?? true,
+    params: { userId: opts?.userId || undefined }
   })
 }
 
 /** FP-16 话术一致性详情（逐轮要点命中明细） */
-export function getConsistency(reportId: string) {
-  return request.get<unknown, ConsistencyResp>(`/student/reports/${reportId}/consistency`)
+export function getConsistency(reportId: string, opts?: { userId?: string }) {
+  return request.get<unknown, ConsistencyResp>(`/student/reports/${reportId}/consistency`, {
+    params: { userId: opts?.userId || undefined }
+  })
 }
 
 /** FP-17 对话记录（消息列表，后端已过滤 withdrawn） */
-export function getReportMessages(sessionId: string) {
-  return request.get<unknown, SessionMessage[]>(`/student/reports/session/${sessionId}/messages`)
+export function getReportMessages(sessionId: string, opts?: { userId?: string }) {
+  return request.get<unknown, SessionMessage[]>(`/student/reports/session/${sessionId}/messages`, {
+    params: { userId: opts?.userId || undefined }
+  })
+}
+
+/** FP-60 个人排名（总分或指定维度） */
+export function getStudentRank(
+  projectId: string,
+  opts?: { dimension?: string; keyword?: string }
+) {
+  return request.get<unknown, ProjectRankResp>(`/student/projects/${projectId}/rank`, {
+    params: {
+      dimension: opts?.dimension || undefined,
+      keyword: opts?.keyword || undefined
+    }
+  })
 }
 
 /** FP-17 消息点赞（幂等） */

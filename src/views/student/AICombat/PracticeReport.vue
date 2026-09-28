@@ -147,6 +147,7 @@ import ChatRecord from './ChatRecord.vue'
 import ConsistencyDetail from './ConsistencyDetail.vue'
 import { getReport, getReportMessages, regenerateReport } from '@/api/student'
 import type { ReportResp, SessionMessage } from '@/types/student'
+import { toast } from '@/utils/toast'
 
 const route = useRoute()
 const router = useRouter()
@@ -276,7 +277,11 @@ const startPolling = () => {
 
 /** FP-21 重新生成 */
 const onRegenerate = async () => {
-  if (!reportId.value || retrying.value) return
+  if (retrying.value) return
+  if (!reportId.value) {
+    toast.warn('报告尚未建立，无法重新生成')
+    return
+  }
   retrying.value = true
   try {
     await regenerateReport(reportId.value)

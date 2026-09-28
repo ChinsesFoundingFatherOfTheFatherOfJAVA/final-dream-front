@@ -19,16 +19,16 @@
             </span>
           </div>
           <div class="project-meta">
-            <span class="meta-item">负责人: {{ project.responsiblePerson }}</span>
+            <span class="meta-item">负责人: {{ project.createdByName || project.createdBy || '--' }}</span>
             <span class="meta-item">起止时间: {{ project.startTime }} ~ {{ project.endTime }}</span>
           </div>
         </div>
         <div class="project-actions">
-          <button class="btn btn-default" @click="handlePublish">
+          <button v-if="isOwner" class="btn btn-default" @click="handlePublish">
             {{ project.status === 'published' ? '撤回' : '发布' }}
           </button>
           <button class="btn btn-default">预览</button>
-          <button class="btn btn-danger" @click="handleDelete">删除</button>
+          <button v-if="isOwner" class="btn btn-danger" @click="handleDelete">删除</button>
         </div>
       </div>
     </div>
@@ -38,6 +38,9 @@
       <aside class="console-menu">
         <router-link :to="`/sparring/newmanage/console/${projectId}/overview`" class="menu-item" :class="{ active: currentMenu === 'overview' }">
           整体概览
+        </router-link>
+        <router-link :to="`/sparring/newmanage/console/${projectId}/student`" class="menu-item" :class="{ active: currentMenu === 'student' }">
+          学员管理
         </router-link>
         <router-link :to="`/sparring/newmanage/console/${projectId}/flow`" class="menu-item" :class="{ active: currentMenu === 'flow' }">
           流程设计
@@ -60,15 +63,18 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getProjectDetail, publishProject, withdrawProject, deleteProject } from '@/api/project'
 import { resolveAssetUrl } from '@/api/request'
-import { toProjectForm, toStatus, toProjectType, toAssignType } from '@/utils/convert'
+import { useAuthStore } from '@/stores/auth'
+import { toStatus, toProjectType, toAssignType } from '@/utils/convert'
 
 const router = useRouter()
 const route = useRoute()
+const auth = useAuthStore()
 const projectId = computed(() => Number(route.params.id))
 
 const currentMenu = computed(() => {
   const path = route.path
   if (path.includes('overview')) return 'overview'
+  if (path.includes('student')) return 'student'
   if (path.includes('flow')) return 'flow'
   if (path.includes('basic')) return 'basic'
   return 'flow'
@@ -80,11 +86,16 @@ const project = ref({
   type: 'train',
   status: 'draft',
   assignType: 'project',
-  responsiblePerson: '',
-  responsiblePersonName: '',
+  createdBy: '',
+  createdByName: '',
   startTime: '',
   endTime: '',
   coverImage: null as string | null
+})
+
+const isOwner = computed(() => {
+  const currentIds = [auth.user?.userId, auth.user?.account].filter(Boolean)
+  return Boolean(project.value.createdBy && currentIds.includes(project.value.createdBy))
 })
 
 const loadProject = async () => {
@@ -96,8 +107,8 @@ const loadProject = async () => {
       type: toProjectType(res.projectType),
       status: toStatus(res.status),
       assignType: toAssignType(res.assignType),
-      responsiblePerson: res.responsiblePerson || '',
-      responsiblePersonName: res.responsiblePersonName || '',
+      createdBy: res.createdBy || '',
+      createdByName: res.createdByName || '',
       startTime: (res.startTime || '').replace('T', ' ').slice(0, 16),
       endTime: (res.endTime || '').replace('T', ' ').slice(0, 16),
       coverImage: resolveAssetUrl(res.coverImage) || null
@@ -262,5 +273,76 @@ onMounted(loadProject)
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  .project-console {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .project-header {
+    padding: 16px 12px;
+  }
+
+  .project-info {
+    flex-wrap: wrap;
+  }
+
+  .project-details {
+    min-width: 0;
+
+    .project-name {
+      overflow-wrap: anywhere;
+    }
+
+    .project-tags {
+      flex-wrap: wrap;
+    }
+
+    .project-meta {
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+  }
+
+  .project-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .console-content {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .console-menu {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border-right: none;
+    border-bottom: 1px solid #e8e8e8;
+
+    .menu-item {
+      flex-shrink: 0;
+      padding: 12px 16px;
+      border-bottom: 2px solid transparent;
+
+      &.active {
+        border-right: none;
+        border-bottom-color: #1890ff;
+      }
+    }
+  }
+
+  .console-main {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    overflow: visible;
+  }
 }
 </style>

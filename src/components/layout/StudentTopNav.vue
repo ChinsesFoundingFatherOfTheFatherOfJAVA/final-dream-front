@@ -34,7 +34,8 @@
       <span class="nav-icon">🔔</span>
       <div class="user-dropdown" @mouseenter="openDropdown('user')" @mouseleave="closeDropdown('user')">
         <span class="user-info">
-          <span class="user-avatar">{{ userInitial }}</span>
+          <span class="user-avatar">{{ auth.userInitial }}</span>
+          <span class="user-name">{{ auth.displayName }}</span>
           <span class="arrow">▾</span>
         </span>
         <div v-if="activeDropdown === 'user'" class="dropdown-menu user-menu" @mouseenter="keepDropdown('user')" @mouseleave="closeDropdown('user')">
@@ -42,7 +43,7 @@
           <div class="dropdown-item">个人中心</div>
           <div class="dropdown-item">我的收藏</div>
           <div class="dropdown-divider"></div>
-          <div class="dropdown-item">退出登录</div>
+          <div class="dropdown-item" @click="logout">退出登录</div>
         </div>
       </div>
       <span class="nav-item workbench">
@@ -55,11 +56,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
-const userInitial = computed(() => '员')
 const activeDropdown = ref<string | null>(null)
 let closeTimer: number | null = null
 
@@ -89,6 +91,12 @@ const keepDropdown = (name: string) => {
 const goToAdmin = () => {
   activeDropdown.value = null
   router.push('/homepage')
+}
+
+const logout = () => {
+  activeDropdown.value = null
+  auth.logout()
+  router.replace('/login')
 }
 </script>
 
@@ -180,6 +188,13 @@ const goToAdmin = () => {
   cursor: pointer;
 }
 
+.user-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .user-avatar {
   width: 32px;
   height: 32px;
@@ -252,6 +267,26 @@ const goToAdmin = () => {
     height: 1px;
     background: #e8e8e8;
     margin: 4px 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .top-nav {
+    padding: 0 12px;
+  }
+
+  .nav-left {
+    gap: 0;
+  }
+
+  .nav-menu,
+  .nav-right .nav-icon,
+  .nav-right > .nav-item {
+    display: none;
+  }
+
+  .nav-right {
+    gap: 8px;
   }
 }
 </style>

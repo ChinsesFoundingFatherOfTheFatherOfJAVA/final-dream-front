@@ -196,3 +196,25 @@ export interface ConsistencyRound {
 export interface ConsistencyResp {
   rounds: ConsistencyRound[]
 }
+
+// ===== 5. 学员排名模块 =====
+
+export interface RankItem {
+  rankIndex: number
+  userId: string
+  fullname: string
+  deptName: string
+  score: number
+  isMe: boolean
+}
+
+export interface MyRank {
+  rankIndex: number
+  score: number
+}
+
+export interface ProjectRankResp {
+  dimensions: string[]
+  rankList: RankItem[]
+  myRank: MyRank | null
+}

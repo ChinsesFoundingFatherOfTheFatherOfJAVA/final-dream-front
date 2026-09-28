@@ -47,7 +47,7 @@
 
         <div class="info-item">
           <label class="info-label">负责人</label>
-          <div class="info-value">{{ project.responsiblePersonText || '—' }}</div>
+          <div class="info-value">{{ project.createdByName || '—' }}</div>
         </div>
 
         <div class="info-item">
@@ -163,7 +163,7 @@ interface Project {
   passStrategy: number | null
   passStrategyN: number | null
   passStrategyText: string
-  responsiblePersonText: string
+  createdByName: string
   coverImage: string | null
   dialogueMode: number
   trainer?: {
@@ -195,7 +195,7 @@ const project = ref<Project>({
   passStrategy: null,
   passStrategyN: null,
   passStrategyText: '',
-  responsiblePersonText: '',
+  createdByName: '',
   coverImage: null,
   dialogueMode: 0
 })
@@ -233,9 +233,7 @@ const loadDetail = async () => {
       passStrategy: res.passStrategy ?? null,
       passStrategyN: res.passStrategyN ?? null,
       passStrategyText: PASS_STRATEGY_TEXT[res.passStrategy] || '',
-      responsiblePersonText: res.responsiblePersonName
-        ? `${res.responsiblePersonName}(${res.responsiblePerson || ''})`
-        : '',
+      createdByName: res.createdByName || '',
       coverImage: resolveAssetUrl(res.coverImage) || null,
       dialogueMode: res.dialogueMode ?? 0,
       trainer: res.virtualTrainer ? {

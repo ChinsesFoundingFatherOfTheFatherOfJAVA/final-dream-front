@@ -30,7 +30,7 @@
             <!-- 点赞 -->
             <span
               class="action-item like"
-              :class="{ liked: likedIds.has(msg.messageId) }"
+              :class="{ liked: likedIds.has(msg.messageId), disabled: likesDisabled }"
               @click="onLike(msg)"
             >
               👍 <span class="action-text">{{ msg.likeCount }}</span>
@@ -60,6 +60,8 @@ const props = defineProps<{
   roundSuggestions: RoundSuggestion[]
   /** 陪练者形象（报告接口带回）；为空时回落内置默认形象 */
   trainerAvatar?: string | null
+  /** 管理端代查报告时只读展示，不触发点赞 */
+  likesDisabled?: boolean
 }>()
 
 const expanded = reactive<Record<string, boolean>>({})
@@ -94,6 +96,7 @@ const toggleExpand = (messageId: string) => {
 
 /** FP-17 点赞：+1 落库，重复点击不叠加 */
 const onLike = async (msg: SessionMessage) => {
+  if (props.likesDisabled) return
   if (likedIds.value.has(msg.messageId)) return
   likedIds.value.add(msg.messageId)
   try {
@@ -211,6 +214,11 @@ const onLike = async (msg: SessionMessage) => {
       &.liked {
         opacity: 0.55;
         cursor: not-allowed;
+      }
+
+      &.disabled {
+        cursor: default;
+        opacity: 0.75;
       }
     }
   }
