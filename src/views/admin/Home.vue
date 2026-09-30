@@ -26,6 +26,15 @@
             <p class="app-desc">围绕真实业务场景展开动态实战训练</p>
           </div>
         </div>
+        <div v-if="hasKngAccess" class="app-card" @click="goToOnlineClassroom">
+          <div class="app-icon kng-icon">
+            <span class="icon-text">K</span>
+          </div>
+          <div class="app-info">
+            <h3 class="app-title">在线课堂</h3>
+            <p class="app-desc">专业的企业学习资源运营</p>
+          </div>
+        </div>
         <div class="app-guide">
           <div class="guide-illustration">
             <div class="guide-text">
@@ -273,12 +282,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const auth = useAuthStore()
 const selectedTime = ref('当月')
 const timeOptions = ['上月', '当月', '上季度', '当季度', '上一年', '当年', '累计']
+const hasKngAccess = computed(() =>
+  auth.hasPermission('kng:catalog') ||
+  auth.hasPermission('kng:courseware') ||
+  auth.hasPermission('kng:course') ||
+  auth.hasPermission('kng:setting')
+)
 
 const goToAIPractice = () => {
   router.push('/sparring/newmanage')
@@ -286,6 +303,10 @@ const goToAIPractice = () => {
 
 const goToActualTraining = () => {
   router.push('/sparring/freesimulate/topic')
+}
+
+const goToOnlineClassroom = () => {
+  router.push('/kng/catalog')
 }
 </script>
 
@@ -376,6 +397,10 @@ const goToActualTraining = () => {
         border-radius: 6px;
         line-height: 1.4;
       }
+    }
+
+    &.kng-icon {
+      background: #e75487;
     }
   }
 

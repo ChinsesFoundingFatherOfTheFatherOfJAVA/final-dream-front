@@ -30,10 +30,10 @@
 
     <!-- FP-10 三栏主体：会话加载失败时整栏隐藏，改由下方错误卡承接 -->
     <div v-if="!loadingError" class="main-body">
-      <!-- 左栏：虚拟陪练者（FP-27：生图固定输出 1024×1024 方图，形象卡按 1:1 完整展示，角色名放在图片下方） -->
+      <!-- 左栏：虚拟陪练者形象铺满剩余高度，角色名固定在下沿 -->
       <aside class="trainer-panel">
         <div class="trainer-figure">
-          <!-- 形象卡：项目配置了形象用生成图，未配置用内置默认形象图；两者都是 1:1，cover 不裁切 -->
+          <!-- 形象卡按栏高自适应，cover 裁切且不拉伸 -->
           <img :src="trainerFace(store.trainerAvatar)" alt="" class="figure-img" />
         </div>
         <div class="trainer-info">
@@ -376,12 +376,16 @@ export default { name: 'ScriptTraining' }
 .trainer-panel {
   width: 280px;
   flex-shrink: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 形象卡：与生图输出同为 1:1，图片完整显示不裁切 */
+/* 形象卡吃掉左栏除信息区外的全部高度，整条 flex 链不再使用百分比高度 */
 .trainer-figure {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   background: #1d2547;
@@ -396,6 +400,7 @@ export default { name: 'ScriptTraining' }
 
 /* 图片下方信息区：AI 扮演角色与角色名（原先叠在图片底部，现随图片变方移出） */
 .trainer-info {
+  flex-shrink: 0;
   padding: 14px 4px 0;
 
   .info-label {

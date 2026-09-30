@@ -7,10 +7,6 @@
     <footer v-if="!isFullBleed" class="footer">
       <p>2026 杰克数字人陪练</p>
     </footer>
-    <div class="floating-tool">
-      <div class="tool-icon">🤖</div>
-      <div class="tool-text">平台操作<br/>答疑助手</div>
-    </div>
   </div>
 </template>
 
@@ -61,35 +57,6 @@ const isFullBleed = computed(() => route.meta.fullBleed === true)
   font-size: 12px;
   background: #fff;
   border-top: 1px solid #e8e8e8;
-}
-
-.floating-tool {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  z-index: 1000;
-
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .tool-icon {
-    font-size: 24px;
-  }
-
-  .tool-text {
-    font-size: 12px;
-    color: #333;
-    line-height: 1.4;
-  }
 }
 
 @media (max-width: 760px) {

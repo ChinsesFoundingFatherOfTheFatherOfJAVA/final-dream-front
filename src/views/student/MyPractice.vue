@@ -76,14 +76,6 @@
         </div>
       </main>
     </div>
-
-    <!-- 右侧悬浮工具栏 -->
-    <div class="floating-toolbar">
-      <div class="tool-item">🤖</div>
-      <div class="tool-item">📄</div>
-      <div class="tool-item">🎧</div>
-      <div class="tool-item">💬</div>
-    </div>
   </div>
 </template>
 
@@ -195,15 +187,4 @@ const getTagClass = (tag: string) => {
   &.tag-danger { background: #fff1f0; color: #f5222d; }
 }
 
-.floating-toolbar {
-  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 12px; z-index: 1000;
-
-  .tool-item {
-    width: 48px; height: 48px; background: #fff; border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); display: flex; align-items: center;
-    justify-content: center; cursor: pointer; font-size: 20px; transition: all 0.3s;
-    &:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transform: scale(1.1); }
-  }
-}
 </style>

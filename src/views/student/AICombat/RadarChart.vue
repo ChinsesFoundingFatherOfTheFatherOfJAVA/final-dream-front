@@ -77,7 +77,17 @@ const render = async () => {
 
   chart.setOption(
     {
-      tooltip: {},
+      tooltip: {
+        formatter: (params: { value?: unknown }) => {
+          const values = Array.isArray(params.value) ? params.value : []
+          return scored
+            .map((dimension, index) => {
+              const value = values[index]
+              return `${dimension.dimensionName}: ${value == null ? '-' : `${value}分`}`
+            })
+            .join('<br/>')
+        }
+      },
       legend: {
         bottom: 0,
         itemWidth: 20,

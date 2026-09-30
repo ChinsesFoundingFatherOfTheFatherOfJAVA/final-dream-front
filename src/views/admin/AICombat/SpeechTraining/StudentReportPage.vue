@@ -381,6 +381,11 @@ const loadInitial = async () => {
   } finally {
     initialLoading.value = false
   }
+  if (!initialError.value) {
+    // 首屏加载期间图表容器尚未挂载，loading 结束后补一次总分折线图渲染。
+    await nextTick()
+    await renderAnalysis()
+  }
 }
 
 const selectRecord = (record: AttendRecordRow) => {

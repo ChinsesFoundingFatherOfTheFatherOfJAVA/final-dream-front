@@ -15,6 +15,47 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/auth/Forbidden.vue'),
     meta: { title: '无权限', public: true }
   },
+  {
+    path: '/kng',
+    component: () => import('@/views/onlineclassroom/OnlineClassroomLayout.vue'),
+    redirect: () => {
+      const auth = useAuthStore()
+      if (auth.hasPermission('kng:catalog')) return '/kng/catalog'
+      if (auth.hasPermission('kng:courseware')) return '/kng/courseware'
+      if (auth.hasPermission('kng:course')) return '/kng/course'
+      if (auth.hasPermission('kng:setting')) return '/kng/setting'
+      return '/403'
+    },
+    meta: { title: '在线课堂', requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: 'courseware',
+        name: 'KngCourseware',
+        component: () => import('@/views/onlineclassroom/PlaceholderPage.vue'),
+        props: { title: '课件管理' },
+        meta: { title: '课件管理', permission: 'kng:courseware' }
+      },
+      {
+        path: 'course',
+        name: 'KngCourse',
+        component: () => import('@/views/onlineclassroom/PlaceholderPage.vue'),
+        props: { title: '课程管理' },
+        meta: { title: '课程管理', permission: 'kng:course' }
+      },
+      {
+        path: 'catalog',
+        name: 'KngCatalog',
+        component: () => import('@/views/onlineclassroom/catalog/CatalogManage.vue'),
+        meta: { title: '分类管理', permission: 'kng:catalog' }
+      },
+      {
+        path: 'setting',
+        name: 'KngSetting',
+        component: () => import('@/views/onlineclassroom/CourseSetting.vue'),
+        meta: { title: '课程设置', permission: 'kng:setting' }
+      }
+    ]
+  },
   // 管理端路由
   {
     path: '/',

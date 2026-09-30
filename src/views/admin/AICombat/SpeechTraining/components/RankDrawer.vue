@@ -4,24 +4,22 @@
       <div v-if="visible" class="drawer-overlay" @click.self="close">
         <aside class="rank-drawer">
           <header class="drawer-header">
-            <div>
+            <div class="header-title">
               <h3>个人排名</h3>
               <p>取学员总分最高分记录进行排名</p>
             </div>
-            <button type="button" class="close-btn" aria-label="关闭" @click="close">×</button>
+            <div class="header-actions">
+              <label class="dimension-select">
+                <span>维度</span>
+                <select :value="activeDimension" @change="onDimensionChange">
+                  <option v-for="dimension in rankTabs" :key="dimension || '__total__'" :value="dimension">
+                    {{ dimensionLabel(dimension) }}
+                  </option>
+                </select>
+              </label>
+              <button type="button" class="close-btn" aria-label="关闭" @click="close">×</button>
+            </div>
           </header>
-
-          <div class="dimension-tabs">
-            <button
-              v-for="dimension in rankTabs"
-              :key="dimension || '__total__'"
-              type="button"
-              :class="{ active: activeDimension === dimension }"
-              @click="selectDimension(dimension)"
-            >
-              {{ dimensionLabel(dimension) }}
-            </button>
-          </div>
 
           <div class="search-bar">
             <input
@@ -126,6 +124,10 @@ const selectDimension = (dimension: string) => {
   void loadRank()
 }
 
+const onDimensionChange = (event: Event) => {
+  selectDimension((event.target as HTMLSelectElement).value)
+}
+
 const searchRank = () => {
   void loadRank()
 }
@@ -164,23 +166,60 @@ watch(
 
 .drawer-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 18px 22px 14px;
   border-bottom: 1px solid #e9edf4;
   background: #fff;
 
-  h3 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 17px;
-  }
+  .header-title {
+    min-width: 0;
 
-  p {
-    margin: 5px 0 0;
-    color: #8a92a5;
-    font-size: 12px;
+    h3 {
+      margin: 0;
+      color: #1f2937;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 5px 0 0;
+      color: #8a92a5;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dimension-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #596274;
+  font-size: 13px;
+
+  select {
+    height: 40px;
+    min-width: 126px;
+    padding: 0 30px 0 10px;
+    border: 1px solid #d9deea;
+    border-radius: 6px;
+    background: #fff;
+    color: #253047;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+
+    &:focus {
+      border-color: #2e7cf6;
+    }
   }
 }
 
@@ -195,33 +234,6 @@ watch(
   cursor: pointer;
 }
 
-.dimension-tabs {
-  display: flex;
-  gap: 8px;
-  padding: 14px 18px 0;
-  overflow-x: auto;
-  background: #fff;
-
-  button {
-    flex-shrink: 0;
-    height: 32px;
-    padding: 0 14px;
-    border: 1px solid #d9deea;
-    border-radius: 16px;
-    background: #fff;
-    color: #667085;
-    font-size: 13px;
-    cursor: pointer;
-
-    &.active {
-      border-color: #2e7cf6;
-      background: #eaf1ff;
-      color: #2e7cf6;
-      font-weight: 600;
-    }
-  }
-}
-
 .search-bar {
   display: flex;
   gap: 10px;
@@ -232,7 +244,7 @@ watch(
   input {
     flex: 1;
     min-width: 0;
-    height: 34px;
+    height: 40px;
     box-sizing: border-box;
     padding: 0 11px;
     border: 1px solid #d9deea;
@@ -247,7 +259,7 @@ watch(
   }
 
   button {
-    height: 34px;
+    height: 40px;
     padding: 0 18px;
     border: 1px solid #2e7cf6;
     border-radius: 6px;
@@ -291,8 +303,8 @@ watch(
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 62px;
-    padding: 10px 14px;
+    min-height: 68px;
+    padding: 12px 14px;
     border: 1px solid #edf0f5;
     border-radius: 9px;
     background: #fff;
@@ -305,10 +317,10 @@ watch(
 }
 
 .rank-index {
-  width: 28px;
+  width: 32px;
   flex-shrink: 0;
   color: #7a8396;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
   text-align: center;
 
@@ -377,7 +389,7 @@ watch(
 .score {
   flex-shrink: 0;
   color: #2e7cf6;
-  font-size: 20px;
+  font-size: 28px;
 }
 
 .drawer-fade-enter-active,
@@ -401,6 +413,16 @@ watch(
 @media (max-width: 760px) {
   .rank-drawer {
     width: 100%;
+  }
+
+  .drawer-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>

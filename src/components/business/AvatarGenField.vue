@@ -16,7 +16,7 @@
     </div>
     <p v-if="generating" class="gen-hint">形象生成最长约需 5 分钟，请耐心等待</p>
 
-    <!-- 形象预览（160×160 方形圆角卡片，对齐生图模型的 1024×1024 输出） -->
+    <!-- 形象预览：统一按 3:4 展示，生图原图保留不裁掉画质 -->
     <div v-if="modelValue" class="preview-wrap">
       <div class="preview-card">
         <img :src="modelValue" alt="陪练者形象预览" class="preview-img" />
@@ -189,7 +189,7 @@ $primary: #1890ff;
   color: #999;
 }
 
-/* 预览卡 160×160：与生图输出的 1024×1024 方图同比例，避免裁切 */
+/* 预览卡统一 3:4：与详情页使用同一展示口径 */
 .preview-wrap {
   display: flex;
   align-items: flex-end;
@@ -199,7 +199,8 @@ $primary: #1890ff;
 .preview-card {
   position: relative;
   width: 160px;
-  height: 160px;
+  aspect-ratio: 3 / 4;
+  box-sizing: border-box;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #ebeef5;

@@ -133,7 +133,13 @@
           <label class="info-label">预览效果</label>
           <div class="info-value">
             <div class="cover-preview-large">
-              <span class="preview-icon">👤</span>
+              <img
+                v-if="project.trainer?.avatarImage"
+                class="preview-img"
+                :src="project.trainer.avatarImage"
+                alt="陪练者形象"
+              />
+              <span v-else class="preview-icon">👤</span>
             </div>
           </div>
         </div>
@@ -173,6 +179,7 @@ interface Project {
     speed: number
     inputLanguage: string
     forbiddenWords: string
+    avatarImage: string | null
   }
 }
 
@@ -242,7 +249,8 @@ const loadDetail = async () => {
         voiceName: res.virtualTrainer.voiceId || '',
         speed: res.virtualTrainer.speed ?? 30,
         inputLanguage: res.virtualTrainer.inputLanguage || '',
-        forbiddenWords: res.virtualTrainer.forbiddenWords || ''
+        forbiddenWords: res.virtualTrainer.forbiddenWords || '',
+        avatarImage: resolveAssetUrl(res.virtualTrainer.avatarImage) || null
       } : undefined
     }
     dimensions.value = (res.scoringDimensions || []).map((d: any) => ({
@@ -351,12 +359,20 @@ onMounted(loadDetail)
 
 .cover-preview-large {
   width: 200px;
-  height: 280px;
+  aspect-ratio: 3 / 4;
   border-radius: 4px;
   background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+
+  .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   .preview-icon {
     font-size: 80px;
