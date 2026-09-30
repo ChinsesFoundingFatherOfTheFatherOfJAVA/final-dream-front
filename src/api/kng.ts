@@ -104,6 +104,7 @@ export interface KngCheatSaveReq {
 export interface KngPlayConf {
   speedEnabled: boolean
   speedScope: number
+  speedHoursCalc: boolean
 }
 
 export interface KngFaceConf {

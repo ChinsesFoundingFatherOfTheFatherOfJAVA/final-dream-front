@@ -134,4 +134,39 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   overflow: auto;
   padding: 20px;
 }
+
+@media (max-width: 900px) {
+  .kng-sidebar {
+    width: 64px;
+    padding: 14px 8px;
+  }
+
+  .menu-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .menu-item > span:last-child {
+    display: none;
+  }
+
+  .kng-content {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kng-header {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .kng-sidebar {
+    display: none;
+  }
+
+  .kng-content {
+    padding: 10px;
+  }
+}
 </style>

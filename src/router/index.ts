@@ -31,9 +31,45 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'courseware',
         name: 'KngCourseware',
-        component: () => import('@/views/onlineclassroom/PlaceholderPage.vue'),
-        props: { title: '课件管理' },
+        component: () => import('@/views/onlineclassroom/courseware/CoursewareMgmt.vue'),
         meta: { title: '课件管理', permission: 'kng:courseware' }
+      },
+      {
+        path: 'courseware/info/:id',
+        name: 'KngCoursewareInfo',
+        component: () => import('@/views/onlineclassroom/courseware/CoursewareInfo.vue'),
+        meta: { title: '课件详情', permission: 'kng:courseware' }
+      },
+      {
+        path: 'courseware/edit/:id',
+        name: 'KngCoursewareEdit',
+        component: () => import('@/views/onlineclassroom/courseware/CoursewareForm.vue'),
+        props: { mode: 'edit', variant: 'file' },
+        meta: { title: '编辑课件', permission: 'kng:courseware' }
+      },
+      {
+        path: 'courseware/publish/:variant',
+        name: 'KngCoursewarePublish',
+        component: () => import('@/views/onlineclassroom/courseware/CoursewareForm.vue'),
+        props: route => ({
+          mode: 'create',
+          variant: ['file', 'scorm', 'html', 'link'].includes(String(route.params.variant))
+            ? String(route.params.variant)
+            : 'file'
+        }),
+        meta: { title: '发布课件', permission: 'kng:courseware' }
+      },
+      {
+        path: 'courseware/transcode',
+        name: 'KngCoursewareTranscode',
+        component: () => import('@/views/onlineclassroom/courseware/TranscodeMgmt.vue'),
+        meta: { title: '转码管理', permission: 'kng:courseware' }
+      },
+      {
+        path: 'courseware/subtitles',
+        name: 'KngCoursewareSubtitles',
+        component: () => import('@/views/onlineclassroom/courseware/SubtitleMgmt.vue'),
+        meta: { title: '字幕管理', permission: 'kng:courseware' }
       },
       {
         path: 'course',

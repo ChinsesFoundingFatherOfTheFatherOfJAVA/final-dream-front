@@ -235,6 +235,15 @@
           <span class="switch-control"></span>
           <span>开启倍速播放功能</span>
         </label>
+        <label class="switch-line">
+          <input
+            v-model="form.playConf.speedHoursCalc"
+            type="checkbox"
+            :disabled="!form.playConf.speedEnabled"
+          />
+          <span class="switch-control"></span>
+          <span>倍速播放时学习时长也倍速计算</span>
+        </label>
       </div>
 
       <div class="play-scope">
@@ -310,7 +319,7 @@ const createDefaultSetting = (): KngSetting => ({
     forbidDragEnabled: true,
     audioBackgroundPlay: false
   },
-  playConf: { speedEnabled: true, speedScope: 2 },
+  playConf: { speedEnabled: true, speedScope: 2, speedHoursCalc: true },
   faceConf: { enabled: false }
 })
 

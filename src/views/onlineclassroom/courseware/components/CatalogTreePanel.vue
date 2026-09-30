@@ -1,0 +1,340 @@
+<template>
+  <aside class="catalog-tree-panel">
+    <div class="tree-toolbar">
+      <label class="tree-search">
+        <span aria-hidden="true">⌕</span>
+        <input v-model.trim="keyword" type="search" placeholder="搜索分类名称" />
+      </label>
+      <button type="button" class="collapse-btn" title="收起分类树" @click="emit('collapse')">≡</button>
+    </div>
+
+    <div class="tree-body">
+      <div
+        v-if="!keyword"
+        class="tree-row root-row"
+        :class="{ selected: modelValue === '' }"
+        @click="select('')"
+      >
+        <button type="button" class="tree-arrow expanded" @click.stop="toggleRoot">
+          <span />
+        </button>
+        <span class="tree-label">主课堂</span>
+      </div>
+
+      <template v-if="!keyword || rootExpanded">
+        <div
+          v-for="row in rows"
+          :key="row.node.id"
+          class="tree-row"
+          :class="{ selected: modelValue === row.node.id }"
+          :style="{ paddingLeft: `${12 + row.depth * 18}px` }"
+          @click="select(row.node.id)"
+        >
+          <button
+            v-if="row.hasChildren"
+            type="button"
+            class="tree-arrow"
+            :class="{ expanded: row.expanded }"
+            @click.stop="toggle(row.node.id)"
+          >
+            <span />
+          </button>
+          <span v-else class="tree-arrow placeholder"></span>
+          <span class="tree-label">{{ row.node.name }}</span>
+        </div>
+      </template>
+      <p v-if="keyword && !rows.length" class="empty-tip">未找到匹配分类</p>
+    </div>
+
+    <footer class="tree-footer">
+      <div class="scope-options">
+        <label>
+          <input v-model.number="scope" type="radio" :value="1" />
+          <span>包含子分类</span>
+        </label>
+        <label>
+          <input v-model.number="scope" type="radio" :value="0" />
+          <span>仅当前分类</span>
+        </label>
+      </div>
+      <div class="tree-total">共 {{ total }} 条</div>
+    </footer>
+  </aside>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import type { KngTreeNode } from '@/api/kng'
+
+const props = withDefaults(defineProps<{
+  tree: KngTreeNode[]
+  modelValue: string
+  includeChildCatalog: number
+  total: number
+}>(), {
+  modelValue: '',
+  includeChildCatalog: 1,
+  total: 0
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  'update:includeChildCatalog': [value: number]
+  change: []
+  collapse: []
+}>()
+
+interface FlatRow {
+  node: KngTreeNode
+  depth: number
+  hasChildren: boolean
+  expanded: boolean
+}
+
+const keyword = ref('')
+const rootExpanded = ref(true)
+const expanded = ref(new Set<string>())
+
+const scope = computed({
+  get: () => props.includeChildCatalog,
+  set: (value: number) => emit('update:includeChildCatalog', value)
+})
+
+const allNodes = computed(() => {
+  const result: KngTreeNode[] = []
+  const walk = (nodes: KngTreeNode[]) => {
+    for (const node of nodes) {
+      result.push(node)
+      walk(node.children ?? [])
+    }
+  }
+  walk(props.tree)
+  return result
+})
+
+const parentById = computed(() => {
+  const result = new Map<string, string>()
+  const walk = (nodes: KngTreeNode[]) => {
+    for (const node of nodes) {
+      for (const child of node.children ?? []) result.set(child.id, node.id)
+      walk(node.children ?? [])
+    }
+  }
+  walk(props.tree)
+  return result
+})
+
+const visibleIds = computed(() => {
+  const needle = keyword.value.trim()
+  if (!needle) return null
+  const result = new Set<string>()
+  for (const node of allNodes.value) {
+    if (!node.name.includes(needle)) continue
+    result.add(node.id)
+    let parent = parentById.value.get(node.id)
+    while (parent) {
+      result.add(parent)
+      parent = parentById.value.get(parent)
+    }
+  }
+  return result
+})
+
+const rows = computed<FlatRow[]>(() => {
+  const result: FlatRow[] = []
+  const searching = Boolean(visibleIds.value)
+  const walk = (nodes: KngTreeNode[], depth: number) => {
+    for (const node of nodes) {
+      if (searching && !visibleIds.value?.has(node.id)) continue
+      const hasChildren = Boolean(node.children?.length)
+      const open = searching || expanded.value.has(node.id)
+      result.push({ node, depth, hasChildren, expanded: open })
+      if (open) walk(node.children ?? [], depth + 1)
+    }
+  }
+  walk(props.tree, 0)
+  return result
+})
+
+const toggle = (id: string) => {
+  const next = new Set(expanded.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expanded.value = next
+}
+
+const toggleRoot = () => {
+  rootExpanded.value = !rootExpanded.value
+}
+
+const select = (id: string) => {
+  emit('update:modelValue', id)
+  emit('change')
+}
+
+watch(() => props.tree, tree => {
+  const next = new Set(expanded.value)
+  for (const node of tree) {
+    if (!next.size) next.add(node.id)
+  }
+  expanded.value = next
+}, { immediate: true })
+</script>
+
+<style scoped lang="scss">
+.catalog-tree-panel {
+  width: 250px;
+  min-width: 250px;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e7ebf2;
+  background: #fff;
+}
+
+.tree-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px 10px;
+}
+
+.tree-search {
+  min-width: 0;
+  flex: 1;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 9px;
+  border: 1px solid #d9deea;
+  border-radius: 6px;
+  color: #9aa3b2;
+
+  input {
+    min-width: 0;
+    flex: 1;
+    border: none;
+    outline: none;
+    color: #394253;
+    font-size: 13px;
+  }
+}
+
+.collapse-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #7b8496;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.tree-body {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+}
+
+.tree-row {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: #4d5568;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f4f7fb;
+  }
+
+  &.selected {
+    background: #eaf2ff;
+    color: #1f6fe8;
+    font-weight: 600;
+  }
+}
+
+.root-row {
+  font-weight: 600;
+}
+
+.tree-arrow {
+  width: 22px;
+  height: 28px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  span {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid #919bad;
+    transition: transform 0.15s ease;
+  }
+
+  &.expanded span {
+    transform: rotate(90deg);
+  }
+
+  &.placeholder {
+    cursor: default;
+  }
+}
+
+.tree-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-tip {
+  padding: 36px 12px;
+  color: #98a1b2;
+  text-align: center;
+  font-size: 13px;
+}
+
+.tree-footer {
+  flex-shrink: 0;
+  padding: 14px 16px 16px;
+  border-top: 1px solid #edf0f5;
+  color: #667085;
+  font-size: 12px;
+}
+
+.scope-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+  }
+
+  input {
+    accent-color: #2e7cf6;
+  }
+}
+
+.tree-total {
+  margin-top: 14px;
+  color: #8a93a5;
+}
+</style>

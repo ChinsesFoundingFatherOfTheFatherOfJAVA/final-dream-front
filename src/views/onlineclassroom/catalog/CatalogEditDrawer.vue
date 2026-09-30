@@ -314,7 +314,7 @@ const save = async () => {
     ...form,
     parentId: props.mode === 'create' ? props.parentId : form.parentId,
     name: form.name.trim(),
-    prefixContent: form.prefixEnabled ? form.prefixContent?.trim() : null,
+    prefixContent: form.prefixEnabled ? (form.prefixContent?.trim() ?? null) : null,
     dateSuffixFormat: form.dateSuffixEnabled ? form.dateSuffixFormat : null,
     permissions: form.permissions.map(row => ({ ...row, permCodes: [...row.permCodes].sort() }))
   }
