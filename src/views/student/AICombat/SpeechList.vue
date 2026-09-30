@@ -442,6 +442,7 @@ $primary: #2e7cf6;
 .card-grid {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 16px;
   flex: 1;
 }

@@ -50,13 +50,71 @@ export interface KngCatalogSaveReq {
   permissions: KngPermissionItem[]
 }
 
-export interface KngSetting {
-  creditMode: number
+export interface KngStandardScoreRule {
+  standardMinutes: number
+  score: number
+  applyToAll: boolean
+}
+
+export interface KngDocumentScoreRule {
+  pagesPerScore: number
+  score: number
+  standardMinutes: number
+  maxScore: number
+  applyToAll: boolean
+}
+
+export interface KngMicrocourseScoreRule {
+  standardMinutes: number
+  score: number
+  maxScore: number
+  applyToAll: boolean
+}
+
+export interface KngScoreConf {
+  videoAudio: KngStandardScoreRule
+  document: KngDocumentScoreRule
+  microcourse: KngMicrocourseScoreRule
+  scorm: KngStandardScoreRule
+  html: KngStandardScoreRule
+  rewardType: number
+}
+
+export interface KngCheatConf {
   antiIdleEnabled: boolean
-  antiIdleMode: number
-  checkIntervalMinutes: number
+  mode: number
+  checkMinutes: number
   confirmSeconds: number
   promptText: string
+  multiCourseEnabled: boolean
+  forbidDragEnabled: boolean
+  audioBackgroundPlay: boolean
+}
+
+export interface KngCheatSaveReq {
+  antiIdleEnabled: boolean
+  mode: number
+  checkMinutes: number
+  confirmSeconds: number
+  promptText: string
+  multiCourseEnabled: boolean
+  forbidDragEnabled: boolean
+}
+
+export interface KngPlayConf {
+  speedEnabled: boolean
+  speedScope: number
+}
+
+export interface KngFaceConf {
+  enabled: boolean
+}
+
+export interface KngSetting {
+  scoreConf: KngScoreConf
+  cheatConf: KngCheatConf
+  playConf: KngPlayConf
+  faceConf: KngFaceConf
 }
 
 export interface KngDeptNode {
@@ -108,8 +166,24 @@ export function getKngSetting() {
   return request.get<unknown, KngSetting>('/kng/admin/setting')
 }
 
-export function updateKngSetting(data: KngSetting) {
-  return request.put<unknown, null>('/kng/admin/setting', data)
+export function saveKngScoreConf(data: KngScoreConf) {
+  return request.put<unknown, null>('/kng/admin/setting/score', data)
+}
+
+export function saveKngCheatConf(data: KngCheatSaveReq) {
+  return request.put<unknown, null>('/kng/admin/setting/cheat', data)
+}
+
+export function saveKngSpecialSetting(data: { audioBackgroundPlay: boolean }) {
+  return request.put<unknown, null>('/kng/admin/setting/special', data)
+}
+
+export function saveKngPlayConf(data: KngPlayConf) {
+  return request.put<unknown, null>('/kng/admin/setting/play', data)
+}
+
+export function saveKngFaceConf(data: KngFaceConf) {
+  return request.put<unknown, null>('/kng/admin/setting/face', data)
 }
 
 export function getKngDeptTree() {
