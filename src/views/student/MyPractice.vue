@@ -6,7 +6,7 @@
         <div class="user-avatar">
           <span class="avatar-text">员</span>
         </div>
-        <h3 class="user-name">管理员</h3>
+        <h3 class="user-name">{{ authStore.displayName }}</h3>
         <div class="user-badges">
           <span class="medal-badge">🏅 0枚勋章</span>
           <span class="level-badge">Lv.2</span>
@@ -55,7 +55,7 @@
         <div class="content-header">
           <div class="header-left">
             <h2 class="page-title">待学习</h2>
-            <span class="task-count">学习任务 <strong>1</strong></span>
+            <span class="task-count">学习任务 <strong>{{ tasks.length }}</strong></span>
           </div>
           <div class="header-right">
             <select class="filter-select"><option>全部分类</option></select>
@@ -66,6 +66,7 @@
         </div>
 
         <div class="task-list">
+          <div v-if="!tasks.length && !loading" class="task-empty">暂无学习任务</div>
           <div v-for="task in tasks" :key="task.id" class="task-card">
             <div class="task-tags">
               <span v-for="tag in task.tags" :key="tag" class="tag" :class="getTagClass(tag)">{{ tag }}</span>
@@ -80,19 +81,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { mockTasks } from '@/mock/data'
+import { onMounted, ref } from 'vue'
+import { getStudentProjects } from '@/api/student'
+import { useAuthStore } from '@/stores/auth'
 
-const tasks = ref(mockTasks)
+const authStore = useAuthStore()
+
+interface TaskItem {
+  id: string
+  title: string
+  tags: string[]
+  startTime: string
+  endTime: string
+}
+
+// 2026-10-02 起接入学员项目真实接口（FP-01~04），原 mockTasks 数据退役；
+// 侧边栏的勋章/经验值/积分等仍为静态展示，待产品确认口径后另行接数。
+const tasks = ref<TaskItem[]>([])
+const loading = ref(false)
+
+const loadTasks = async () => {
+  loading.value = true
+  try {
+    const data = await getStudentProjects({ page: 1, pageSize: 20 })
+    tasks.value = data.records.map((project) => ({
+      id: String(project.projectId),
+      title: project.name,
+      tags: [project.projectType === 1 ? '考核' : '培训'],
+      startTime: project.startTime ?? '',
+      endTime: project.endTime ?? ''
+    }))
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadTasks)
 
 const getTagClass = (tag: string) => {
-  const map: Record<string, string> = { '培训': 'tag-info', '重要': 'tag-danger' }
+  const map: Record<string, string> = { '培训': 'tag-info', '重要': 'tag-danger', '考核': 'tag-danger' }
   return map[tag] || 'tag-info'
 }
 </script>
 
 <style scoped lang="scss">
 .my-practice { height: 100%; position: relative; }
+
+.task-empty { padding: 48px 0; text-align: center; color: #999; font-size: 14px; }
 
 .layout {
   display: flex;

@@ -1,3 +1,8 @@
+/**
+ * 话术训练管理端（/api/admin/**）接口封装。
+ * 与 SpeechTraining 的 AdminProject/AdminProjectStudent/AdminProjectStatistics 等 Controller 对应，
+ * 端点语义见后端 javadoc；部门树复用 sm.ts 的 getDepartmentTree。
+ */
 import request from './request'
 import { getDepartmentTree } from './sm'
 import type {

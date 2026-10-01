@@ -1,3 +1,7 @@
+/**
+ * 在线课堂分类/主体选人（/api/kng/admin/**）接口封装。
+ * 与 OnlineClassroom 的 CatalogController / SubjectController 对应，端点语义见后端 javadoc。
+ */
 import request from './request'
 
 export interface KngTreeNode {

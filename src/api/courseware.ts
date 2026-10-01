@@ -1,3 +1,8 @@
+/**
+ * 在线课堂课件管理（/api/kng/admin/courseware/**）接口封装。
+ * 各函数与 OnlineClassroom 的 CoursewareController / CoursewareOpController 一一对应，
+ * 端点语义见后端同名方法的 javadoc。
+ */
 import request from './request'
 
 export interface CoursewareListQuery {
