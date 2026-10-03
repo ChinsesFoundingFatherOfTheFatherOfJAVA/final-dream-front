@@ -93,6 +93,14 @@ export interface CoursewareDetail {
   aiSubtitleEnabled: boolean
   /** 隐藏标记（增补A：详情响应追加，向后兼容） */
   hidden?: boolean
+  /** 媒体处理专项（03 §1 修订）：HLS m3u8 相对路径；仅视频类转码成功后有值 */
+  hlsPath?: string | null
+  /** 媒体处理专项：字幕已生成标记（0/1 或布尔，历史字段语义转正） */
+  subtitlesFlag?: number | boolean
+  /** 媒体处理专项：ffprobe 回填的分辨率/编码（仅媒体类课件有值） */
+  mediaWidth?: number | null
+  mediaHeight?: number | null
+  mediaCodec?: string | null
   contributor: CoursewareContributor | null
   createdByName: string | null
   createTime: string | null
@@ -122,6 +130,10 @@ export interface CoursewareSaveReq {
   speedEnabled: boolean
   speedHoursCalc: boolean
   aiSubtitleEnabled: boolean
+  /** 媒体处理专项（MT-01）：ffprobe 回填的分辨率/编码，随发布写入课件元数据列；文档类不传 */
+  mediaWidth?: number | null
+  mediaHeight?: number | null
+  mediaCodec?: string | null
   files: CoursewareFile[]
   links: CoursewareFile[]
   attachmentPaths: Array<{ storagePath: string; fileName: string; fileSize: number }>
@@ -170,7 +182,7 @@ export interface FinishTimeOverview {
 
 export function getCoursewareList(
   params: { page: number; pageSize: number; orderBy?: string; orderType?: string },
-  body: CoursewareListQuery
+  body: CoursewareListQuery,
 ) {
   return request.post<unknown, CoursewarePage>('/kng/admin/courseware/list', body, { params })
 }
@@ -205,11 +217,16 @@ export function batchPutOnCourseware(ids: string[]) {
 }
 
 export function moveCourseware(ids: string[], targetCatalogId: string) {
-  return request.post<unknown, { count: number }>('/kng/admin/courseware/batch/move', { ids, targetCatalogId })
+  return request.post<unknown, { count: number }>('/kng/admin/courseware/batch/move', {
+    ids,
+    targetCatalogId,
+  })
 }
 
 export function copyCourseware(id: string, targetCatalogId: string) {
-  return request.post<unknown, { id: string }>(`/kng/admin/courseware/${id}/copy`, { targetCatalogId })
+  return request.post<unknown, { id: string }>(`/kng/admin/courseware/${id}/copy`, {
+    targetCatalogId,
+  })
 }
 
 export function deleteCourseware(id: string) {
@@ -226,19 +243,19 @@ export function getCoursewareReferences(id: string) {
 
 export function getCoursewareDownloadRecords(id: string) {
   return request.get<unknown, { total: number; records: unknown[] }>(
-    `/kng/admin/courseware/${id}/download-records`
+    `/kng/admin/courseware/${id}/download-records`,
   )
 }
 
 export function getStudyRecords(
   id: string,
   params: { page: number; pageSize: number },
-  body: StudyRecordQuery
+  body: StudyRecordQuery,
 ) {
   return request.post<unknown, { total: number; records: StudyRecord[] }>(
     `/kng/admin/courseware/${id}/study-records`,
     body,
-    { params }
+    { params },
   )
 }
 
@@ -247,20 +264,27 @@ export function getStudyOverview(id: string) {
 }
 
 export function getFinishTimeOverview(id: string) {
-  return request.get<unknown, FinishTimeOverview>(`/kng/admin/courseware/${id}/finish-time-overview`)
+  return request.get<unknown, FinishTimeOverview>(
+    `/kng/admin/courseware/${id}/finish-time-overview`,
+  )
 }
 
 export function getCoursewareDeptFirstLevel() {
-  return request.get<unknown, Array<{ id: string; name: string }>>('/kng/admin/courseware/dept-first-level')
+  return request.get<unknown, Array<{ id: string; name: string }>>(
+    '/kng/admin/courseware/dept-first-level',
+  )
 }
 
 export function getDeptFinishOverview(id: string, deptIds: string[]) {
-  return request.post<unknown, Array<{
-    deptId: string
-    deptName: string
-    numOfStudyPeo: number
-    numOfFinishPeo: number
-  }>>(`/kng/admin/courseware/${id}/dept-finish-overview`, { deptIds })
+  return request.post<
+    unknown,
+    Array<{
+      deptId: string
+      deptName: string
+      numOfStudyPeo: number
+      numOfFinishPeo: number
+    }>
+  >(`/kng/admin/courseware/${id}/dept-finish-overview`, { deptIds })
 }
 
 export function initUpload(data: {
@@ -271,12 +295,15 @@ export function initUpload(data: {
   totalChunks: number
   uploadId?: string
 }) {
-  return request.post<unknown, {
-    uploadId: string
-    uploadedChunks: number[]
-    instant: boolean
-    storagePath: string | null
-  }>('/kng/admin/upload/init', data)
+  return request.post<
+    unknown,
+    {
+      uploadId: string
+      uploadedChunks: number[]
+      instant: boolean
+      storagePath: string | null
+    }
+  >('/kng/admin/upload/init', data)
 }
 
 export function uploadChunk(uploadId: string, chunkIndex: number, file: Blob) {
@@ -284,43 +311,24 @@ export function uploadChunk(uploadId: string, chunkIndex: number, file: Blob) {
   form.append('file', file)
   return request.post<unknown, null>('/kng/admin/upload/chunk', form, {
     params: { uploadId, chunkIndex },
-    timeout: 0
+    timeout: 0,
   })
 }
 
+/** 媒体处理专项（MT-01）：合并完成时同步 ffprobe 的元数据（仅视频/音频类返回） */
+export interface MediaMeta {
+  durationSeconds: number
+  width: number
+  height: number
+  codec: string
+}
+
 export function mergeUpload(uploadId: string, fileName: string) {
-  return request.post<unknown, { storagePath: string; fileSize: number }>(
-    '/kng/admin/upload/merge',
-    { uploadId, fileName }
-  )
+  return request.post<
+    unknown,
+    { storagePath: string; fileSize: number; mediaMeta?: MediaMeta | null }
+  >('/kng/admin/upload/merge', { uploadId, fileName })
 }
 
-export function getTranscodeList(
-  params: { page: number; pageSize: number },
-  body: { tab: 'processing' | 'failed'; keyword?: string }
-) {
-  return request.post<unknown, {
-    total: number
-    processingCount: number
-    records: Array<{
-      id: string
-      title: string
-      catalogName: string
-      uploadTime: string
-      convertedSeconds: number
-      createdByName: string
-      remark: string
-    }>
-  }>('/kng/admin/courseware/transcode/list', body, { params })
-}
-
-export function getSubtitleList(
-  params: { page: number; pageSize: number },
-  body: { tab: 'recognizing' | 'failed'; keyword?: string }
-) {
-  return request.post<unknown, { total: number; records: unknown[] }>(
-    '/kng/admin/courseware/subtitles/list',
-    body,
-    { params }
-  )
-}
+// 注：原骨架页用的 getTranscodeList / getSubtitleList 已删除——
+// 转码/字幕两管理页数据源转正后统一走 src/api/media.ts 的 POST /kng/admin/media/jobs 契约。

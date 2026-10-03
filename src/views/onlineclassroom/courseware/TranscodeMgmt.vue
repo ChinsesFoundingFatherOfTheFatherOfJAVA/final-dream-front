@@ -5,18 +5,32 @@
       <h1>转码管理</h1>
     </header>
     <nav class="tabs">
-      <button type="button" :class="{ active: tab === 'processing' }" @click="switchTab('processing')">转码中</button>
-      <button type="button" :class="{ active: tab === 'failed' }" @click="switchTab('failed')">转码失败</button>
+      <button
+        type="button"
+        :class="{ active: tab === 'processing' }"
+        @click="switchTab('processing')"
+      >
+        转码中
+      </button>
+      <button type="button" :class="{ active: tab === 'failed' }" @click="switchTab('failed')">
+        转码失败
+      </button>
     </nav>
     <div class="manage-toolbar">
       <label>
         <span>⌕</span>
-        <input v-model.trim="keyword" placeholder="请输入名称/分类/分享者姓名搜索" @keyup.enter="load(1)" />
+        <input
+          v-model.trim="keyword"
+          placeholder="请输入名称/分类/分享者姓名搜索"
+          @keyup.enter="load(1)"
+        />
       </label>
       <div v-if="tab === 'processing'" class="toolbar-note">
-        有 <strong>{{ processingCount }}</strong> 个课程处于转码中 <i>i</i>
+        有 <strong>{{ processingTotal }}</strong> 个课程处于转码中 <i>i</i>
       </div>
-      <button v-else type="button" class="reason-link" @click="showReasons">查看常见出错原因</button>
+      <button v-else type="button" class="reason-link" @click="showReasons">
+        查看常见出错原因
+      </button>
     </div>
     <div class="table-wrap">
       <table>
@@ -24,11 +38,13 @@
           <tr>
             <th>名称</th>
             <th>分类</th>
-            <th class="sortable" @click="sortBy('uploadTime')">
-              上传日期 <span>{{ orderBy === 'uploadTime' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
+            <th class="sortable" @click="sortBy('createdAt')">
+              上传日期
+              <span>{{ orderBy === 'createdAt' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
             </th>
-            <th class="sortable" @click="sortBy('convertedSeconds')">
-              已转换时间 <span>{{ orderBy === 'convertedSeconds' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
+            <th class="sortable" @click="sortBy('elapsed')">
+              已转换时间
+              <span>{{ orderBy === 'elapsed' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
             </th>
             <th>分享者</th>
             <th>{{ tab === 'failed' ? '失败原因' : '备注' }}</th>
@@ -37,13 +53,28 @@
         </thead>
         <tbody>
           <tr v-for="row in displayRecords" :key="row.id">
-            <td>{{ row.title }}</td>
+            <td>{{ row.coursewareTitle }}</td>
             <td>{{ row.catalogName || '--' }}</td>
-            <td>{{ row.uploadTime }}</td>
-            <td>{{ formatSeconds(row.convertedSeconds) }}</td>
+            <!-- 转码中 tab 的"上传日期"= job 的 createdAt（发布即投递，与上传时刻一致） -->
+            <td>{{ row.createdAt || '--' }}</td>
+            <td>{{ formatSeconds(liveElapsed(row)) }}</td>
             <td>{{ row.createdByName || '--' }}</td>
-            <td>{{ tab === 'failed' ? '--' : row.remark || '--' }}</td>
-            <td><button type="button" class="retry-btn" disabled>重试</button></td>
+            <td v-if="tab === 'failed'" class="error-cell" :title="row.error || ''">
+              {{ truncateError(row.error) }}
+            </td>
+            <td v-else>--</td>
+            <td>
+              <!-- 仅失败行可重试；后端校验 retry_count<3，超限由 code=1 提示 -->
+              <button
+                v-if="tab === 'failed'"
+                type="button"
+                class="retry-btn"
+                :disabled="retryingId === row.id"
+                @click="retry(row)"
+              >
+                重试
+              </button>
+            </td>
           </tr>
           <tr v-if="!records.length">
             <td colspan="7" class="empty-cell">
@@ -64,30 +95,61 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PaginationBar from './components/PaginationBar.vue'
-import { getTranscodeList } from '@/api/courseware'
+import { retryMediaJob, listMediaJobs, type MediaJobItem, type MediaJobTab } from '@/api/media'
+import { toast } from '@/utils/toast'
 
 const router = useRouter()
-const tab = ref<'processing' | 'failed'>('processing')
+const tab = ref<MediaJobTab>('processing')
 const keyword = ref('')
 const page = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-const processingCount = ref(0)
-const records = ref<Awaited<ReturnType<typeof getTranscodeList>>['records']>([])
-const orderBy = ref<'uploadTime' | 'convertedSeconds'>('uploadTime')
+// "有 N 个课程处于转码中"固定取 processing tab 的 total；
+// 当前在失败 tab 时用一条 silent 的 pageSize=1 查询补齐该数字
+const processingTotal = ref(0)
+const records = ref<MediaJobItem[]>([])
+const retryingId = ref('')
+
+/**
+ * "已转换时间"实现决策（02 §5 两个方案二选一）：选 **前端自算 + 30s 跳动**。
+ * now 每 30s 更新一次触发重渲染，running 行耗时 = now - startedAt（本地毫秒差，精确到秒）；
+ * 不起服务端轮询的原因：耗时的精度需求只有分钟级，自算零请求开销；
+ * 行是否移出 tab（转码成功/失败）仍由用户下次进入页面或刷新时感知。
+ */
+const nowTick = ref(Date.now())
+let tickTimer: number | null = null
+
+const orderBy = ref<'createdAt' | 'elapsed'>('createdAt')
 const orderType = ref<'asc' | 'desc'>('desc')
+
+// 服务端 "yyyy-MM-dd HH:mm:ss" 按本地时区解析（与后端同为服务器本地时间口径）
+function parseServerTime(value: string | null): number | null {
+  if (!value) return null
+  const timestamp = new Date(value.replace(' ', 'T')).getTime()
+  return Number.isNaN(timestamp) ? null : timestamp
+}
+
+/** 行耗时：running/pending 行按 startedAt 实时自算（pending 无 startedAt 时记 0）；
+ *  已终结行直接用后端快照 elapsedSeconds */
+function liveElapsed(row: MediaJobItem): number {
+  if (row.status === 0 || row.status === 1) {
+    const started = parseServerTime(row.startedAt)
+    if (started === null) return 0
+    return Math.max(0, Math.floor((nowTick.value - started) / 1000))
+  }
+  return row.elapsedSeconds ?? 0
+}
+
+/** 失败原因列：当前页本地排序用（保持骨架原有的点击表头排序交互） */
+const sortValue = (row: MediaJobItem) =>
+  orderBy.value === 'elapsed' ? liveElapsed(row) : (parseServerTime(row.createdAt) ?? 0)
+
 const displayRecords = computed(() => {
   const factor = orderType.value === 'asc' ? 1 : -1
-  return [...records.value].sort((left, right) => {
-    if (orderBy.value === 'convertedSeconds') {
-      return (left.convertedSeconds - right.convertedSeconds) * factor
-    }
-    return left.uploadTime.localeCompare(right.uploadTime) * factor
-  })
+  return [...records.value].sort((left, right) => (sortValue(left) - sortValue(right)) * factor)
 })
 
 function formatSeconds(seconds: number) {
@@ -96,15 +158,23 @@ function formatSeconds(seconds: number) {
   const rest = seconds % 60
   return hours > 0
     ? `${hours}时${minutes}分${rest}秒`
-    : minutes > 0 ? `${minutes}分${rest}秒` : `${rest}秒`
+    : minutes > 0
+      ? `${minutes}分${rest}秒`
+      : `${rest}秒`
 }
 
-function switchTab(value: 'processing' | 'failed') {
+// 失败原因截断展示（约 30 字符），悬浮 title 看全量（error 最长 2000 字符）
+function truncateError(error: string | null) {
+  const text = error || '--'
+  return text.length > 30 ? `${text.slice(0, 30)}…` : text
+}
+
+function switchTab(value: MediaJobTab) {
   tab.value = value
   void load(1)
 }
 
-function sortBy(value: 'uploadTime' | 'convertedSeconds') {
+function sortBy(value: 'createdAt' | 'elapsed') {
   if (orderBy.value === value) orderType.value = orderType.value === 'asc' ? 'desc' : 'asc'
   else {
     orderBy.value = value
@@ -112,22 +182,58 @@ function sortBy(value: 'uploadTime' | 'convertedSeconds') {
   }
 }
 
+/** "查看常见出错原因"静态提示弹窗（原平台文案照原样推断，仅提示） */
 function showReasons() {
   window.alert('常见出错原因：文件损坏、格式不支持、文件加密或转码服务暂不可用。')
 }
 
-async function load(nextPage?: number) {
-  if (nextPage) page.value = nextPage
-  const result = await getTranscodeList(
-    { page: page.value, pageSize: pageSize.value },
-    { tab: tab.value, keyword: keyword.value }
-  )
-  total.value = result.total
-  processingCount.value = result.processingCount
-  records.value = result.records
+/** 重试失败任务：成功后后端重置回 pending，当前行会移出失败 tab，刷新列表即可 */
+async function retry(row: MediaJobItem) {
+  retryingId.value = row.id
+  try {
+    await retryMediaJob(row.id)
+    toast.info('已重新发起转码')
+    await load()
+  } finally {
+    retryingId.value = ''
+  }
 }
 
-onMounted(() => load())
+async function load(nextPage?: number) {
+  if (nextPage) page.value = nextPage
+  const result = await listMediaJobs(
+    { page: page.value, pageSize: pageSize.value },
+    { type: 1, tab: tab.value, keyword: keyword.value },
+  )
+  total.value = result.total
+  if (tab.value === 'processing') processingTotal.value = result.total
+  records.value = result.records
+  // 失败 tab 下补查转码中 total（silent，失败不打扰用户）
+  if (tab.value === 'failed') {
+    try {
+      const processing = await listMediaJobs(
+        { page: 1, pageSize: 1 },
+        { type: 1, tab: 'processing', keyword: '' },
+        { silent: true },
+      )
+      processingTotal.value = processing.total
+    } catch {
+      /* 辅助数字查询失败时保持旧值 */
+    }
+  }
+}
+
+onMounted(() => {
+  void load()
+  // 30s 跳动：驱动 running 行的"已转换时间"重算（见 nowTick 注释）
+  tickTimer = window.setInterval(() => {
+    nowTick.value = Date.now()
+  }, 30_000)
+})
+
+onBeforeUnmount(() => {
+  if (tickTimer !== null) window.clearInterval(tickTimer)
+})
 </script>
 
 <style scoped lang="scss">
@@ -287,13 +393,23 @@ table {
   }
 }
 
+.error-cell {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #e05a4e;
+}
+
 .retry-btn {
   border: none;
   background: transparent;
   color: #2e7cf6;
+  cursor: pointer;
 
   &:disabled {
     color: #c2c8d2;
+    cursor: not-allowed;
   }
 }
 

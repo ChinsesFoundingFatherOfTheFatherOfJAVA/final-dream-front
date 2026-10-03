@@ -384,7 +384,8 @@ import {
   getCoursewareDetail,
   updateCourseware,
   type CoursewareFile,
-  type CoursewareSaveReq
+  type CoursewareSaveReq,
+  type MediaMeta
 } from '@/api/courseware'
 import { resolveAssetUrl } from '@/api/request'
 import { uploadFile } from '@/utils/chunkUploader'
@@ -607,6 +608,9 @@ async function handleFiles(files: File[]) {
   }
 }
 
+/** MT-01：最后上传的媒体文件经 ffprobe 回填的元数据（发布时透传进 SaveRequest 写入课件元数据列） */
+const lastMediaMeta = ref<MediaMeta | null>(null)
+
 async function uploadRow(row: typeof uploadRows.value[number]) {
   if (!row.file) return
   try {
@@ -622,8 +626,25 @@ async function uploadRow(row: typeof uploadRows.value[number]) {
       storagePath: result.storagePath
     }
     form.files.push(file)
+    applyMediaMeta(result.mediaMeta)
   } catch {
     row.error = true
+  }
+}
+
+/**
+ * MT-01 元数据自动回填：合并完成后用 ffprobe 的时长自动填"标准时长"（12分52秒 → 12分+52秒）。
+ * 验收口径：仅当表单时长值为空或 0 时回填，用户已手填的值（如 10分0秒）不覆盖。
+ * 分辨率/编码始终取最后一次媒体上传的值（后端以发布请求透传为准）。
+ */
+function applyMediaMeta(meta?: MediaMeta | null) {
+  if (!meta) return
+  lastMediaMeta.value = meta
+  const minutes = Number(form.standardMinutes || 0)
+  const seconds = Number(form.standardSeconds || 0)
+  if (minutes === 0 && seconds === 0) {
+    form.standardMinutes = Math.floor(meta.durationSeconds / 60)
+    form.standardSeconds = meta.durationSeconds % 60
   }
 }
 
@@ -803,6 +824,14 @@ async function submit() {
 
   const payload: CoursewareSaveReq = {
     ...form,
+    // MT-01/02：ffprobe 回填的分辨率/编码随发布透传（后端已支持，写入课件元数据列）；文档/外链类无值
+    ...(props.variant === 'file' && lastMediaMeta.value
+      ? {
+          mediaWidth: lastMediaMeta.value.width,
+          mediaHeight: lastMediaMeta.value.height,
+          mediaCodec: lastMediaMeta.value.codec
+        }
+      : {}),
     studyScore: scoreMode.value === 'follow' ? null : Number(form.studyScore || 0),
     standardDurationFollow: durationMode.value === 'follow',
     files: props.variant === 'link' ? [] : form.files,

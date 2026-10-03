@@ -60,7 +60,8 @@
                 <dt>学时计算</dt>
                 <dd>{{ effectiveHours ? '倍速播放时学习时长也倍速计算' : '关闭' }}</dd>
                 <dt>AI字幕</dt>
-                <dd>{{ detail.aiSubtitleEnabled ? '开启AI字幕（生成能力待专项上线）' : '关闭' }}</dd>
+                <!-- AI字幕与转码专项已上线：去掉"生成能力待专项上线"占位后缀，开关值语义不变 -->
+                <dd>{{ detail.aiSubtitleEnabled ? '开启AI字幕' : '关闭' }}</dd>
               </dl>
             </section>
           </div>

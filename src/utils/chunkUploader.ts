@@ -1,4 +1,4 @@
-import { initUpload, mergeUpload, uploadChunk } from '@/api/courseware'
+import { initUpload, mergeUpload, uploadChunk, type MediaMeta } from '@/api/courseware'
 
 const CHUNK_SIZE = 5 * 1024 * 1024
 
@@ -20,7 +20,7 @@ async function fingerprint(file: File) {
 export async function uploadFile(
   file: File,
   onProgress?: (percent: number) => void,
-  chunkSize = CHUNK_SIZE
+  chunkSize = CHUNK_SIZE,
 ) {
   const totalChunks = Math.max(1, Math.ceil(file.size / chunkSize))
   const uploadId = crypto.randomUUID()
@@ -31,14 +31,16 @@ export async function uploadFile(
     md5,
     chunkSize,
     totalChunks,
-    uploadId
+    uploadId,
   })
   if (initialized.instant && initialized.storagePath) {
     onProgress?.(100)
     return {
       fileName: file.name,
       fileSize: file.size,
-      storagePath: initialized.storagePath
+      storagePath: initialized.storagePath,
+      // 秒传不走 merge，拿不到 ffprobe 元数据，保持 undefined
+      mediaMeta: undefined,
     }
   }
 
@@ -56,6 +58,8 @@ export async function uploadFile(
   return {
     fileName: file.name,
     fileSize: merged.fileSize,
-    storagePath: merged.storagePath
+    storagePath: merged.storagePath,
+    // MT-01：合并完成时后端同步 ffprobe，媒体类文件带回时长/分辨率/编码
+    mediaMeta: merged.mediaMeta ?? undefined,
   }
 }
