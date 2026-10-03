@@ -29,6 +29,8 @@ export interface CoursewareListItem {
   status: number
   statusDesc: string
   onSale: number
+  /** 隐藏标记（增补A：独立于 status 的双标记，行置灰 + "已隐藏"标签） */
+  hidden: boolean
   updateTime: string | null
   studyCount: number
   platformNo: string | null
@@ -89,6 +91,8 @@ export interface CoursewareDetail {
   speedEnabled: boolean
   speedHoursCalc: boolean
   aiSubtitleEnabled: boolean
+  /** 隐藏标记（增补A：详情响应追加，向后兼容） */
+  hidden?: boolean
   contributor: CoursewareContributor | null
   createdByName: string | null
   createTime: string | null
@@ -146,6 +150,8 @@ export interface StudyRecord {
   finishCostDays: number | null
   finishMethod: number | null
   finishMethodDesc: string | null
+  /** 学习进度%（课程内学习详情 CS-05 增补字段；课件模块自身不返回，恒 undefined） */
+  studySchedule?: number | null
 }
 
 export interface StudyOverview {
@@ -183,6 +189,11 @@ export function updateCourseware(id: string, data: CoursewareSaveReq) {
 
 export function takeDownCourseware(id: string) {
   return request.post<unknown, { count: number }>(`/kng/admin/courseware/${id}/take-down`)
+}
+
+/** 隐藏/取消隐藏课件（增补A）：更新 hidden 列，独立于 status */
+export function hideCourseware(id: string, hidden: boolean) {
+  return request.post<unknown, null>(`/kng/admin/courseware/${id}/hide`, { hidden })
 }
 
 export function batchTakeDownCourseware(ids: string[]) {

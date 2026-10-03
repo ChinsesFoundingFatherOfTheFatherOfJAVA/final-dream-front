@@ -725,6 +725,12 @@ async function load() {
   contributorAccount.value = auth.user?.account || '--'
   applyGlobalPlaySettings()
 
+  // 增补B：列表页左树有选中分类时，创建表单通过 query.catalogId 继承预选（四种发布途径共用）
+  const presetCatalogId = route.query.catalogId ? String(route.query.catalogId) : ''
+  if (props.mode === 'create' && presetCatalogId && flatCatalogs.value.some(node => node.id === presetCatalogId)) {
+    form.catalogId = presetCatalogId
+  }
+
   if (props.mode === 'edit') {
     formLoading.value = true
     try {

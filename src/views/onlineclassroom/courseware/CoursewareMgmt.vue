@@ -136,7 +136,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in page.records" :key="row.id">
+            <tr v-for="row in page.records" :key="row.id" :class="{ 'row-hidden': row.hidden }">
               <td>
                 <input
                   type="checkbox"
@@ -148,6 +148,7 @@
                 <span class="type-icon" :class="`type-${row.type}`">{{ typeBadge(row.type) }}</span>
                 <button type="button" class="title-link" @click="openDetail(row.id)">{{ row.title }}</button>
                 <span v-if="row.type === 8" class="external-icon" title="外链课">↗</span>
+                <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
               </td>
               <td>{{ row.typeDesc }}</td>
               <td>{{ row.updateTime || '--' }}</td>
@@ -199,6 +200,8 @@
       @mouseenter="cancelCloseMore"
       @mouseleave="scheduleCloseMore"
     >
+      <!-- 增补A：隐藏在下架之前；hidden 为独立双标记，可取消隐藏 -->
+      <button type="button" @click="openHide(moreRow)">{{ moreRow.hidden ? '取消隐藏' : '隐藏' }}</button>
       <button v-if="moreRow.status === 2" type="button" @click="openTakeDown(moreRow)">下架</button>
       <button type="button" @click="openMove(moreRow)">移动</button>
       <button type="button" @click="openCopy(moreRow)">复制</button>
@@ -239,6 +242,14 @@
       @close="moveVisible = false"
       @confirm="confirmMove"
     />
+    <!-- 增补A：隐藏确认弹窗（截图18 语义），与课程模块共用 -->
+    <HideConfirmDialog
+      :visible="hideVisible"
+      target-type="课件"
+      :name="hideRow?.title || ''"
+      @close="hideVisible = false"
+      @confirm="confirmHide"
+    />
   </div>
 </template>
 
@@ -253,6 +264,7 @@ import CopyDrawer from './components/CopyDrawer.vue'
 import SubtitleDrawer from './components/SubtitleDrawer.vue'
 import MoveCoursewareDrawer from './components/MoveCoursewareDrawer.vue'
 import PaginationBar from './components/PaginationBar.vue'
+import HideConfirmDialog from '../components/HideConfirmDialog.vue'
 import { getKngCatalogTree, type KngTreeNode } from '@/api/kng'
 import {
   batchDeleteCourseware,
@@ -263,6 +275,7 @@ import {
   getCoursewareDownloadRecords,
   getCoursewareList,
   getCoursewareReferences,
+  hideCourseware,
   moveCourseware,
   takeDownCourseware,
   type CoursewareListItem,
@@ -312,6 +325,9 @@ const subtitleVisible = ref(false)
 const subtitleRow = ref<CoursewareListItem | null>(null)
 const moveVisible = ref(false)
 const moveRows = ref<string[]>([])
+// 增补A：隐藏确认弹窗状态
+const hideVisible = ref(false)
+const hideRow = ref<CoursewareListItem | null>(null)
 
 const typeOptions = [
   { value: 1, label: '文档' },
@@ -399,7 +415,11 @@ function toggleAll(checked: boolean) {
 
 function goPublish(variant: 'file' | 'scorm' | 'html' | 'link') {
   publishOpen.value = false
-  router.push(`/kng/courseware/publish/${variant}`)
+  // 增补B：四种发布途径共用的表单页通过 query 继承左树选中分类
+  router.push({
+    path: `/kng/courseware/publish/${variant}`,
+    query: selectedCatalogId.value ? { catalogId: selectedCatalogId.value } : {}
+  })
 }
 
 function openDetail(id: string) {
@@ -438,6 +458,21 @@ function openTakeDown(row: CoursewareListItem) {
   moreRow.value = null
   takeDownRow.value = row
   takeDownVisible.value = true
+}
+
+// 增补A：打开隐藏确认弹窗（hidden 与 status 独立双标记，可反复切换）
+function openHide(row: CoursewareListItem) {
+  moreRow.value = null
+  hideRow.value = row
+  hideVisible.value = true
+}
+
+async function confirmHide() {
+  if (!hideRow.value) return
+  await hideCourseware(hideRow.value.id, !hideRow.value.hidden)
+  toast.info(hideRow.value.hidden ? '已取消隐藏' : '已隐藏')
+  hideVisible.value = false
+  await reload()
 }
 
 async function confirmTakeDown() {
@@ -871,6 +906,30 @@ th {
 
 tbody tr:hover {
   background: #fafcff;
+}
+
+/* 增补A：隐藏课件行置灰（独立于下架，可取消隐藏恢复） */
+tr.row-hidden {
+  background: #fafbfc;
+
+  td {
+    color: #b3bac7;
+  }
+
+  .title-link {
+    color: #9aa2b1;
+  }
+}
+
+.hidden-tag {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  border: 1px solid #f0b25e;
+  border-radius: 4px;
+  background: #fdf6ec;
+  color: #d98a1f;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 input[type='checkbox'] {

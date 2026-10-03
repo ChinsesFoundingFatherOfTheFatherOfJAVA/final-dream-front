@@ -74,9 +74,44 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'course',
         name: 'KngCourse',
-        component: () => import('@/views/onlineclassroom/PlaceholderPage.vue'),
-        props: { title: '课程管理' },
+        component: () => import('@/views/onlineclassroom/course/CourseMgmt.vue'),
         meta: { title: '课程管理', permission: 'kng:course' }
+      },
+      {
+        path: 'course/info/:id',
+        name: 'KngCourseInfo',
+        component: () => import('@/views/onlineclassroom/course/CourseInfo.vue'),
+        meta: { title: '课程详情', permission: 'kng:course' }
+      },
+      {
+        // CS-05 课程内课件学习详情（列=课件学习详情+学习进度%）
+        path: 'course/courseware-study/:courseId/:coursewareId',
+        name: 'KngCourseCoursewareStudy',
+        component: () => import('@/views/onlineclassroom/course/CoursewareStudyInCourse.vue'),
+        meta: { title: '课件学习详情', permission: 'kng:course' }
+      },
+      {
+        // CS-08 创建课程第一步（预填"未命名课程"+继承左树选中分类）
+        path: 'course/create/step1',
+        name: 'KngCourseCreate',
+        component: () => import('@/views/onlineclassroom/course/CourseForm.vue'),
+        props: { mode: 'create' },
+        meta: { title: '创建课程', permission: 'kng:course' }
+      },
+      {
+        // CS-07 编辑课程第一步（基本信息）
+        path: 'course/edit/:id/step1',
+        name: 'KngCourseEditStep1',
+        component: () => import('@/views/onlineclassroom/course/CourseForm.vue'),
+        props: { mode: 'edit' },
+        meta: { title: '编辑课程', permission: 'kng:course' }
+      },
+      {
+        // CS-07a 设计器（正式实现由设计器负责人填充 CourseDesigner.vue，当前为占位页）
+        path: 'course/edit/:id/designer',
+        name: 'KngCourseDesigner',
+        component: () => import('@/views/onlineclassroom/course/designer/CourseDesigner.vue'),
+        meta: { title: '编辑课程-章节任务', permission: 'kng:course' }
       },
       {
         path: 'catalog',
