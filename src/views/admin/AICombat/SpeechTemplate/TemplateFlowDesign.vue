@@ -108,11 +108,10 @@
       @delete="handleDeleteEdge(edgeDialog.id)"
     />
 
-    <AIGenerateDialog
+    <AIGenScriptDialog
       v-if="showAIDialog"
-      :generating="aiGenerating"
       @close="showAIDialog = false"
-      @generate="handleAIGenerate"
+      @imported="handleAIImported"
     />
 
     <TemplateImportDialog
@@ -134,11 +133,10 @@ import BigNode from '@/components/business/nodes/BigNode.vue'
 import StartEndNode from '@/components/business/nodes/StartEndNode.vue'
 import NodeConfigPanel from '@/components/business/NodeConfigPanel.vue'
 import EdgeWeightDialog from '@/components/business/EdgeWeightDialog.vue'
-import AIGenerateDialog from '@/components/business/AIGenerateDialog.vue'
+import AIGenScriptDialog from '@/components/business/AIGenScriptDialog.vue'
 import TemplateImportDialog from '@/components/business/TemplateImportDialog.vue'
 import type { FlowNodeData } from '@/types/speech'
 import { getTemplateFlow, saveTemplateFlow } from '@/api/template'
-import { generateScript } from '@/api/ai'
 import { toVfNode, toVfEdge, toBackendNode, toBackendEdge } from '@/utils/convert'
 
 import '@vue-flow/core/dist/style.css'
@@ -158,7 +156,6 @@ const selectedNodeConfig = ref<{ nodeId: string; subType: 'trainer' | 'student';
 const edgeDialog = ref<any>(null)
 const showAIDialog = ref(false)
 const showTemplateDialog = ref(false)
-const aiGenerating = ref(false)
 const updateTime = ref('2026-09-14 16:00')
 
 let nodeSeq = 0
@@ -366,31 +363,21 @@ const openAIDialog = () => {
   showAIDialog.value = true
 }
 
-const handleAIGenerate = async (scene: string, rounds: number, firstSpeaker: string) => {
-  if (aiGenerating.value) return
-  aiGenerating.value = true
-  try {
-    const res: any = await generateScript({ description: scene, rounds, firstSpeaker })
-    const backendNodes = res.nodes || []
-    const backendEdges = res.edges || []
-    // AI 返回的节点没有后端 id，按数组下标补齐临时 id
-    const tempIds = backendNodes.map((n: any, i: number) => (n.id != null ? n.id : i + 1))
-    const nodes = backendNodes.map((n: any, i: number) => toVfNode({ ...n, id: tempIds[i] }))
-    // AI 的 edges 用 source/target 表示节点数组下标，这里换算成画布需要的 sourceNodeId/targetNodeId
-    const edges = backendEdges.map((e: any, i: number) => toVfEdge({
-      id: e.id ?? `ai-${i}`,
-      sourceNodeId: tempIds[e.source],
-      targetNodeId: tempIds[e.target],
-      weight: e.weight
-    }))
-    flowNodes.value = nodes
-    flowEdges.value = edges
-    hasFlow.value = true
-    showAIDialog.value = false
-    await nextTick()
-    setTimeout(() => fitView({ padding: 0.25, duration: 200 }), 80)
-  } catch { /* handled */ }
-  finally { aiGenerating.value = false }
+const handleAIImported = (backendNodes: any[], backendEdges: any[]) => {
+  // v2.0 三步向导导入：后端 import-script 已编排好 nodes/edges（同旧 generate-script 响应结构）
+  const tempIds = backendNodes.map((n: any, i: number) => (n.id != null ? n.id : i + 1))
+  const nodes = backendNodes.map((n: any, i: number) => toVfNode({ ...n, id: tempIds[i] }))
+  const edges = backendEdges.map((e: any, i: number) => toVfEdge({
+    id: e.id ?? `ai-${i}`,
+    sourceNodeId: tempIds[e.source],
+    targetNodeId: tempIds[e.target],
+    weight: e.weight
+  }))
+  flowNodes.value = nodes
+  flowEdges.value = edges
+  hasFlow.value = true
+  showAIDialog.value = false
+  nextTick(() => setTimeout(() => fitView({ padding: 0.25, duration: 200 }), 80))
 }
 
 const handleTemplateImport = (_templateId: number, backendNodes: any[], backendEdges: any[]) => {
