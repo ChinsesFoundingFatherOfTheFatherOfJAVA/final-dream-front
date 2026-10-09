@@ -90,6 +90,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
 import {
   addRolePermission,
@@ -163,7 +164,7 @@ async function handleDelete() {
     toast.warn(`该角色下仍有 ${role.userCount} 名用户，请先取消全部授权`)
     return
   }
-  if (!window.confirm(`确认删除角色“${role.name}”？`)) return
+  if (!(await confirmDialog({ message: `确认删除角色“${role.name}”？`, danger: true }))) return
   try {
     await deleteRole(role.roleId)
     await loadRoles()

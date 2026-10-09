@@ -64,6 +64,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { toast } from '@/utils/toast'
+import { confirmDialog } from '@/utils/confirmDialog'
 
 const props = defineProps<{
   generating: boolean
@@ -96,15 +98,15 @@ watch(
 
 const handleGenerate = () => {
   if (!scene.value.trim()) {
-    alert('请输入对话场景')
+    toast.warn('请输入对话场景')
     return
   }
   emit('generate', scene.value, rounds.value, firstSpeaker.value)
 }
 
-const handleCancel = () => {
+const handleCancel = async () => {
   if (props.generating) {
-    if (!confirm('生成正在进行中，确定要取消吗？')) return
+    if (!(await confirmDialog({ message: '生成正在进行中，确定要取消吗？', danger: true }))) return
   }
   emit('close')
 }

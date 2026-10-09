@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
 import { getTemplateDetail } from '@/api/template'
 import { deleteTemplate } from '@/api/template'
@@ -75,7 +76,7 @@ const load = async () => {
 }
 
 const handleDelete = async () => {
-  if (!confirm('确定要删除这个模板吗？')) return
+  if (!(await confirmDialog({ message: '确定要删除这个模板吗？', danger: true }))) return
   try {
     await deleteTemplate(templateId)
     router.push('/sparring/newtemplate')

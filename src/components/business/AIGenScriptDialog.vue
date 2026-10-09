@@ -27,7 +27,7 @@
               ref="step1Ref"
               v-model:description="description"
               v-model:first-speaker="firstSpeaker"
-              :materials="materials"
+              v-model:materials="materials"
               :generating="generating"
               :has-scene="!!scene"
               @generate="handleGenScene"
@@ -70,6 +70,7 @@
           <div class="pane-full">
             <Step3Preview
               :rounds="rounds"
+              :narration="narration"
               :language="language"
               :first-speaker="firstSpeaker"
               :session-id="sessionId"
@@ -128,6 +129,7 @@ const sceneHash = ref('')
 const sceneFailed = ref(false)
 const outlines = ref<OutlineItem[]>([])
 const rounds = ref<RoundItem[]>([])
+const narration = ref('')
 const language = ref<'zh' | 'en'>('zh')
 
 const step1Ref = ref<InstanceType<typeof Step1BasicInfo>>()
@@ -138,12 +140,14 @@ let progressTimer: number | undefined
 
 const stepClass = (i: number) => (step.value > i ? 'done' : step.value === i ? 'active' : 'todo')
 
-/** SG-06 进度模拟：预估时长=轮数×8s，每秒线性递增压 90% 封顶。 */
+/** SG-06 进度模拟：预估时长=轮数×8s，每秒线性递增压 90% 封顶；展示取整（小数无意义）。 */
 const startProgress = (estimatedSeconds: number) => {
   progress.value = 0
+  let raw = 0
   const perTick = 100 / (estimatedSeconds * 1.1)
   progressTimer = window.setInterval(() => {
-    progress.value = Math.min(90, progress.value + perTick)
+    raw = Math.min(90, raw + perTick)
+    progress.value = Math.round(raw)
   }, 1000)
 }
 
@@ -236,9 +240,11 @@ const handleGenScript = async (lang: 'zh' | 'en') => {
       sceneHash: sceneHash.value,
       scene: scene.value!,
       outlines: outlines.value,
-      language: lang
+      language: lang,
+      firstSpeaker: firstSpeaker.value
     })
     rounds.value = res.rounds || []
+    narration.value = res.narration || ''
     stopProgress()
     step.value = 3
   } catch (e: any) {

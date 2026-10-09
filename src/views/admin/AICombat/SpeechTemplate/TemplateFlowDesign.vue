@@ -84,6 +84,9 @@
           <template #node-student_ask="nodeProps">
             <BigNode v-bind="nodeProps" />
           </template>
+          <template #node-narration="nodeProps">
+            <NarrationNode v-bind="nodeProps" />
+          </template>
         </VueFlow>
       </div>
 
@@ -91,6 +94,7 @@
         v-if="selectedNodeConfig"
         :node-data="selectedNodeConfig.data"
         :sub-type="selectedNodeConfig.subType"
+        :node-kind="selectedNodeConfig.nodeKind || 'big'"
         @close="selectedNodeConfig = null"
         @save="handleNodeSave"
         @delete="handleDeleteSelectedNode"
@@ -124,12 +128,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
+import { toast } from '@/utils/toast'
 import { useRoute } from 'vue-router'
 import { VueFlow, useVueFlow, ConnectionMode, MarkerType } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import BigNode from '@/components/business/nodes/BigNode.vue'
+import NarrationNode from '@/components/business/nodes/NarrationNode.vue'
 import StartEndNode from '@/components/business/nodes/StartEndNode.vue'
 import NodeConfigPanel from '@/components/business/NodeConfigPanel.vue'
 import EdgeWeightDialog from '@/components/business/EdgeWeightDialog.vue'
@@ -152,7 +158,7 @@ const flowRef = ref()
 const hasFlow = ref(false)
 const flowNodes = ref<any[]>([])
 const flowEdges = ref<any[]>([])
-const selectedNodeConfig = ref<{ nodeId: string; subType: 'trainer' | 'student'; data: FlowNodeData } | null>(null)
+const selectedNodeConfig = ref<{ nodeId: string; subType: 'trainer' | 'student'; nodeKind?: 'big' | 'narration'; data: FlowNodeData } | null>(null)
 const edgeDialog = ref<any>(null)
 const showAIDialog = ref(false)
 const showTemplateDialog = ref(false)
@@ -165,6 +171,7 @@ const nodePanelItems = [
   { type: 'start', label: '开始', color: '#52c41a' },
   { type: 'trainer_ask', label: '陪练者问学员说', color: '#fa8c16' },
   { type: 'student_ask', label: '学员问陪练者说', color: '#1890ff' },
+  { type: 'narration', label: '旁白', color: '#722ed1' },
   { type: 'end', label: '结束', color: '#f5222d' }
 ]
 
@@ -204,13 +211,23 @@ const onNodeClick = ({ node, event }: any) => {
   const delBtn = (event?.target as HTMLElement)?.closest?.('.node-delete-btn')
   if (delBtn) {
     if (delBtn.getAttribute('data-deletable') === 'false') {
-      alert('开始和结束节点不可删除')
+      toast.warn('开始和结束节点不可删除')
       return
     }
     handleDeleteNode(node.id)
     return
   }
   const nodeType = node?.data?.nodeType
+  // v1.2 旁白节点：整节点点击即开面板（无 trainer/student 双气泡）
+  if (nodeType === 'narration') {
+    selectedNodeConfig.value = {
+      nodeId: node.id,
+      subType: 'trainer',
+      nodeKind: 'narration',
+      data: JSON.parse(JSON.stringify({ ...node.data, narration: node.data.narration || '' }))
+    }
+    return
+  }
   if (nodeType !== 'trainer_ask' && nodeType !== 'student_ask') return
   const target = (event?.target as HTMLElement)?.closest?.('[data-sub]') as HTMLElement | null
   if (!target) return
@@ -245,7 +262,7 @@ const onNodesChange = () => {
 const handleDeleteNode = (nodeId: string) => {
   const node: any = findNode(nodeId)
   if (node && node.deletable === false) {
-    alert('开始和结束节点不可删除')
+    toast.warn('开始和结束节点不可删除')
     return
   }
   removeNodes(nodeId)
@@ -279,6 +296,15 @@ const onDrop = (event: DragEvent) => {
   const y = position.y - 40
   if (type === 'start' || type === 'end') {
     flowNodes.value.push(buildSimpleNode(genId(type), type as 'start' | 'end', x, y))
+  } else if (type === 'narration') {
+    // v1.2 旁白节点：可拖入任意位置（含中途场景转换提示）
+    flowNodes.value.push({
+      id: genId('narration'),
+      type: 'narration',
+      position: { x, y },
+      deletable: true,
+      data: { nodeType: 'narration', nodeTypeTitle: '旁白', label: '旁白', narration: '', deletable: true, backendId: null }
+    })
   } else {
     flowNodes.value.push(buildBigNode(genId('big'), type as 'trainer_ask' | 'student_ask', x, y, defaultData()))
   }
@@ -354,7 +380,7 @@ const handleSave = async () => {
   const backendEdges = flowEdges.value.map((e: any) => toBackendEdge(e, idMap))
   try {
     await saveTemplateFlow(templateId, { nodes: backendNodes, edges: backendEdges })
-    alert('模板流程已保存')
+    toast.success('模板流程已保存')
     loadFlow()
   } catch { /* handled */ }
 }

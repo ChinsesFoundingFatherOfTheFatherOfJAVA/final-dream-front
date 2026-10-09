@@ -14,6 +14,7 @@ export interface PassCondition {
 // 节点数据
 export interface FlowNodeData {
   nodeName: string
+  narration?: string // 旁白（v1.2 旁白节点 nodeType=5 专用）
   trainerQuestion?: string // 陪练者问
   standardScript?: string // 标准话术
   keyPoints?: KeyPoint[] // 要点

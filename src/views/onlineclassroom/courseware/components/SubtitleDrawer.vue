@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import KngDrawer from '../../components/KngDrawer.vue'
 import { resolveAssetUrl } from '@/api/request'
 import type { CoursewareListItem } from '@/api/courseware'
@@ -255,7 +256,7 @@ async function save() {
 async function regenerate() {
   const id = props.courseware?.id
   if (!id) return
-  if (subtitlesFlag.value && !window.confirm('将覆盖现有字幕，确定重新生成吗？')) return
+  if (subtitlesFlag.value && !(await confirmDialog({ message: '将覆盖现有字幕，确定重新生成吗？' }))) return
   regenerating.value = true
   try {
     await regenerateSubtitles(id)

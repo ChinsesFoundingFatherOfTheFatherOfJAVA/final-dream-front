@@ -8,8 +8,11 @@
         class="message-row"
         :class="msg.role === 2 ? 'student' : 'trainer'"
       >
+        <!-- v1.2 旁白消息：微信"撤回了一条消息"式居中灰条，无头像无气泡 -->
+        <div v-if="msg.role === 3" class="narration-tip">{{ msg.content }}</div>
+
         <!-- 陪练者消息：左侧头像 + 气泡（形象与训练页左栏同源） -->
-        <template v-if="msg.role === 1">
+        <template v-else-if="msg.role === 1">
           <img class="avatar trainer-avatar" :src="trainerFace(store.trainerAvatar)" alt="" />
           <div class="bubble trainer-bubble">
             <span class="bubble-text">{{ msg.content }}</span>
@@ -305,6 +308,9 @@ const uploadRecording = async (blob: Blob) => {
       return
     }
 
+    if (res.narrationMessages?.length) {
+      for (const nm of res.narrationMessages) store.appendMessage(nm)
+    }
     if (res.nextTrainerMessage) {
       store.appendMessage(res.nextTrainerMessage)
     }
@@ -423,6 +429,9 @@ const onSend = async () => {
       return
     }
 
+    if (res.narrationMessages?.length) {
+      for (const nm of res.narrationMessages) store.appendMessage(nm)
+    }
     if (res.nextTrainerMessage) {
       store.appendMessage(res.nextTrainerMessage)
     }
@@ -493,6 +502,17 @@ const onSend = async () => {
 .student-avatar {
   background: #2ec5b6;
   color: #fff;
+}
+
+.narration-tip {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 4px 12px;
+  line-height: 1.6;
 }
 
 .bubble {

@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
 import TrainChat from './TrainChat.vue'
 import TipModal from './TipModal.vue'
@@ -130,7 +131,7 @@ const toggleDetailPanel = () => {
 const exiting = ref(false)
 const onExit = async () => {
   if (exiting.value) return
-  if (!confirm('确定退出训练吗？本次练习将保存为未完成记录。')) return
+  if (!(await confirmDialog({ message: '确定退出训练吗？本次练习将保存为未完成记录。', danger: true }))) return
   exiting.value = true
   try {
     if (store.sessionId && store.sessionStatus === 0) {

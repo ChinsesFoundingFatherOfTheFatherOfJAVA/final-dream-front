@@ -24,13 +24,13 @@
       <p class="material-tip">支持格式：.doc、.docx、.ppt、.pptx、.pps，pdf，单个文档小于100M，最多上传3个文档</p>
 
       <div class="entry-row">
-        <button class="entry-btn" :disabled="generating" @click="showKngDrawer = true">
+        <button class="entry-btn" :disabled="generating || extracting" @click="showKngDrawer = true">
           <span class="entry-icon">📘</span>从在线课堂选择
         </button>
         <button class="entry-btn disabled" disabled title="功能建设中">
           <span class="entry-icon">📚</span>从知识空间选择
         </button>
-        <button class="entry-btn" :disabled="generating" @click="fileInput?.click()">
+        <button class="entry-btn" :disabled="generating || extracting" @click="fileInput?.click()">
           <span class="entry-icon">📁</span>点击上传
         </button>
         <input
@@ -41,6 +41,12 @@
           hidden
           @change="handleFileChange"
         />
+      </div>
+
+      <div v-for="name in extractingNames" :key="'ing-' + name" class="file-item extracting">
+        <span class="file-icon doc">…</span>
+        <span class="file-name">{{ name }}</span>
+        <span class="extracting-tip">解析中...</span>
       </div>
 
       <div v-for="(m, i) in materials" :key="i" class="file-item">
@@ -107,7 +113,7 @@
 import { computed, ref } from 'vue'
 import KngMaterialDrawer from './KngMaterialDrawer.vue'
 import { toast } from '@/utils/toast'
-import { extractMaterial, type MaterialItem } from '@/api/aiGen'
+import { extractMaterial, extractKngMaterial, type MaterialItem } from '@/api/aiGen'
 
 /**
  * 第一步基本信息表单（SG-02/03）。
@@ -145,7 +151,12 @@ const selectedKngIds = ref<string[]>([])
 
 const setMaterials = (list: MaterialItem[]) => emit('update:materials', list)
 
-/** 本地上传：逐个抽取（单个失败不阻塞其余），合计 ≤3。 */
+/** 素材抽取中（上传/在线课堂）：按钮禁用 + 列表区显示进行中条目，给用户即时反馈 */
+const extracting = ref(false)
+const extractingNames = ref<string[]>([])
+
+/** 本地上传：逐个抽取（单个失败不阻塞其余），合计 ≤3。
+ *  用本地数组累积（连续 await 中 props.materials 是 stale 快照，直接展开会丢前一个文件）。 */
 const handleFileChange = async (event: Event) => {
   const input = event.target as HTMLInputElement
   const files = Array.from(input.files || [])
@@ -155,44 +166,69 @@ const handleFileChange = async (event: Event) => {
     toast.error('最多上传3个文档')
     return
   }
-  for (const file of files) {
-    if (file.size > 100 * 1024 * 1024) {
-      toast.error(`${file.name} 超过100M`)
-      continue
+  const added: MaterialItem[] = []
+  extracting.value = true
+  extractingNames.value = files.map((f) => f.name)
+  try {
+    for (const file of files) {
+      extractingNames.value = [file.name]
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error(`${file.name} 超过100M`)
+        continue
+      }
+      try {
+        const res: any = await extractMaterial(file)
+        added.push({
+          fileName: res.fileName || file.name,
+          text: res.text || '',
+          truncated: !!res.truncated
+        })
+      } catch (e: any) {
+        toast.error(`${file.name}: ${e?.message || '抽取失败'}`)
+      }
     }
-    try {
-      const res: any = await extractMaterial(file)
-      setMaterials([...props.materials, {
-        fileName: res.fileName || file.name,
-        text: res.text || '',
-        truncated: !!res.truncated
-      }])
-    } catch (e: any) {
-      toast.error(`${file.name}: ${e?.message || '抽取失败'}`)
+    if (added.length) {
+      setMaterials([...props.materials, ...added])
+      toast.info(`已添加 ${added.length} 个素材`)
     }
+  } finally {
+    extracting.value = false
+    extractingNames.value = []
   }
 }
 
 /** 在线课堂确认：逐个课件抽取其第一个文档类源文件。 */
 const handleKngConfirm = async (items: { id: string; title: string }[]) => {
   showKngDrawer.value = false
+  if (!items.length) return
   if (props.materials.length + items.length > 3) {
     toast.error('最多上传3个文档')
     return
   }
-  for (const item of items) {
-    try {
-      const { extractKngMaterial } = await import('@/api/aiGen')
-      const res: any = await extractKngMaterial(item.id)
-      setMaterials([...props.materials, {
-        fileName: res.fileName || item.title,
-        text: res.text || '',
-        truncated: !!res.truncated
-      }])
-      selectedKngIds.value.push(item.id)
-    } catch (e: any) {
-      toast.error(`${item.title}: ${e?.message || '抽取失败'}`)
+  const added: MaterialItem[] = []
+  extracting.value = true
+  try {
+    for (const item of items) {
+      extractingNames.value = [item.title]
+      try {
+        const res: any = await extractKngMaterial(item.id)
+        added.push({
+          fileName: res.fileName || item.title,
+          text: res.text || '',
+          truncated: !!res.truncated
+        })
+        selectedKngIds.value.push(item.id)
+      } catch (e: any) {
+        toast.error(`${item.title}: ${e?.message || '抽取失败'}`)
+      }
     }
+    if (added.length) {
+      setMaterials([...props.materials, ...added])
+      toast.info(`已添加 ${added.length} 个素材`)
+    }
+  } finally {
+    extracting.value = false
+    extractingNames.value = []
   }
 }
 
@@ -277,6 +313,11 @@ const extGlyph = (name: string) => {
   .entry-icon { font-size: 15px; }
   &:hover { border-color: #6b5ce7; color: #6b5ce7; }
   &.disabled, &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.file-item.extracting {
+  .file-name { color: #999; }
+  .extracting-tip { font-size: 12px; color: #6b5ce7; }
 }
 
 .file-item {

@@ -184,7 +184,7 @@ function sortBy(value: 'createdAt' | 'elapsed') {
 
 /** "查看常见出错原因"静态提示弹窗（原平台文案照原样推断，仅提示） */
 function showReasons() {
-  window.alert('常见出错原因：文件损坏、格式不支持、文件加密或转码服务暂不可用。')
+  toast.warn('常见出错原因：文件损坏、格式不支持、文件加密或转码服务暂不可用。')
 }
 
 /** 重试失败任务：成功后后端重置回 pending，当前行会移出失败 tab，刷新列表即可 */

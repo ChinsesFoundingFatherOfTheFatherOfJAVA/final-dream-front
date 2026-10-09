@@ -118,25 +118,27 @@ export function genOutline(data: {
   )
 }
 
-/** SG-07 工作流③话术生成 */
+/** SG-07 工作流③话术生成（v1.2：firstSpeaker 透传控制第1轮发言结构；narration=开场旁白） */
 export function genScriptV2(data: {
   sessionId: string
   sceneHash: string
   scene: SceneData
   outlines: OutlineItem[]
   language: string
+  firstSpeaker: string
 }) {
-  return request.post<unknown, { rounds: RoundItem[]; elapsedMs?: number }>(
+  return request.post<unknown, { narration: string; rounds: RoundItem[]; elapsedMs?: number }>(
     '/admin/ai/gen-script-v2',
     data,
     { timeout: 300000 }
   )
 }
 
-/** SG-08 导入编排（返回与旧 generate-script 同构的 nodes/edges） */
+/** SG-08 导入编排（v1.2：narration 非空时开始节点后插旁白节点） */
 export function importScript(data: {
   sessionId: string
   firstSpeaker: string
+  narration?: string
   rounds: RoundItem[]
 }) {
   return request.post<unknown, { nodes: any[]; edges: any[] }>('/admin/ai/import-script', data)

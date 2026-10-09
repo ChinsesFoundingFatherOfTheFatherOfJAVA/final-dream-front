@@ -2,8 +2,8 @@
 import { resolveAssetUrl } from '@/api/request'
 
 // --- nodeType 数字 ↔ 字符串 ---
-const NODE_TYPE_MAP: Record<number, string> = { 1: 'start', 2: 'trainer_ask', 3: 'student_ask', 4: 'end' }
-const NODE_TYPE_MAP_REVERSE: Record<string, number> = { start: 1, trainer_ask: 2, student_ask: 3, end: 4 }
+const NODE_TYPE_MAP: Record<number, string> = { 1: 'start', 2: 'trainer_ask', 3: 'student_ask', 4: 'end', 5: 'narration' }
+const NODE_TYPE_MAP_REVERSE: Record<string, number> = { start: 1, trainer_ask: 2, student_ask: 3, end: 4, narration: 5 }
 
 export const toNodeType = (n: number) => NODE_TYPE_MAP[n] || 'start'
 export const toNodeTypeInt = (s: string) => NODE_TYPE_MAP_REVERSE[s] || 1
@@ -157,6 +157,7 @@ export interface VfNodeData {
   nodeType: string
   nodeTypeTitle: string
   nodeName: string
+  narration: string
   trainerQuestion: string
   standardScript: string
   keyPoints: Array<{ id: string; content: string }>
@@ -184,8 +185,10 @@ export const toVfNode = (n: any): VfNode => {
       backendId: n.id ?? null,
       nodeType,
       nodeTypeTitle: isSimple ? (nodeType === 'start' ? '开始' : '结束') :
+        nodeType === 'narration' ? '旁白' :
         n.nodeType === 2 ? '陪练者问学员说' : '学员问陪练者说',
       nodeName: n.nodeName || '',
+      narration: n.narration || '',
       trainerQuestion: n.trainerQuestion || '',
       standardScript: n.standardScript || '',
       keyPoints: parseKeyPoints(n.keyPoints),
@@ -218,6 +221,7 @@ export const toBackendNode = (n: VfNode, tempId: number) => {
     nodeName: d.nodeName || typeName[n.type] || n.type,
     positionX: n.position.x,
     positionY: n.position.y,
+    narration: d.narration || null,
     trainerQuestion: d.trainerQuestion || null,
     standardScript: d.standardScript || null,
     // 后端期望数组，不是 JSON 字符串

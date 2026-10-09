@@ -61,5 +61,7 @@ const show = (text: string, type: ToastType, duration: number) => {
 export const toast = {
   error: (text: string, duration = DEFAULT_DURATION) => show(text, 'error', duration),
   warn: (text: string, duration = DEFAULT_DURATION) => show(text, 'warn', duration),
-  info: (text: string, duration = DEFAULT_DURATION) => show(text, 'info', duration)
+  info: (text: string, duration = DEFAULT_DURATION) => show(text, 'info', duration),
+  /** 操作成功提示（window.alert 的成功场景替代） */
+  success: (text: string, duration = DEFAULT_DURATION) => show('✓ ' + text, 'info', duration)
 }

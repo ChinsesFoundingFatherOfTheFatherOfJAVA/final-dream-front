@@ -60,6 +60,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter, useRoute } from 'vue-router'
 import { getProjectDetail, publishProject, withdrawProject, deleteProject } from '@/api/project'
 import { resolveAssetUrl } from '@/api/request'
@@ -129,7 +130,7 @@ const handlePublish = async () => {
 }
 
 const handleDelete = async () => {
-  if (!confirm('确定要删除这个项目吗？')) return
+  if (!(await confirmDialog({ message: '确定要删除这个项目吗？', danger: true }))) return
   try {
     await deleteProject(projectId.value)
     router.push('/sparring/newmanage')

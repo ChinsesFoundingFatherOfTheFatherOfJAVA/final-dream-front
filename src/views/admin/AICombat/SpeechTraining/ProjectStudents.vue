@@ -143,6 +143,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getDepartmentTree,
@@ -301,7 +302,7 @@ const handleInvited = () => {
 
 const handleRemove = async () => {
   if (!selectedIds.value.length || removing.value) return
-  if (!confirm(`确定移除已选的 ${selectedIds.value.length} 名学员吗？移除后历史训练记录仍会保留。`)) return
+  if (!(await confirmDialog({ message: `确定移除已选的 ${selectedIds.value.length} 名学员吗？移除后历史训练记录仍会保留。`, danger: true }))) return
   removing.value = true
   try {
     const data = await removeProjectStudents(projectId, selectedIds.value)

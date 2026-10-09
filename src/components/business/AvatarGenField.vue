@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { toast } from '@/utils/toast'
 import { generateAvatar } from '@/api/ai'
 
 /**
@@ -72,7 +73,7 @@ const onGenerate = async () => {
   const p = prompt.value.trim()
   if (!p || generating.value) return
   if (p.length < 2) {
-    alert('请输入形象提示词（2~200字）')
+    toast.warn('请输入形象提示词（2~200字）')
     return
   }
   generating.value = true
@@ -98,7 +99,7 @@ const onFileChange = (e: Event) => {
   input.value = '' // 允许重复选择同一文件
   if (!file) return
   if (!/^image\//.test(file.type)) {
-    alert('请选择图片文件')
+    toast.warn('请选择图片文件')
     return
   }
   // 清理旧 blob 预览

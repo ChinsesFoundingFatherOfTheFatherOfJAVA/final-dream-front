@@ -117,6 +117,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import CatalogViewDrawer from './CatalogViewDrawer.vue'
 import CatalogEditDrawer from './CatalogEditDrawer.vue'
 import CatalogBatchDrawer from './CatalogBatchDrawer.vue'
@@ -300,7 +301,7 @@ const openMove = (node: KngTreeNode, mode: 'tree' | 'courses') => {
 
 const removeRow = async (node: KngTreeNode) => {
   activeMoreId.value = ''
-  if (!window.confirm(`确定删除分类「${node.name}」吗？`)) return
+  if (!(await confirmDialog({ message: `确定删除分类「${node.name}」吗？`, danger: true }))) return
   try {
     await deleteKngCatalog(node.id)
     toast.info('已删除')

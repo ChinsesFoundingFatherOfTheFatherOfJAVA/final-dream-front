@@ -7,7 +7,8 @@
       :class="msg.role === 2 ? 'student' : 'trainer'"
     >
       <!-- 陪练者：左头像 + 浅紫气泡（形象与训练页左栏同源，来自报告接口的 trainerAvatar） -->
-      <template v-if="msg.role === 1">
+      <div v-if="msg.role === 3" class="narration-tip">{{ msg.content }}</div>
+      <template v-else-if="msg.role === 1">
         <img class="avatar trainer-avatar" :src="trainerFace(trainerAvatar)" alt="" />
         <div class="bubble trainer-bubble">{{ msg.content }}</div>
       </template>
@@ -243,5 +244,15 @@ const onLike = async (msg: SessionMessage) => {
   color: #999;
   font-size: 14px;
   padding: 30px 0;
+}
+.narration-tip {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 4px 12px;
+  line-height: 1.6;
 }
 </style>

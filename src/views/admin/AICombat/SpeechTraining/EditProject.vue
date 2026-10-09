@@ -144,8 +144,24 @@
                 <span v-else>{{ dim.name }}</span>
               </div>
               <div class="col-rule">
+                <!-- 话术一致性：规则内嵌为单选（对齐原平台；v1.2 拍板砍 mixed——无逐节点标记数据支撑） -->
+                <div v-if="dim.name === '话术一致性'" class="consistency-picker">
+                  <label class="consistency-option" :class="{ active: dim.ruleType === 'keypoints' }">
+                    <input type="radio" value="keypoints" v-model="dim.ruleType" :disabled="!dim.enabled" />
+                    <span>按照标准话术的要点表达即可</span>
+                  </label>
+                  <label class="consistency-option" :class="{ active: dim.ruleType === 'exact' }">
+                    <input type="radio" value="exact" v-model="dim.ruleType" :disabled="!dim.enabled" />
+                    <span>与标准话术精准逐字匹配</span>
+                  </label>
+                  <p class="consistency-tip">
+                    {{ dim.ruleType === 'exact'
+                      ? '学员回答须与各轮标准话术高度吻合，逐字一致性是本维度主要评分依据。'
+                      : '学员回答覆盖标准话术要点即可，不要求逐字一致。' }}
+                  </p>
+                </div>
                 <textarea
-                  v-if="dim.isCustom"
+                  v-else-if="dim.isCustom"
                   class="rule-input"
                   v-model="dim.scoringRule"
                   :placeholder="rulePlaceholder"
@@ -231,24 +247,6 @@
 
           <button class="btn btn-link" @click="addCustomDimension">+ 添加自定义维度</button>
 
-          <!-- 话术一致性详细规则 -->
-          <div class="consistency-section" v-if="isDimensionEnabled('话术一致性')">
-            <h3 class="sub-title">话术一致性评分规则</h3>
-            <div class="radio-group">
-              <label class="radio-item">
-                <input type="radio" v-model="form.consistencyRule" value="exact" />
-                <span class="radio-label">与标准话术精准逐字匹配</span>
-              </label>
-              <label class="radio-item">
-                <input type="radio" v-model="form.consistencyRule" value="keypoints" />
-                <span class="radio-label">按照标准话术的要点表达即可</span>
-              </label>
-              <label class="radio-item">
-                <input type="radio" v-model="form.consistencyRule" value="mixed" />
-                <span class="radio-label">部分话术需要精准逐字匹配，其他按照要点表达即可</span>
-              </label>
-            </div>
-          </div>
         </div>
 
         <!-- 步骤3: 虚拟陪练者设置 -->
@@ -413,7 +411,6 @@ const form = ref({
   passStrategy: 'single',
   passStrategyN: 0,
   dialogueMode: 'voice',
-  consistencyRule: 'keypoints',
   coverImage: '',
   trainer: {
     name: 'AI陪练师',
@@ -629,7 +626,7 @@ const goBack = () => {
 const RULE_TYPE_BY_CODE: Record<number, string> = {
   1: 'exact',
   2: 'keypoints',
-  3: 'mixed',
+  3: 'keypoints', // v1.2 砍 mixed：历史 ruleType=3 回显降级为要点表达
   4: 'grade',
   5: 'formula',
   6: 'deduction'
@@ -733,10 +730,6 @@ const loadProject = async (id: number) => {
         metricParams: parseMetricParams(d),
         isCustom: d.isCustom === 1
       }))
-      const consistency = dimensions.value.find((d) => d.name === '话术一致性')
-      if (consistency && ['exact', 'keypoints', 'mixed'].includes(consistency.ruleType)) {
-        form.value.consistencyRule = consistency.ruleType
-      }
     }
   } catch {
     toast.error('项目加载失败，请重试')
@@ -744,12 +737,12 @@ const loadProject = async (id: number) => {
 }
 
 const handleSubmit = async () => {
-  if (!form.value.name) { alert('请输入名称'); return }
-  if (!form.value.startTime || !form.value.endTime) { alert('请选择起止时间'); return }
-  if (!form.value.description) { alert('请输入说明信息'); return }
-  if (totalWeight.value !== 100) { alert('权重之和必须等于100%'); return }
+  if (!form.value.name) { toast.warn('请输入名称'); return }
+  if (!form.value.startTime || !form.value.endTime) { toast.warn('请选择起止时间'); return }
+  if (!form.value.description) { toast.warn('请输入说明信息'); return }
+  if (totalWeight.value !== 100) { toast.warn('权重之和必须等于100%'); return }
   const invalidTone = dimensions.value.find((d) => d.metricKey === 'tone' && !isValidToneAspect(d.metricAspect))
-  if (invalidTone) { alert('评什么角度需为2~6个字'); return }
+  if (invalidTone) { toast.warn('评什么角度需为2~6个字'); return }
 
   saving.value = true
   try {
@@ -779,8 +772,8 @@ const handleSubmit = async () => {
         dimensionName: d.name,
         weight: d.weight,
         enabled: d.enabled ? 1 : 0,
-        // 话术一致性的三种模式由本步骤顶部的单选决定，此前只存在表单里从未落库
-        ruleType: d.name === '话术一致性' ? form.value.consistencyRule : d.ruleType,
+        // 话术一致性规则在维度行内单选（v1.2：砍 mixed，只留 exact/keypoints）
+        ruleType: d.ruleType,
         scoringRule: d.scoringRule,
         // 评分依据与评分方式：evidenceType=2 的维度在纯文字场次不参与评分；metricKey 非空时分数由后端规则算
         evidenceType: d.evidenceType,
@@ -1109,6 +1102,39 @@ const handleSubmit = async () => {
   .col-rule { flex: 1; min-width: 0; }
   .col-evidence { width: 260px; display: flex; flex-direction: column; gap: 6px; }
   .col-weight { width: 100px; display: flex; align-items: center; gap: 4px; }
+}
+
+.consistency-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .consistency-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #555;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+
+    input { margin: 0; cursor: pointer; }
+
+    &.active {
+      border-color: #1890ff;
+      background: #f0f8ff;
+      color: #1890ff;
+    }
+  }
+
+  .consistency-tip {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: #999;
+    line-height: 1.6;
+  }
 }
 
 .rule-lines {

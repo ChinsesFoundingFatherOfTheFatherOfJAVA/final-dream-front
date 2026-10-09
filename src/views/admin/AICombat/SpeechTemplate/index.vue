@@ -124,6 +124,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { toast } from '@/utils/toast'
 import { useRouter } from 'vue-router'
 import { getTemplateList, createTemplate } from '@/api/template'
 import { toTemplateCard } from '@/utils/convert'
@@ -184,8 +185,8 @@ const goToTemplate = (id: number) => {
 }
 
 const handleCreate = async () => {
-  if (!newTemplate.value.name) { alert('请输入模板名称'); return }
-  if (!newTemplate.value.description) { alert('请输入模板说明'); return }
+  if (!newTemplate.value.name) { toast.warn('请输入模板名称'); return }
+  if (!newTemplate.value.description) { toast.warn('请输入模板说明'); return }
   try {
     await createTemplate({ name: newTemplate.value.name, description: newTemplate.value.description, permission: 0 })
     showCreateDialog.value = false

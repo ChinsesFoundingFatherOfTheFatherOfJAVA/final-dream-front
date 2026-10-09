@@ -2,8 +2,8 @@
   <div class="config-panel">
     <div class="panel-header">
       <div class="panel-title">
-        <span class="title-bar" :style="{ background: isStudent ? '#1890ff' : '#fa8c16' }"></span>
-        {{ isStudent ? '学员节点设置' : '陪练者节点设置' }}
+        <span class="title-bar" :style="{ background: titleColor }"></span>
+        {{ titleText }}
       </div>
       <span class="close-btn" @click="$emit('close')">×</span>
     </div>
@@ -15,15 +15,24 @@
         <input type="text" class="form-input" v-model="localData.nodeName" placeholder="请输入节点名称" maxlength="50" />
       </div>
 
+      <!-- 旁白节点（v1.2）：仅旁白文本 -->
+      <template v-if="isNarration">
+        <div class="form-item">
+          <label class="form-label required">旁白内容</label>
+          <textarea class="form-textarea" v-model="localData.narration" placeholder="请输入旁白文本，例如场景转换提示或学员处境交代" rows="6"></textarea>
+          <span class="char-count">{{ (localData.narration || '').length }}/500</span>
+        </div>
+      </template>
+
       <!-- 陪练者问 -->
-      <div class="form-item" v-if="!isStudent">
+      <div class="form-item" v-if="!isStudent && !isNarration">
         <label class="form-label required">陪练者问</label>
         <textarea class="form-textarea" v-model="localData.trainerQuestion" placeholder="请输入陪练者的话术内容" rows="4"></textarea>
         <span class="char-count">{{ (localData.trainerQuestion || '').length }}/500</span>
       </div>
 
       <!-- 学员字段 -->
-      <template v-if="isStudent">
+      <template v-if="isStudent && !isNarration">
         <div class="form-item">
           <label class="form-label required">标准话术</label>
           <textarea class="form-textarea" v-model="localData.standardScript" placeholder="请输入标准话术" rows="4"></textarea>
@@ -113,6 +122,8 @@ import type { FlowNodeData } from '@/types/speech'
 const props = defineProps<{
   nodeData: FlowNodeData
   subType: 'trainer' | 'student'
+  /** v1.2 旁白节点标记：narration 时仅显示旁白文本输入 */
+  nodeKind?: 'big' | 'narration'
 }>()
 
 const emit = defineEmits<{
@@ -122,6 +133,11 @@ const emit = defineEmits<{
 }>()
 
 const isStudent = computed(() => props.subType === 'student')
+const isNarration = computed(() => props.nodeKind === 'narration')
+const titleColor = computed(() =>
+  isNarration.value ? '#722ed1' : isStudent.value ? '#1890ff' : '#fa8c16')
+const titleText = computed(() =>
+  isNarration.value ? '旁白节点设置' : isStudent.value ? '学员节点设置' : '陪练者节点设置')
 
 const createLocal = (): LocalNodeData => ({
   nodeName: props.nodeData.nodeName || '',

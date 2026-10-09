@@ -216,6 +216,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
 import CatalogTreePanel from '../courseware/components/CatalogTreePanel.vue'
 import FilterTags from '../courseware/components/FilterTags.vue'
@@ -458,7 +459,7 @@ async function confirmMove(targetCatalogId: string) {
 
 async function remove(row: CourseListItem) {
   moreRow.value = null
-  if (!window.confirm(`确定删除课程「${row.title}」吗？`)) return
+  if (!(await confirmDialog({ message: `确定删除课程「${row.title}」吗？`, danger: true }))) return
   await deleteCourse(row.id)
   toast.info('已删除')
   await reload()
@@ -466,7 +467,7 @@ async function remove(row: CourseListItem) {
 
 async function batchTakeDown() {
   batchOpen.value = false
-  if (!window.confirm(`确定下架选中的 ${selectedIds.value.size} 个课程吗？`)) return
+  if (!(await confirmDialog({ message: `确定下架选中的 ${selectedIds.value.size} 个课程吗？`, danger: true }))) return
   await batchTakeDownCourses([...selectedIds.value])
   toast.info('已下架')
   selectedIds.value = new Set()
@@ -475,7 +476,7 @@ async function batchTakeDown() {
 
 async function batchPutOn() {
   batchOpen.value = false
-  if (!window.confirm(`确定上架选中的 ${selectedIds.value.size} 个课程吗？`)) return
+  if (!(await confirmDialog({ message: `确定上架选中的 ${selectedIds.value.size} 个课程吗？`, danger: true }))) return
   await batchPutOnCourses([...selectedIds.value])
   toast.info('已上架')
   selectedIds.value = new Set()
@@ -484,7 +485,7 @@ async function batchPutOn() {
 
 async function batchDelete() {
   batchOpen.value = false
-  if (!window.confirm(`确定删除选中的 ${selectedIds.value.size} 个课程吗？`)) return
+  if (!(await confirmDialog({ message: `确定删除选中的 ${selectedIds.value.size} 个课程吗？`, danger: true }))) return
   await batchDeleteCourses([...selectedIds.value])
   toast.info('已删除')
   selectedIds.value = new Set()

@@ -136,6 +136,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
 import DeptTree from '@/components/common/DeptTree.vue'
 import {
@@ -240,7 +241,7 @@ function toggleCurrentPage() {
 }
 
 async function removeOne(member: RoleMember) {
-  if (!window.confirm(`确认取消 ${member.name || member.account} 的角色授权？`)) return
+  if (!(await confirmDialog({ message: `确认取消 ${member.name || member.account} 的角色授权？`, danger: true }))) return
   try {
     await removeRoleMember(roleId, member.userId)
     toast.info('已取消授权')
@@ -252,7 +253,7 @@ async function removeOne(member: RoleMember) {
 
 async function handleBatchRemove() {
   if (!selectedIds.value.length || removing.value) return
-  if (!window.confirm(`确认取消已选 ${selectedIds.value.length} 人的角色授权？`)) return
+  if (!(await confirmDialog({ message: `确认取消已选 ${selectedIds.value.length} 人的角色授权？`, danger: true }))) return
   removing.value = true
   try {
     const result = await removeRoleMembers(roleId, selectedIds.value)

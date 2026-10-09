@@ -10,21 +10,47 @@
       以下为AI生成的话术，如不符合预期，可点击左侧按钮返回上一页更改/补充相关信息后重新生成。AI生成内容不完全可靠，导入话术后，建议仔细审查及修改！
     </div>
 
+    <!-- v1.2 开场旁白（学员先说场景）：导入后将成为画布的旁白节点 -->
+    <div v-if="narration" class="narration-bar">
+      <span class="narration-tag">旁白</span>
+      <span class="narration-text">{{ narration }}</span>
+    </div>
+
     <div class="dialog-list">
       <div v-for="(round, i) in rounds" :key="round.round" class="round-block">
         <div class="round-divider">第 {{ i + 1 }} 轮</div>
 
-        <!-- 陪练者气泡：固定左侧（浅紫底） -->
-        <div class="bubble-row trainer">
-          <div class="avatar trainer-avatar">陪</div>
-          <div class="bubble trainer-bubble">
-            <p class="speaker-name">陪练者</p>
-            <p class="bubble-text">{{ round.trainerQuestion }}</p>
+        <!-- v1.2 学员先说：第 1 轮学员主动开场（上），陪练者回应（下）；气泡左右规则不变 -->
+        <template v-if="i === 0 && firstSpeaker === 'student'">
+          <div class="bubble-row student">
+            <div class="bubble student-bubble">
+              <p class="speaker-name">学员</p>
+              <p class="bubble-text">{{ round.standardScript }}</p>
+            </div>
+            <div class="avatar student-avatar">学</div>
           </div>
-        </div>
+          <div class="bubble-row trainer">
+            <div class="avatar trainer-avatar">陪</div>
+            <div class="bubble trainer-bubble">
+              <p class="speaker-name">陪练者</p>
+              <p class="bubble-text">{{ round.trainerQuestion }}</p>
+            </div>
+          </div>
+        </template>
+
+        <!-- 默认顺序：陪练者气泡（上）→ 学员（下） -->
+        <template v-else>
+          <div class="bubble-row trainer">
+            <div class="avatar trainer-avatar">陪</div>
+            <div class="bubble trainer-bubble">
+              <p class="speaker-name">陪练者</p>
+              <p class="bubble-text">{{ round.trainerQuestion }}</p>
+            </div>
+          </div>
+        </template>
 
         <!-- 学员卡片：checkbox + 白底气泡（右侧）+ 要点/解析 -->
-        <div class="student-block">
+        <div class="student-block" v-if="!(i === 0 && firstSpeaker === 'student')">
           <input
             type="checkbox"
             class="round-check"
@@ -77,6 +103,8 @@ import { importScript, type RoundItem } from '@/api/aiGen'
  */
 const props = defineProps<{
   rounds: RoundItem[]
+  /** 开场旁白（v1.2：学员先说场景非空；导入时传后端插旁白节点；预览顶部展示） */
+  narration: string
   language: string
   firstSpeaker: string
   sessionId: string
@@ -111,6 +139,7 @@ const handleImport = async () => {
     const res: any = await importScript({
       sessionId: props.sessionId,
       firstSpeaker: props.firstSpeaker,
+      narration: props.narration,
       rounds: selected
     })
     emit('imported', res.nodes || [], res.edges || [])
@@ -148,6 +177,28 @@ const handleImport = async () => {
   color: #6b5ce7;
   font-size: 13px;
   cursor: pointer;
+}
+
+.narration-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f9f7ff;
+  border: 1px dashed #d3c8ff;
+  border-radius: 6px;
+  padding: 10px 14px;
+
+  .narration-tag {
+    flex-shrink: 0;
+    background: #722ed1;
+    color: #fff;
+    font-size: 11px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-top: 2px;
+  }
+
+  .narration-text { font-size: 13px; color: #555; line-height: 1.7; }
 }
 
 .notice-bar {

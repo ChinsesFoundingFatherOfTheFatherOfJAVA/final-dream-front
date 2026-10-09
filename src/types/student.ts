@@ -55,7 +55,7 @@ export interface StudentProjectDetail {
 export interface SessionMessage {
   messageId: ID
   seq: number
-  role: 1 | 2 // 1=陪练者, 2=学员
+  role: 1 | 2 | 3 // 1=陪练者, 2=学员, 3=旁白（v1.2 微信撤回式灰条，不占轮次）
   content: string
   passed: 0 | 1 | null
   withdrawn: 0 | 1
@@ -108,6 +108,8 @@ export interface SendMessageResp {
   finishedRounds: number
   totalRounds: number
   nextTrainerMessage: SessionMessage | null
+  /** 流转途中经过的旁白消息（v1.2 role=3 灰条，先于 nextTrainerMessage 展示） */
+  narrationMessages?: SessionMessage[] | null
 }
 
 /** FP-24/28 学员语音消息响应（接口 5.2）：流转字段与 SendMessageResp 同构，附加语音字段 */

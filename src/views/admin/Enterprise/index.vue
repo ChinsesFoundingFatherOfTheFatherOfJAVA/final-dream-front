@@ -220,6 +220,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import DeptTree from '@/components/common/DeptTree.vue'
 import {
   deleteUser,
@@ -390,16 +391,17 @@ function toggleStatus(user: EnterpriseUser) {
   )
 }
 
-function handleResetPassword(user: EnterpriseUser) {
-  if (!window.confirm(`确认将账号 ${user.account} 的密码重置为默认密码？`)) return
+async function handleResetPassword(user: EnterpriseUser) {
+  if (!(await confirmDialog({ message: `确认将账号 ${user.account} 的密码重置为默认密码？`, danger: true }))) return
   void runAction(user, () => resetUserPassword(user.userId), '密码已重置')
 }
 
-function handleDelete(user: EnterpriseUser) {
+async function handleDelete(user: EnterpriseUser) {
   if (
-    !window.confirm(
-      `确认删除账号 ${user.account}？其角色与项目学员指派会同步清除。若该员工仍在 Oracle 在职名单，将于下次同步自动恢复。`
-    )
+    !(await confirmDialog({
+      message: `确认删除账号 ${user.account}？其角色与项目学员指派会同步清除。若该员工仍在 Oracle 在职名单，将于下次同步自动恢复。`,
+      danger: true
+    }))
   ) {
     return
   }

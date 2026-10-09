@@ -110,6 +110,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getCourseDesigner,
@@ -301,9 +302,9 @@ async function onStructureChoose(chosen: number) {
  * 有→无：确认"切换后任务将平铺"后展平保留任务（附录C 待验证项，按平铺保留实现）；
  * 无→有：自动建"章节1"并把 flatTasks 归入。均为本地状态变化，保存后落库。
  */
-function toggleStructure() {
+async function toggleStructure() {
   if (structureType.value === 1) {
-    if (!window.confirm('切换为无章节后，各章节任务将平铺展示，是否继续？')) return
+    if (!(await confirmDialog({ message: '切换为无章节后，各章节任务将平铺展示，是否继续？', danger: true }))) return
     flatTasks.value = chapters.value.flatMap(chapter => chapter.tasks)
     chapters.value = []
     structureType.value = 0
@@ -354,10 +355,10 @@ function confirmChapter(value: { name: string; description: string }) {
 }
 
 /** 删除章节：二次确认，连带删该章节任务（本地状态层面） */
-function removeChapter(index: number) {
+async function removeChapter(index: number) {
   const chapter = chapters.value[index]
   if (!chapter) return
-  if (!window.confirm(`确定删除章节「${chapter.name}」吗？章节下的 ${chapter.tasks.length} 个任务将一并删除`)) return
+  if (!(await confirmDialog({ message: `确定删除章节「${chapter.name}」吗？章节下的 ${chapter.tasks.length} 个任务将一并删除`, danger: true }))) return
   chapters.value.splice(index, 1)
   if (selectedChapterIndex.value >= chapters.value.length) {
     selectedChapterIndex.value = chapters.value.length - 1
@@ -471,15 +472,15 @@ function removeFromCurrent(targets: DesignerTask[]) {
   }
 }
 
-function removeTask(task: DesignerTask) {
-  if (!window.confirm(`确定删除任务「${task.taskName}」吗？`)) return
+async function removeTask(task: DesignerTask) {
+  if (!(await confirmDialog({ message: `确定删除任务「${task.taskName}」吗？`, danger: true }))) return
   removeFromCurrent([task])
   toast.info('已删除')
 }
 
-function batchDeleteTasks(targets: DesignerTask[]) {
+async function batchDeleteTasks(targets: DesignerTask[]) {
   if (!targets.length) return
-  if (!window.confirm(`确定删除选中的 ${targets.length} 个任务吗？`)) return
+  if (!(await confirmDialog({ message: `确定删除选中的 ${targets.length} 个任务吗？`, danger: true }))) return
   removeFromCurrent(targets)
   toast.info('已删除')
 }
