@@ -202,7 +202,8 @@ export default { name: 'ScriptTraining' }
 
 <style scoped lang="scss">
 .script-training {
-  height: 100vh;
+  /* html/body/#app 全链 100% 已就位；100dvh 兜移动端动态视口，100vh 为最终回退 */
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background:
@@ -317,9 +318,10 @@ export default { name: 'ScriptTraining' }
 .main-body {
   flex: 1;
   display: flex;
-  gap: 14px;
-  padding: 14px 18px 0;
+  gap: 1px;
+  padding: 0;
   min-height: 0;
+  /* v1.2 用户拍板：训练页贴满窗口（四周不留白）——面板间以 1px 分隔线相接 */
 }
 
 /* 左栏 陪练者 */
@@ -387,7 +389,7 @@ export default { name: 'ScriptTraining' }
   flex: 1;
   min-height: 0;
   width: 100%;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
   background: #1d2547;
 
@@ -423,9 +425,11 @@ export default { name: 'ScriptTraining' }
 .chat-panel {
   flex: 1;
   min-width: 0;
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -439,7 +443,7 @@ export default { name: 'ScriptTraining' }
 
 .detail-card {
   height: 100%;
-  border-radius: 14px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;

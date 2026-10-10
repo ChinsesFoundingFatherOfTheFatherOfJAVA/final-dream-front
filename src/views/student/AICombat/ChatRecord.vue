@@ -246,13 +246,12 @@ const onLike = async (msg: SessionMessage) => {
   padding: 30px 0;
 }
 .narration-tip {
+  /* v1.2 嵌入式文字（报告页白底：中灰无底块） */
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: #999;
-  background: #f5f5f5;
-  border-radius: 4px;
-  padding: 4px 12px;
+  color: #b0b0b0;
+  padding: 2px 12px;
   line-height: 1.6;
 }
 </style>

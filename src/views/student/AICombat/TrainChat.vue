@@ -505,13 +505,12 @@ const onSend = async () => {
 }
 
 .narration-tip {
+  /* v1.2 用户拍板：无底色块、嵌入背景的居中文字（微信"撤回了一条消息"式） */
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: #999;
-  background: #f5f5f5;
-  border-radius: 4px;
-  padding: 4px 12px;
+  color: rgba(255, 255, 255, 0.45); /* 深色训练背景上的可读灰白 */
+  padding: 2px 12px;
   line-height: 1.6;
 }
 

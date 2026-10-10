@@ -327,6 +327,7 @@ const handleNodeSave = (newData: FlowNodeData) => {
     node.data = {
       ...node.data,
       nodeName: newData.nodeName,
+      narration: newData.narration, // v1.2 旁白节点编辑回写（此前漏传致保存丢失）
       trainerQuestion: newData.trainerQuestion,
       standardScript: newData.standardScript,
       keyPoints: newData.keyPoints,
