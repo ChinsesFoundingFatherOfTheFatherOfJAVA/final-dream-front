@@ -26,6 +26,15 @@
             <p class="app-desc">围绕真实业务场景展开动态实战训练</p>
           </div>
         </div>
+        <div class="app-card" @click="router.push('/exam/queslib')">
+          <div class="app-icon exam-icon">
+            <span class="icon-text">📝</span>
+          </div>
+          <div class="app-info">
+            <h3 class="app-title">测练中心</h3>
+            <p class="app-desc">题库与考试管理</p>
+          </div>
+        </div>
         <div v-if="hasKngAccess" class="app-card" @click="goToOnlineClassroom">
           <div class="app-icon kng-icon">
             <span class="icon-text">K</span>

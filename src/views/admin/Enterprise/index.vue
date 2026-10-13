@@ -479,6 +479,10 @@ onMounted(async () => {
   max-height: calc(100vh - 140px);
   padding: 12px 8px;
   overflow: hidden;
+  /* 必须让面板成为 flex 列容器：DeptTree 才能 flex:1 收缩并在内部滚动，
+     否则树撑开后会被 overflow:hidden 直接裁掉、滚不动。 */
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-heading {

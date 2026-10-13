@@ -16,6 +16,64 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '无权限', public: true }
   },
   {
+    path: '/exam',
+    component: () => import('@/views/exam/ExamLayout.vue'),
+    redirect: '/exam/queslib',
+    meta: { title: '测练中心', requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: 'queslib',
+        name: 'ExamQuesLib',
+        component: () => import('@/views/exam/queslib/QuesLibPage.vue'),
+        meta: { title: '题库管理' }
+      },
+      {
+        // FP-06 题库详情页（题库列表「管理」列跳这里，带 ?libId=）
+        path: 'queslib/detail',
+        name: 'ExamQuesLibDetail',
+        component: () => import('@/views/exam/queslib/QuesLibDetailPage.vue'),
+        meta: { title: '题库详情' }
+      },
+      {
+        // FP-08 试题编辑/新建页：?id= 编辑，?libId= 新建（03 §3.2 上方路由表）
+        path: 'quesdetail',
+        name: 'ExamQuesDetail',
+        component: () => import('@/views/exam/queslib/QuesFormPage.vue'),
+        meta: { title: '试题编辑' }
+      },
+      {
+        path: 'paper',
+        name: 'ExamPaper',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '组卷' }
+      },
+      {
+        path: 'exam-mgmt',
+        name: 'ExamMgmt',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '考试管理' }
+      },
+      {
+        path: 'practice',
+        name: 'ExamPractice',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '练习管理' }
+      },
+      {
+        path: 'feedback',
+        name: 'ExamFeedback',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '题目反馈' }
+      },
+      {
+        path: 'field',
+        name: 'ExamField',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '字段设置' }
+      }
+    ]
+  },
+  {
     path: '/kng',
     component: () => import('@/views/onlineclassroom/OnlineClassroomLayout.vue'),
     redirect: () => {

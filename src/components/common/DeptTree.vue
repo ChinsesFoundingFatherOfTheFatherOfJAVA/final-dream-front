@@ -33,6 +33,9 @@
         @click="activate(row)"
         @keydown.enter="activate(row)"
       >
+        <!-- 层级缩进放在箭头之前：箭头始终紧贴自己的文字，而不是全部贴在最左边 -->
+        <span class="tree-indent" :style="{ width: `${row.depth * 16}px` }" />
+
         <button
           v-if="row.hasChildren"
           type="button"
@@ -54,7 +57,7 @@
           @change="toggleChecked(row, ($event.target as HTMLInputElement).checked)"
         />
 
-        <span class="tree-label" :style="{ paddingLeft: `${row.depth * 16}px` }">
+        <span class="tree-label">
           {{ row.node.deptName }}
         </span>
         <span v-if="showCount" class="tree-count">{{ row.node.userCount }}</span>
@@ -194,6 +197,7 @@ function toggleChecked(row: FlatRow, checked: boolean) {
 
 <style scoped lang="scss">
 .dept-tree {
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -221,6 +225,7 @@ function toggleChecked(row: FlatRow, checked: boolean) {
 }
 
 .tree-body {
+  flex: 1 1 auto;
   min-height: 80px;
   overflow: auto;
 }
@@ -254,6 +259,10 @@ function toggleChecked(row: FlatRow, checked: boolean) {
 
 .all-row {
   margin-bottom: 2px;
+}
+
+.tree-indent {
+  flex: 0 0 auto;
 }
 
 .tree-arrow {
