@@ -62,9 +62,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { getLibShare, saveLibShare, type LibItem } from '@/api/exam'
+import { getPaperShare, savePaperShare } from '@/api/paper'
 import type { EnterpriseDepartment } from '@/api/sm'
 import UserPickerDrawer from './UserPickerDrawer.vue'
 import DeptPickerDrawer from './DeptPickerDrawer.vue'
@@ -73,7 +74,18 @@ import DeptPickerDrawer from './DeptPickerDrawer.vue'
  * 共享题库抽屉（FP-04/05：全量覆盖式提交）。
  * 共享范围含两个维度：人（targetType=2）与部门（targetType=1），与后端 exam_lib_share 的 target_type 对齐。
  */
-const props = defineProps<{ lib: LibItem | null }>()
+/**
+ * 只读展示 + 取 id，故用结构类型而非 LibItem：
+ * 试卷（PaperItem）与题库（LibItem）都能满足，复用同一个抽屉。
+ */
+type LibLike = Pick<LibItem, 'id' | 'name' | 'catalogName'>
+
+const props = defineProps<{ lib: LibLike | null; api?: 'ques' | 'paper' }>()
+
+/** 试卷共享与题库共享结构同构，仅接口不同（且试卷要求已发布）。 */
+const shareApi = computed(() => props.api === 'paper'
+  ? { get: getPaperShare, save: savePaperShare }
+  : { get: getLibShare, save: saveLibShare })
 const emit = defineEmits<{ close: []; saved: [] }>()
 
 const shares = ref<{ targetType: number; targetId: string; targetName: string }[]>([])
@@ -127,7 +139,7 @@ const onPickDepts = (depts: EnterpriseDepartment[]) => {
 const handleSave = async () => {
   saving.value = true
   try {
-    await saveLibShare(props.lib!.id, shares.value.map(s => ({
+    await shareApi.value.save(props.lib!.id, shares.value.map(s => ({
       targetType: s.targetType, targetId: s.targetId
     })))
     toast.success('共享设置已保存')
@@ -139,7 +151,7 @@ const handleSave = async () => {
 
 onMounted(async () => {
   try {
-    const res: any = await getLibShare(props.lib!.id)
+    const res: any = await shareApi.value.get(props.lib!.id)
     shares.value = res.shares || []
   } catch { /* handled */ }
 })

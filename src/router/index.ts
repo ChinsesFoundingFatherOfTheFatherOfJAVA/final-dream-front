@@ -16,6 +16,21 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '无权限', public: true }
   },
   {
+    // FP-10 固定出卷编辑页：**独立全屏页**（原平台同样是跳转出去的独立页面，
+    // 不复用测练中心的头部与左侧菜单），故放在 /exam 布局路由之外。
+    path: '/exam/paper/quick',
+    name: 'ExamPaperQuick',
+    component: () => import('@/views/exam/paper/PaperQuickEditPage.vue'),
+    meta: { title: '固定出卷', requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    // FP-08/09 随机出卷编辑页：同上，独立全屏页
+    path: '/exam/paper/auto',
+    name: 'ExamPaperAuto',
+    component: () => import('@/views/exam/paper/PaperAutoEditPage.vue'),
+    meta: { title: '随机出卷', requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/exam',
     component: () => import('@/views/exam/ExamLayout.vue'),
     redirect: '/exam/queslib',
@@ -42,10 +57,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '试题编辑' }
       },
       {
+        // FP-04/05 试卷管理主页（分类树 + 试卷列表，截图01）
         path: 'paper',
         name: 'ExamPaper',
-        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        component: () => import('@/views/exam/paper/PaperPage.vue'),
         meta: { title: '组卷' }
+      },
+      {
+        // FP-07 试卷管理页（试题列表，截图02）
+        path: 'paper/detail',
+        name: 'ExamPaperDetail',
+        component: () => import('@/views/exam/paper/PaperDetailPage.vue'),
+        meta: { title: '试卷管理' }
       },
       {
         path: 'exam-mgmt',

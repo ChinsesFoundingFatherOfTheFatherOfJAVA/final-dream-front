@@ -214,6 +214,8 @@ export interface QuesListQuery {
   disabled: number
   pointId: string
   isDuplicate: number
+  /** 试卷管理页跳转定位单题用（题库 07 §9 增量） */
+  quesId?: string
 }
 
 export function getQuesList(

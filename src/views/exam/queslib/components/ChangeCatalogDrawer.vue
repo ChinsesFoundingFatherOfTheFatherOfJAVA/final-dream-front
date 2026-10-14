@@ -8,7 +8,7 @@
       </div>
 
       <div class="drawer-body">
-        <div v-if="batch" class="batch-tip">已选 {{ count }} 个题库，将统一移动到所选分类</div>
+        <div v-if="batch" class="batch-tip">已选 {{ count }} 个{{ api === 'paper' ? '试卷' : '题库' }}，将统一移动到所选分类</div>
 
         <input v-model.trim="keyword" type="search" placeholder="请输入分类名称搜索" />
 
@@ -47,12 +47,18 @@
 import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { getCatalogTree, changeLibCatalog, batchLib, type CatalogTreeNode, type LibItem } from '@/api/exam'
+import { batchPaper, changePaperCatalog, getPaperCatalogTree } from '@/api/paper'
 
 /** 修改分类抽屉（FP-04：单库 changeLibCatalog / 批量 batchLib('changeCatalog')）。 */
+/** 试卷（PaperItem）与题库（LibItem）共用的字段，故用结构类型。 */
+type LibLike = Pick<LibItem, 'id' | 'catalogId'>
+
 const props = defineProps<{
-  lib: LibItem | null
+  lib: LibLike | null
   batch?: boolean
   count?: number
+  /** 题库（默认）还是试卷——两者分类树同构 */
+  api?: 'ques' | 'paper'
   /** 批量模式下由父组件传入已勾选的题库 id 列表 */
   libIds?: string[]
 }>()
@@ -98,13 +104,22 @@ const handleSave = async () => {
   saving.value = true
   try {
     if (props.batch) {
-      // 批量修改分类：ids 由父组件传入，本抽屉只负责选目标分类；直接调后端 /api/exam/lib/batch
+      // 批量修改分类：ids 由父组件传入，本抽屉只负责选目标分类；按 api 走各自的批量接口
       const ids = props.libIds || []
-      await batchLib('changeCatalog', ids, undefined, targetId.value)
-      toast.success(`已将 ${ids.length} 个题库移动到所选分类`)
+      if (props.api === 'paper') {
+        await batchPaper('changeCatalog', ids, undefined, targetId.value)
+        toast.success(`已将 ${ids.length} 张试卷移动到所选分类`)
+      } else {
+        await batchLib('changeCatalog', ids, undefined, targetId.value)
+        toast.success(`已将 ${ids.length} 个题库移动到所选分类`)
+      }
       emit('saved')
     } else {
-      await changeLibCatalog(props.lib!.id, targetId.value)
+      if (props.api === 'paper') {
+        await changePaperCatalog(props.lib!.id, targetId.value)
+      } else {
+        await changeLibCatalog(props.lib!.id, targetId.value)
+      }
       toast.success('分类已修改')
       emit('saved')
     }
@@ -115,7 +130,7 @@ const handleSave = async () => {
 
 onMounted(async () => {
   try {
-    treeRoot.value = await getCatalogTree() as any
+    treeRoot.value = (props.api === 'paper' ? await getPaperCatalogTree() : await getCatalogTree()) as any
     if (props.lib) {
       targetId.value = props.lib.catalogId
     }

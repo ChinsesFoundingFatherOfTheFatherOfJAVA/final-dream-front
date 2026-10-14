@@ -221,13 +221,19 @@ import {
   aiGenerateQues, createQues, getPointList, parseQuesFile,
   type AiGenCounts, type AiGenDraft
 } from '@/api/exam'
+import { addPaperQuestion } from '@/api/paper'
 import { parseQuickQues } from '@/utils/quickQuesParser'
 
 /**
  * FP-11 AI建题。
  * 素材 → Dify「AI出题」工作流 → 草稿卡片流 → 确定录入（逐题落库）。
  */
-const props = withDefaults(defineProps<{ libId: string, initialMode?: 'ai' | 'quick' }>(), {
+const props = withDefaults(defineProps<{
+  libId: string
+  initialMode?: 'ai' | 'quick'
+  /** 传了试卷 id 就走"录入到试卷"：题目落库后同时建 exam_paper_question 关联 */
+  paperId?: string
+}>(), {
   initialMode: 'ai'
 })
 const emit = defineEmits<{ close: []; saved: [] }>()
@@ -458,7 +464,18 @@ const saveAll = async () => {
     let ok = 0
     for (const card of drafts.value) {
       try {
-        await createQues(toSaveReq(card.data, pointId))
+          const req = toSaveReq(card.data, pointId)
+          if (props.paperId) {
+            // 试卷编辑页：题目落库 + 建关联，sectionIndex 用题型（每题型一个大题组）
+            await addPaperQuestion(props.paperId, {
+              sectionIndex: card.data.type,
+              score: 2,
+              libId: props.libId,
+              question: req
+            })
+          } else {
+            await createQues(req)
+          }
         ok++
       } catch {
         // 单题失败不阻断整体，失败明细最后由 toast 汇总

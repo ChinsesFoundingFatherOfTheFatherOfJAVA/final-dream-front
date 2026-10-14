@@ -45,12 +45,16 @@
 import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { getCatalogTree, moveCatalog, type CatalogTreeNode } from '@/api/exam'
+import { getPaperCatalogTree, movePaperCatalog } from '@/api/paper'
 
 /**
  * 移动分类抽屉（FP-03）：树默认只展开第一层、点箭头展开/收起（可闭合——守既有教训）；
  * 自身及其子孙不可选（后端也校验）。
  */
-const props = defineProps<{ catalogId: string }>()
+const props = defineProps<{ catalogId: string; api?: 'ques' | 'paper' }>()
+
+/** 题库/试卷分类结构同构，仅接口不同。 */
+const isPaper = computed(() => props.api === 'paper')
 const emit = defineEmits<{ close: []; moved: [] }>()
 
 const treeRoot = ref<CatalogTreeNode | null>(null)
@@ -92,7 +96,11 @@ const toggleExpand = (id: string) => {
 const handleMove = async () => {
   moving.value = true
   try {
-    await moveCatalog(props.catalogId, targetId.value)
+    if (isPaper.value) {
+      await movePaperCatalog(props.catalogId, targetId.value)
+    } else {
+      await moveCatalog(props.catalogId, targetId.value)
+    }
     toast.success('分类已移动')
     emit('moved')
   } finally {
@@ -102,7 +110,7 @@ const handleMove = async () => {
 
 onMounted(async () => {
   try {
-    treeRoot.value = await getCatalogTree() as any
+    treeRoot.value = (isPaper.value ? await getPaperCatalogTree() : await getCatalogTree()) as any
   } catch { /* handled */ }
 })
 </script>

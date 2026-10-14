@@ -214,7 +214,11 @@ import SetPointDrawer from './SetPointDrawer.vue'
  * 题库详情页·试题详情 tab（FP-07）。
  * 只负责列表/查看/删除；编辑跳转由父组件处理（编辑页属 FP-08）。
  */
-const props = defineProps<{ libId: string }>()
+const props = defineProps<{
+  libId: string
+  /** 试卷管理页跳过来时带的题目 id：只展示这一题（题库 07 §9 增量） */
+  quesId?: string
+}>()
 const emit = defineEmits<{ edit: [id: string]; create: []; 'ai-create': []; 'quick-create': []; 'import': [format: 'excel' | 'word']; changed: [] }>()
 
 const TYPE_LABELS: Record<number, string> = { 0: '单选', 1: '多选', 2: '判断', 3: '填空', 4: '问答', 5: '组合' }
@@ -308,7 +312,8 @@ const reload = async (next?: number) => {
         levelType: filters.levelType,
         disabled: filters.disabled,
         pointId: filters.pointId,
-        isDuplicate: isDuplicateOnly.value ? 1 : 0
+        isDuplicate: isDuplicateOnly.value ? 1 : 0,
+        quesId: props.quesId || ''
       })
     total.value = res.total || 0
     records.value = res.records || []

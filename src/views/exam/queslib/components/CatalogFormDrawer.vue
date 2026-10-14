@@ -99,6 +99,7 @@ import {
   createCatalogBatch, getCatalogDetail, updateCatalog,
   type CatalogAdminUser
 } from '@/api/exam'
+import * as paperApi from '@/api/paper'
 import UserPickerDrawer from './UserPickerDrawer.vue'
 
 /**
@@ -109,13 +110,20 @@ const props = defineProps<{
   mode: 'create' | 'edit'
   parentId?: string
   catalogId?: string
+  /** 题库分类（默认）还是试卷分类：两者结构 100% 同构，仅接口路径不同，故按此切换 API。 */
+  api?: 'ques' | 'paper'
 }>()
 
 const emit = defineEmits<{ close: []; saved: [] }>()
 
+/** 按 api 选一组的分类接口——抽屉本身完全复用。 */
+const catalogApi = computed(() => props.api === 'paper'
+  ? { create: paperApi.createPaperCatalogBatch, update: paperApi.updatePaperCatalog, detail: paperApi.getPaperCatalogDetail }
+  : { create: createCatalogBatch, update: updateCatalog, detail: getCatalogDetail })
+
 const catalogText = ref('')
 const editName = ref('')
-const parentName = ref('默认题库分类')
+const parentName = ref(props.api === 'paper' ? '默认试卷分类' : '默认题库分类')
 const detail = ref<{ parentName: string; libQty: number; createTime: string; createFullname: string } | null>(null)
 const adminUsers = ref<CatalogAdminUser[]>([])
 const inheritParentAuth = ref(false)
@@ -147,7 +155,7 @@ const handleSave = async () => {
     }
     saving.value = true
     try {
-      const res: any = await createCatalogBatch({
+      const res: any = await catalogApi.value.create({
         parentId: props.parentId || 'root',
         catalogText: catalogText.value,
         adminUserIds: adminUsers.value.map(u => u.userId),
@@ -170,7 +178,7 @@ const handleSave = async () => {
     }
     saving.value = true
     try {
-      await updateCatalog(props.catalogId!, {
+      await catalogApi.value.update(props.catalogId!, {
         name: editName.value.trim(),
         adminUserIds: adminUsers.value.map(u => u.userId),
         inheritParentAuth: inheritParentAuth.value ? 1 : 0,
@@ -187,7 +195,7 @@ const handleSave = async () => {
 onMounted(async () => {
   if (props.mode === 'edit' && props.catalogId) {
     try {
-      const d: any = await getCatalogDetail(props.catalogId)
+      const d: any = await catalogApi.value.detail(props.catalogId)
       detail.value = d
       editName.value = d.name
       parentName.value = d.parentName

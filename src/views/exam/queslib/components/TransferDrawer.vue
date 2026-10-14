@@ -14,7 +14,7 @@
           <div class="info-row"><span>题库分类</span><span>{{ lib.catalogName }}</span></div>
           <div class="info-row"><span>原创建者</span><span>{{ lib.createFullname }}{{ lib.createUserName ? `(${lib.createUserName})` : '' }}</span></div>
         </div>
-        <div v-else class="batch-tip">已选 {{ count }} 个题库，将统一转移给新创建者</div>
+        <div v-else class="batch-tip">已选 {{ count }} 个{{ api === 'paper' ? '试卷' : '题库' }}，将统一转移给新创建者</div>
 
         <div class="section">
           <div class="section-title">转移设置</div>
@@ -51,14 +51,20 @@
 import { ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { transferLib, batchLib, type LibItem } from '@/api/exam'
+import { batchPaper, transferPaper } from '@/api/paper'
 
 /** 转移题库抽屉（FP-04：单库 / 批量统一转给一人）。 */
+/** 试卷（PaperItem）与题库（LibItem）共用的只读字段，故用结构类型。 */
+type LibLike = Pick<LibItem, 'id' | 'name' | 'catalogName' | 'createFullname' | 'createUserName'>
+
 const props = defineProps<{
-  lib: LibItem | null
+  lib: LibLike | null
   batch?: boolean
   count?: number
   /** 批量模式下由父组件传入已勾选的题库 id 列表 */
   libIds?: string[]
+  /** 题库（默认）还是试卷——试卷只有单库转移 */
+  api?: 'ques' | 'paper'
 }>()
 
 const emit = defineEmits<{ close: []; saved: [] }>()
@@ -76,14 +82,24 @@ const handleTransfer = async () => {
   saving.value = true
   try {
     if (props.batch) {
-      // 批量转移：ids 由父组件传入，本抽屉只负责选人；直接调后端 /api/exam/lib/batch
+      // 批量转移：ids 由父组件传入，本抽屉只负责选人；按 api 走各自的批量接口
       const ids = props.libIds || []
-      await batchLib('transfer', ids, picked.value!.userId)
-      toast.success(`已将 ${ids.length} 个题库转移给 ${picked.value!.fullname}`)
+      if (props.api === 'paper') {
+        await batchPaper('transfer', ids, picked.value!.userId)
+        toast.success(`已将 ${ids.length} 张试卷转移给 ${picked.value!.fullname}`)
+      } else {
+        await batchLib('transfer', ids, picked.value!.userId)
+        toast.success(`已将 ${ids.length} 个题库转移给 ${picked.value!.fullname}`)
+      }
       emit('saved')
     } else {
-      await transferLib(props.lib!.id, picked.value!.userId)
-      toast.success('题库已转移')
+      if (props.api === 'paper') {
+        await transferPaper(props.lib!.id, picked.value!.userId)
+        toast.success('试卷已转移')
+      } else {
+        await transferLib(props.lib!.id, picked.value!.userId)
+        toast.success('题库已转移')
+      }
       emit('saved')
     }
   } finally {

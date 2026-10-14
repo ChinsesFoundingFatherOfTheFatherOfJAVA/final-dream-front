@@ -40,6 +40,7 @@
       v-if="tab === 'ques'"
       ref="quesListRef"
       :lib-id="libId"
+      :ques-id="quesId"
       @edit="onEditQues"
       @create="onCreateQues"
       @ai-create="openAiDrawer('ai')"
@@ -105,6 +106,8 @@ const route = useRoute()
 const router = useRouter()
 
 const libId = String(route.query.libId ?? '')
+/** 试卷管理页跳转过来时会带 quesId，只展示该题（题库 07 §9 增量）。 */
+const quesId = String(route.query.quesId ?? '')
 const lib = ref<LibDetail | null>(null)
 const tab = ref<'ques' | 'rate'>('ques')
 const showEdit = ref(false)

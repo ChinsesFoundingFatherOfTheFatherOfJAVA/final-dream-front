@@ -79,9 +79,15 @@
 import { computed, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { downloadQuesTemplate, importQuesFile, type ImportResult } from '@/api/exam'
+import { downloadPaperTemplate, importPaperFile } from '@/api/paper'
 
 /** FP-12 导入试题：模板下载 + 上传 + 逐行错误明细。 */
-const props = defineProps<{ libId: string; format: 'excel' | 'word' }>()
+const props = defineProps<{
+  libId: string
+  format: 'excel' | 'word'
+  /** 试卷 id：走试卷导入模板（含分值列），题目落库后建试卷关联 */
+  paperId?: string
+}>()
 const emit = defineEmits<{ close: []; imported: [] }>()
 
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -106,8 +112,13 @@ const saveBlob = (blob: Blob, filename: string) => {
 const downloadTemplate = async () => {
   downloading.value = true
   try {
-    const blob = await downloadQuesTemplate(props.format)
-    saveBlob(blob, props.format === 'word' ? '试题导入模板.docx' : '试题导入模板.xlsx')
+    if (props.paperId) {
+      // 试卷导入模板带「分值」列，由后端 classpath 静态资源分发
+      saveBlob(await downloadPaperTemplate(), '试卷导入模板.xlsx')
+    } else {
+      const blob = await downloadQuesTemplate(props.format)
+      saveBlob(blob, props.format === 'word' ? '试题导入模板.docx' : '试题导入模板.xlsx')
+    }
     toast.success('模板已开始下载')
   } catch {
     toast.error('模板下载失败，请重试')
@@ -134,7 +145,18 @@ const doImport = async () => {
   importing.value = true
   percent.value = 0
   try {
-    result.value = await importQuesFile(file.value, props.libId, (p) => { percent.value = p })
+    if (props.paperId) {
+      // 试卷导入：错误明细带 Sheet 名，拼进 reason 一起展示
+      const res = await importPaperFile(file.value, props.libId, 'root', 0,
+        (p) => { percent.value = p }, props.paperId)
+      result.value = {
+        successCount: res.successCount,
+        failCount: res.failCount,
+        errors: (res.errors || []).map(e => ({ line: e.row, reason: `【${e.sheet}】${e.reason}` }))
+      }
+    } else {
+      result.value = await importQuesFile(file.value, props.libId, (p) => { percent.value = p })
+    }
     if (result.value.failCount === 0) {
       toast.success(`导入成功 ${result.value.successCount} 条`)
     } else {
