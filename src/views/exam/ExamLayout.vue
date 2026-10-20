@@ -17,6 +17,37 @@
             <span>题库管理</span>
           </router-link>
         </div>
+        <!-- 组卷（试卷管理已实现，仅样式沿用占位项） -->
+        <router-link
+          to="/exam/paper"
+          class="menu-item pending"
+          :class="{ active: route.path.startsWith('/exam/paper') }"
+        >
+          <span class="menu-icon">▥</span>
+          <span>组卷</span>
+          <span class="pending-arrow">›</span>
+        </router-link>
+        <!-- 考试管理（原平台为「考试管理 > 考试管理 / 考试批阅」两级菜单） -->
+        <div class="menu-group">
+          <p class="group-title">考试管理</p>
+          <router-link
+            to="/exam/exam-mgmt"
+            class="menu-item"
+            :class="{ active: route.path.startsWith('/exam/exam-mgmt') }"
+          >
+            <span class="menu-icon">▦</span>
+            <span>考试管理</span>
+          </router-link>
+          <router-link
+            to="/exam/exam-review"
+            class="menu-item pending"
+            :class="{ active: route.path === '/exam/exam-review' }"
+          >
+            <span class="menu-icon">✎</span>
+            <span>考试批阅</span>
+            <span class="pending-arrow">›</span>
+          </router-link>
+        </div>
         <router-link
           v-for="item in pendingMenus"
           :key="item.path"
@@ -44,8 +75,6 @@ const router = useRouter()
 
 /** 未建设菜单（点击 PlaceholderPage"功能建设中"，01 §2） */
 const pendingMenus = [
-  { path: '/exam/paper', label: '组卷', icon: '▥' },
-  { path: '/exam/exam-mgmt', label: '考试管理', icon: '▦' },
   { path: '/exam/practice', label: '练习管理', icon: '▤' },
   { path: '/exam/feedback', label: '题目反馈', icon: '✎' },
   { path: '/exam/field', label: '字段设置', icon: '⚙' }

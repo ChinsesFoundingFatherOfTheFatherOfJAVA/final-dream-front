@@ -1,0 +1,140 @@
+<template>
+  <!-- F16 选择试卷抽屉：分类下拉 + 名称搜索 + 列表单选 -->
+  <div class="drawer-overlay">
+    <div class="drawer">
+      <div class="drawer-header">
+        <span>选择试卷</span>
+        <span class="close-btn" @click="emit('close')">×</span>
+      </div>
+
+      <div class="drawer-body">
+        <div class="filter-row">
+          <select v-model="catalogId" class="filter-select" @change="reload(1)">
+            <option value="root">全部分类</option>
+            <option v-for="c in flatCatalogs" :key="c.id" :value="c.id">{{ '　'.repeat(c.level) }}{{ c.name }}</option>
+          </select>
+          <input v-model.trim="keyword" type="search" placeholder="请输入试卷名称搜索" @keyup.enter="reload(1)" />
+          <button class="btn primary" type="button" @click="reload(1)">查询</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="check-col"></th>
+                <th>试卷名称</th><th class="col-sm">出卷方式</th>
+                <th class="col-sm">试题数</th><th class="col-sm">总分</th>
+                <th class="col-sm">试卷状态</th><th class="col-time">更新日期</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="p in records" :key="p.id" :class="{ picked: picked?.id === p.id }"
+                  @click="picked = p">
+                <td class="check-col"><input type="radio" :checked="picked?.id === p.id" /></td>
+                <td class="col-name" :title="p.name">{{ p.name }}</td>
+                <td class="col-sm">{{ p.buildType === 1 ? '随机出卷' : '固定出卷' }}</td>
+                <td class="col-sm">{{ p.totalQuesQty }}</td>
+                <td class="col-sm">{{ p.totalScore }}</td>
+                <td class="col-sm">
+                  <span :class="['tag', p.status === 4 ? 'ok' : 'warn']">{{ p.status === 4 ? '已发布' : '未发布' }}</span>
+                </td>
+                <td class="col-time">{{ p.updateTime }}</td>
+              </tr>
+              <tr v-if="!records.length"><td colspan="7" class="empty-cell">没有可选试卷</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p v-if="picked && picked.status !== 4" class="warn">
+          该试卷尚未发布，发布考试时会自动发布它（需已有题目/策略和分值）。
+        </p>
+
+        <div class="pagination">
+          <span>共 {{ total }} 条</span>
+          <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
+          <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
+          <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn" type="button" @click="emit('close')">取消</button>
+        <button class="btn primary" type="button" :disabled="!picked" @click="confirm">确定</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { getPaperCatalogTree, getPaperList, type PaperCatalogTreeNode, type PaperItem } from '@/api/paper'
+
+const emit = defineEmits<{ close: []; picked: [paper: PaperItem] }>()
+
+const records = ref<PaperItem[]>([])
+const total = ref(0)
+const pageNo = ref(1)
+const pageSize = 10
+const keyword = ref('')
+const catalogId = ref('root')
+const picked = ref<PaperItem | null>(null)
+const treeRoot = ref<PaperCatalogTreeNode | null>(null)
+
+interface FlatNode extends PaperCatalogTreeNode { level: number }
+const flatCatalogs = computed<FlatNode[]>(() => {
+  if (!treeRoot.value) return []
+  const out: FlatNode[] = []
+  const walk = (n: PaperCatalogTreeNode, level: number) => {
+    out.push({ ...n, level })
+    for (const c of n.children || []) walk(c, level + 1)
+  }
+  walk(treeRoot.value, 0)
+  return out
+})
+
+const reload = async (next?: number) => {
+  if (next) pageNo.value = next
+  try {
+    const res = await getPaperList(pageNo.value, pageSize, 'updateTime', 'desc', {
+      queryType: 0, keyword: keyword.value, catalogId: catalogId.value, routingPath: '',
+      creatorUserId: '', buildType: -1, disabled: -1, status: -1
+    })
+    records.value = res.records || []
+    total.value = res.total || 0
+  } catch { /* 拦截器已提示 */ }
+}
+
+const confirm = () => {
+  if (picked.value) emit('picked', picked.value)
+}
+
+onMounted(async () => {
+  try {
+    treeRoot.value = await getPaperCatalogTree() as any
+  } catch { /* 拦截器已提示 */ }
+  reload(1)
+})
+</script>
+
+<style scoped lang="scss">
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3200; }
+.drawer { width: 900px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; } }
+.drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
+.filter-row { display: flex; gap: 10px; .filter-select { width: 220px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; } input { flex: 1; border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none; } }
+.table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #f2f4f8; }
+th { background: #fafbfd; color: #667; font-weight: 500; white-space: nowrap; }
+tr { cursor: pointer; &:hover td { background: #fafbfe; } &.picked td { background: #f0f8ff; } }
+.check-col { width: 40px; text-align: center; }
+.col-name { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.col-sm { min-width: 90px; white-space: nowrap; }
+.col-time { min-width: 150px; white-space: nowrap; color: #667; }
+.tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; &.ok { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; } &.warn { background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; } }
+.warn { margin: 0; padding: 8px 10px; background: #fff7e6; border: 1px solid #ffe9a8; border-radius: 4px; font-size: 12px; color: #ad8b00; }
+.empty-cell { text-align: center; color: #999; padding: 40px 0; }
+.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
+.drawer-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }
+.btn { padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } &:disabled { opacity: .6; cursor: not-allowed; } }
+</style>

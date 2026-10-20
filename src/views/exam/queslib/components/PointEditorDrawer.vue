@@ -11,7 +11,7 @@
       <div class="drawer-body">
         <div v-for="point in list" :key="point.id" class="point-row"
              @mouseenter="hoverId = point.id" @mouseleave="hoverId = ''">
-          <template v-if="editingId === point.id">
+          <template v-if="editingId !== '' && editingId === point.id">
             <input v-model.trim="editingName" placeholder="考核点名称" @keyup.enter="confirmEdit(point)" />
             <button class="icon-btn" type="button" @click="confirmEdit(point)">✓</button>
             <button class="icon-btn" type="button" @click="editingId = ''">×</button>

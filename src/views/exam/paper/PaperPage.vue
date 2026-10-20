@@ -105,6 +105,7 @@
               </td>
               <td class="col-op">
                 <span v-if="row.status !== 4" class="op-link" @click="releaseRow(row)">发布</span>
+                <span v-else class="op-link" @click="goManageRow(row)">管理</span>
                 <span class="op-link more" @click="openMoreMenu(row, $event)">更多<span class="more-arrow">▾</span></span>
               </td>
             </tr>
@@ -145,7 +146,7 @@
     <!-- 行"更多"菜单（同样带遮罩，点空白处关闭） -->
     <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
       <div class="float-menu" :style="{ left: moreMenu.x + 'px', top: moreMenu.y + 'px' }">
-        <div class="menu-item" @click="goManage">管理</div>
+        <div v-if="moreMenu.row?.status !== 4" class="menu-item" @click="goManage">管理</div>
         <div class="menu-item" @click="openEditPaper()">编辑</div>
         <div v-if="moreMenu.row?.status === 4" class="menu-item" @click="openShare()">共享</div>
         <div class="menu-item" @click="openTransfer()">转移</div>
@@ -329,11 +330,13 @@ const router = useRouter()
 const orderIcon = (field: string) => (orderby.value === field ? (asc.value ? '↑' : '↓') : '⇅')
 
 /** 管理 → 试卷管理页（FP-07）。 */
-const goManage = () => {
+const goManageRow = (row: PaperItem) => {
   moreMenu.visible = false
-  if (moreMenu.row) {
-    router.push(`/exam/paper/detail?paperId=${moreMenu.row.id}`)
-  }
+  router.push(`/exam/paper/detail?paperId=${row.id}`)
+}
+
+const goManage = () => {
+  if (moreMenu.row) goManageRow(moreMenu.row)
 }
 
 const sortBy = (field: 'updateTime' | 'usedQty') => {

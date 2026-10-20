@@ -120,7 +120,7 @@
 
       <div class="drawer-footer">
         <button class="btn" type="button" @click="emit('close')">关闭</button>
-        <button v-if="result" class="btn primary" type="button" @click="emit('imported'); emit('close')">
+        <button v-if="result" class="btn primary" type="button" @click="emit('imported', result.paperId); emit('close')">
           完成（刷新列表）
         </button>
       </div>
@@ -139,7 +139,7 @@ import {
 
 /** FP-12 快速出卷：四步骤「下载模板 → 选择题库 → 选分类保密 → 上传导入」。 */
 const props = defineProps<{ defaultCatalogId?: string }>()
-const emit = defineEmits<{ close: []; imported: [] }>()
+const emit = defineEmits<{ close: []; imported: [paperId?: string] }>()
 
 const downloading = ref(false)
 const importing = ref(false)

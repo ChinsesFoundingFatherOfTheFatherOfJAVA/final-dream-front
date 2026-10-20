@@ -100,6 +100,7 @@ import {
   type CatalogAdminUser
 } from '@/api/exam'
 import * as paperApi from '@/api/paper'
+import * as arrangeApi from '@/api/arrange'
 import UserPickerDrawer from './UserPickerDrawer.vue'
 
 /**
@@ -111,19 +112,21 @@ const props = defineProps<{
   parentId?: string
   catalogId?: string
   /** 题库分类（默认）还是试卷分类：两者结构 100% 同构，仅接口路径不同，故按此切换 API。 */
-  api?: 'ques' | 'paper'
+  api?: 'ques' | 'paper' | 'arrange'
 }>()
 
 const emit = defineEmits<{ close: []; saved: [] }>()
 
 /** 按 api 选一组的分类接口——抽屉本身完全复用。 */
-const catalogApi = computed(() => props.api === 'paper'
-  ? { create: paperApi.createPaperCatalogBatch, update: paperApi.updatePaperCatalog, detail: paperApi.getPaperCatalogDetail }
-  : { create: createCatalogBatch, update: updateCatalog, detail: getCatalogDetail })
+const catalogApi = computed(() => props.api === 'arrange'
+  ? { create: arrangeApi.createArrangeCatalogBatch, update: arrangeApi.updateArrangeCatalog, detail: arrangeApi.getArrangeCatalogDetail }
+  : props.api === 'paper'
+    ? { create: paperApi.createPaperCatalogBatch, update: paperApi.updatePaperCatalog, detail: paperApi.getPaperCatalogDetail }
+    : { create: createCatalogBatch, update: updateCatalog, detail: getCatalogDetail })
 
 const catalogText = ref('')
 const editName = ref('')
-const parentName = ref(props.api === 'paper' ? '默认试卷分类' : '默认题库分类')
+const parentName = ref(props.api === 'arrange' ? '默认考试分类' : props.api === 'paper' ? '默认试卷分类' : '默认题库分类')
 const detail = ref<{ parentName: string; libQty: number; createTime: string; createFullname: string } | null>(null)
 const adminUsers = ref<CatalogAdminUser[]>([])
 const inheritParentAuth = ref(false)

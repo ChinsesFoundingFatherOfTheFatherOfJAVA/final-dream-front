@@ -67,10 +67,12 @@
               <option :value="2">难</option>
             </select>
           </label>
-          <label class="setting-item point-item">
+          <!-- 不能用 label 包裹：label 会把点击转发给内部第一个可聚焦控件（考核点抽屉的「编辑」按钮），
+               导致点选考核点时抽屉被误开。 -->
+          <div class="setting-item point-item">
             <span>考核点</span>
             <PointPicker v-model="selectedPointIds" :lib-id="libId" />
-          </label>
+          </div>
         </div>
 
         <p v-if="!parentReady" class="stage-hint">
@@ -160,10 +162,11 @@
               <input v-model.number="score" type="number" min="0" step="0.5" class="num" />
               <span>分</span>
             </label>
-            <label class="setting-item point-item">
+            <!-- 同组合题：div 包裹，避免 label 把点击转发给抽屉里的按钮 -->
+            <div class="setting-item point-item">
               <span>考核点</span>
               <PointPicker v-model="selectedPointIds" :lib-id="libId" />
-            </label>
+            </div>
             <!-- 多选题：漏选得分策略 -->
             <MissScoreField v-if="type === 1" :miss-score="missScore" :miss-type="missScoreType"
                             @miss="missScore = $event" @miss-type="missScoreType = $event" />

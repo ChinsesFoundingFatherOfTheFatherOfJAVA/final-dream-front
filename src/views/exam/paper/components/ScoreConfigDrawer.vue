@@ -25,7 +25,8 @@
               <td v-for="lv in LEVELS" :key="lv.value" class="cell">
                 <div class="cell-score">
                   <input v-model.number="cellOf(t.value, lv.value).score"
-                         type="number" min="0" step="0.5" class="num" />
+                         type="number" min="0" step="0.5" class="num"
+                         @input="clampCell(cellOf(t.value, lv.value))" />
                   <span class="unit">分</span>
                 </div>
 
@@ -34,7 +35,8 @@
                   <div class="miss-row">
                     <span class="miss-label">漏选</span>
                     <input v-model.number="cellOf(t.value, lv.value).missScore"
-                           type="number" min="0" step="0.5" class="num small" />
+                           type="number" min="0" :max="cellOf(t.value, lv.value).score" step="0.5" class="num small"
+                           @input="clampCell(cellOf(t.value, lv.value))" />
                     <span class="unit">分</span>
                   </div>
                   <label class="miss-radio">
@@ -108,10 +110,24 @@ onMounted(async () => {
         cells[k].missScoreType = Number(item.missScoreType ?? 0)
       }
     }
+    // 历史配置可能 missScore > score，载入后先修正
+    for (const t of TYPES) {
+      for (const lv of LEVELS) clampCell(cellOf(t.value, lv.value))
+    }
   } catch { /* 拦截器已提示 */ }
 })
 
+/** 漏选得分不能超过该格满分（同 BatchScoreDrawer 的口径）。 */
+const clampCell = (c: Cell) => {
+  if (!Number.isFinite(c.score) || c.score < 0) c.score = 0
+  if (!Number.isFinite(c.missScore) || c.missScore < 0) c.missScore = 0
+  if (c.missScore > c.score) c.missScore = c.score
+}
+
 const handleSave = async () => {
+  for (const t of TYPES) {
+    for (const lv of LEVELS) clampCell(cellOf(t.value, lv.value))
+  }
   saving.value = true
   try {
     const items: ScoreConfigItem[] = []

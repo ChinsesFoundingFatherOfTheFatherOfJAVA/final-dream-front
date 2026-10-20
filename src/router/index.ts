@@ -4,6 +4,12 @@ import { useAuthStore } from '@/stores/auth'
 
 const routes: RouteRecordRaw[] = [
   {
+    // F21 答卷详情（原平台同样是从考试详情跳出去的独立页面）
+    path: '/exam/result',
+    name: 'ExamResult',
+    component: () => import('@/views/exam/arrange/ResultPage.vue'),
+    meta: { title: '答卷详情', requiresAuth: true, requiresAdmin: true }
+  },  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/Login.vue'),
@@ -71,10 +77,39 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '试卷管理' }
       },
       {
+        // F15/F16/F17/F18 创建考试向导（三步：创建试卷 → 编辑试题 → 发布考试）
+        path: 'exam-mgmt/create',
+        name: 'ExamMgmtCreate',
+        component: () => import('@/views/exam/arrange/ExamCreateWizardPage.vue'),
+        meta: { title: '创建考试' }
+      },
+      {
+        // F18 发布配置页（新考试向导第三步 / 已发布考试编辑共用）
+        path: 'exam-mgmt/publish',
+        name: 'ExamMgmtPublish',
+        component: () => import('@/views/exam/arrange/ExamPublishPage.vue'),
+        meta: { title: '发布考试' }
+      },
+      {
+        // F1/F2/F3/F4 考试管理主页（分类树 + 考试列表）
         path: 'exam-mgmt',
         name: 'ExamMgmt',
-        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        component: () => import('@/views/exam/arrange/ExamMgmtPage.vue'),
         meta: { title: '考试管理' }
+      },
+      {
+        // F6~F12 考试详情（三 tab：考生情况 / 试题分析 / 统计分析）
+        path: 'exam-mgmt/detail',
+        name: 'ExamMgmtDetail',
+        component: () => import('@/views/exam/arrange/ExamDetailPage.vue'),
+        meta: { title: '考试详情' }
+      },
+      {
+        // 考试批阅：原平台「考试管理 > 考试批阅」的并列项，本轮未建设
+        path: 'exam-review',
+        name: 'ExamReview',
+        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        meta: { title: '考试批阅' }
       },
       {
         path: 'practice',

@@ -20,13 +20,15 @@
           <div class="score-fields">
             <label class="field">
               <span>每题分值</span>
-              <input v-model.number="item.score" type="number" min="0" step="0.5" :disabled="!item.checked" />
+              <input v-model.number="item.score" type="number" min="0" step="0.5"
+                     :disabled="!item.checked" @input="clampMiss(item)" />
             </label>
 
             <template v-if="item.sectionIndex === 1">
               <label class="field">
                 <span>漏选得分</span>
-                <input v-model.number="item.missScore" type="number" min="0" step="0.5" :disabled="!item.checked" />
+                <input v-model.number="item.missScore" type="number" min="0" :max="item.score" step="0.5"
+                       :disabled="!item.checked" @input="clampMiss(item)" />
               </label>
               <div class="radio-row">
                 <label><input v-model.number="item.missScoreType" type="radio" :value="0" :disabled="!item.checked" /> 不漏选得分</label>
@@ -74,7 +76,23 @@ const rows = reactive(props.sections.map(section => ({
 
 const checkedRows = computed(() => rows.filter(row => row.checked))
 
+/**
+ * 漏选得分是"答对一部分"的补偿分，不能超过该题满分。
+ *
+ * <p>输入框加 max 只是浏览器提示（手输仍能越界），所以在 input 事件与提交前都做一次夹取，
+ * 保证 UI 与落库都不会出现"漏选 5 分 / 满分 2 分"。
+ */
+const clampMiss = (row: { score: number; missScore: number }) => {
+  if (!Number.isFinite(row.score) || row.score < 0) row.score = 0
+  if (!Number.isFinite(row.missScore) || row.missScore < 0) row.missScore = 0
+  if (row.missScore > row.score) row.missScore = row.score
+}
+
+// 历史数据可能已经存在 missScore > score，进抽屉时就先修正显示
+rows.forEach(clampMiss)
+
 const confirm = async () => {
+  checkedRows.value.forEach(clampMiss)
   saving.value = true
   try {
     await batchPaperScore(props.paperId, checkedRows.value.map(row => ({

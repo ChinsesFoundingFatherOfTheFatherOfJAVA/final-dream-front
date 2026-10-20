@@ -6,11 +6,19 @@
       <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
       <h1>{{ paper?.name || '固定出卷' }}</h1>
       <span class="save-hint"><i class="hint-dot"></i>{{ saveHint }}</span>
+      <!-- 创建考试流程的第②步：三步条 + 右上角上一步/下一步（截图25） -->
+      <ExamWizardSteps v-if="arrangeId" class="paper-steps" :current="2" :can-jump="canJumpStep" @jump="jumpStep" />
       <div class="header-actions">
         <button class="btn" type="button" @click="notReady('预览')">预览</button>
         <button class="btn" type="button" @click="notReady('导出')">导出</button>
-        <button v-if="!published" class="btn primary" type="button" @click="doRelease">发布</button>
-        <span v-else class="sync-btn">同步试卷至考试</span>
+        <template v-if="arrangeId">
+          <button class="btn" type="button" @click="jumpStep(1)">上一步</button>
+          <button class="btn primary" type="button" @click="goPublish">下一步</button>
+        </template>
+        <template v-else>
+          <button v-if="!published" class="btn primary" type="button" @click="doRelease">发布</button>
+          <span v-else class="sync-btn">同步试卷至考试</span>
+        </template>
       </div>
     </header>
 
@@ -178,12 +186,15 @@ import PickQuesDrawer from './components/PickQuesDrawer.vue'
 import BatchScoreDrawer from './components/BatchScoreDrawer.vue'
 import AiQuesDrawer from '../queslib/components/AiQuesDrawer.vue'
 import QuesImportDrawer from '../queslib/components/QuesImportDrawer.vue'
+import ExamWizardSteps from '../components/ExamWizardSteps.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const paperId = String(route.query.paperId ?? '')
-/** 六题型（组合题也占一个大题位，暂只做占位卡片）。 */
+/** 从「创建考试向导」第二步进来时带 arrangeId，用于回跳发布配置 */
+const arrangeId = String(route.query.arrangeId ?? '')
+/** 六题型；组合题也占一个大题位，但走"先题干、再小题"的两段式编辑（见 PaperQuesCard）。 */
 const TYPE_BUTTONS = [
   { type: 0, label: '单选题', icon: '◉' },
   { type: 1, label: '多选题', icon: '☑' },
@@ -417,7 +428,30 @@ const doRelease = async () => {
   } catch { /* 拦截器已提示 */ }
 }
 
-const goBack = () => router.push(`/exam/paper/detail?paperId=${paperId}`)
+const goBack = () => {
+  // 创建考试流程里返回第 1 步；独立编辑试卷时回试卷详情
+  if (arrangeId) {
+    router.push(`/exam/exam-mgmt/create?examType=onlineExam&arrangeId=${arrangeId}&step=1`)
+    return
+  }
+  router.push(`/exam/paper/detail?paperId=${paperId}`)
+}
+
+/** F17 验收：固定卷无题时阻止进入下一步。 */
+const goPublish = () => {
+  if (!sections.value.length) {
+    toast.warn('请先设置策略或添加试题')
+    return
+  }
+  router.push(`/exam/exam-mgmt/create?examType=onlineExam&arrangeId=${arrangeId}&step=3`)
+}
+
+/** 步骤条只允许回第 1 步；第 3 步走 goPublish 的校验。 */
+const canJumpStep = (no: number) => no === 1
+const jumpStep = (no: number) => {
+  if (no === 1) goBack()
+  else if (no === 3) goPublish()
+}
 
 onMounted(async () => {
   loadCanvas()
@@ -454,6 +488,7 @@ onMounted(async () => {
     }
   }
   .header-actions { margin-left: auto; display: flex; gap: 10px; }
+  .paper-steps { margin: 0 auto; }
   .sync-btn {
     padding: 6px 14px; border: 1px solid #e5e8ef; border-radius: 4px;
     background: #f5f7fa; color: #b0b7c3; font-size: 13px;
