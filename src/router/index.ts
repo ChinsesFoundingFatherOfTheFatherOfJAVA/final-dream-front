@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { resolveRouteAccess } from './routeAccess'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -8,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     path: '/exam/result',
     name: 'ExamResult',
     component: () => import('@/views/exam/arrange/ResultPage.vue'),
-    meta: { title: '答卷详情', requiresAuth: true, requiresAdmin: true }
+    meta: { title: '答卷详情', requiresAuth: true, requiresAdmin: true, permission: 'exam:manage' }
   },  {
     path: '/login',
     name: 'Login',
@@ -27,107 +28,112 @@ const routes: RouteRecordRaw[] = [
     path: '/exam/paper/quick',
     name: 'ExamPaperQuick',
     component: () => import('@/views/exam/paper/PaperQuickEditPage.vue'),
-    meta: { title: '固定出卷', requiresAuth: true, requiresAdmin: true }
+    meta: { title: '固定出卷', requiresAuth: true, requiresAdmin: true, permission: 'exam:paper' }
   },
   {
     // FP-08/09 随机出卷编辑页：同上，独立全屏页
     path: '/exam/paper/auto',
     name: 'ExamPaperAuto',
     component: () => import('@/views/exam/paper/PaperAutoEditPage.vue'),
-    meta: { title: '随机出卷', requiresAuth: true, requiresAdmin: true }
+    meta: { title: '随机出卷', requiresAuth: true, requiresAdmin: true, permission: 'exam:paper' }
   },
   {
     path: '/exam',
     component: () => import('@/views/exam/ExamLayout.vue'),
     redirect: '/exam/queslib',
-    meta: { title: '测练中心', requiresAuth: true, requiresAdmin: true },
+    meta: {
+      title: '测练中心',
+      requiresAuth: true,
+      requiresAdmin: true,
+      permissionAny: ['exam:queslib', 'exam:paper', 'exam:manage']
+    },
     children: [
       {
         path: 'queslib',
         name: 'ExamQuesLib',
         component: () => import('@/views/exam/queslib/QuesLibPage.vue'),
-        meta: { title: '题库管理' }
+        meta: { title: '题库管理', permission: 'exam:queslib' }
       },
       {
         // FP-06 题库详情页（题库列表「管理」列跳这里，带 ?libId=）
         path: 'queslib/detail',
         name: 'ExamQuesLibDetail',
         component: () => import('@/views/exam/queslib/QuesLibDetailPage.vue'),
-        meta: { title: '题库详情' }
+        meta: { title: '题库详情', permission: 'exam:queslib' }
       },
       {
         // FP-08 试题编辑/新建页：?id= 编辑，?libId= 新建（03 §3.2 上方路由表）
         path: 'quesdetail',
         name: 'ExamQuesDetail',
         component: () => import('@/views/exam/queslib/QuesFormPage.vue'),
-        meta: { title: '试题编辑' }
+        meta: { title: '试题编辑', permission: 'exam:queslib' }
       },
       {
         // FP-04/05 试卷管理主页（分类树 + 试卷列表，截图01）
         path: 'paper',
         name: 'ExamPaper',
         component: () => import('@/views/exam/paper/PaperPage.vue'),
-        meta: { title: '组卷' }
+        meta: { title: '组卷', permission: 'exam:paper' }
       },
       {
         // FP-07 试卷管理页（试题列表，截图02）
         path: 'paper/detail',
         name: 'ExamPaperDetail',
         component: () => import('@/views/exam/paper/PaperDetailPage.vue'),
-        meta: { title: '试卷管理' }
+        meta: { title: '试卷管理', permission: 'exam:paper' }
       },
       {
         // F15/F16/F17/F18 创建考试向导（三步：创建试卷 → 编辑试题 → 发布考试）
         path: 'exam-mgmt/create',
         name: 'ExamMgmtCreate',
         component: () => import('@/views/exam/arrange/ExamCreateWizardPage.vue'),
-        meta: { title: '创建考试' }
+        meta: { title: '创建考试', permission: 'exam:manage' }
       },
       {
         // F18 发布配置页（新考试向导第三步 / 已发布考试编辑共用）
         path: 'exam-mgmt/publish',
         name: 'ExamMgmtPublish',
         component: () => import('@/views/exam/arrange/ExamPublishPage.vue'),
-        meta: { title: '发布考试' }
+        meta: { title: '发布考试', permission: 'exam:manage' }
       },
       {
         // F1/F2/F3/F4 考试管理主页（分类树 + 考试列表）
         path: 'exam-mgmt',
         name: 'ExamMgmt',
         component: () => import('@/views/exam/arrange/ExamMgmtPage.vue'),
-        meta: { title: '考试管理' }
+        meta: { title: '考试管理', permission: 'exam:manage' }
       },
       {
         // F6~F12 考试详情（三 tab：考生情况 / 试题分析 / 统计分析）
         path: 'exam-mgmt/detail',
         name: 'ExamMgmtDetail',
         component: () => import('@/views/exam/arrange/ExamDetailPage.vue'),
-        meta: { title: '考试详情' }
+        meta: { title: '考试详情', permission: 'exam:manage' }
       },
       {
         // 考试批阅：原平台「考试管理 > 考试批阅」的并列项，本轮未建设
         path: 'exam-review',
         name: 'ExamReview',
         component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '考试批阅' }
+        meta: { title: '考试批阅', permission: 'exam:manage' }
       },
       {
         path: 'practice',
         name: 'ExamPractice',
         component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '练习管理' }
+        meta: { title: '练习管理', permission: 'exam:manage' }
       },
       {
         path: 'feedback',
         name: 'ExamFeedback',
         component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '题目反馈' }
+        meta: { title: '题目反馈', permission: 'exam:manage' }
       },
       {
         path: 'field',
         name: 'ExamField',
         component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '字段设置' }
+        meta: { title: '字段设置', permission: 'exam:manage' }
       }
     ]
   },
@@ -142,7 +148,12 @@ const routes: RouteRecordRaw[] = [
       if (auth.hasPermission('kng:setting')) return '/kng/setting'
       return '/403'
     },
-    meta: { title: '在线课堂', requiresAuth: true, requiresAdmin: true },
+    meta: {
+      title: '在线课堂',
+      requiresAuth: true,
+      requiresAdmin: true,
+      permissionAny: ['kng:courseware', 'kng:course', 'kng:catalog', 'kng:setting']
+    },
     children: [
       {
         path: 'courseware',
@@ -266,7 +277,12 @@ const routes: RouteRecordRaw[] = [
           if (auth.hasPermission('role:mgmt')) return '/enterprise/roles'
           return '/403'
         },
-        meta: { title: '我的企业', activeMenu: 'enterprise', fullBleed: true },
+        meta: {
+          title: '我的企业',
+          activeMenu: 'enterprise',
+          fullBleed: true,
+          permissionAny: ['org:employee', 'org:department', 'role:mgmt']
+        },
         children: [
           {
             path: 'staff',
@@ -300,26 +316,30 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/sparring',
     component: () => import('@/components/layout/AdminLayout.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      permissionAny: ['act:speech', 'act:template', 'act:training']
+    },
     children: [
       {
         path: 'newmanage',
         name: 'SpeechTrainingCenter',
         component: () => import('@/views/admin/AICombat/SpeechTraining/index.vue'),
-        meta: { title: '话术训练中心', activeMenu: 'speech-training' }
+        meta: { title: '话术训练中心', activeMenu: 'speech-training', permission: 'act:speech' }
       },
       {
         path: 'newmanage/edit2',
         name: 'EditProject',
         component: () => import('@/views/admin/AICombat/SpeechTraining/EditProject.vue'),
-        meta: { title: '创建项目', activeMenu: 'speech-training' }
+        meta: { title: '创建项目', activeMenu: 'speech-training', permission: 'act:speech' }
       },
       {
         path: 'newmanage/console/:id',
         name: 'ProjectConsole',
         component: () => import('@/views/admin/AICombat/SpeechTraining/Console.vue'),
         redirect: (to) => ({ path: `${to.path}/flow`, query: to.query }),
-        meta: { requiresAuth: true, requiresAdmin: true },
+        meta: { requiresAuth: true, requiresAdmin: true, permission: 'act:speech' },
         children: [
           {
             path: 'overview',
@@ -357,19 +377,20 @@ const routes: RouteRecordRaw[] = [
         path: 'newtemplate',
         name: 'SpeechTemplate',
         component: () => import('@/views/admin/AICombat/SpeechTemplate/index.vue'),
-        meta: { title: '话术模板', activeMenu: 'speech-template' }
+        meta: { title: '话术模板', activeMenu: 'speech-template', permission: 'act:template' }
       },
       {
         path: 'newtemplate/console/:id',
         name: 'TemplateConsole',
         component: () => import('@/views/admin/AICombat/SpeechTemplate/TemplateConsole.vue'),
-        meta: { title: '模板控制台', activeMenu: 'speech-template' }
+        meta: { title: '模板控制台', activeMenu: 'speech-template', permission: 'act:template' }
       },
       // AI实战训练场（铺满窗口：顶栏 + 左菜单 + 内容区内部滚动）
       {
         path: 'freesimulate',
         component: () => import('@/views/admin/AICombat/ActualTraining/index.vue'),
         redirect: '/sparring/freesimulate/topic',
+        meta: { permission: 'act:training' },
         children: [
           {
             path: 'topic',
@@ -390,7 +411,7 @@ const routes: RouteRecordRaw[] = [
         path: 'freesimulate/assistant/:themeId?',
         name: 'ActualAssistant',
         component: () => import('@/views/admin/AICombat/ActualTraining/Assistant/index.vue'),
-        meta: { title: 'AI 设计助手', activeMenu: 'actual-training', fullBleed: true }
+        meta: { title: 'AI 设计助手', activeMenu: 'actual-training', fullBleed: true, permission: 'act:training' }
       }
     ]
   },
@@ -471,39 +492,6 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to) => {
-  const auth = useAuthStore()
-
-  if (to.meta.public === true) {
-    return true
-  }
-
-  if (!auth.isAuthenticated) {
-    return { path: '/login', query: { redirect: to.fullPath } }
-  }
-
-  try {
-    if (!auth.identityLoaded) {
-      await auth.loadMe()
-    }
-  } catch {
-    auth.logout()
-    return { path: '/login', query: { redirect: to.fullPath } }
-  }
-
-  if (to.meta.permission && !auth.hasPermission(String(to.meta.permission))) {
-    return { path: '/403' }
-  }
-
-  if (
-    to.meta.requiresAdmin === true &&
-    !auth.isSuperAdmin &&
-    auth.permissions.length === 0
-  ) {
-    return { path: '/403' }
-  }
-
-  return true
-})
+router.beforeEach((to) => resolveRouteAccess(to, useAuthStore()))
 
 export default router

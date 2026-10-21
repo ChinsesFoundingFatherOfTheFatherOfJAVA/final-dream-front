@@ -48,15 +48,15 @@
 
         <div class="field">
           <span class="label required">使用试卷</span>
-          <div class="user-box" :class="{ locked: published }" @click="openPaperPick">
+          <div class="user-box" :class="{ locked: published }" @click="!published && openPaperPick()">
             <span v-if="form.paperName" class="user-tag">{{ form.paperName }}</span>
             <span v-else class="placeholder">请选择试卷</span>
             <span v-if="!published" class="more-dots" @click.stop="openPaperPick">…</span>
           </div>
           <p class="hint">
             {{ published
-              ? '已发布后不可更改：发布后的试卷本体不能更换。'
-              : '发布考试时若试卷未发布会自动发布；已发布考试更换试卷后，历史答卷仍使用原试卷快照。' }}
+              ? '已发布后不可更改：试卷已锁定，换卷请新建考试。'
+              : '发布考试时若试卷未发布会自动发布；发布后试卷锁定，不可更换。' }}
           </p>
         </div>
 
@@ -189,6 +189,7 @@
               </span>
             </span>
           </div>
+          <p class="hint">本期统计按及格线计算，优秀分配置仅保存、暂不参与统计。</p>
         </div>
 
         <div class="field">
