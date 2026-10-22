@@ -1,18 +1,17 @@
 <template>
   <div class="avatar-gen-field">
     <div class="gen-row">
-      <input
+      <el-input
         v-model="prompt"
-        type="text"
         class="prompt-input"
         placeholder="中年男性医生，白大褂，专业亲切"
         maxlength="200"
         :disabled="generating"
         @keyup.enter="onGenerate"
       />
-      <button class="gen-btn" :disabled="generating || !prompt.trim()" @click="onGenerate">
+      <el-button type="primary" class="gen-btn" :disabled="generating || !prompt.trim()" @click="onGenerate">
         {{ generating ? '生成中...' : 'AI生成' }}
-      </button>
+      </el-button>
     </div>
     <p v-if="generating" class="gen-hint">形象生成最长约需 5 分钟，请耐心等待</p>
 
@@ -28,9 +27,9 @@
       <span class="remove-link" title="清除形象" @click="onRemove">移除</span>
     </div>
     <!-- 无形象时的本地上传入口 -->
-    <button v-else class="upload-link" :disabled="generating" @click="triggerUpload">
+    <el-button v-else class="upload-link" :disabled="generating" @click="triggerUpload">
       上传本地图片
-    </button>
+    </el-button>
 
     <!-- 本地文件选择（隐藏） -->
     <input

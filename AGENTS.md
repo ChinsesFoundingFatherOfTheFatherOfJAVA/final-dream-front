@@ -8,7 +8,7 @@
 
 ## 2. 技术栈与结构
 
-- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus（依赖已安装，`main.ts` 当前未全局 `app.use`）· Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
+- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus（`main.ts` 全量注册，主题由 `src/assets/styles/element-theme.scss` 统一覆盖；主色 `#1890ff`）· Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
 - 目录：`src/api`（按后端模块拆分的请求封装）、`src/views`（admin / student / onlineclassroom / auth / exam）、
   `src/components/layout`（AdminLayout/EnterpriseLayout/AdminTopNav/StudentTopNav）、`src/stores`（auth/training）、`src/utils`、`src/mock`、`src/types`。
 - 测试：Vitest + @vue/test-utils（`npm run test`）；类型检查 `vue-tsc`（`npm run build` 自带 type-check）。
@@ -47,10 +47,12 @@
 - token 存 localStorage（`final_dream.auth`）；JWT 12h 过期，过期统一走 401 分支跳登录。
 - 仓库卫生（2026-10-02）：`.mimosa/`、`test-results/` 已加入 `.gitignore` 并移出索引；
   源码树内的《复刻平台前端》《复刻话术训练模块》文档目录已迁至 `D:\JACK\plan` 仓库。
+- **UI 控件口径（2026-10-22）**：普通表单、列表、分页、弹窗、抽屉、树控件统一使用 Element Plus；文件上传原生 `input`、聊天输入区、FlowDesign/NodeConfigPanel/EdgeWeightDialog、玩家/字幕专用交互和全屏 AI 生成向导属于已登记例外。新增页面不得恢复手写通用控件。
+- **抽屉约定**：考试域等自定义业务抽屉使用 `class="exam-drawer"` 的 `el-drawer`，`with-header=false` 时在内部保留业务头部；抽屉内容自行管理滚动，点击遮罩由 Element Plus 负责关闭。
 
 ## 5. 构建与验证
 
-- `npm run test`（vitest，当前 **8 个 spec / 35 个用例**必须全绿）；`npm run build`（含 vue-tsc type-check）通过后再提交。
+- `npm run test`（vitest，当前 **8 个 spec / 35 个用例**必须全绿）；`npm run type-check`、`npm run build-only`（Vite 打包）通过后再提交。
 - 本地联调：后端网关 8080 + ACT 8082（WS）在跑即可 `npm run dev`（端口 3000）。
 - 提交前跑 `npm run format`（prettier），不要提交与本次改动无关的大面积格式化。
 

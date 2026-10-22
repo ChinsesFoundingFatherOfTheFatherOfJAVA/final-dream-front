@@ -3,7 +3,7 @@
   <div class="step3">
     <div class="header-row">
       <span class="ai-tag">AI生成</span>
-      <button class="btn-text-back" :disabled="generating" @click="emit('back')">‹ 返回上一页</button>
+      <el-button link class="btn-text-back" :disabled="generating" @click="emit('back')">‹ 返回上一页</el-button>
     </div>
 
     <div class="notice-bar">
@@ -51,11 +51,10 @@
 
         <!-- 学员卡片：checkbox + 白底气泡（右侧）+ 要点/解析 -->
         <div class="student-block" v-if="!(i === 0 && firstSpeaker === 'student')">
-          <input
-            type="checkbox"
+          <el-checkbox
             class="round-check"
-            :checked="checked.has(i)"
-            @change="toggle(i, ($event.target as HTMLInputElement).checked)"
+            :model-value="checked.has(i)"
+            @change="toggle(i, Boolean($event))"
           />
           <div class="bubble-row student">
             <div class="bubble student-bubble">
@@ -80,13 +79,12 @@
     </div>
 
     <div class="footer-bar">
-      <label class="check-all">
-        <input type="checkbox" :checked="allChecked" @change="toggleAll(($event.target as HTMLInputElement).checked)" />
+      <el-checkbox :model-value="allChecked" @change="toggleAll(Boolean($event))">
         全选
-      </label>
-      <button class="btn-gradient" :disabled="!checked.size" :title="!checked.size ? '请勾选要导入的话术' : ''" @click="handleImport">
+      </el-checkbox>
+      <el-button class="btn-gradient" :disabled="!checked.size" :title="!checked.size ? '请勾选要导入的话术' : ''" @click="handleImport">
         导入已选话术
-      </button>
+      </el-button>
     </div>
   </div>
 </template>

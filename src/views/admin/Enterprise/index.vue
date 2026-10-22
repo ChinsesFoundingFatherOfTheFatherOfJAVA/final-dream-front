@@ -47,7 +47,7 @@
           <label class="field compact">
             <span>状态</span>
             <el-select v-model="status" placeholder="全部" @change="resetAndSearch">
-              <el-option label="全部" :value="undefined" />
+              <el-option label="全部" :value="''" />
               <el-option label="启用" :value="1" />
               <el-option label="禁用" :value="0" />
             </el-select>
@@ -56,7 +56,7 @@
           <label class="field compact">
             <span>超级管理员</span>
             <el-select v-model="isSuperAdmin" placeholder="全部" @change="resetAndSearch">
-              <el-option label="全部" :value="undefined" />
+              <el-option label="全部" :value="''" />
               <el-option label="是" :value="1" />
               <el-option label="否" :value="0" />
             </el-select>
@@ -246,8 +246,8 @@ const users = ref<EnterpriseUser[]>([])
 const selectedDeptId = ref('')
 const keyword = ref('')
 const searchField = ref('name')
-const status = ref<number | undefined>(undefined)
-const isSuperAdmin = ref<number | undefined>(undefined)
+const status = ref<number | ''>('')
+const isSuperAdmin = ref<number | ''>('')
 const selectedPositions = ref<string[]>([])
 const page = ref(1)
 const size = ref(20)
@@ -304,8 +304,8 @@ async function loadUsers() {
       page: page.value,
       size: size.value,
       deptId: selectedDeptId.value || undefined,
-      status: status.value,
-      isSuperAdmin: isSuperAdmin.value,
+      status: status.value === '' ? undefined : status.value,
+      isSuperAdmin: isSuperAdmin.value === '' ? undefined : isSuperAdmin.value,
       searchField: searchField.value,
       keyword: keyword.value || undefined,
       positionNames: selectedPositions.value.length

@@ -72,11 +72,11 @@
           <span class="caret">⌄</span>
         </el-button>
         <el-select v-model="typeFilter" class="filter-select" placeholder="全部类型" @change="reload(1)">
-          <el-option label="全部类型" :value="null" />
+          <el-option label="全部类型" :value="''" />
           <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <el-select v-model="statusFilter" class="filter-select" placeholder="课件状态" @change="reload(1)">
-          <el-option label="课件状态" :value="null" />
+          <el-option label="课件状态" :value="''" />
           <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <el-input
@@ -275,8 +275,8 @@ const pageNo = ref(1)
 const pageSize = ref(10)
 const orderBy = ref('updateTime')
 const orderType = ref('desc')
-const typeFilter = ref<number | null>(null)
-const statusFilter = ref<number | null>(null)
+const typeFilter = ref<number | ''>('')
+const statusFilter = ref<number | ''>('')
 const keyword = ref('')
 const loading = ref(false)
 const page = reactive<{ total: number; records: CoursewareListItem[] }>({ total: 0, records: [] })
@@ -341,8 +341,8 @@ function typeBadge(type: number) {
 function queryBody(): CoursewareListQuery {
   return {
     keyword: keyword.value || undefined,
-    type: typeFilter.value,
-    status: statusFilter.value,
+    type: typeFilter.value === '' ? null : typeFilter.value,
+    status: statusFilter.value === '' ? null : statusFilter.value,
     catalogId: selectedCatalogId.value || null,
     includeChildCatalog: includeChildCatalog.value,
     ...appliedFilters.value

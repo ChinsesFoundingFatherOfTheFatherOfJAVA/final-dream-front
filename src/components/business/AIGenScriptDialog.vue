@@ -44,7 +44,7 @@
               <div class="failed-icon">⚠</div>
               <p class="failed-title">生成失败</p>
               <p class="failed-sub">这里信息量太大，再给我点时间准备下嘛</p>
-              <button class="btn-outline" @click="handleGenScene">再试一次</button>
+              <el-button class="btn-outline" @click="handleGenScene">再试一次</el-button>
             </div>
             <div v-else class="empty-state">
               <div class="quill-icon">✒</div>

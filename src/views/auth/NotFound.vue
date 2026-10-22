@@ -5,8 +5,8 @@
       <h1>页面不存在</h1>
       <p>你访问的地址不存在或已被移除。</p>
       <div class="actions">
-        <button class="primary-btn" @click="goBack">返回上一页</button>
-        <button class="plain-btn" @click="goHome">回到首页</button>
+        <el-button type="primary" class="primary-btn" @click="goBack">返回上一页</el-button>
+        <el-button class="plain-btn" @click="goHome">回到首页</el-button>
       </div>
     </div>
   </div>
@@ -88,18 +88,5 @@ const goHome = () => {
   padding: 0 18px;
   border-radius: 8px;
   font-size: 14px;
-  cursor: pointer;
-}
-
-.primary-btn {
-  border: none;
-  background: #1890ff;
-  color: #fff;
-}
-
-.plain-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
 }
 </style>

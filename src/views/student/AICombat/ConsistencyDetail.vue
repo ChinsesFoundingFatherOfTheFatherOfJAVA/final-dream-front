@@ -1,39 +1,35 @@
 <template>
-  <teleport to="body">
-    <transition name="consistency-fade">
-      <div v-if="visible" class="consistency-overlay" @click.self="close">
-        <div class="consistency-modal">
-          <div class="modal-header">
-            <span class="modal-title">话术一致性详情</span>
-            <span class="modal-close" @click="close">×</span>
+  <el-dialog
+    :model-value="visible"
+    title="话术一致性详情"
+    width="560px"
+    append-to-body
+    @close="close"
+  >
+    <div class="modal-body">
+      <div v-if="loading" class="state-hint">加载中...</div>
+      <div v-else-if="error" class="state-hint">{{ error }}</div>
+      <template v-else>
+        <div v-for="round in rounds" :key="round.seq" class="round-block">
+          <div class="round-title">第 {{ round.seq }} 轮</div>
+          <div class="round-line">
+            <span class="role-label">陪练者问：</span>
+            <span class="role-text">{{ round.trainerQuestion }}</span>
           </div>
-          <div class="modal-body">
-            <div v-if="loading" class="state-hint">加载中...</div>
-            <div v-else-if="error" class="state-hint">{{ error }}</div>
-            <template v-else>
-              <div v-for="round in rounds" :key="round.seq" class="round-block">
-                <div class="round-title">第 {{ round.seq }} 轮</div>
-                <div class="round-line">
-                  <span class="role-label">陪练者问：</span>
-                  <span class="role-text">{{ round.trainerQuestion }}</span>
-                </div>
-                <div class="round-line">
-                  <span class="role-label">学员答：</span>
-                  <span class="role-text">{{ round.studentAnswer }}</span>
-                </div>
-                <div class="round-points">
-                  <span v-for="(point, i) in round.keyPoints" :key="i" class="point-tag" :class="point.hit ? 'hit' : 'miss'">
-                    {{ point.hit ? '✓' : '✗' }} {{ point.content }}
-                  </span>
-                </div>
-              </div>
-              <div v-if="!rounds.length" class="state-hint">暂无数据</div>
-            </template>
+          <div class="round-line">
+            <span class="role-label">学员答：</span>
+            <span class="role-text">{{ round.studentAnswer }}</span>
+          </div>
+          <div class="round-points">
+            <span v-for="(point, i) in round.keyPoints" :key="i" class="point-tag" :class="point.hit ? 'hit' : 'miss'">
+              {{ point.hit ? '✓' : '✗' }} {{ point.content }}
+            </span>
           </div>
         </div>
-      </div>
-    </transition>
-  </teleport>
+        <div v-if="!rounds.length" class="state-hint">暂无数据</div>
+      </template>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -75,55 +71,9 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.consistency-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.consistency-modal {
-  width: 560px;
-  max-width: calc(100vw - 48px);
-  max-height: 78vh;
-  background: #fff;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-
-  .modal-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #222;
-  }
-
-  .modal-close {
-    font-size: 22px;
-    color: #999;
-    cursor: pointer;
-    line-height: 1;
-
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
 .modal-body {
-  padding: 16px 20px 20px;
+  max-height: 62vh;
+  padding: 4px 0 0;
   overflow-y: auto;
 }
 
@@ -193,13 +143,4 @@ watch(
   padding: 30px 0;
 }
 
-.consistency-fade-enter-active,
-.consistency-fade-leave-active {
-  transition: opacity 0.18s ease;
-}
-
-.consistency-fade-enter-from,
-.consistency-fade-leave-to {
-  opacity: 0;
-}
 </style>

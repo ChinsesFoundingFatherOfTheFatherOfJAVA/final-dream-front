@@ -54,7 +54,7 @@
           <span class="caret">⌄</span>
         </el-button>
         <el-select v-model="statusFilter" class="filter-select" placeholder="课程状态" @change="reload(1)">
-          <el-option label="课程状态" :value="null" />
+          <el-option label="课程状态" :value="''" />
           <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <el-input
@@ -238,7 +238,7 @@ const pageNo = ref(1)
 const pageSize = ref(10)
 const orderBy = ref('updateTime')
 const orderType = ref('desc')
-const statusFilter = ref<number | null>(null)
+const statusFilter = ref<number | ''>('')
 const keyword = ref('')
 const loading = ref(false)
 const page = reactive<{ total: number; records: CourseListItem[] }>({ total: 0, records: [] })
@@ -285,7 +285,7 @@ const courseRowClass = ({ row }: { row: CourseListItem }) => row.hidden ? 'row-h
 function queryBody(): CourseListQuery {
   return {
     keyword: keyword.value || undefined,
-    status: statusFilter.value,
+    status: statusFilter.value === '' ? null : statusFilter.value,
     catalogId: selectedCatalogId.value || null,
     includeChildCatalog: includeChildCatalog.value,
     ...appliedFilters.value

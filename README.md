@@ -23,6 +23,14 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
+## UI conventions
+
+The application uses Element Plus globally. Shared visual tokens live in
+`src/assets/styles/element-theme.scss`; ordinary forms, tables, pagination,
+dialogs and drawers should use Element Plus components. Keep the documented
+exceptions for file-upload inputs, chat interactions, the flow editor and
+specialized media/player controls.
+
 ## Project Setup
 
 ```sh

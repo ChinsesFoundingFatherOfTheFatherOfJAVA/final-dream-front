@@ -107,39 +107,40 @@
     </div>
 
     <!-- FP-41 发布弹窗（照线上：主题名/场景数/参与学员/预估时间 + 三条说明） -->
-    <Teleport to="body">
-      <div v-if="publishVisible" class="publish-overlay" @click.self="publishVisible = false">
-        <div class="publish-dialog">
-          <div class="publish-header">发布主题</div>
-          <div class="publish-body">
-            <div class="publish-theme">{{ detail.themeName }}</div>
-            <div class="publish-stats">
-              <div class="publish-stat">
-                <div class="stat-label">场景数</div>
-                <div class="stat-value">{{ detail.scenarioUnitCount }} <span class="unit">个</span></div>
-              </div>
-              <div class="publish-stat">
-                <div class="stat-label">参与学员</div>
-                <div class="stat-value">{{ detail.stats.participantCount }} <span class="unit">人</span></div>
-              </div>
-              <div class="publish-stat">
-                <div class="stat-label">预估初始化</div>
-                <div class="stat-value">≈ {{ estimatedMinutes }} <span class="unit">分钟</span></div>
-              </div>
-            </div>
-            <ul class="publish-notes">
-              <li v-for="(n, i) in publishNotes" :key="i">{{ n }}</li>
-            </ul>
+    <el-dialog
+      :model-value="publishVisible"
+      title="发布主题"
+      width="520px"
+      append-to-body
+      @close="publishVisible = false"
+    >
+      <div class="publish-body">
+        <div class="publish-theme">{{ detail.themeName }}</div>
+        <div class="publish-stats">
+          <div class="publish-stat">
+            <div class="stat-label">场景数</div>
+            <div class="stat-value">{{ detail.scenarioUnitCount }} <span class="unit">个</span></div>
           </div>
-          <div class="publish-footer">
-            <el-button class="btn-cancel" @click="publishVisible = false">取消</el-button>
-            <el-button class="btn-publish" :disabled="publishing" @click="doPublish">
-              {{ publishing ? '发布中…' : '确认发布' }}
-            </el-button>
+          <div class="publish-stat">
+            <div class="stat-label">参与学员</div>
+            <div class="stat-value">{{ detail.stats.participantCount }} <span class="unit">人</span></div>
+          </div>
+          <div class="publish-stat">
+            <div class="stat-label">预估初始化</div>
+            <div class="stat-value">≈ {{ estimatedMinutes }} <span class="unit">分钟</span></div>
           </div>
         </div>
+        <ul class="publish-notes">
+          <li v-for="(n, i) in publishNotes" :key="i">{{ n }}</li>
+        </ul>
       </div>
-    </Teleport>
+      <template #footer>
+        <el-button @click="publishVisible = false">取消</el-button>
+        <el-button type="primary" :disabled="publishing" @click="doPublish">
+          {{ publishing ? '发布中…' : '确认发布' }}
+        </el-button>
+      </template>
+    </el-dialog>
 
     <!-- 确认弹窗 -->
     <ConfirmDialog
@@ -620,106 +621,56 @@ const doAction = async () => {
   to { transform: rotate(360deg); }
 }
 
-/* FP-41 发布弹窗 */
-.publish-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9998;
+.publish-body { padding: 4px 0 0; }
+
+.publish-theme {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f2f3f5;
+  color: #1f2329;
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.publish-dialog {
-  width: 520px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+.publish-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0;
 
-  .publish-header {
-    padding: 18px 24px 0;
-    font-size: 18px;
+  .publish-stat {
+    padding: 10px 12px;
+    border: 1px solid #eef0f3;
+    border-radius: 8px;
+    background: #fafbfc;
+  }
+
+  .stat-label {
+    margin-bottom: 5px;
+    color: #8a8f98;
+    font-size: 12px;
+  }
+
+  .stat-value {
+    color: #1890ff;
+    font-size: 20px;
     font-weight: 600;
-    color: #1f2329;
-  }
 
-  .publish-body { padding: 14px 24px 20px; }
-
-  .publish-theme {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1f2329;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f2f3f5;
-  }
-
-  .publish-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 14px 0;
-
-    .publish-stat {
-      background: #fafbfc;
-      border: 1px solid #eef0f3;
-      border-radius: 8px;
-      padding: 10px 12px;
-
-      .stat-label { font-size: 12px; color: #8a8f98; margin-bottom: 5px; }
-      .stat-value {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1890ff;
-
-        .unit { font-size: 12px; font-weight: 400; margin-left: 2px; }
-      }
+    .unit {
+      margin-left: 2px;
+      font-size: 12px;
+      font-weight: 400;
     }
   }
+}
 
-  .publish-notes {
-    margin: 0;
-    padding-left: 18px;
+.publish-notes {
+  margin: 0;
+  padding-left: 18px;
 
-    li {
-      font-size: 13px;
-      color: #646a73;
-      line-height: 1.9;
-    }
-  }
-
-  .publish-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 12px 24px 18px;
-    border-top: 1px solid #f0f0f0;
-
-    button {
-      padding: 7px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &.btn-cancel {
-        background: #fff;
-        color: #666;
-        border: 1px solid #d9d9d9;
-
-        &:hover { color: #1890ff; border-color: #1890ff; }
-      }
-
-      &.btn-publish {
-        background: #1890ff;
-        color: #fff;
-        border: 1px solid #1890ff;
-
-        &:hover:not(:disabled) { opacity: 0.85; }
-        &:disabled { opacity: 0.6; cursor: not-allowed; }
-      }
-    }
+  li {
+    color: #646a73;
+    font-size: 13px;
+    line-height: 1.9;
   }
 }
 

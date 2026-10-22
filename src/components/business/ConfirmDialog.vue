@@ -1,21 +1,29 @@
 <template>
   <!-- 全局确认弹窗：confirmDialog() Promise 化调用，替代浏览器 window.confirm -->
-  <div v-if="visible" class="confirm-overlay" @click.self="handleCancel">
-    <div class="confirm-box">
-      <div class="confirm-title">{{ title }}</div>
-      <div class="confirm-body">{{ message }}</div>
-      <div class="confirm-footer">
-        <button class="btn" @click="handleCancel">{{ cancelText }}</button>
-        <button class="btn primary" :class="{ danger: danger }" @click="handleConfirm">
-          {{ confirmText }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <el-dialog
+    :model-value="visible"
+    width="400px"
+    append-to-body
+    :show-close="false"
+    :close-on-click-modal="false"
+    @close="handleCancel"
+  >
+    <template #header>
+      <span class="confirm-title">{{ title }}</span>
+    </template>
+    <div class="confirm-body">{{ message }}</div>
+    <template #footer>
+      <el-button @click="handleCancel">{{ cancelText }}</el-button>
+      <el-button :type="danger ? 'danger' : 'primary'" @click="handleConfirm">
+        {{ confirmText }}
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ElButton, ElDialog } from 'element-plus'
 
 /**
  * 全局确认弹窗（window.confirm 的页面级替代）。
@@ -64,65 +72,16 @@ defineExpose({ open })
 </script>
 
 <style scoped lang="scss">
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5000;
-}
-
-.confirm-box {
-  width: 400px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 22px 24px 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-
-  .confirm-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
-  }
-
-  .confirm-body {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 20px;
-    white-space: pre-wrap;
-  }
-
-  .confirm-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-}
-
-.btn {
-  padding: 7px 20px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  background: #fff;
+.confirm-title {
+  font-size: 15px;
+  font-weight: 600;
   color: #333;
+}
+
+.confirm-body {
   font-size: 13px;
-  cursor: pointer;
-
-  &:hover { opacity: 0.85; }
-
-  &.primary {
-    background: #1890ff;
-    border-color: #1890ff;
-    color: #fff;
-  }
-
-  &.danger {
-    background: #ff4d4f;
-    border-color: #ff4d4f;
-  }
+  color: #555;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 </style>

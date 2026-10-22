@@ -3,13 +3,13 @@
   <div class="step2">
     <div class="header-row">
       <span class="page-title">对话大纲</span>
-      <button class="btn-text-back" :disabled="generating" @click="emit('back')">‹ 返回上一页</button>
+      <el-button link class="btn-text-back" :disabled="generating" @click="emit('back')">‹ 返回上一页</el-button>
     </div>
 
     <div v-for="(item, i) in localOutlines" :key="i" class="outline-card">
       <div class="card-head">
         <span class="card-index">环节{{ i + 1 }}：</span>
-        <input class="name-input" v-model="item.name" maxlength="20" placeholder="环节名（必填）" />
+        <el-input class="name-input" v-model="item.name" maxlength="20" placeholder="环节名（必填）" />
         <span class="name-count">{{ item.name.length }}/20</span>
         <span class="ops">
           <span class="op" title="上移" @click="move(i, -1)">↑</span>
@@ -19,25 +19,25 @@
       </div>
       <div class="card-field">
         <label>✎ 考察点</label>
-        <textarea v-model="item.assessmentPoints" maxlength="200" rows="3"></textarea>
+        <el-input v-model="item.assessmentPoints" type="textarea" maxlength="200" :rows="3" />
         <span class="field-count">{{ item.assessmentPoints.length }}/200</span>
       </div>
       <div class="card-field">
         <label>✎ 应对思路</label>
-        <textarea v-model="item.strategy" maxlength="200" rows="3"></textarea>
+        <el-input v-model="item.strategy" type="textarea" maxlength="200" :rows="3" />
         <span class="field-count">{{ item.strategy.length }}/200</span>
       </div>
     </div>
 
-    <button v-if="localOutlines.length < 10" class="add-link" @click="add">＋ 新增对话环节</button>
+    <el-button v-if="localOutlines.length < 10" link class="add-link" @click="add">＋ 新增对话环节</el-button>
 
     <div class="footer-row">
       <div class="gen-group">
-        <button
+        <el-button
           class="btn-gradient"
           :disabled="generating || !valid"
           @click="openMenu = !openMenu"
-        >✨ 确认无误，生成{{ language === 'en' ? '英语' : '普通话' }}话术 ▾</button>
+        >✨ 确认无误，生成{{ language === 'en' ? '英语' : '普通话' }}话术 ▾</el-button>
         <div v-if="openMenu" class="lang-menu" @click.self="openMenu = false">
           <div :class="{ active: language === 'zh' }" @click="choose('zh')">普通话</div>
           <div :class="{ active: language === 'en' }" @click="choose('en')">英语</div>

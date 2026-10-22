@@ -1,6 +1,15 @@
 <template>
   <!-- SG-03 从在线课堂选择抽屉：960px，仅名称搜索（极简口径），列=名称/学分/时长/分享人 -->
-  <div class="drawer-overlay">
+  <el-drawer
+    :model-value="true"
+    size="960px"
+    :with-header="false"
+    :z-index="props.zIndex"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>课程库中的</span>
@@ -8,68 +17,77 @@
       </div>
       <div class="drawer-body">
         <div class="filter-row">
-          <label class="keyword-box">
-            <span>⌕</span>
-            <input v-model.trim="keyword" type="search" placeholder="搜索课件名称" @keyup.enter="reload(1)" />
-          </label>
-          <button class="search-btn" @click="reload(1)">搜索</button>
+          <el-input
+            v-model.trim="keyword"
+            class="keyword-input"
+            placeholder="搜索课件名称"
+            clearable
+            @keyup.enter="reload(1)"
+          >
+            <template #prefix><span>⌕</span></template>
+          </el-input>
+          <el-button type="primary" class="search-btn" @click="reload(1)">搜索</el-button>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="check-col">
-                  <input
-                    type="checkbox"
-                    :checked="allPageChecked"
-                    :indeterminate.prop="somePageChecked"
-                    @change="toggleAllPage(($event.target as HTMLInputElement).checked)"
-                  />
-                </th>
-                <th>名称</th>
-                <th>学分</th>
-                <th>时长</th>
-                <th>分享人</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in page.records" :key="row.id" :class="{ checked: selected.has(row.id) }">
-                <td class="check-col">
-                  <input
-                    type="checkbox"
-                    :checked="selected.has(row.id)"
-                    @change="toggleRow(row, ($event.target as HTMLInputElement).checked)"
-                  />
-                </td>
-                <td class="title-cell"><span class="title-text" :title="row.title">{{ row.title }}</span></td>
-                <td>{{ row.credits ?? '--' }}</td>
-                <td>{{ row.durationText || '--' }}</td>
-                <td>{{ row.createdByName || '--' }}</td>
-              </tr>
-              <tr v-if="!loading && !page.records.length">
-                <td colspan="5" class="empty-cell">暂无文档类课件</td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-if="loading" class="table-loading">加载中...</div>
-        </div>
+        <el-table
+          v-loading="loading"
+          :data="page.records"
+          row-key="id"
+          class="material-table"
+          empty-text="暂无文档类课件"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox
+                :model-value="allPageChecked"
+                :indeterminate="somePageChecked"
+                @change="toggleAllPage(Boolean($event))"
+              />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="selected.has(row.id)"
+                @change="toggleRow(row, Boolean($event))"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="名称" min-width="280">
+            <template #default="{ row }">
+              <span class="title-text" :title="row.title">{{ row.title }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="学分" width="100">
+            <template #default="{ row }">{{ row.credits ?? '--' }}</template>
+          </el-table-column>
+          <el-table-column label="时长" width="130">
+            <template #default="{ row }">{{ row.durationText || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="分享人" width="140">
+            <template #default="{ row }">{{ row.createdByName || '--' }}</template>
+          </el-table-column>
+        </el-table>
 
         <div class="pagination">
-          <button :disabled="pageNo <= 1" @click="reload(pageNo - 1)">上一页</button>
-          <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(page.total / pageSize)) }}</span>
-          <button :disabled="pageNo >= Math.ceil(page.total / pageSize)" @click="reload(pageNo + 1)">下一页</button>
+          <span>共 {{ page.total }} 条</span>
+          <el-pagination
+            :current-page="pageNo"
+            :page-size="pageSize"
+            :total="page.total"
+            layout="prev, pager, next"
+            background
+            @current-change="reload"
+          />
         </div>
       </div>
       <div class="drawer-footer">
         <span class="selected-count">已选择：{{ selected.size }}</span>
         <div class="footer-btns">
-          <button class="btn" @click="emit('close')">取消</button>
-          <button class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</button>
+          <el-button @click="emit('close')">取消</el-button>
+          <el-button type="primary" :disabled="!selected.size" @click="confirmPick">确定</el-button>
         </div>
       </div>
     </div>
-  </div>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -140,15 +158,6 @@ onMounted(() => reload(1))
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: v-bind('props.zIndex || 3100');
-  display: flex;
-  justify-content: flex-end;
-}
-
 .drawer {
   width: 960px;
   height: 100%;
@@ -178,90 +187,42 @@ onMounted(() => reload(1))
   gap: 12px;
 }
 
-.filter-row { display: flex; gap: 10px; }
-
-.keyword-box {
-  flex: 1;
+.filter-row {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  padding: 0 10px;
+  gap: 10px;
 
-  span { color: #999; }
-  input {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 8px 0;
-    font-size: 13px;
+  .keyword-input { flex: 1; }
+  .search-btn { min-width: 76px; }
+}
+
+.material-table {
+  flex: 1;
+  min-height: 0;
+  font-size: 13px;
+
+  :deep(.el-table__header th) {
+    background: #fafafa;
+    color: #666;
+    font-weight: 500;
   }
 }
 
-.search-btn {
-  padding: 0 18px;
-  border: none;
-  border-radius: 6px;
-  background: #6b5ce7;
-  color: #fff;
-  font-size: 13px;
-  cursor: pointer;
-
-  &:hover { opacity: 0.9; }
-}
-
-.table-wrap {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  position: relative;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-}
-
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-
-th, td {
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-th { background: #fafafa; color: #666; font-weight: 500; }
-tr.checked { background: #f6f4ff; }
-tr:hover { background: #fafafa; }
-
-.check-col { width: 40px; }
-.title-cell .title-text {
+.title-text {
   max-width: 380px;
   display: inline-block;
   overflow: hidden;
+  color: #333;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #333;
 }
-
-.empty-cell { text-align: center; color: #999; padding: 32px 0; }
-.table-loading { position: absolute; inset: 0; background: rgba(255,255,255,.7); display: flex; align-items: center; justify-content: center; color: #999; }
 
 .pagination {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  font-size: 13px;
   color: #666;
-
-  button {
-    padding: 4px 10px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    background: #fff;
-    cursor: pointer;
-
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-  }
+  font-size: 13px;
 }
 
 .drawer-footer {
@@ -276,15 +237,4 @@ tr:hover { background: #fafafa; }
 
 .footer-btns { display: flex; gap: 10px; }
 
-.btn {
-  padding: 7px 18px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 13px;
-  cursor: pointer;
-
-  &.primary { background: #6b5ce7; border-color: #6b5ce7; color: #fff; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
 </style>

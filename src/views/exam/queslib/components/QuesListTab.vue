@@ -154,7 +154,16 @@
     />
 
     <!-- 查看抽屉 -->
-    <div v-if="viewDetail" class="view-overlay" @click.self="viewDetail = null">
+    <el-drawer
+      v-if="viewDetail"
+      :model-value="true"
+      size="520px"
+      :with-header="false"
+      append-to-body
+      destroy-on-close
+      class="exam-drawer"
+      @close="viewDetail = null"
+    >
       <div class="view-drawer">
         <div class="view-header">
           <span>试题详情</span>
@@ -203,7 +212,7 @@
                   @click="moveView(1)">下一题</el-button>
         </div>
       </div>
-    </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -628,15 +637,6 @@ tr.checked td { background: #f0f7ff; }
   i { font-style: normal; cursor: pointer; &:hover { color: #f5222d; } }
 }
 .btn-primary { border: 1px solid #1890ff; background: #1890ff; color: #fff; }
-
-.view-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3200;
-}
 
 .view-drawer {
   width: 520px;

@@ -3,14 +3,15 @@
   <div class="step1">
     <div class="form-item">
       <label class="form-label required">请描述想要生成的话术内容</label>
-      <textarea
-        class="form-textarea"
+      <el-input
         v-model="localDescription"
+        type="textarea"
+        :rows="4"
+        class="form-textarea"
         maxlength="500"
-        rows="4"
         placeholder="请描述想要生成的话术内容"
         :disabled="generating"
-      ></textarea>
+      />
       <div class="char-count">{{ localDescription.length }}/500</div>
       <div class="suggest-box">
         <p>建议：包含对话场景，2个人物，对话目标。</p>
@@ -24,15 +25,15 @@
       <p class="material-tip">支持格式：.doc、.docx、.ppt、.pptx、.pps，pdf，单个文档小于100M，最多上传3个文档</p>
 
       <div class="entry-row">
-        <button class="entry-btn" :disabled="generating || extracting" @click="showKngDrawer = true">
+        <el-button class="entry-btn" :disabled="generating || extracting" @click="showKngDrawer = true">
           <span class="entry-icon">📘</span>从在线课堂选择
-        </button>
-        <button class="entry-btn disabled" disabled title="功能建设中">
+        </el-button>
+        <el-button class="entry-btn disabled" disabled title="功能建设中">
           <span class="entry-icon">📚</span>从知识空间选择
-        </button>
-        <button class="entry-btn" :disabled="generating || extracting" @click="fileInput?.click()">
+        </el-button>
+        <el-button class="entry-btn" :disabled="generating || extracting" @click="fileInput?.click()">
           <span class="entry-icon">📁</span>点击上传
-        </button>
+        </el-button>
         <input
           ref="fileInput"
           type="file"
@@ -60,31 +61,25 @@
 
     <div class="form-item">
       <label class="form-label required">对话开启者</label>
-      <div class="radio-group">
-        <label class="radio-item" :class="{ active: localFirstSpeaker === 'student' }">
-          <input type="radio" value="student" v-model="localFirstSpeaker" :disabled="generating" />
-          <span>学员</span>
-        </label>
-        <label class="radio-item" :class="{ active: localFirstSpeaker === 'trainer' }">
-          <input type="radio" value="trainer" v-model="localFirstSpeaker" :disabled="generating" />
-          <span>陪练者</span>
-        </label>
-      </div>
+      <el-radio-group v-model="localFirstSpeaker" class="radio-group" :disabled="generating">
+        <el-radio-button value="student">学员</el-radio-button>
+        <el-radio-button value="trainer">陪练者</el-radio-button>
+      </el-radio-group>
     </div>
 
     <div class="footer-btns">
-      <button
+      <el-button
         v-if="!hasScene"
         class="btn-ai-outline"
         :disabled="generating || !localDescription.trim()"
         @click="emit('generate')"
-      >✨ AI生成对话场景</button>
-      <button
+      >✨ AI生成对话场景</el-button>
+      <el-button
         v-else
         class="btn-ai-outline"
         :disabled="generating || !localDescription.trim()"
         @click="emit('generate')"
-      >✨ AI重新生成对话场景</button>
+      >✨ AI重新生成对话场景</el-button>
     </div>
 
     <!-- 素材文本预览（眼睛） -->

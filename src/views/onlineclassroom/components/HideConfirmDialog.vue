@@ -1,23 +1,28 @@
 <template>
-  <teleport to="body">
-    <div v-if="visible" class="hide-dialog-mask" @click.self="emit('close')">
-      <section class="hide-dialog">
-        <div class="dialog-body">
-          <div class="warning-icon">!</div>
-          <div>
-            <!-- 截图18 语义：⚠ 标题 + "已选择 xxx：名称" + "隐藏后对所有学员不可见" -->
-            <h3>确定隐藏此{{ targetType }}吗？</h3>
-            <p>已选择{{ targetType }}：{{ name || '--' }}</p>
-            <p>隐藏后对所有学员不可见</p>
-          </div>
-        </div>
-        <footer>
-          <el-button @click="emit('close')">取消</el-button>
-          <el-button class="danger" @click="emit('confirm')">确定</el-button>
-        </footer>
-      </section>
+  <el-dialog
+    :model-value="visible"
+    width="552px"
+    :show-close="false"
+    :close-on-click-modal="false"
+    append-to-body
+    @close="emit('close')"
+  >
+    <template #header>
+      <span class="hide-dialog-title">确定隐藏此{{ targetType }}吗？</span>
+    </template>
+    <div class="dialog-body">
+      <div class="warning-icon">!</div>
+      <div>
+        <!-- 截图18 语义：⚠ 标题 + "已选择 xxx：名称" + "隐藏后对所有学员不可见" -->
+        <p>已选择{{ targetType }}：{{ name || '--' }}</p>
+        <p>隐藏后对所有学员不可见</p>
+      </div>
     </div>
-  </teleport>
+    <template #footer>
+      <el-button @click="emit('close')">取消</el-button>
+      <el-button type="primary" class="danger" @click="emit('confirm')">确定</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -46,33 +51,16 @@ void props
 </script>
 
 <style scoped lang="scss">
-.hide-dialog-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 4000;
-  display: grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.34);
-}
-
-.hide-dialog {
-  width: 552px;
-  max-width: calc(100vw - 32px);
-  border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.18);
+.hide-dialog-title {
+  color: #30384a;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .dialog-body {
   display: flex;
   gap: 14px;
-  padding: 44px 40px 34px;
-
-  h3 {
-    margin: 0 0 12px;
-    color: #30384a;
-    font-size: 17px;
-  }
+  padding: 8px 0 10px;
 
   p {
     margin: 0;
@@ -92,28 +80,5 @@ void props
   background: #f59f2f;
   color: #fff;
   font-weight: 700;
-}
-
-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 0 40px 22px;
-
-  button {
-    height: 36px;
-    padding: 0 18px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    cursor: pointer;
-
-    &.danger {
-      border-color: #2e7cf6;
-      background: #2e7cf6;
-      color: #fff;
-    }
-  }
 }
 </style>

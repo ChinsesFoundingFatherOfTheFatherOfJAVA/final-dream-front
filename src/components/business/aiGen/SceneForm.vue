@@ -3,34 +3,55 @@
   <div class="scene-form">
     <div class="form-item">
       <label class="form-label required">对话场景</label>
-      <textarea class="form-textarea tall" v-model="local.scene" maxlength="500" :disabled="generating"></textarea>
+      <el-input
+        v-model="local.scene"
+        type="textarea"
+        :rows="4"
+        maxlength="500"
+        class="form-textarea tall"
+        :disabled="generating"
+      />
       <div class="char-count">{{ local.scene.length }}/500</div>
     </div>
     <div class="form-item">
       <label class="form-label required">陪练角色</label>
-      <input class="form-input" v-model="local.trainerRole" maxlength="20" :disabled="generating" />
+      <el-input class="form-input" v-model="local.trainerRole" maxlength="20" :disabled="generating" />
       <div class="char-count">{{ local.trainerRole.length }}/20</div>
     </div>
     <div class="form-item">
       <label class="form-label required">角色画像</label>
-      <textarea class="form-textarea" v-model="local.trainerProfile" maxlength="200" :disabled="generating"></textarea>
+      <el-input
+        v-model="local.trainerProfile"
+        type="textarea"
+        :rows="3"
+        maxlength="200"
+        class="form-textarea"
+        :disabled="generating"
+      />
       <div class="char-count">{{ local.trainerProfile.length }}/200</div>
     </div>
     <div class="form-item">
       <label class="form-label required">学员角色</label>
-      <input class="form-input" v-model="local.studentRole" maxlength="20" :disabled="generating" />
+      <el-input class="form-input" v-model="local.studentRole" maxlength="20" :disabled="generating" />
       <div class="char-count">{{ local.studentRole.length }}/20</div>
     </div>
     <div class="form-item">
       <label class="form-label required">对话目标</label>
-      <textarea class="form-textarea" v-model="local.goal" maxlength="500" :disabled="generating"></textarea>
+      <el-input
+        v-model="local.goal"
+        type="textarea"
+        :rows="4"
+        maxlength="500"
+        class="form-textarea"
+        :disabled="generating"
+      />
       <div class="char-count">{{ local.goal.length }}/500</div>
     </div>
 
     <div class="footer-btns">
-      <button class="btn-gradient" :disabled="generating" @click="emit('next')">
+      <el-button class="btn-gradient" :disabled="generating" @click="emit('next')">
         ✨ 确认无误，生成对话大纲
-      </button>
+      </el-button>
     </div>
   </div>
 </template>

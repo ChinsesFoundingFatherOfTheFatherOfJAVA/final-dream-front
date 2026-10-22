@@ -1,23 +1,26 @@
 <template>
-  <teleport to="body">
-    <div v-if="visible" class="dialog-mask" @click.self="emit('close')">
-      <section class="dialog-card">
-        <div class="dialog-body">
-          <div class="warning-icon">!</div>
-          <div>
-            <h3>确定下架【{{ course?.title || '' }}】吗？</h3>
-            <p>下架后学员无法再学习该课程，请谨慎操作</p>
-          </div>
-        </div>
-        <footer>
-          <el-button @click="emit('close')">取消</el-button>
-          <el-button class="danger" :disabled="remaining > 0" @click="emit('confirm')">
-            {{ remaining > 0 ? `下架(${remaining}s)` : '下架' }}
-          </el-button>
-        </footer>
-      </section>
+  <el-dialog
+    :model-value="visible"
+    width="552px"
+    :show-close="false"
+    :close-on-click-modal="false"
+    append-to-body
+    @close="emit('close')"
+  >
+    <template #header>
+      <span class="dialog-title">确定下架【{{ course?.title || '' }}】吗？</span>
+    </template>
+    <div class="dialog-body">
+      <div class="warning-icon">!</div>
+      <p>下架后学员无法再学习该课程，请谨慎操作</p>
     </div>
-  </teleport>
+    <template #footer>
+      <el-button @click="emit('close')">取消</el-button>
+      <el-button type="primary" class="danger" :disabled="remaining > 0" @click="emit('confirm')">
+        {{ remaining > 0 ? `下架(${remaining}s)` : '下架' }}
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -58,33 +61,16 @@ watch(() => props.visible, visible => {
 </script>
 
 <style scoped lang="scss">
-.dialog-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 4000;
-  display: grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.34);
-}
-
-.dialog-card {
-  width: 552px;
-  max-width: calc(100vw - 32px);
-  border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.18);
+.dialog-title {
+  color: #30384a;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .dialog-body {
   display: flex;
   gap: 14px;
-  padding: 44px 40px 34px;
-
-  h3 {
-    margin: 0 0 12px;
-    color: #30384a;
-    font-size: 17px;
-  }
+  padding: 8px 0 10px;
 
   p {
     margin: 0;
@@ -104,34 +90,5 @@ watch(() => props.visible, visible => {
   background: #f59f2f;
   color: #fff;
   font-weight: 700;
-}
-
-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 0 40px 22px;
-
-  button {
-    height: 36px;
-    padding: 0 18px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    cursor: pointer;
-
-    &.danger {
-      border-color: #2e7cf6;
-      background: #2e7cf6;
-      color: #fff;
-
-      &:disabled {
-        border-color: #d9deea;
-        background: #f2f4f8;
-        color: #a6adba;
-      }
-    }
-  }
 }
 </style>

@@ -42,7 +42,7 @@
             <el-button class="btn btn-primary" @click="showCreateDialog = true">创建</el-button>
           </div>
           <div class="filter-bar">
-            <el-select v-model="filters.status" class="filter-select" placeholder="全部状态" @change="fetchTemplates">
+            <el-select v-model="filters.status" class="filter-select" placeholder="全部状态" @change="resetAndFetch">
               <el-option label="全部状态" value="" />
               <el-option label="未发布" value="0" />
               <el-option label="已发布" value="1" />
@@ -53,7 +53,7 @@
               class="filter-input"
               placeholder="请输入名称搜索"
               clearable
-              @keyup.enter="fetchTemplates"
+              @keyup.enter="resetAndFetch"
             />
           </div>
         </div>
@@ -93,11 +93,12 @@
         <div class="pagination">
           <span class="total">共 {{ total }} 条</span>
           <el-pagination
-            :current-page="1"
+            v-model:current-page="currentPage"
             :page-size="50"
             :total="total"
             layout="prev, pager, next"
             background
+            @current-change="fetchTemplates"
           />
         </div>
       </main>
@@ -144,6 +145,7 @@ const loading = ref(false)
 const newTemplate = ref({ name: '', description: '' })
 const templates = ref<TemplateCard[]>([])
 const total = ref(0)
+const currentPage = ref(1)
 const filters = ref({
   status: '' as '' | '0' | '1' | '2',
   keyword: ''
@@ -152,7 +154,7 @@ const filters = ref({
 const fetchTemplates = async () => {
   loading.value = true
   try {
-    const params: any = { page: 1, pageSize: 50 }
+    const params: any = { page: currentPage.value, pageSize: 50 }
     if (filters.value.status !== '') params.status = Number(filters.value.status)
     if (filters.value.keyword.trim()) params.keyword = filters.value.keyword.trim()
     const res: any = await getTemplateList(params)
@@ -160,6 +162,11 @@ const fetchTemplates = async () => {
     total.value = res.total || 0
   } catch { /* handled */ }
   finally { loading.value = false }
+}
+
+const resetAndFetch = () => {
+  currentPage.value = 1
+  void fetchTemplates()
 }
 
 onMounted(fetchTemplates)

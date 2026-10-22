@@ -1,25 +1,32 @@
 <template>
   <!-- 截图20：创建首入"选择要创建的课程结构"弹窗（无章节/有章节两卡片 + 说明文案） -->
-  <teleport to="body">
-    <div v-if="visible" class="structure-mask" @click.self="emit('close')">
-      <section class="structure-dialog">
+  <el-dialog
+    :model-value="visible"
+    width="620px"
+    :show-close="false"
+    :close-on-click-modal="false"
+    append-to-body
+    @close="emit('close')"
+  >
+    <template #header>
+      <div class="structure-heading">
         <h3>选择要创建的课程结构</h3>
         <p class="tip">选择后仍可在编辑中切换，切换后任务将保留</p>
-        <div class="cards">
-          <el-button class="card" @click="emit('choose', 0)">
-            <span class="card-icon flat">▤</span>
-            <strong>无章节</strong>
-            <span class="desc">任务平铺展示，适合内容较少、无需分章的课程</span>
-          </el-button>
-          <el-button class="card" @click="emit('choose', 1)">
-            <span class="card-icon chaptered">☰</span>
-            <strong>有章节</strong>
-            <span class="desc">按章节组织任务，自动创建"章节1"，适合体系化课程</span>
-          </el-button>
-        </div>
-      </section>
+      </div>
+    </template>
+    <div class="cards">
+      <el-button class="card" @click="emit('choose', 0)">
+        <span class="card-icon flat">▤</span>
+        <strong>无章节</strong>
+        <span class="desc">任务平铺展示，适合内容较少、无需分章的课程</span>
+      </el-button>
+      <el-button class="card" @click="emit('choose', 1)">
+        <span class="card-icon chaptered">☰</span>
+        <strong>有章节</strong>
+        <span class="desc">按章节组织任务，自动创建"章节1"，适合体系化课程</span>
+      </el-button>
     </div>
-  </teleport>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -38,23 +45,7 @@ const emit = defineEmits<{
 </script>
 
 <style scoped lang="scss">
-.structure-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 3600;
-  display: grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.4);
-}
-
-.structure-dialog {
-  width: 620px;
-  max-width: calc(100vw - 32px);
-  padding: 30px 34px 34px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.2);
-
+.structure-heading {
   h3 {
     margin: 0;
     color: #253047;

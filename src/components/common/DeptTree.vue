@@ -1,9 +1,8 @@
 <template>
   <div class="dept-tree" role="tree">
-    <label v-if="searchable" class="tree-search">
-      <span class="sr-only">搜索部门</span>
-      <input v-model.trim="keyword" type="search" :placeholder="searchPlaceholder" />
-    </label>
+    <div v-if="searchable" class="tree-search">
+      <el-input v-model.trim="keyword" :placeholder="searchPlaceholder" clearable />
+    </div>
 
     <div class="tree-body">
       <div
@@ -36,25 +35,24 @@
         <!-- 层级缩进放在箭头之前：箭头始终紧贴自己的文字，而不是全部贴在最左边 -->
         <span class="tree-indent" :style="{ width: `${row.depth * 16}px` }" />
 
-        <button
+        <el-button
           v-if="row.hasChildren"
-          type="button"
+          link
           class="tree-arrow"
           :class="{ expanded: row.expanded }"
           :aria-label="row.expanded ? '收起' : '展开'"
           @click.stop="toggleExpanded(row.node.deptId)"
         >
           <span />
-        </button>
+        </el-button>
         <span v-else class="tree-arrow placeholder" />
 
-        <input
+        <el-checkbox
           v-if="mode === 'check'"
-          type="checkbox"
-          :checked="row.checked"
-          :indeterminate.prop="row.indeterminate"
+          :model-value="row.checked"
+          :indeterminate="row.indeterminate"
           @click.stop
-          @change="toggleChecked(row, ($event.target as HTMLInputElement).checked)"
+          @change="toggleChecked(row, Boolean($event))"
         />
 
         <span class="tree-label">
@@ -204,23 +202,16 @@ function toggleChecked(row: FlatRow, checked: boolean) {
 }
 
 .tree-search {
-  display: block;
   padding: 0 10px 10px;
 
-  input {
-    width: 100%;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
     border-radius: 6px;
-    color: #374151;
-    font-size: 13px;
-    outline: none;
+    box-shadow: 0 0 0 1px #d9deea inset;
+  }
 
-    &:focus {
-      border-color: #2e7cf6;
-      box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.1);
-    }
+  :deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #1890ff inset, 0 0 0 2px rgba(24, 144, 255, 0.1);
   }
 }
 
@@ -294,12 +285,9 @@ function toggleChecked(row: FlatRow, checked: boolean) {
   }
 }
 
-.tree-row input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  flex: 0 0 15px;
-  margin: 0 8px 0 0;
-  accent-color: #2e7cf6;
+.tree-row :deep(.el-checkbox) {
+  flex: 0 0 auto;
+  margin-right: 8px;
 }
 
 .tree-label {
@@ -324,15 +312,4 @@ function toggleChecked(row: FlatRow, checked: boolean) {
   font-size: 13px;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 </style>
