@@ -18,5 +18,5 @@ export function login(account: string, password: string) {
 }
 
 export function getMe() {
-  return request.get<unknown, MeResult>('/me')
+  return request.get<unknown, MeResult>('/sm/auth/me')
 }
