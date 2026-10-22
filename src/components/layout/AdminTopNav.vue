@@ -22,7 +22,7 @@
             </div>
           </div>
         </div>
-        <router-link to="/operation" class="nav-item">平台运营</router-link>
+        <span class="nav-item disabled" title="敬请期待">平台运营</span>
         <router-link
           v-if="hasEnterpriseAccess"
           to="/enterprise"
@@ -31,7 +31,7 @@
         >
           我的企业
         </router-link>
-        <router-link to="/report" class="nav-item">报表中心</router-link>
+        <span class="nav-item disabled" title="敬请期待">报表中心</span>
       </nav>
     </div>
     <div class="nav-right">
@@ -250,6 +250,12 @@ const submitPassword = async () => {
 
   &:hover, &.active {
     color: #1890ff;
+  }
+
+  &.disabled {
+    color: #c0c4cc;
+    cursor: not-allowed;
+    &:hover { color: #c0c4cc; }
   }
 
   &.active {

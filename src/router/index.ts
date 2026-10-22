@@ -484,6 +484,13 @@ const routes: RouteRecordRaw[] = [
     name: 'PracticeReport',
     component: () => import('@/views/student/AICombat/PracticeReport.vue'),
     meta: { title: '训练报告', requiresAuth: true }
+  },
+  // 404 兜底：必须放在路由表最后，否则会吞掉后面的具体路由
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('@/views/auth/NotFound.vue'),
+    meta: { title: '页面不存在', public: true }
   }
 ]
 

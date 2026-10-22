@@ -49,7 +49,7 @@
 
 ## 5. 构建与验证
 
-- `npm run test`（vitest，当前 21 个用例必须全绿）；`npm run build`（含 vue-tsc type-check）通过后再提交。
+- `npm run test`（vitest，当前 **8 个 spec / 35 个用例**必须全绿）；`npm run build`（含 vue-tsc type-check）通过后再提交。
 - 本地联调：后端网关 8080 + ACT 8082（WS）在跑即可 `npm run dev`（端口 3000）。
 - 提交前跑 `npm run format`（prettier），不要提交与本次改动无关的大面积格式化。
 

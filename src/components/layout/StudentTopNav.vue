@@ -11,13 +11,13 @@
         <router-link to="/study/home" class="nav-item" :class="{ active: currentRoute === '/study/home' }">
           首页
         </router-link>
-        <router-link to="/phrase" class="nav-item">话术目录</router-link>
-        <router-link to="/course" class="nav-item">课程中心</router-link>
+        <span class="nav-item disabled" title="敬请期待">话术目录</span>
+        <span class="nav-item disabled" title="敬请期待">课程中心</span>
         <router-link to="/sparring/web/speech/list" class="nav-item" :class="{ active: currentRoute === '/sparring/web/speech/list' }">
           AI对练
         </router-link>
-        <router-link to="/ai-combat" class="nav-item">AI实战训练场</router-link>
-        <router-link to="/leaderboard" class="nav-item">陪练看板</router-link>
+        <span class="nav-item disabled" title="敬请期待">AI实战训练场</span>
+        <span class="nav-item disabled" title="敬请期待">陪练看板</span>
         <div class="nav-item dropdown" @mouseenter="openDropdown('more')" @mouseleave="closeDropdown('more')">
           更多 <span class="arrow">▾</span>
           <div v-if="activeDropdown === 'more'" class="dropdown-menu more-menu" @mouseenter="keepDropdown('more')" @mouseleave="closeDropdown('more')">
@@ -152,6 +152,12 @@ const logout = () => {
 
   &:hover, &.active {
     color: #1890ff;
+  }
+
+  &.disabled {
+    color: #c0c4cc;
+    cursor: not-allowed;
+    &:hover { color: #c0c4cc; }
   }
 
   &.active {
