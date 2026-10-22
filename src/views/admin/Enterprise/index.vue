@@ -26,195 +26,198 @@
         <div class="filter-panel">
           <label class="field field-search">
             <span>搜索</span>
-            <select v-model="searchField" @change="resetAndSearch">
-              <option value="name">姓名</option>
-              <option value="account">账号</option>
-              <option value="employeeNo">工号</option>
-              <option value="email">邮箱</option>
-              <option value="mobile">手机号</option>
-              <option value="jobGrade">职级</option>
-            </select>
-            <input
-              v-model.trim="keyword"
-              type="search"
-              placeholder="输入关键字"
-              @keyup.enter="resetAndSearch"
-            />
+            <div class="search-composite">
+              <el-select v-model="searchField" @change="resetAndSearch">
+                <el-option label="姓名" value="name" />
+                <el-option label="账号" value="account" />
+                <el-option label="工号" value="employeeNo" />
+                <el-option label="邮箱" value="email" />
+                <el-option label="手机号" value="mobile" />
+                <el-option label="职级" value="jobGrade" />
+              </el-select>
+              <el-input
+                v-model.trim="keyword"
+                placeholder="输入关键字"
+                clearable
+                @keyup.enter="resetAndSearch"
+              />
+            </div>
           </label>
 
           <label class="field compact">
             <span>状态</span>
-            <select v-model="status" @change="resetAndSearch">
-              <option :value="undefined">全部</option>
-              <option :value="1">启用</option>
-              <option :value="0">禁用</option>
-            </select>
+            <el-select v-model="status" placeholder="全部" @change="resetAndSearch">
+              <el-option label="全部" :value="undefined" />
+              <el-option label="启用" :value="1" />
+              <el-option label="禁用" :value="0" />
+            </el-select>
           </label>
 
           <label class="field compact">
             <span>超级管理员</span>
-            <select v-model="isSuperAdmin" @change="resetAndSearch">
-              <option :value="undefined">全部</option>
-              <option :value="1">是</option>
-              <option :value="0">否</option>
-            </select>
+            <el-select v-model="isSuperAdmin" placeholder="全部" @change="resetAndSearch">
+              <el-option label="全部" :value="undefined" />
+              <el-option label="是" :value="1" />
+              <el-option label="否" :value="0" />
+            </el-select>
           </label>
 
-          <button type="button" class="filter-button" @click="openPositionPicker">
+          <el-button class="filter-button" @click="openPositionPicker">
             岗位{{ selectedPositions.length ? `（${selectedPositions.length}）` : '' }}
-          </button>
-          <button type="button" class="search-button" :disabled="loading" @click="resetAndSearch">
+          </el-button>
+          <el-button type="primary" class="search-button" :loading="loading" @click="resetAndSearch">
             查询
-          </button>
+          </el-button>
         </div>
 
         <div v-if="selectedPositions.length" class="selected-line">
           <span>已选岗位：{{ selectedPositions.join('、') }}</span>
-          <button type="button" @click="clearPositions">清除</button>
+          <el-button link type="primary" @click="clearPositions">清除</el-button>
         </div>
 
-        <div class="table-scroll" :class="{ loading }">
-          <table>
-            <colgroup>
-              <col v-for="index in 11" :key="`col-${index}`" class="normal-col" />
-              <col class="action-col" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>姓名</th>
-                <th>账号</th>
-                <th>工号</th>
-                <th>手机号</th>
-                <th>邮箱</th>
-                <th>部门</th>
-                <th>岗位</th>
-                <th>职级</th>
-                <th>角色</th>
-                <th>入职时间</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="user in users"
-                :key="user.userId"
-                :class="{ disabled: user.status !== 1 }"
-              >
-                <td class="name-cell" :title="valueOrDash(user.name)">{{ valueOrDash(user.name) }}</td>
-                <td :title="valueOrDash(user.account)">{{ valueOrDash(user.account) }}</td>
-                <td :title="valueOrDash(user.employeeNo)">{{ valueOrDash(user.employeeNo) }}</td>
-                <td :title="valueOrDash(user.mobile)">{{ valueOrDash(user.mobile) }}</td>
-                <td :title="valueOrDash(user.email)">{{ valueOrDash(user.email) }}</td>
-                <td :title="valueOrDash(user.deptPath)">{{ valueOrDash(user.deptPath) }}</td>
-                <td :title="valueOrDash(user.positionName)">{{ valueOrDash(user.positionName) }}</td>
-                <td :title="valueOrDash(user.jobGrade)">{{ valueOrDash(user.jobGrade) }}</td>
-                <td :title="roleText(user)">{{ roleText(user) }}</td>
-                <td :title="valueOrDash(user.entryDate)">{{ valueOrDash(user.entryDate) }}</td>
-                <td>
-                  <span class="status-tag" :class="{ disabled: user.status !== 1 }">
-                    {{ user.status === 1 ? '启用' : '禁用' }}
-                  </span>
-                </td>
-                <td class="action-cell">
-                  <template v-if="user.builtin">
+        <el-table
+          v-loading="loading"
+          :data="users"
+          row-key="userId"
+          class="user-table"
+          max-height="calc(100vh - 310px)"
+          :empty-text="loadError || '暂无数据'"
+          :row-class-name="userRowClass"
+        >
+          <el-table-column prop="name" label="姓名" width="130" show-overflow-tooltip>
+            <template #default="{ row }">
+              <span class="name-cell">{{ valueOrDash(row.name) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="账号" width="150" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.account) }}</template>
+          </el-table-column>
+          <el-table-column label="工号" width="140" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.employeeNo) }}</template>
+          </el-table-column>
+          <el-table-column label="手机号" width="150" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.mobile) }}</template>
+          </el-table-column>
+          <el-table-column label="邮箱" width="190" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.email) }}</template>
+          </el-table-column>
+          <el-table-column label="部门" width="220" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.deptPath) }}</template>
+          </el-table-column>
+          <el-table-column label="岗位" width="150" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.positionName) }}</template>
+          </el-table-column>
+          <el-table-column label="职级" width="110" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.jobGrade) }}</template>
+          </el-table-column>
+          <el-table-column label="角色" width="170" show-overflow-tooltip>
+            <template #default="{ row }">{{ roleText(row) }}</template>
+          </el-table-column>
+          <el-table-column label="入职时间" width="150" show-overflow-tooltip>
+            <template #default="{ row }">{{ valueOrDash(row.entryDate) }}</template>
+          </el-table-column>
+          <el-table-column label="状态" width="90">
+            <template #default="{ row }">
+              <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="light">
+                {{ row.status === 1 ? '启用' : '禁用' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="290" fixed="right">
+            <template #default="{ row }">
+              <div class="action-cell">
+                  <template v-if="row.builtin">
                     <span class="protected-text">受保护</span>
                   </template>
                   <template v-else>
-                    <button type="button" :disabled="actionUserId === user.userId" @click="toggleStatus(user)">
-                      {{ user.status === 1 ? '禁用' : '启用' }}
-                    </button>
-                    <button type="button" :disabled="actionUserId === user.userId" @click="handleResetPassword(user)">
+                    <el-button link type="primary" :disabled="actionUserId === row.userId" @click="toggleStatus(row)">
+                      {{ row.status === 1 ? '禁用' : '启用' }}
+                    </el-button>
+                    <el-button link type="primary" :disabled="actionUserId === row.userId" @click="handleResetPassword(row)">
                       重置密码
-                    </button>
-                    <button type="button" class="danger" :disabled="actionUserId === user.userId" @click="handleDelete(user)">
+                    </el-button>
+                    <el-button link type="danger" :disabled="actionUserId === row.userId" @click="handleDelete(row)">
                       删除
-                    </button>
-                    <button
+                    </el-button>
+                    <el-button
                       v-if="auth.isSuperAdmin"
-                      type="button"
-                      :disabled="actionUserId === user.userId"
-                      @click="toggleSuperAdmin(user)"
+                      link
+                      type="primary"
+                      :disabled="actionUserId === row.userId"
+                      @click="toggleSuperAdmin(row)"
                     >
-                      {{ user.isSuperAdmin ? '取消超管' : '设置超管' }}
-                    </button>
+                      {{ row.isSuperAdmin ? '取消超管' : '设置超管' }}
+                    </el-button>
                   </template>
-                </td>
-              </tr>
-              <tr v-if="!users.length">
-                <td colspan="12" class="empty-cell">
-                  {{ loading ? '正在加载...' : loadError || '暂无数据' }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
 
         <footer class="pagination">
           <span>共 {{ total }} 条</span>
-          <div class="page-actions">
-            <select v-model.number="size" @change="resetAndSearch">
-              <option :value="20">20 条/页</option>
-              <option :value="50">50 条/页</option>
-              <option :value="100">100 条/页</option>
-            </select>
-            <button type="button" :disabled="page <= 1 || loading" @click="goToPage(page - 1)">上一页</button>
-            <span>{{ page }} / {{ totalPages }}</span>
-            <button type="button" :disabled="page >= totalPages || loading" @click="goToPage(page + 1)">下一页</button>
-          </div>
+          <el-pagination
+            v-model:current-page="page"
+            v-model:page-size="size"
+            :page-sizes="[20, 50, 100]"
+            :total="total"
+            :disabled="loading"
+            layout="sizes, prev, pager, next"
+            background
+            @size-change="resetAndSearch"
+            @current-change="loadUsers"
+          />
         </footer>
       </section>
     </div>
 
-    <teleport to="body">
-      <div v-if="positionPickerVisible" class="drawer-overlay" @click.self="positionPickerVisible = false">
-        <aside class="position-drawer">
-          <header>
-            <h3>选择岗位</h3>
-            <button type="button" aria-label="关闭" @click="positionPickerVisible = false">×</button>
-          </header>
-          <div class="drawer-search">
-            <input
-              v-model.trim="positionKeyword"
-              type="search"
-              placeholder="搜索岗位名称"
-              @keyup.enter="loadPositions(1)"
-            />
-            <button type="button" @click="loadPositions(1)">搜索</button>
-          </div>
-          <div class="position-list">
-            <label v-for="item in positionOptions" :key="item.positionName" class="position-row">
-              <input
-                type="checkbox"
-                :checked="draftPositions.includes(item.positionName)"
-                @change="togglePosition(item.positionName)"
-              />
-              <span>{{ item.positionName }}</span>
-              <em>{{ item.userCount }} 人</em>
-            </label>
-            <p v-if="!positionOptions.length">暂无岗位数据</p>
-          </div>
-          <footer>
-            <span>已选 {{ draftPositions.length }} 项</span>
-            <div>
-              <button type="button" class="plain" @click="positionPickerVisible = false">取消</button>
-              <button type="button" class="primary" @click="confirmPositions">确定</button>
-            </div>
-          </footer>
-          <div class="drawer-pagination">
-            <button type="button" :disabled="positionPage <= 1" @click="loadPositions(positionPage - 1)">上一页</button>
-            <span>{{ positionPage }} / {{ positionTotalPages }}</span>
-            <button
-              type="button"
-              :disabled="positionPage >= positionTotalPages"
-              @click="loadPositions(positionPage + 1)"
-            >
-              下一页
-            </button>
-          </div>
-        </aside>
+    <el-drawer
+      v-model="positionPickerVisible"
+      title="选择岗位"
+      size="470px"
+      append-to-body
+    >
+      <div class="drawer-search">
+        <el-input
+          v-model.trim="positionKeyword"
+          placeholder="搜索岗位名称"
+          clearable
+          @keyup.enter="loadPositions(1)"
+        />
+        <el-button type="primary" @click="loadPositions(1)">搜索</el-button>
       </div>
-    </teleport>
+      <el-checkbox-group v-model="draftPositions" class="position-list">
+        <el-checkbox
+          v-for="item in positionOptions"
+          :key="item.positionName"
+          :value="item.positionName"
+          class="position-row"
+        >
+          <span>{{ item.positionName }}</span>
+          <em>{{ item.userCount }} 人</em>
+        </el-checkbox>
+      </el-checkbox-group>
+      <el-empty v-if="!positionOptions.length" description="暂无岗位数据" :image-size="64" />
+      <div class="drawer-pagination">
+        <el-button :disabled="positionPage <= 1" @click="loadPositions(positionPage - 1)">上一页</el-button>
+        <span>{{ positionPage }} / {{ positionTotalPages }}</span>
+        <el-button
+          :disabled="positionPage >= positionTotalPages"
+          @click="loadPositions(positionPage + 1)"
+        >
+          下一页
+        </el-button>
+      </div>
+      <template #footer>
+        <div class="position-footer">
+          <span>已选 {{ draftPositions.length }} 项</span>
+          <div>
+            <el-button @click="positionPickerVisible = false">取消</el-button>
+            <el-button type="primary" @click="confirmPositions">确定</el-button>
+          </div>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
@@ -275,6 +278,9 @@ const valueOrDash = (value: unknown) => {
 
 const roleText = (user: EnterpriseUser) =>
   user.roleNames?.length ? user.roleNames.join(',') : '-'
+
+const userRowClass = ({ row }: { row: EnterpriseUser }) =>
+  row.status === 1 ? '' : 'disabled-row'
 
 async function loadDepartments() {
   try {
@@ -350,12 +356,6 @@ async function loadPositions(targetPage: number) {
   })
   positionOptions.value = result.list ?? []
   positionTotal.value = result.total ?? 0
-}
-
-function togglePosition(positionName: string) {
-  draftPositions.value = draftPositions.value.includes(positionName)
-    ? draftPositions.value.filter((item) => item !== positionName)
-    : [...draftPositions.value, positionName]
 }
 
 function confirmPositions() {
@@ -511,20 +511,15 @@ onMounted(async () => {
     font-size: 12px;
   }
 
-  select,
-  input {
-    height: 34px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    color: #2b3445;
-    font-size: 13px;
-    outline: none;
+  :deep(.el-select) {
+    width: 100%;
+  }
 
-    &:focus {
-      border-color: #2e7cf6;
-      box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.1);
-    }
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
+    font-size: 13px;
   }
 }
 
@@ -532,52 +527,35 @@ onMounted(async () => {
   min-width: 360px;
   flex: 1;
   display: grid;
-  grid-template-columns: 50px 88px minmax(160px, 1fr);
+  grid-template-columns: 50px minmax(0, 1fr);
   align-items: center;
+}
 
-  input,
-  select {
-    padding: 0 10px;
+.search-composite {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+
+  :deep(.el-select__wrapper) {
+    border-radius: 6px 0 0 6px;
+    box-shadow: 0 0 0 1px #d7dce5 inset;
   }
 
-  input {
-    border-left: none;
+  :deep(.el-input__wrapper) {
     border-radius: 0 6px 6px 0;
-  }
-
-  select {
-    border-radius: 0;
+    box-shadow: 0 0 0 1px #d7dce5 inset;
   }
 }
 
 .field.compact {
   width: 126px;
-
-  select {
-    width: 100%;
-    padding: 0 9px;
-  }
 }
 
 .filter-button,
 .search-button {
   height: 34px;
-  padding: 0 14px;
   border-radius: 6px;
   font-size: 13px;
-  cursor: pointer;
-}
-
-.filter-button {
-  border: 1px solid #d7dce5;
-  background: #fff;
-  color: #4d5568;
-}
-
-.search-button {
-  border: none;
-  background: #2e7cf6;
-  color: #fff;
 }
 
 .selected-line {
@@ -596,66 +574,29 @@ onMounted(async () => {
     white-space: nowrap;
   }
 
-  button {
-    border: none;
-    background: transparent;
-    color: #2e7cf6;
-    cursor: pointer;
+}
+
+.user-table {
+  width: 100%;
+
+  :deep(.el-table__header th) {
+    height: 44px;
+    background: #f8fafc;
+    color: #596274;
+    font-size: 14px;
+    font-weight: 600;
   }
-}
 
-.table-scroll {
-  overflow: auto;
-  max-height: calc(100vh - 310px);
-
-  &.loading {
-    opacity: 0.72;
+  :deep(.el-table__row td) {
+    height: 44px;
+    color: #394253;
+    font-size: 14px;
   }
-}
 
-table {
-  width: 1970px;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.normal-col {
-  width: 160px;
-}
-
-.action-col {
-  width: 210px;
-}
-
-th,
-td {
-  height: 44px;
-  padding: 0 12px;
-  border-bottom: 1px solid #edf0f5;
-  overflow: hidden;
-  color: #394253;
-  font-size: 14px;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: #f8fafc;
-  color: #596274;
-  font-weight: 600;
-}
-
-tbody tr:hover {
-  background: #f8fbff;
-}
-
-tbody tr.disabled {
-  color: #98a0ad;
-  background: #fbfbfc;
+  :deep(.disabled-row) {
+    color: #98a0ad;
+    background: #fbfbfc;
+  }
 }
 
 .name-cell {
@@ -663,56 +604,17 @@ tbody tr.disabled {
   font-weight: 600;
 }
 
-.status-tag {
-  display: inline-flex;
-  min-width: 44px;
-  height: 23px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  color: #157347;
-  background: #e9f8ef;
-  font-size: 12px;
-
-  &.disabled {
-    color: #8a5360;
-    background: #f7ecef;
-  }
-}
-
 .action-cell {
-  overflow: visible;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
   white-space: nowrap;
-
-  button {
-    margin-right: 10px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: #2e7cf6;
-    font-size: 14px;
-    cursor: pointer;
-
-    &.danger {
-      color: #d94a4a;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
 }
 
 .protected-text {
   color: #98a0ad;
   font-size: 13px;
-}
-
-.empty-cell {
-  height: 180px;
-  text-align: center;
-  color: #9aa3b2;
 }
 
 .pagination {
@@ -724,113 +626,9 @@ tbody tr.disabled {
   border-top: 1px solid #edf0f5;
   color: #667085;
   font-size: 13px;
-}
 
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  select,
-  button {
-    height: 32px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    font-size: 13px;
-  }
-
-  select {
-    padding: 0 8px;
-  }
-
-  button {
-    padding: 0 12px;
-    cursor: pointer;
-
-    &:disabled {
-      color: #b8bfcc;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3300;
-  display: flex;
-  justify-content: flex-end;
-  background: rgba(15, 23, 42, 0.36);
-}
-
-.position-drawer {
-  width: min(470px, 100%);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  box-shadow: -16px 0 40px rgba(15, 23, 42, 0.13);
-
-  > header,
-  > footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px;
-  }
-
-  > header {
-    border-bottom: 1px solid #eef0f5;
-
-    h3 {
-      margin: 0;
-      color: #1f2937;
-      font-size: 17px;
-    }
-
-    button {
-      border: none;
-      background: transparent;
-      color: #8a92a5;
-      font-size: 25px;
-      cursor: pointer;
-    }
-  }
-
-  > footer {
-    border-top: 1px solid #eef0f5;
-
-    > span {
-      color: #667085;
-      font-size: 13px;
-    }
-
-    div {
-      display: flex;
-      gap: 8px;
-    }
-
-    button {
-      min-width: 76px;
-      height: 34px;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-
-      &.plain {
-        border: 1px solid #d7dce5;
-        background: #fff;
-        color: #4d5568;
-      }
-
-      &.primary {
-        border: none;
-        background: #2e7cf6;
-        color: #fff;
-      }
-    }
+  :deep(.el-pagination) {
+    margin-left: auto;
   }
 }
 
@@ -839,62 +637,46 @@ tbody tr.disabled {
   gap: 8px;
   padding: 14px 18px 8px;
 
-  input {
+  :deep(.el-input) {
     flex: 1;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    outline: none;
-  }
-
-  button {
-    width: 64px;
-    border: none;
-    border-radius: 6px;
-    background: #2e7cf6;
-    color: #fff;
-    cursor: pointer;
   }
 }
 
 .position-list {
-  flex: 1;
-  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 260px);
   overflow-y: auto;
   padding: 8px 18px;
-
-  p {
-    padding: 36px 0;
-    text-align: center;
-    color: #9aa3b2;
-    font-size: 13px;
-  }
 }
 
 .position-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  width: 100%;
   min-height: 42px;
+  margin-right: 0;
   padding: 0 8px;
   border-radius: 6px;
   color: #394253;
   font-size: 14px;
-  cursor: pointer;
 
   &:hover {
     background: #f5f8ff;
   }
 
-  span {
+  :deep(.el-checkbox__label) {
     flex: 1;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #394253;
+    font-size: 14px;
 
-  em {
-    color: #98a0ad;
-    font-size: 12px;
-    font-style: normal;
+    em {
+      color: #98a0ad;
+      font-size: 12px;
+      font-style: normal;
+    }
   }
 }
 
@@ -907,18 +689,22 @@ tbody tr.disabled {
   color: #667085;
   font-size: 12px;
 
-  button {
-    height: 30px;
-    padding: 0 10px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
+}
 
-    &:disabled {
-      color: #b8bfcc;
-      cursor: not-allowed;
-    }
+.position-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  > span {
+    color: #667085;
+    font-size: 13px;
+  }
+
+  > div {
+    display: flex;
+    gap: 8px;
   }
 }
 
@@ -945,7 +731,11 @@ tbody tr.disabled {
 
   .field-search {
     min-width: 100%;
-    grid-template-columns: 48px 82px minmax(120px, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .search-composite {
+    grid-template-columns: 82px minmax(0, 1fr);
   }
 
   .field.compact {

@@ -5,48 +5,47 @@
         <h1>部门管理</h1>
         <p>组织数据由 Oracle 同步生成，本页只读</p>
       </div>
-      <label class="search-field">
-        <span class="sr-only">搜索部门</span>
-        <input v-model.trim="keyword" type="search" placeholder="请输入部门名称" />
-      </label>
+      <el-input
+        v-model.trim="keyword"
+        class="search-field"
+        placeholder="请输入部门名称"
+        clearable
+      />
     </header>
 
     <section class="table-panel">
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th class="name-col">部门名称</th>
-              <th class="code-col">部门编码</th>
-              <th class="count-col">人数</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in rows" :key="row.node.deptId">
-              <td class="name-cell">
+      <el-table
+        :data="rows"
+        row-key="node.deptId"
+        class="department-table"
+        :empty-text="loading ? '正在加载...' : '暂无数据'"
+      >
+        <el-table-column label="部门名称" min-width="300">
+          <template #default="{ row }">
+            <div class="name-cell">
                 <span class="indent" :style="{ width: `${row.depth * 20}px` }" />
-                <button
+                <el-button
                   v-if="row.hasChildren"
-                  type="button"
+                  link
                   class="tree-arrow"
                   :class="{ expanded: row.expanded }"
                   :aria-label="row.expanded ? '收起' : '展开'"
                   @click="toggle(row.node.deptId)"
                 >
                   <span />
-                </button>
+                </el-button>
                 <span v-else class="arrow-placeholder" />
                 <span class="dept-name">{{ row.node.deptName }}</span>
-              </td>
-              <td>{{ row.node.deptCode || '-' }}</td>
-              <td>{{ row.node.userCount ?? 0 }}</td>
-            </tr>
-            <tr v-if="!rows.length">
-              <td colspan="3" class="empty-cell">{{ loading ? '正在加载...' : '暂无数据' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="部门编码" width="220" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.node.deptCode || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="人数" width="140">
+          <template #default="{ row }">{{ row.node.userCount ?? 0 }}</template>
+        </el-table-column>
+      </el-table>
     </section>
   </div>
 </template>
@@ -140,20 +139,8 @@ onMounted(async () => {
   }
 }
 
-.search-field input {
+.search-field {
   width: 260px;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid #d7dce5;
-  border-radius: 6px;
-  color: #2b3445;
-  font-size: 13px;
-  outline: none;
-
-  &:focus {
-    border-color: #2e7cf6;
-    box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.1);
-  }
 }
 
 .table-panel {
@@ -163,51 +150,22 @@ onMounted(async () => {
   background: #fff;
 }
 
-.table-scroll {
-  overflow-x: auto;
-}
-
-table {
+.department-table {
   width: 100%;
-  min-width: 720px;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.name-col {
-  width: auto;
-}
+  :deep(.el-table__header th) {
+    height: 46px;
+    background: #f8fafc;
+    color: #596274;
+    font-size: 14px;
+    font-weight: 600;
+  }
 
-.code-col {
-  width: 220px;
-}
-
-.count-col {
-  width: 140px;
-}
-
-th,
-td {
-  height: 46px;
-  padding: 0 16px;
-  border-bottom: 1px solid #edf0f5;
-  color: #394253;
-  font-size: 14px;
-  text-align: left;
-}
-
-th {
-  background: #f8fafc;
-  color: #596274;
-  font-weight: 600;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-tbody tr:hover {
-  background: #f8fbff;
+  :deep(.el-table__row td) {
+    height: 46px;
+    color: #394253;
+    font-size: 14px;
+  }
 }
 
 .name-cell {
@@ -229,10 +187,8 @@ tbody tr:hover {
 .tree-arrow {
   display: grid;
   place-items: center;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  min-width: 24px;
+  height: 30px;
 
   span {
     width: 0;
@@ -253,27 +209,13 @@ tbody tr:hover {
   font-weight: 500;
 }
 
-.empty-cell {
-  height: 180px;
-  text-align: center;
-  color: #9aa3b2;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-
 @media (max-width: 680px) {
   .page-header {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .search-field input {
+  .search-field {
     width: 100%;
   }
 }

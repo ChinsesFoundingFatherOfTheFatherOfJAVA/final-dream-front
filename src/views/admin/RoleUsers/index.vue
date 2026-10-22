@@ -2,20 +2,27 @@
   <div class="role-users-page">
     <header class="page-header">
       <div>
-        <button type="button" class="back-button" @click="goBack">返回</button>
+        <el-button class="back-button" @click="goBack">返回</el-button>
         <h1>角色人员管理</h1>
         <p>{{ roleDetail?.name || '角色' }} · 共 {{ total }} 人</p>
       </div>
-      <button type="button" class="primary-button" @click="addVisible = true">添加成员</button>
+      <el-button type="primary" class="primary-button" @click="addVisible = true">添加成员</el-button>
     </header>
 
     <section class="content-panel">
       <div class="filter-bar">
         <div class="dept-filter">
-          <button type="button" @click="deptVisible = !deptVisible">
-            选择部门{{ selectedDeptName ? `：${selectedDeptName}` : '' }}
-          </button>
-          <div v-if="deptVisible" class="dept-popover">
+          <el-popover
+            v-model:visible="deptVisible"
+            placement="bottom-start"
+            :width="300"
+            trigger="click"
+          >
+            <template #reference>
+              <el-button>
+                选择部门{{ selectedDeptName ? `：${selectedDeptName}` : '' }}
+              </el-button>
+            </template>
             <DeptTree
               v-model="deptId"
               :data="departments"
@@ -25,103 +32,113 @@
               show-count
               @change="handleDeptSelected"
             />
-          </div>
+          </el-popover>
         </div>
 
         <label class="field">
           <span>账号状态</span>
-          <select v-model="status" @change="search">
-            <option :value="undefined">全部</option>
-            <option :value="1">启用</option>
-            <option :value="0">禁用</option>
-          </select>
+          <el-select v-model="status" placeholder="全部" @change="search">
+            <el-option label="全部" :value="undefined" />
+            <el-option label="启用" :value="1" />
+            <el-option label="禁用" :value="0" />
+          </el-select>
         </label>
 
         <label class="field search-field">
           <span>搜索</span>
-          <select v-model="searchField" @change="search">
-            <option value="name">姓名</option>
-            <option value="account">账号</option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="输入关键字" @keyup.enter="search" />
+          <div class="search-composite">
+            <el-select v-model="searchField" @change="search">
+              <el-option label="姓名" value="name" />
+              <el-option label="账号" value="account" />
+            </el-select>
+            <el-input
+              v-model.trim="keyword"
+              placeholder="输入关键字"
+              clearable
+              @keyup.enter="search"
+            />
+          </div>
         </label>
 
-        <button type="button" class="search-button" @click="search">查询</button>
-        <button
-          type="button"
+        <el-button type="primary" class="search-button" @click="search">查询</el-button>
+        <el-button
+          type="danger"
+          plain
           class="danger-button"
           :disabled="!selectedIds.length || removing"
           @click="handleBatchRemove"
         >
           {{ removing ? '处理中...' : `批量取消授权${selectedIds.length ? `（${selectedIds.length}）` : ''}` }}
-        </button>
+        </el-button>
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input
-                  type="checkbox"
-                  :checked="pageAllSelected"
-                  :disabled="!members.length"
-                  @change="toggleCurrentPage"
-                />
-              </th>
-              <th>姓名</th>
-              <th>账号</th>
-              <th>状态</th>
-              <th>所在部门</th>
-              <th>所在岗位</th>
-              <th>添加人</th>
-              <th>添加时间</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="member in members" :key="member.userId">
-              <td class="check-col">
-                <input
-                  type="checkbox"
-                  :checked="selectedIds.includes(member.userId)"
-                  @change="toggleMember(member.userId)"
-                />
-              </td>
-              <td class="name-cell">{{ member.name || '-' }}</td>
-              <td>{{ member.account || '-' }}</td>
-              <td>
-                <span class="status-tag" :class="{ disabled: member.status !== 1 }">
-                  {{ member.status === 1 ? '启用' : '禁用' }}
-                </span>
-              </td>
-              <td :title="member.deptName || ''">{{ member.deptName || '-' }}</td>
-              <td :title="member.positionName || ''">{{ member.positionName || '-' }}</td>
-              <td>{{ member.addedByName || member.addedBy || '-' }}</td>
-              <td>{{ member.addedAt || '-' }}</td>
-              <td>
-                <button type="button" class="link-button" @click="removeOne(member)">取消授权</button>
-              </td>
-            </tr>
-            <tr v-if="!members.length">
-              <td colspan="9" class="empty-cell">{{ loading ? '正在加载...' : '暂无数据' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <el-table
+        v-loading="loading"
+        :data="members"
+        row-key="userId"
+        class="members-table"
+        :empty-text="'暂无数据'"
+      >
+        <el-table-column width="44" align="center">
+          <template #header>
+            <el-checkbox
+              :model-value="pageAllSelected"
+              :disabled="!members.length"
+              @change="toggleCurrentPage"
+            />
+          </template>
+          <template #default="{ row }">
+            <el-checkbox
+              :model-value="selectedIds.includes(row.userId)"
+              @change="toggleMember(row.userId)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="姓名" min-width="120">
+          <template #default="{ row }"><span class="name-cell">{{ row.name || '-' }}</span></template>
+        </el-table-column>
+        <el-table-column label="账号" min-width="140" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.account || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="状态" width="90">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="light">
+              {{ row.status === 1 ? '启用' : '禁用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="所在部门" min-width="170" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.deptName || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="所在岗位" min-width="140" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.positionName || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="添加人" min-width="130">
+          <template #default="{ row }">{{ row.addedByName || row.addedBy || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="添加时间" min-width="160">
+          <template #default="{ row }">{{ row.addedAt || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="removeOne(row)">取消授权</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
       <footer class="pagination">
         <span>共 {{ total }} 条</span>
-        <div>
-          <select v-model.number="size" @change="search">
-            <option :value="20">20 条/页</option>
-            <option :value="50">50 条/页</option>
-            <option :value="100">100 条/页</option>
-          </select>
-          <button type="button" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
-          <span>{{ page }} / {{ totalPages }}</span>
-          <button type="button" :disabled="page >= totalPages" @click="changePage(page + 1)">下一页</button>
-        </div>
+        <el-pagination
+          v-model:current-page="page"
+          v-model:page-size="size"
+          :page-sizes="[20, 50, 100]"
+          :total="total"
+          :disabled="loading"
+          layout="sizes, prev, pager, next"
+          background
+          @size-change="search"
+          @current-change="loadMembers"
+        />
       </footer>
     </section>
 
@@ -172,7 +189,6 @@ const removing = ref(false)
 const selectedIds = ref<string[]>([])
 const addVisible = ref(false)
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / size.value)))
 const selectedDeptName = computed(
   () => departments.value.find((item) => item.deptId === deptId.value)?.deptName ?? ''
 )
@@ -212,12 +228,6 @@ async function loadMembers() {
 
 function search() {
   page.value = 1
-  selectedIds.value = []
-  void loadMembers()
-}
-
-function changePage(nextPage: number) {
-  page.value = Math.min(Math.max(1, nextPage), totalPages.value)
   selectedIds.value = []
   void loadMembers()
 }
@@ -308,41 +318,17 @@ onMounted(async () => {
 .back-button {
   height: 30px;
   margin-right: 10px;
-  padding: 0 10px;
-  border: 1px solid #d7dce5;
   border-radius: 6px;
-  background: #fff;
   color: #596274;
   font-size: 13px;
-  cursor: pointer;
 }
 
 .primary-button,
 .search-button,
 .danger-button {
   height: 35px;
-  padding: 0 14px;
   border-radius: 6px;
   font-size: 13px;
-  cursor: pointer;
-}
-
-.primary-button,
-.search-button {
-  border: none;
-  background: #2e7cf6;
-  color: #fff;
-}
-
-.danger-button {
-  border: 1px solid #f0c9c9;
-  background: #fffafa;
-  color: #d94a4a;
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
 }
 
 .content-panel {
@@ -371,152 +357,82 @@ onMounted(async () => {
     font-size: 12px;
   }
 
-  select,
-  input {
-    height: 34px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    font-size: 13px;
-    outline: none;
+  :deep(.el-select) {
+    min-width: 118px;
   }
 
-  select {
-    min-width: 118px;
-    padding: 0 9px;
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
+    font-size: 13px;
   }
 }
 
 .search-field {
   min-width: 310px;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: 42px minmax(0, 1fr);
   align-items: center;
 
   > span {
     grid-column: 1 / -1;
   }
+}
 
-  select {
+.search-composite {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+
+  :deep(.el-select) {
     min-width: 0;
-    border-radius: 6px 0 0 6px;
   }
 
-  input {
+  :deep(.el-select__wrapper) {
+    border-radius: 6px 0 0 6px;
+    box-shadow: 0 0 0 1px #d7dce5 inset;
+  }
+
+  :deep(.el-input__wrapper) {
     min-width: 0;
-    padding: 0 10px;
-    border-left: none;
     border-radius: 0 6px 6px 0;
+    box-shadow: 0 0 0 1px #d7dce5 inset;
   }
 }
 
 .dept-filter {
-  position: relative;
-
-  > button {
+  :deep(.el-button) {
     height: 34px;
     max-width: 210px;
     padding: 0 12px;
-    overflow: hidden;
-    border: 1px solid #d7dce5;
     border-radius: 6px;
-    background: #fff;
     color: #4d5568;
     font-size: 13px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: pointer;
   }
 }
 
-.dept-popover {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  z-index: 8;
-  width: 300px;
-  max-height: 420px;
-  padding: 10px;
-  border: 1px solid #dfe4ed;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
+.members-table {
   width: 100%;
-  min-width: 1100px;
-  border-collapse: collapse;
-  font-size: 13px;
-}
 
-th,
-td {
-  height: 44px;
-  padding: 0 12px;
-  border-bottom: 1px solid #edf0f5;
-  overflow: hidden;
-  color: #4d5568;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  :deep(.el-table__header th) {
+    height: 44px;
+    background: #f8fafc;
+    color: #596274;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-th {
-  background: #f8fafc;
-  color: #596274;
-  font-weight: 600;
-}
-
-tbody tr:hover {
-  background: #f8fbff;
-}
-
-.check-col {
-  width: 44px;
-  text-align: center;
+  :deep(.el-table__row td) {
+    height: 44px;
+    color: #4d5568;
+    font-size: 13px;
+  }
 }
 
 .name-cell {
   color: #253047;
   font-weight: 500;
-}
-
-.status-tag {
-  display: inline-flex;
-  min-width: 44px;
-  height: 23px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  color: #157347;
-  background: #e9f8ef;
-  font-size: 12px;
-
-  &.disabled {
-    color: #8a5360;
-    background: #f7ecef;
-  }
-}
-
-.link-button {
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #2e7cf6;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.empty-cell {
-  height: 180px;
-  text-align: center;
-  color: #9aa3b2;
 }
 
 .pagination {
@@ -528,34 +444,8 @@ tbody tr:hover {
   color: #667085;
   font-size: 13px;
 
-  > div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  select,
-  button {
-    height: 32px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    font-size: 13px;
-  }
-
-  select {
-    padding: 0 8px;
-  }
-
-  button {
-    padding: 0 12px;
-    cursor: pointer;
-
-    &:disabled {
-      color: #b8bfcc;
-      cursor: not-allowed;
-    }
+  :deep(.el-pagination) {
+    margin-left: auto;
   }
 }
 
@@ -567,6 +457,10 @@ tbody tr:hover {
 
   .search-field {
     min-width: 100%;
+  }
+
+  .search-composite {
+    grid-template-columns: 64px minmax(0, 1fr);
   }
 }
 </style>

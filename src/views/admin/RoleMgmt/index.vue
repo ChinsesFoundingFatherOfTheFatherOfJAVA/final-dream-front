@@ -3,25 +3,31 @@
     <aside class="role-list-panel">
       <div class="list-header">
         <h2>角色列表</h2>
-        <button type="button" @click="openCreate">创建</button>
+        <el-button type="primary" size="small" @click="openCreate">创建</el-button>
       </div>
-      <label class="role-search">
-        <span class="sr-only">搜索角色</span>
-        <input v-model.trim="keyword" type="search" placeholder="搜索角色名称" />
-      </label>
+      <el-input
+        v-model.trim="keyword"
+        class="role-search"
+        placeholder="搜索角色名称"
+        clearable
+      />
       <div class="role-list">
-        <button
-          v-for="role in filteredRoles"
-          :key="role.roleId"
-          type="button"
-          class="role-item"
-          :class="{ active: currentRole?.roleId === role.roleId }"
-          @click="selectRole(role.roleId)"
+        <el-menu
+          :default-active="currentRole?.roleId || ''"
+          class="role-menu"
+          @select="selectRole"
         >
-          <span>{{ role.name }}</span>
-          <em>{{ role.userCount }} 人</em>
-        </button>
-        <p v-if="!filteredRoles.length">暂无角色</p>
+          <el-menu-item
+            v-for="role in filteredRoles"
+            :key="role.roleId"
+            :index="role.roleId"
+            class="role-item"
+          >
+            <span>{{ role.name }}</span>
+            <em>{{ role.userCount }} 人</em>
+          </el-menu-item>
+        </el-menu>
+        <el-empty v-if="!filteredRoles.length" description="暂无角色" :image-size="64" />
       </div>
     </aside>
 
@@ -33,9 +39,9 @@
             <p>{{ currentRole.userCount }} 人</p>
           </div>
           <div class="header-actions">
-            <button type="button" class="link-action" @click="goToMembers">角色人员管理</button>
-            <button type="button" @click="openEdit">编辑</button>
-            <button type="button" class="danger" @click="handleDelete">删除</button>
+            <el-button class="link-action" type="primary" plain @click="goToMembers">角色人员管理</el-button>
+            <el-button @click="openEdit">编辑</el-button>
+            <el-button type="danger" plain @click="handleDelete">删除</el-button>
           </div>
         </header>
 
@@ -74,9 +80,12 @@
         </section>
       </template>
 
-      <div v-else class="empty-detail">
-        {{ loading ? '正在加载...' : '请选择或创建一个角色' }}
-      </div>
+      <el-empty
+        v-else
+        class="empty-detail"
+        :description="loading ? '正在加载...' : '请选择或创建一个角色'"
+        :image-size="96"
+      />
     </section>
 
     <RoleFormDrawer
@@ -249,36 +258,10 @@ onMounted(async () => {
     font-size: 16px;
   }
 
-  button {
-    height: 32px;
-    padding: 0 13px;
-    border: none;
-    border-radius: 6px;
-    background: #2e7cf6;
-    color: #fff;
-    font-size: 13px;
-    cursor: pointer;
-  }
 }
 
 .role-search {
   padding: 12px 14px 8px;
-
-  input {
-    width: 100%;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    color: #374151;
-    font-size: 13px;
-    outline: none;
-    box-sizing: border-box;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
-  }
 }
 
 .role-list {
@@ -287,37 +270,31 @@ onMounted(async () => {
   padding: 4px 10px 12px;
   overflow-y: auto;
 
-  > p {
-    padding: 36px 0;
-    text-align: center;
-    color: #9aa3b2;
-    font-size: 13px;
+  :deep(.el-menu) {
+    border-right: none;
+    background: transparent;
   }
 }
 
+.role-menu {
+  min-width: 0;
+}
+
 .role-item {
-  width: 100%;
   height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
   padding: 0 12px;
-  border: none;
   border-radius: 6px;
-  background: transparent;
   color: #4d5568;
   font-size: 14px;
-  text-align: left;
-  cursor: pointer;
+  line-height: 42px;
 
   &:hover {
     background: #f5f8fd;
   }
 
-  &.active {
+  &.is-active {
     background: #eaf2ff;
-    color: #1f6fe8;
+    color: #1890ff;
     font-weight: 600;
   }
 
@@ -367,27 +344,8 @@ onMounted(async () => {
   flex-wrap: wrap;
   gap: 8px;
 
-  button {
-    height: 32px;
-    padding: 0 12px;
-    border: 1px solid #d7dce5;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    font-size: 13px;
-    cursor: pointer;
-
-    &.link-action {
-      border-color: #bcd4ff;
-      color: #2e7cf6;
-      background: #f5f9ff;
-    }
-
-    &.danger {
-      border-color: #f0c9c9;
-      color: #d94a4a;
-      background: #fffafa;
-    }
+  .link-action {
+    color: #1890ff;
   }
 }
 
@@ -452,20 +410,7 @@ onMounted(async () => {
 }
 
 .empty-detail {
-  height: 100%;
   min-height: 380px;
-  display: grid;
-  place-items: center;
-  color: #9aa3b2;
-  font-size: 14px;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
 }
 
 @media (max-width: 980px) {
