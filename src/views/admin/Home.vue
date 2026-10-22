@@ -89,17 +89,15 @@
       </div>
 
       <!-- 时间筛选标签 -->
-      <div class="time-filter">
-        <span
+      <el-radio-group v-model="selectedTime" size="small" class="time-filter">
+        <el-radio-button
           v-for="item in timeOptions"
           :key="item"
-          class="time-tag"
-          :class="{ active: selectedTime === item }"
-          @click="selectedTime = item"
+          :value="item"
         >
           {{ item }}
-        </span>
-      </div>
+        </el-radio-button>
+      </el-radio-group>
 
       <!-- 数据统计卡片 -->
       <div class="stats-cards">
@@ -212,11 +210,11 @@
         <div class="detail-card">
           <div class="card-header">
             <h3 class="card-title">课程情况 <span class="tip">ℹ</span></h3>
-            <div class="card-tabs">
-              <span class="tab active">全部</span>
-              <span class="tab">内部</span>
-              <span class="tab">外部</span>
-            </div>
+            <el-radio-group v-model="courseScope" size="small" class="card-tabs">
+              <el-radio-button value="全部">全部</el-radio-button>
+              <el-radio-button value="内部">内部</el-radio-button>
+              <el-radio-button value="外部">外部</el-radio-button>
+            </el-radio-group>
           </div>
           <div class="card-content">
             <div class="stat-row"><span class="stat-label">课程总量</span><span class="stat-value">1,358</span></div>
@@ -298,6 +296,7 @@ import { useAuthStore } from '@/stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 const selectedTime = ref('当月')
+const courseScope = ref('全部')
 const timeOptions = ['上月', '当月', '上季度', '当季度', '上一年', '当年', '累计']
 const hasKngAccess = computed(() =>
   auth.hasPermission('kng:catalog') ||
@@ -462,22 +461,14 @@ const goToOnlineClassroom = () => {
 
 // 平台总览
 .time-filter {
-  display: flex;
-  gap: 8px;
   margin-bottom: 20px;
-}
 
-.time-tag {
-  padding: 6px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  font-size: 12px;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover { color: #1890ff; border-color: #1890ff; }
-  &.active { color: #1890ff; border-color: #1890ff; background: #e6f7ff; }
+  :deep(.el-radio-button__inner) {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+    line-height: 28px;
+  }
 }
 
 .stats-cards {
@@ -552,18 +543,11 @@ const goToOnlineClassroom = () => {
   }
 
   .card-tabs {
-    display: flex;
-    gap: 8px;
-
-    .tab {
+    :deep(.el-radio-button__inner) {
+      height: 26px;
+      padding: 0 8px;
       font-size: 12px;
-      color: #666;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-
-      &:hover { color: #1890ff; }
-      &.active { color: #1890ff; background: #e6f7ff; }
+      line-height: 24px;
     }
   }
 

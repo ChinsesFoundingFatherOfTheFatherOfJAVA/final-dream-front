@@ -5,8 +5,8 @@
       <h1>{{ title }}</h1>
       <p>{{ message }}</p>
       <div class="actions">
-        <button class="primary-btn" @click="goBack">返回上一页</button>
-        <button class="plain-btn" @click="logout">退出登录</button>
+        <el-button class="primary-btn" type="primary" @click="goBack">返回上一页</el-button>
+        <el-button class="plain-btn" @click="logout">退出登录</el-button>
       </div>
     </div>
   </div>
@@ -97,18 +97,5 @@ const logout = () => {
   padding: 0 18px;
   border-radius: 8px;
   font-size: 14px;
-  cursor: pointer;
-}
-
-.primary-btn {
-  border: none;
-  background: #2e7cf6;
-  color: #fff;
-}
-
-.plain-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
 }
 </style>

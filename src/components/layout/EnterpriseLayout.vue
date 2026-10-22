@@ -2,17 +2,16 @@
   <div class="enterprise-layout">
     <aside class="enterprise-sidebar">
       <div class="sidebar-title">我的企业</div>
-      <nav class="sidebar-menu">
-        <router-link
+      <el-menu :default-active="route.path" router class="sidebar-menu">
+        <el-menu-item
           v-for="item in visibleMenus"
           :key="item.path"
-          :to="item.path"
+          :index="item.path"
           class="menu-item"
-          :class="{ active: route.path.startsWith(item.match) }"
         >
           {{ item.label }}
-        </router-link>
-      </nav>
+        </el-menu-item>
+      </el-menu>
     </aside>
     <main class="enterprise-content">
       <router-view />
@@ -68,30 +67,27 @@ const visibleMenus = computed(() =>
 }
 
 .sidebar-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  border-right: none;
+  background: transparent;
 }
 
 .menu-item {
   height: 42px;
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
+  margin-bottom: 4px;
+  padding: 0 14px !important;
   border-radius: 7px;
   color: #596274;
   font-size: 14px;
-  text-decoration: none;
   transition: background 0.16s ease, color 0.16s ease;
 
   &:hover {
     background: #f4f7fc;
-    color: #245fbd;
+    color: #1890ff;
   }
 
-  &.active {
+  &.is-active {
     background: #eaf2ff;
-    color: #1f6fe8;
+    color: #1890ff;
     font-weight: 600;
   }
 }
@@ -121,12 +117,14 @@ const visibleMenus = computed(() =>
   }
 
   .sidebar-menu {
+    display: flex;
     flex-direction: row;
     overflow-x: auto;
   }
 
   .menu-item {
     flex: 0 0 auto;
+    margin-bottom: 0;
   }
 }
 </style>

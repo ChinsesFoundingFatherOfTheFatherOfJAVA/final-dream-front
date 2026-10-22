@@ -18,34 +18,37 @@
         </router-link>
         <span class="nav-item disabled" title="敬请期待">AI实战训练场</span>
         <span class="nav-item disabled" title="敬请期待">陪练看板</span>
-        <div class="nav-item dropdown" @mouseenter="openDropdown('more')" @mouseleave="closeDropdown('more')">
-          更多 <span class="arrow">▾</span>
-          <div v-if="activeDropdown === 'more'" class="dropdown-menu more-menu" @mouseenter="keepDropdown('more')" @mouseleave="closeDropdown('more')">
-            <div class="dropdown-item">学习路径</div>
-            <div class="dropdown-item">知识图谱</div>
-            <div class="dropdown-item">学习社区</div>
-          </div>
-        </div>
+        <el-dropdown trigger="hover">
+          <span class="nav-item">更多 <span class="arrow">▾</span></span>
+          <template #dropdown>
+            <el-dropdown-menu class="more-menu">
+              <el-dropdown-item disabled>学习路径</el-dropdown-item>
+              <el-dropdown-item disabled>知识图谱</el-dropdown-item>
+              <el-dropdown-item disabled>学习社区</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </nav>
     </div>
     <div class="nav-right">
       <span class="nav-icon">🎨</span>
       <span class="nav-icon">🔍</span>
       <span class="nav-icon">🔔</span>
-      <div class="user-dropdown" @mouseenter="openDropdown('user')" @mouseleave="closeDropdown('user')">
+      <el-dropdown trigger="hover" @command="handleUserCommand">
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
           <span class="user-name">{{ auth.displayName }}</span>
           <span class="arrow">▾</span>
         </span>
-        <div v-if="activeDropdown === 'user'" class="dropdown-menu user-menu" @mouseenter="keepDropdown('user')" @mouseleave="closeDropdown('user')">
-          <div class="dropdown-item" @click="goToAdmin">前往管理端</div>
-          <div class="dropdown-item">个人中心</div>
-          <div class="dropdown-item">我的收藏</div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" @click="logout">退出登录</div>
-        </div>
-      </div>
+        <template #dropdown>
+          <el-dropdown-menu class="user-menu">
+            <el-dropdown-item command="admin">前往管理端</el-dropdown-item>
+            <el-dropdown-item disabled>个人中心</el-dropdown-item>
+            <el-dropdown-item disabled>我的收藏</el-dropdown-item>
+            <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <span class="nav-item workbench">
         <span>⊞</span> 工作台
       </span>
@@ -54,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -62,41 +65,18 @@ const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
-const activeDropdown = ref<string | null>(null)
-let closeTimer: number | null = null
-
-const openDropdown = (name: string) => {
-  if (closeTimer) {
-    clearTimeout(closeTimer)
-    closeTimer = null
-  }
-  activeDropdown.value = name
-}
-
-const closeDropdown = (name: string) => {
-  closeTimer = window.setTimeout(() => {
-    if (activeDropdown.value === name) {
-      activeDropdown.value = null
-    }
-  }, 150)
-}
-
-const keepDropdown = (name: string) => {
-  if (closeTimer) {
-    clearTimeout(closeTimer)
-    closeTimer = null
-  }
-}
-
-const goToAdmin = () => {
-  activeDropdown.value = null
-  router.push('/homepage')
-}
 
 const logout = () => {
-  activeDropdown.value = null
   auth.logout()
   router.replace('/login')
+}
+
+const handleUserCommand = (command: string) => {
+  if (command === 'admin') {
+    router.push('/homepage')
+  } else if (command === 'logout') {
+    logout()
+  }
 }
 </script>
 
@@ -220,60 +200,12 @@ const logout = () => {
   gap: 4px;
 }
 
-// 下拉菜单
-.dropdown {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1001;
-  padding: 8px 0;
-}
-
 .more-menu {
   min-width: 120px;
-
-  .dropdown-item {
-    padding: 10px 16px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: #f5f5f5;
-    }
-  }
 }
 
 .user-menu {
-  right: 0;
-  left: auto;
   min-width: 160px;
-
-  .dropdown-item {
-    padding: 10px 16px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: #f5f5f5;
-    }
-  }
-
-  .dropdown-divider {
-    height: 1px;
-    background: #e8e8e8;
-    margin: 4px 0;
-  }
 }
 
 @media (max-width: 760px) {

@@ -68,10 +68,7 @@
     <!-- 最近学习 -->
     <section class="recent-learning">
       <h2 class="section-title">最近学习</h2>
-      <div class="empty-state">
-        <span class="empty-icon">📭</span>
-        <p class="empty-text">暂无学习记录</p>
-      </div>
+      <el-empty description="暂无学习记录" :image-size="96" />
     </section>
   </div>
 </template>
@@ -196,22 +193,12 @@ const goTo = (path: string) => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 0;
+:deep(.el-empty) {
+  padding: 24px 0;
+}
 
-  .empty-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-  }
-
-  .empty-text {
-    font-size: 14px;
-    color: #999;
-    margin: 0;
-  }
+:deep(.el-empty__description p) {
+  color: #999;
+  font-size: 14px;
 }
 </style>

@@ -9,31 +9,37 @@
         </div>
       </div>
 
-      <form class="login-form" @submit.prevent="submit">
-        <label class="form-field">
-          <span>账号</span>
-          <input
+      <el-form class="login-form" label-position="top" @submit.prevent="submit">
+        <el-form-item label="账号">
+          <el-input
             v-model.trim="account"
-            type="text"
             autocomplete="username"
             placeholder="请输入账号"
+            size="large"
             autofocus
           />
-        </label>
-        <label class="form-field">
-          <span>密码</span>
-          <input
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input
             v-model="password"
             type="password"
             autocomplete="current-password"
             placeholder="请输入密码"
+            size="large"
+            show-password
           />
-        </label>
-        <p v-if="errorMsg" class="login-error">{{ errorMsg }}</p>
-        <button class="login-btn" type="submit" :disabled="submitting">
-          {{ submitting ? '登录中...' : '登录' }}
-        </button>
-      </form>
+        </el-form-item>
+        <el-alert v-if="errorMsg" :title="errorMsg" type="error" :closable="false" show-icon />
+        <el-button
+          class="login-btn"
+          type="primary"
+          native-type="submit"
+          size="large"
+          :loading="submitting"
+        >
+          登录
+        </el-button>
+      </el-form>
     </div>
   </div>
 </template>
@@ -141,74 +147,41 @@ onMounted(() => {
 }
 
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+  :deep(.el-form-item) {
+    margin-bottom: 18px;
+  }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  span {
+  :deep(.el-form-item__label) {
+    padding-bottom: 8px;
     color: #4d5568;
     font-size: 13px;
     font-weight: 500;
+    line-height: 1.2;
   }
 
-  input {
-    height: 44px;
+  :deep(.el-input__wrapper) {
+    min-height: 44px;
     padding: 0 14px;
-    border: 1px solid #d9deea;
     border-radius: 8px;
-    color: #1e2638;
-    background: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    &:focus {
-      border-color: #2e7cf6;
-      box-shadow: 0 0 0 3px rgba(46, 124, 246, 0.12);
-    }
-
-    &::placeholder {
-      color: #a5adbd;
-    }
+    box-shadow: 0 0 0 1px #d9deea inset;
   }
-}
 
-.login-error {
-  margin: -4px 0 0;
-  color: #d94a4a;
-  font-size: 13px;
+  :deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #1890ff inset, 0 0 0 3px rgba(24, 144, 255, 0.12);
+  }
+
+  :deep(.el-alert) {
+    margin: -4px 0 4px;
+  }
 }
 
 .login-btn {
+  width: 100%;
   height: 46px;
-  margin-top: 4px;
-  border: none;
+  margin-top: 18px;
   border-radius: 8px;
-  background: #2e7cf6;
-  color: #fff;
   font-size: 15px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-
-  &:hover:not(:disabled) {
-    background: #1f6fe8;
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.99);
-  }
-
-  &:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
 }
 
 @media (max-width: 520px) {
