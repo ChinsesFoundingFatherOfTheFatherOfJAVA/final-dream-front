@@ -11,30 +11,29 @@
     <div v-else class="simple-form">
       <label class="field">
         <span class="label">课件名称<em>*</em></span>
-        <input v-model.trim="title" type="text" maxlength="200" />
+        <el-input v-model.trim="title" maxlength="200" show-word-limit />
       </label>
 
       <label class="field">
         <span class="label">所属分类<em>*</em></span>
-        <select v-model="catalogId" class="catalog-select">
-          <option v-for="node in catalogOptions" :key="node.id" :value="node.id">
-            {{ '　'.repeat(node.depth) }}{{ node.name }}
-          </option>
-        </select>
+        <el-select v-model="catalogId" class="catalog-select">
+          <el-option
+            v-for="node in catalogOptions"
+            :key="node.id"
+            :label="`${'　'.repeat(node.depth)}${node.name}`"
+            :value="node.id"
+          />
+        </el-select>
       </label>
 
       <div class="field">
         <span class="label">学分</span>
-        <label class="inline-radio">
-          <input v-model="scoreMode" type="radio" value="follow" />
-          <span>跟随学分策略</span>
-        </label>
-        <label class="inline-radio">
-          <input v-model="scoreMode" type="radio" value="custom" />
-          <span>单独设置学分</span>
-        </label>
+        <el-radio-group v-model="scoreMode">
+          <el-radio value="follow">跟随学分策略</el-radio>
+          <el-radio value="custom">单独设置学分</el-radio>
+        </el-radio-group>
         <div v-if="scoreMode === 'custom'" class="inline-control">
-          <input v-model.number="studyScore" type="number" min="0.1" step="0.1" />
+          <el-input-number v-model="studyScore" :min="0.1" :step="0.1" :controls="false" />
           <span>学分</span>
         </div>
       </div>
@@ -42,19 +41,19 @@
       <div class="field">
         <span class="label">标准时长</span>
         <div class="inline-control">
-          <input v-model.number="standardMinutes" type="number" min="0" />
+          <el-input-number v-model="standardMinutes" :min="0" :controls="false" />
           <span>分</span>
-          <input v-model.number="standardSeconds" type="number" min="0" max="59" />
+          <el-input-number v-model="standardSeconds" :min="0" :max="59" :controls="false" />
           <span>秒</span>
         </div>
       </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="loading || saving" @click="save">
+      <el-button class="btn" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="loading || saving" @click="save">
         {{ saving ? '保存中...' : '保存' }}
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>
@@ -224,41 +223,21 @@ async function save() {
     }
   }
 
-  input[type='text'],
-  select {
-    box-sizing: border-box;
+  :deep(.el-input),
+  :deep(.el-select) {
     width: 100%;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    color: #30384a;
-    font-size: 13px;
-    outline: none;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
   }
 
-  input[type='text'] {
-    height: auto;
-    padding: 8px 10px;
+  :deep(.el-input__wrapper),
+  :deep(.el-select__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
+    font-size: 13px;
   }
 }
 
-.inline-radio {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.inline-control :deep(.el-radio) {
   margin-right: 18px;
-  color: #4d5568;
-  font-size: 13px;
-  cursor: pointer;
-
-  input {
-    accent-color: #2e7cf6;
-  }
 }
 
 .inline-control {
@@ -269,20 +248,14 @@ async function save() {
   color: #4d5568;
   font-size: 13px;
 
-  input[type='number'] {
-    box-sizing: border-box;
+  :deep(.el-input-number) {
     width: 110px;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    color: #30384a;
-    font-size: 13px;
-    outline: none;
+  }
 
-    &:focus {
-      border-color: #2e7cf6;
-    }
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
+    font-size: 13px;
   }
 }
 

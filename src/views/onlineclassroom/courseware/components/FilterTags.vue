@@ -1,10 +1,14 @@
 <template>
   <div v-if="tags.length" class="filter-tags">
-    <button v-for="tag in tags" :key="tag.key" type="button" @click="emit('remove', tag.key)">
-      <span>{{ tag.label }}</span>
-      <i>×</i>
-    </button>
-    <button type="button" class="clear-all" @click="emit('clear')">清空</button>
+    <el-tag
+      v-for="tag in tags"
+      :key="tag.key"
+      closable
+      @close="emit('remove', tag.key)"
+    >
+      {{ tag.label }}
+    </el-tag>
+    <el-button link class="clear-all" @click="emit('clear')">清空</el-button>
   </div>
 </template>
 
@@ -42,32 +46,20 @@ const tags = computed(() => {
 <style scoped lang="scss">
 .filter-tags {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
 
-  button {
+  :deep(.el-tag) {
     height: 30px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 10px;
-    border: 1px solid #b9d3ff;
-    border-radius: 5px;
+    border-color: #b9d3ff;
     background: #f7faff;
     color: #426a9f;
     font-size: 12px;
-    cursor: pointer;
-  }
-
-  i {
-    color: #7b8ca5;
-    font-style: normal;
   }
 
   .clear-all {
-    border-color: transparent;
-    background: transparent;
     color: #7b8496;
   }
 }

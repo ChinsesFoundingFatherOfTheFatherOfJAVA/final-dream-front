@@ -11,87 +11,83 @@
     />
 
     <section class="courseware-content">
-      <button
+      <el-button
         v-if="treeCollapsed"
-        type="button"
+       
         class="tree-expand"
         title="展开分类树"
         @click="treeCollapsed = false"
       >
         ≡
-      </button>
+      </el-button>
 
       <header class="top-actions">
         <div class="left-actions">
-          <div class="publish-wrap">
-            <button type="button" class="primary-btn" @click.stop="publishOpen = !publishOpen">
+          <el-dropdown trigger="click" @command="handlePublishCommand">
+            <el-button class="primary-btn">
               发布课件 <span class="caret">⌄</span>
-            </button>
-            <div v-if="publishOpen" class="publish-menu" @click.stop>
-              <div class="menu-group">
-                <span class="group-label">本地上传</span>
-                <button type="button" @click="goPublish('file')">上传文件</button>
-                <button type="button" @click="goPublish('scorm')">SCORM课件</button>
-                <button type="button" @click="goPublish('html')">HTML课件</button>
-              </div>
-              <div class="menu-group">
-                <button type="button" @click="goPublish('link')">外部链接</button>
-              </div>
-              <div class="menu-group">
-                <span class="group-label">从应用选择</span>
-                <button type="button" disabled title="功能建设中">从知识库选择</button>
-                <button type="button" disabled title="功能建设中">发表微课</button>
-              </div>
-            </div>
-          </div>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item disabled>本地上传</el-dropdown-item>
+                <el-dropdown-item command="file">上传文件</el-dropdown-item>
+                <el-dropdown-item command="scorm">SCORM课件</el-dropdown-item>
+                <el-dropdown-item command="html">HTML课件</el-dropdown-item>
+                <el-dropdown-item command="link">外部链接</el-dropdown-item>
+                <el-dropdown-item disabled>从应用选择</el-dropdown-item>
+                <el-dropdown-item disabled>从知识库选择</el-dropdown-item>
+                <el-dropdown-item disabled>发表微课</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
 
-          <div class="batch-wrap">
-            <button
-              type="button"
+          <el-dropdown trigger="click" @command="handleBatchCommand">
+            <el-button
               class="ghost-btn"
               :disabled="selectedIds.size === 0"
-              @click.stop="batchOpen = !batchOpen"
             >
               批量操作 <span class="caret">⌄</span>
-            </button>
-            <div v-if="batchOpen && selectedIds.size" class="batch-menu" @click.stop>
-              <button type="button" @click="batchPutOn">上架</button>
-              <button type="button" @click="batchTakeDown">下架</button>
-              <button type="button" @click="openBatchMove">移动</button>
-              <button type="button" @click="batchDelete">删除</button>
-            </div>
-          </div>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="put-on">上架</el-dropdown-item>
+                <el-dropdown-item command="take-down">下架</el-dropdown-item>
+                <el-dropdown-item command="move">移动</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
 
         <div class="right-links">
-          <button type="button" @click="router.push('/kng/courseware/transcode')">转码管理</button>
-          <button type="button" @click="router.push('/kng/courseware/subtitles')">字幕管理</button>
+          <el-button @click="router.push('/kng/courseware/transcode')">转码管理</el-button>
+          <el-button @click="router.push('/kng/courseware/subtitles')">字幕管理</el-button>
         </div>
       </header>
 
       <div class="filter-row">
-        <button type="button" class="filter-more" @click="filterVisible = true">
+        <el-button class="filter-more" @click="filterVisible = true">
           <span class="filter-icon">▽</span>
           更多筛选
           <span class="caret">⌄</span>
-        </button>
-        <select v-model="typeFilter" class="filter-select" @change="reload(1)">
-          <option :value="null">全部类型</option>
-          <option v-for="item in typeOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
-        </select>
-        <select v-model="statusFilter" class="filter-select" @change="reload(1)">
-          <option :value="null">课件状态</option>
-          <option v-for="item in statusOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
-        </select>
-        <label class="keyword-box">
-          <span>⌕</span>
-          <input
+        </el-button>
+        <el-select v-model="typeFilter" class="filter-select" placeholder="全部类型" @change="reload(1)">
+          <el-option label="全部类型" :value="null" />
+          <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <el-select v-model="statusFilter" class="filter-select" placeholder="课件状态" @change="reload(1)">
+          <el-option label="课件状态" :value="null" />
+          <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <el-input
             v-model.trim="keyword"
-            type="search"
+            class="keyword-box"
             placeholder="搜索名称/分类/上传者等"
+            clearable
             @keyup.enter="reload(1)"
-          />
-        </label>
+        >
+          <template #prefix>⌕</template>
+        </el-input>
       </div>
 
       <FilterTags
@@ -101,88 +97,92 @@
       />
 
       <div class="table-wrap">
-        <table>
-          <colgroup>
-            <col class="check-col" />
-            <col class="name-col" />
-            <col class="type-col" />
-            <col class="date-col" />
-            <col class="count-col" />
-            <col class="status-col" />
-            <col class="action-col" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  :checked="allChecked"
-                  :indeterminate.prop="someChecked"
-                  @change="toggleAll(($event.target as HTMLInputElement).checked)"
-                />
-              </th>
-              <th>名称</th>
-              <th>类型</th>
-              <th class="sortable" @click="sortBy('updateTime')">
-                更新日期
-                <span class="sort-icon">{{ orderBy === 'updateTime' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </th>
-              <th class="sortable" @click="sortBy('studyCount')">
-                学习人数
-                <span class="sort-icon">{{ orderBy === 'studyCount' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </th>
-              <th>状态</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in page.records" :key="row.id" :class="{ 'row-hidden': row.hidden }">
-              <td>
-                <input
-                  type="checkbox"
-                  :checked="selectedIds.has(row.id)"
-                  @change="toggleRow(row.id, ($event.target as HTMLInputElement).checked)"
-                />
-              </td>
-              <td class="title-cell">
+        <el-table
+          v-loading="loading"
+          :data="page.records"
+          row-key="id"
+          class="courseware-table"
+          :empty-text="'暂无数据'"
+          :row-class-name="coursewareRowClass"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox
+                :model-value="allChecked"
+                :indeterminate="someChecked"
+                @change="toggleAll"
+              />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="selectedIds.has(row.id)"
+                @change="toggleRow(row.id, Boolean($event))"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="名称" min-width="320">
+            <template #default="{ row }">
+              <div class="title-cell">
                 <span class="type-icon" :class="`type-${row.type}`">{{ typeBadge(row.type) }}</span>
-                <button type="button" class="title-link" @click="openDetail(row.id)">{{ row.title }}</button>
+                <el-button link class="title-link" @click="openDetail(row.id)">{{ row.title }}</el-button>
                 <span v-if="row.type === 8" class="external-icon" title="外链课">↗</span>
                 <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
-              </td>
-              <td>{{ row.typeDesc }}</td>
-              <td>{{ row.updateTime || '--' }}</td>
-              <td>{{ row.studyCount }}</td>
-              <td>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="类型" width="92">
+            <template #default="{ row }">{{ row.typeDesc }}</template>
+          </el-table-column>
+          <el-table-column label="更新日期" width="150">
+            <template #header>
+              <el-button link @click="sortBy('updateTime')">
+                更新日期
+                <span class="sort-icon">{{ orderBy === 'updateTime' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
+              </el-button>
+            </template>
+            <template #default="{ row }">{{ row.updateTime || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="学习人数" width="110">
+            <template #header>
+              <el-button link @click="sortBy('studyCount')">
+                学习人数
+                <span class="sort-icon">{{ orderBy === 'studyCount' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
+              </el-button>
+            </template>
+            <template #default="{ row }">{{ row.studyCount }}</template>
+          </el-table-column>
+          <el-table-column label="状态" width="108">
+            <template #default="{ row }">
                 <span class="status-text" :class="`status-${row.status}`">
                   <i></i>{{ row.statusDesc }}
                 </span>
-              </td>
-              <td class="action-cell">
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="220" fixed="right">
+            <template #default="{ row }">
                 <div class="action-list">
-                  <button type="button" @click="openDetail(row.id)">查看详情</button>
-                  <button type="button" @click="edit(row.id)">编辑</button>
-                  <button
-                    type="button"
-                    class="more-trigger"
-                    @mouseenter="showMore($event, row)"
-                    @mouseleave="scheduleCloseMore"
-                    @click.stop="showMore($event, row)"
-                  >
-                    更多⌄
-                  </button>
+                  <el-button link type="primary" @click="openDetail(row.id)">查看详情</el-button>
+                  <el-button link type="primary" @click="edit(row.id)">编辑</el-button>
+                  <el-dropdown trigger="click" @command="(command: string) => handleMoreCommand(command, row)">
+                    <el-button link class="more-trigger">更多⌄</el-button>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="hide">{{ row.hidden ? '取消隐藏' : '隐藏' }}</el-dropdown-item>
+                        <el-dropdown-item v-if="row.status === 2" command="take-down">下架</el-dropdown-item>
+                        <el-dropdown-item command="move">移动</el-dropdown-item>
+                        <el-dropdown-item command="copy">复制</el-dropdown-item>
+                        <el-dropdown-item command="delete">删除</el-dropdown-item>
+                        <el-dropdown-item command="download">下载</el-dropdown-item>
+                        <el-dropdown-item command="references">引用记录</el-dropdown-item>
+                        <el-dropdown-item command="download-records">下载记录</el-dropdown-item>
+                        <el-dropdown-item v-if="row.type !== 1" command="subtitle">编辑字幕</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
                 </div>
-              </td>
-            </tr>
-            <tr v-if="!loading && !page.records.length">
-              <td colspan="7" class="empty-cell">
-                <div class="empty-folder">▱</div>
-                <span>暂无数据</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="loading" class="table-loading">加载中...</div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <PaginationBar
@@ -192,25 +192,6 @@
         @change="reload()"
       />
     </section>
-
-    <div
-      v-if="moreRow"
-      class="floating-more-menu"
-      :style="moreMenuStyle"
-      @mouseenter="cancelCloseMore"
-      @mouseleave="scheduleCloseMore"
-    >
-      <!-- 增补A：隐藏在下架之前；hidden 为独立双标记，可取消隐藏 -->
-      <button type="button" @click="openHide(moreRow)">{{ moreRow.hidden ? '取消隐藏' : '隐藏' }}</button>
-      <button v-if="moreRow.status === 2" type="button" @click="openTakeDown(moreRow)">下架</button>
-      <button type="button" @click="openMove(moreRow)">移动</button>
-      <button type="button" @click="openCopy(moreRow)">复制</button>
-      <button type="button" @click="remove(moreRow)">删除</button>
-      <button type="button" @click="download(moreRow)">下载</button>
-      <button type="button" @click="showReferences(moreRow)">引用记录</button>
-      <button type="button" @click="showDownloadRecords(moreRow)">下载记录</button>
-      <button v-if="moreRow.type !== 1" type="button" @click="openSubtitle(moreRow)">编辑字幕</button>
-    </div>
 
     <FilterDrawer
       :visible="filterVisible"
@@ -254,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
 import CatalogTreePanel from './components/CatalogTreePanel.vue'
@@ -300,8 +281,6 @@ const keyword = ref('')
 const loading = ref(false)
 const page = reactive<{ total: number; records: CoursewareListItem[] }>({ total: 0, records: [] })
 const selectedIds = ref(new Set<string>())
-const publishOpen = ref(false)
-const batchOpen = ref(false)
 const filterVisible = ref(false)
 
 const emptyFilters = (): CoursewareFilters => ({
@@ -315,9 +294,6 @@ const emptyFilters = (): CoursewareFilters => ({
 const filterForm = ref<CoursewareFilters>(emptyFilters())
 const appliedFilters = ref<CoursewareFilters>(emptyFilters())
 
-const moreRow = ref<CoursewareListItem | null>(null)
-const morePosition = reactive({ left: 0, top: 0 })
-const moreCloseTimer = ref<number | null>(null)
 const takeDownVisible = ref(false)
 const takeDownRow = ref<CoursewareListItem | null>(null)
 const copyVisible = ref(false)
@@ -356,10 +332,7 @@ const allChecked = computed(() =>
 const someChecked = computed(() =>
   page.records.some(row => selectedIds.value.has(row.id)) && !allChecked.value
 )
-const moreMenuStyle = computed(() => ({
-  left: `${morePosition.left}px`,
-  top: `${morePosition.top}px`
-}))
+const coursewareRowClass = ({ row }: { row: CoursewareListItem }) => row.hidden ? 'row-hidden' : ''
 
 function typeBadge(type: number) {
   return type === 2 ? '▶' : type === 3 ? '♫' : type === 4 ? '▣' : type === 6 ? 'SC' : type === 7 ? '<>' : type === 8 ? '↗' : 'P'
@@ -415,12 +388,24 @@ function toggleAll(checked: boolean) {
 }
 
 function goPublish(variant: 'file' | 'scorm' | 'html' | 'link') {
-  publishOpen.value = false
   // 增补B：四种发布途径共用的表单页通过 query 继承左树选中分类
   router.push({
     path: `/kng/courseware/publish/${variant}`,
     query: selectedCatalogId.value ? { catalogId: selectedCatalogId.value } : {}
   })
+}
+
+function handlePublishCommand(command: string) {
+  if (['file', 'scorm', 'html', 'link'].includes(command)) {
+    goPublish(command as 'file' | 'scorm' | 'html' | 'link')
+  }
+}
+
+function handleBatchCommand(command: string) {
+  if (command === 'put-on') void batchPutOn()
+  else if (command === 'take-down') void batchTakeDown()
+  else if (command === 'move') openBatchMove()
+  else if (command === 'delete') void batchDelete()
 }
 
 function openDetail(id: string) {
@@ -432,38 +417,13 @@ function edit(id: string) {
   router.push(`/kng/courseware/edit/${id}`)
 }
 
-function showMore(event: MouseEvent, row: CoursewareListItem) {
-  cancelCloseMore()
-  const target = event.currentTarget as HTMLElement
-  const rect = target.getBoundingClientRect()
-  morePosition.left = Math.max(12, Math.min(window.innerWidth - 180, rect.right - 150))
-  morePosition.top = Math.min(window.innerHeight - 330, rect.bottom + 4)
-  moreRow.value = row
-}
-
-function scheduleCloseMore() {
-  cancelCloseMore()
-  moreCloseTimer.value = window.setTimeout(() => {
-    moreRow.value = null
-  }, 180)
-}
-
-function cancelCloseMore() {
-  if (moreCloseTimer.value) {
-    window.clearTimeout(moreCloseTimer.value)
-    moreCloseTimer.value = null
-  }
-}
-
 function openTakeDown(row: CoursewareListItem) {
-  moreRow.value = null
   takeDownRow.value = row
   takeDownVisible.value = true
 }
 
 // 增补A：打开隐藏确认弹窗（hidden 与 status 独立双标记，可反复切换）
 function openHide(row: CoursewareListItem) {
-  moreRow.value = null
   hideRow.value = row
   hideVisible.value = true
 }
@@ -485,7 +445,6 @@ async function confirmTakeDown() {
 }
 
 function openCopy(row: CoursewareListItem) {
-  moreRow.value = null
   copyRow.value = row
   copyVisible.value = true
 }
@@ -500,19 +459,16 @@ async function confirmCopy(targetCatalogId: string) {
 }
 
 function openSubtitle(row: CoursewareListItem) {
-  moreRow.value = null
   subtitleRow.value = row
   subtitleVisible.value = true
 }
 
 function openMove(row: CoursewareListItem) {
-  moreRow.value = null
   moveRows.value = [row.id]
   moveVisible.value = true
 }
 
 function openBatchMove() {
-  batchOpen.value = false
   moveRows.value = [...selectedIds.value]
   moveVisible.value = true
 }
@@ -526,7 +482,6 @@ async function confirmMove(targetCatalogId: string) {
 }
 
 async function remove(row: CoursewareListItem) {
-  moreRow.value = null
   if (!(await confirmDialog({ message: `确定删除课件「${row.title}」吗？`, danger: true }))) return
   await deleteCourseware(row.id)
   toast.info('已删除')
@@ -534,7 +489,6 @@ async function remove(row: CoursewareListItem) {
 }
 
 async function batchTakeDown() {
-  batchOpen.value = false
   if (!(await confirmDialog({ message: `确定下架选中的 ${selectedIds.value.size} 个课件吗？`, danger: true }))) return
   await batchTakeDownCourseware([...selectedIds.value])
   toast.info('已下架')
@@ -543,7 +497,6 @@ async function batchTakeDown() {
 }
 
 async function batchPutOn() {
-  batchOpen.value = false
   if (!(await confirmDialog({ message: `确定上架选中的 ${selectedIds.value.size} 个课件吗？`, danger: true }))) return
   await batchPutOnCourseware([...selectedIds.value])
   toast.info('已上架')
@@ -552,7 +505,6 @@ async function batchPutOn() {
 }
 
 async function batchDelete() {
-  batchOpen.value = false
   if (!(await confirmDialog({ message: `确定删除选中的 ${selectedIds.value.size} 个课件吗？`, danger: true }))) return
   await batchDeleteCourseware([...selectedIds.value])
   toast.info('已删除')
@@ -561,7 +513,6 @@ async function batchDelete() {
 }
 
 async function download(row: CoursewareListItem) {
-  moreRow.value = null
   try {
     const blob = await downloadBlob(`/kng/admin/courseware/${row.id}/download`, { timeout: 180_000 })
     saveBlob(blob, row.title)
@@ -571,13 +522,11 @@ async function download(row: CoursewareListItem) {
 }
 
 async function showReferences(row: CoursewareListItem) {
-  moreRow.value = null
   const records = await getCoursewareReferences(row.id)
   window.alert(records.length ? JSON.stringify(records, null, 2) : '暂无引用')
 }
 
 async function showDownloadRecords(row: CoursewareListItem) {
-  moreRow.value = null
   const result = await getCoursewareDownloadRecords(row.id)
   window.alert(result.total ? JSON.stringify(result.records, null, 2) : '暂无数据')
 }
@@ -601,31 +550,22 @@ function clearFilters() {
   void reload(1)
 }
 
-function closeMenus(event: MouseEvent) {
-  const target = event.target as HTMLElement
-  if (!target.closest('.publish-wrap')) publishOpen.value = false
-  if (!target.closest('.batch-wrap')) batchOpen.value = false
-}
-
-function closeMenusByKey(event: KeyboardEvent) {
-  if (event.key !== 'Escape') return
-  publishOpen.value = false
-  batchOpen.value = false
-  moreRow.value = null
-}
-
 onMounted(async () => {
-  document.addEventListener('click', closeMenus)
-  document.addEventListener('keydown', closeMenusByKey)
   catalogTree.value = await getKngCatalogTree()
   await reload()
 })
 
-onBeforeUnmount(() => {
-  document.removeEventListener('click', closeMenus)
-  document.removeEventListener('keydown', closeMenusByKey)
-  cancelCloseMore()
-})
+function handleMoreCommand(command: string, row: CoursewareListItem) {
+  if (command === 'hide') openHide(row)
+  else if (command === 'take-down') openTakeDown(row)
+  else if (command === 'move') openMove(row)
+  else if (command === 'copy') openCopy(row)
+  else if (command === 'delete') void remove(row)
+  else if (command === 'download') void download(row)
+  else if (command === 'references') void showReferences(row)
+  else if (command === 'download-records') void showDownloadRecords(row)
+  else if (command === 'subtitle') openSubtitle(row)
+}
 </script>
 
 <style scoped lang="scss">
@@ -680,11 +620,6 @@ onBeforeUnmount(() => {
   gap: 10px;
 }
 
-.publish-wrap,
-.batch-wrap {
-  position: relative;
-}
-
 .primary-btn,
 .ghost-btn {
   height: 36px;
@@ -716,59 +651,6 @@ onBeforeUnmount(() => {
   font-size: 11px;
 }
 
-.publish-menu,
-.batch-menu {
-  position: absolute;
-  top: 42px;
-  left: 0;
-  z-index: 25;
-  min-width: 180px;
-  padding: 7px;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(30, 45, 70, 0.16);
-
-  button {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 5px;
-    background: transparent;
-    color: #4d5568;
-    text-align: left;
-    font-size: 13px;
-    cursor: pointer;
-
-    &:hover:not(:disabled) {
-      background: #f2f7ff;
-      color: #2e7cf6;
-    }
-
-    &:disabled {
-      color: #b5bcc9;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.menu-group {
-  padding: 4px 0;
-  border-bottom: 1px solid #eef1f6;
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.group-label {
-  display: block;
-  padding: 5px 10px;
-  color: #98a1b2;
-  font-size: 12px;
-}
-
 .right-links button {
   border: none;
   background: transparent;
@@ -788,9 +670,7 @@ onBeforeUnmount(() => {
 .filter-select,
 .keyword-box {
   height: 36px;
-  border: 1px solid #d9deea;
   border-radius: 6px;
-  background: #fff;
   color: #4d5568;
   font-size: 13px;
 }
@@ -807,24 +687,17 @@ onBeforeUnmount(() => {
 
 .filter-select {
   width: 158px;
-  padding: 0 10px;
+
+  :deep(.el-select__wrapper) {
+    min-height: 36px;
+  }
 }
 
 .keyword-box {
   width: 260px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0 10px;
-  color: #98a1b2;
 
-  input {
-    min-width: 0;
-    flex: 1;
-    border: none;
-    outline: none;
-    color: #394253;
-    font-size: 13px;
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
   }
 }
 
@@ -833,63 +706,25 @@ onBeforeUnmount(() => {
   min-height: 0;
   flex: 1;
   margin-top: 14px;
-  overflow: visible;
+  overflow: hidden;
 }
 
-table {
+.courseware-table {
   width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.check-col {
-  width: 44px;
-}
+  :deep(.el-table__header th) {
+    height: 43px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-.name-col {
-  width: 32%;
-}
-
-.type-col {
-  width: 92px;
-}
-
-.date-col {
-  width: 130px;
-}
-
-.count-col {
-  width: 104px;
-}
-
-.status-col {
-  width: 108px;
-}
-
-.action-col {
-  width: 206px;
-}
-
-th,
-td {
-  height: 48px;
-  padding: 0 12px;
-  border-bottom: 1px solid #edf0f5;
-  color: #4d5568;
-  text-align: left;
-  font-size: 13px;
-}
-
-th {
-  height: 43px;
-  background: #f8fafc;
-  color: #667085;
-  font-weight: 600;
-}
-
-.sortable {
-  cursor: pointer;
+  :deep(.el-table__row td) {
+    height: 48px;
+    color: #4d5568;
+    font-size: 13px;
+  }
 }
 
 .sort-icon {
@@ -898,21 +733,18 @@ th {
   font-size: 11px;
 }
 
-tbody tr:hover {
-  background: #fafcff;
-}
-
 /* 增补A：隐藏课件行置灰（独立于下架，可取消隐藏恢复） */
-tr.row-hidden {
+.courseware-table :deep(.row-hidden) {
   background: #fafbfc;
 
   td {
     color: #b3bac7;
   }
 
-  .title-link {
-    color: #9aa2b1;
-  }
+}
+
+.courseware-table :deep(.row-hidden .title-link) {
+  color: #9aa2b1;
 }
 
 .hidden-tag {
@@ -924,12 +756,6 @@ tr.row-hidden {
   color: #d98a1f;
   font-size: 11px;
   white-space: nowrap;
-}
-
-input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  accent-color: #2e7cf6;
 }
 
 .title-cell {
@@ -1041,57 +867,6 @@ input[type='checkbox'] {
 
 .more-trigger {
   color: #667085 !important;
-}
-
-.empty-cell {
-  height: 260px;
-  color: #98a1b2;
-  text-align: center;
-}
-
-.empty-folder {
-  margin-bottom: 8px;
-  color: #c7cdd7;
-  font-size: 44px;
-}
-
-.table-loading {
-  position: absolute;
-  inset: 43px 0 0;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.75);
-  color: #7b8496;
-  font-size: 13px;
-}
-
-.floating-more-menu {
-  position: fixed;
-  z-index: 5000;
-  min-width: 150px;
-  padding: 6px;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(30, 45, 70, 0.18);
-
-  button {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 5px;
-    background: transparent;
-    color: #4d5568;
-    text-align: left;
-    font-size: 13px;
-    cursor: pointer;
-
-    &:hover {
-      background: #f2f7ff;
-      color: #2e7cf6;
-    }
-  }
 }
 
 @media (max-width: 1100px) {

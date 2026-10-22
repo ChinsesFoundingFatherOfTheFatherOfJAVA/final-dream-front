@@ -1,10 +1,10 @@
 <template>
   <!-- 截图09：任务类型图标行（圆角方块彩色图标+下方文字）；置灰占位悬浮"功能建设中" -->
   <div class="task-type-bar">
-    <button
+    <el-button
       v-for="item in items"
       :key="item.label"
-      type="button"
+     
       class="type-item"
       :class="{ disabled: !item.enabled }"
       :title="item.enabled ? '' : '功能建设中'"
@@ -12,7 +12,7 @@
     >
       <span class="type-icon" :style="{ background: item.color }">{{ item.glyph }}</span>
       <span class="type-label">{{ item.label }}</span>
-    </button>
+    </el-button>
   </div>
 </template>
 

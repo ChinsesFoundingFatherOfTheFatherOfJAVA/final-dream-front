@@ -10,52 +10,48 @@
     <form class="edit-form" @submit.prevent="save">
       <label class="form-row">
         <span>所属分类</span>
-        <input :value="parentPath" type="text" readonly />
+        <el-input :model-value="parentPath" readonly />
       </label>
       <label v-if="mode === 'edit' && createUserText" class="form-row">
         <span>创建人</span>
-        <input :value="createUserText" type="text" readonly />
+        <el-input :model-value="createUserText" readonly />
       </label>
       <label class="form-row" :class="{ invalid: nameError }">
         <span>分类名称</span>
-        <input v-model="form.name" type="text" maxlength="50" placeholder="建议6个字以内" />
-        <small>{{ form.name.length }}/50</small>
+        <el-input
+          v-model="form.name"
+          maxlength="50"
+          show-word-limit
+          placeholder="建议6个字以内"
+        />
       </label>
       <p v-if="nameError" class="error-text">请输入分类名称，建议6个字以内</p>
 
       <div class="form-row radio-row">
         <span>默认课程顺序</span>
-        <div class="radio-options">
-          <label v-for="item in orderTypes" :key="item.value">
-            <input v-model.number="form.orderType" type="radio" :value="item.value" />
-            <span>{{ item.label }}</span>
-          </label>
-        </div>
+        <el-radio-group v-model="form.orderType" class="radio-options">
+          <el-radio v-for="item in orderTypes" :key="item.value" :value="item.value">
+            {{ item.label }}
+          </el-radio>
+        </el-radio-group>
       </div>
 
       <div class="form-row prefix-row">
         <span>前后缀设置</span>
         <div>
-          <label>
-            <input v-model="form.prefixEnabled" type="checkbox" />
-            前缀
-          </label>
-          <input
+          <el-checkbox v-model="form.prefixEnabled">前缀</el-checkbox>
+          <el-input
             v-model="form.prefixContent"
-            type="text"
             maxlength="50"
             :disabled="!form.prefixEnabled"
             placeholder="请输入前缀内容"
           />
-          <label>
-            <input v-model="form.dateSuffixEnabled" type="checkbox" />
-            日期后缀
-          </label>
-          <select v-model="form.dateSuffixFormat" :disabled="!form.dateSuffixEnabled">
-            <option value="yyyy-MM-dd">yyyy-MM-dd</option>
-            <option value="yyyy/MM/dd">yyyy/MM/dd</option>
-            <option value="yyyyMMdd">yyyyMMdd</option>
-          </select>
+          <el-checkbox v-model="form.dateSuffixEnabled">日期后缀</el-checkbox>
+          <el-select v-model="form.dateSuffixFormat" :disabled="!form.dateSuffixEnabled">
+            <el-option label="yyyy-MM-dd" value="yyyy-MM-dd" />
+            <el-option label="yyyy/MM/dd" value="yyyy/MM/dd" />
+            <el-option label="yyyyMMdd" value="yyyyMMdd" />
+          </el-select>
         </div>
       </div>
     </form>
@@ -66,70 +62,67 @@
           <h4>权限设置</h4>
           <p v-if="form.inheritParent">已勾选继承父分类权限，保存后使用父分类权限快照。</p>
         </div>
-        <button type="button" class="add-subject" :disabled="form.inheritParent" @click="pickerVisible = true">
+        <el-button class="add-subject" :disabled="form.inheritParent" @click="pickerVisible = true">
           + 添加用户权限
-        </button>
+        </el-button>
       </header>
 
       <div class="permission-table" :class="{ readonly: form.inheritParent }">
         <div class="permission-row header-row">
           <span>授权对象</span>
-          <label v-for="column in permissionColumns" :key="column.code">
-            <input
-              type="checkbox"
-              :checked="rowAllChecked(column.code)"
+          <el-checkbox
+            v-for="column in permissionColumns"
+            :key="column.code"
+            :model-value="rowAllChecked(column.code)"
               :indeterminate="rowIndeterminate(column.code)"
               :disabled="form.inheritParent"
-              @change="toggleAll(column.code)"
-            />
+            @change="toggleAll(column.code)"
+          >
             {{ column.label }}
-          </label>
+          </el-checkbox>
           <span></span>
         </div>
         <div v-for="row in form.permissions" :key="rowKey(row)" class="permission-row">
           <span :title="row.subjectName">{{ row.subjectName }}</span>
-          <label v-for="column in permissionColumns" :key="column.code">
-            <input
-              type="checkbox"
-              :checked="row.permCodes.includes(column.code)"
+          <el-checkbox
+            v-for="column in permissionColumns"
+            :key="column.code"
+            :model-value="row.permCodes.includes(column.code)"
               :disabled="form.inheritParent"
-              @change="togglePermission(row, column.code)"
-            />
-          </label>
-          <button
+            @change="togglePermission(row, column.code)"
+          />
+          <el-button
             v-if="row.subjectType >= 4"
-            type="button"
+           
             class="remove-row"
             :disabled="form.inheritParent"
             @click="removePermissionRow(row)"
           >
             ×
-          </button>
+          </el-button>
           <span v-else></span>
         </div>
       </div>
     </section>
 
     <section v-if="mode === 'edit'" class="inherit-section">
-      <label class="check-line">
-        <input v-model="form.inheritParent" type="checkbox" />
-        <span>继承父分类权限（勾选后使用父分类权限覆盖当前分类权限，不允许修改）</span>
-      </label>
-      <label class="check-line">
-        <input v-model="form.childrenInherit" type="checkbox" />
-        <span>所有子分类继承当前分类权限（保存后递归覆盖全部子孙分类）</span>
-      </label>
+      <el-checkbox v-model="form.inheritParent" class="check-line">
+        继承父分类权限（勾选后使用父分类权限覆盖当前分类权限，不允许修改）
+      </el-checkbox>
+      <el-checkbox v-model="form.childrenInherit" class="check-line">
+        所有子分类继承当前分类权限（保存后递归覆盖全部子孙分类）
+      </el-checkbox>
       <div class="merge-line">
         <span>在父分类中添加当前分类权限</span>
-        <button type="button" :disabled="!catalogId" @click="mergeToParent">一键执行</button>
+        <el-button :disabled="!catalogId" @click="mergeToParent">一键执行</el-button>
       </div>
     </section>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="saving" @click="save">
+      <el-button class="btn ghost" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="saving" @click="save">
         {{ saving ? '保存中...' : '确定' }}
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 
@@ -354,22 +347,19 @@ watch(
   color: #4d5568;
   font-size: 13px;
 
-  > input,
-  select {
-    height: 36px;
+  :deep(.el-input__wrapper),
+  :deep(.el-select__wrapper) {
+    min-height: 36px;
     min-width: 0;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
     border-radius: 6px;
-    outline: none;
   }
 
   small {
     color: #98a1b2;
   }
 
-  &.invalid input {
-    border-color: #e54545;
+  &.invalid :deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 1px #e54545 inset;
   }
 }
 
@@ -385,15 +375,8 @@ watch(
 }
 
 .radio-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 30px;
-
-  label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    white-space: nowrap;
+  :deep(.el-radio) {
+    margin-right: 30px;
   }
 }
 
@@ -406,18 +389,21 @@ watch(
     flex-wrap: wrap;
     gap: 10px;
 
-    label {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+    :deep(.el-checkbox) {
+      margin-right: 2px;
     }
 
-    input[type='text'] {
+    :deep(.el-input) {
       width: 180px;
-      height: 34px;
-      padding: 0 9px;
-      border: 1px solid #d9deea;
+    }
+
+    :deep(.el-input__wrapper) {
+      min-height: 34px;
       border-radius: 6px;
+    }
+
+    :deep(.el-select) {
+      width: 150px;
     }
   }
 }
@@ -489,12 +475,10 @@ watch(
     white-space: nowrap;
   }
 
-  label {
-    display: flex;
-    align-items: center;
+  :deep(.el-checkbox) {
     justify-content: center;
-    gap: 4px;
-    white-space: nowrap;
+    min-width: 0;
+    margin-right: 0;
   }
 }
 
@@ -518,12 +502,16 @@ watch(
 }
 
 .check-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
   color: #4d5568;
   font-size: 13px;
   line-height: 1.5;
+
+  :deep(.el-checkbox__label) {
+    color: #4d5568;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: normal;
+  }
 }
 
 .merge-line {
@@ -533,14 +521,10 @@ watch(
   color: #4d5568;
   font-size: 13px;
 
-  button {
+  :deep(.el-button) {
     height: 32px;
-    padding: 0 14px;
-    border: 1px solid #e75487;
-    border-radius: 6px;
-    background: #fff;
+    border-color: #e75487;
     color: #e75487;
-    cursor: pointer;
   }
 }
 

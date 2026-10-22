@@ -1,89 +1,86 @@
 <template>
   <div class="manage-page">
     <header>
-      <button type="button" class="back-btn" @click="router.push('/kng/courseware')">‹</button>
+      <el-button class="back-btn" @click="router.push('/kng/courseware')">‹</el-button>
       <h1>转码管理</h1>
     </header>
     <nav class="tabs">
-      <button
-        type="button"
+      <el-button
         :class="{ active: tab === 'processing' }"
         @click="switchTab('processing')"
       >
         转码中
-      </button>
-      <button type="button" :class="{ active: tab === 'failed' }" @click="switchTab('failed')">
+      </el-button>
+      <el-button :class="{ active: tab === 'failed' }" @click="switchTab('failed')">
         转码失败
-      </button>
+      </el-button>
     </nav>
     <div class="manage-toolbar">
-      <label>
-        <span>⌕</span>
-        <input
-          v-model.trim="keyword"
-          placeholder="请输入名称/分类/分享者姓名搜索"
-          @keyup.enter="load(1)"
-        />
-      </label>
+      <el-input
+        v-model.trim="keyword"
+        class="manage-search"
+        placeholder="请输入名称/分类/分享者姓名搜索"
+        clearable
+        @keyup.enter="load(1)"
+      >
+        <template #prefix>⌕</template>
+      </el-input>
       <div v-if="tab === 'processing'" class="toolbar-note">
         有 <strong>{{ processingTotal }}</strong> 个课程处于转码中 <i>i</i>
       </div>
-      <button v-else type="button" class="reason-link" @click="showReasons">
+      <el-button v-else class="reason-link" @click="showReasons">
         查看常见出错原因
-      </button>
+      </el-button>
     </div>
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>名称</th>
-            <th>分类</th>
-            <th class="sortable" @click="sortBy('createdAt')">
+      <el-table :data="displayRecords" row-key="id" class="media-table" empty-text="暂无数据">
+        <el-table-column prop="coursewareTitle" label="名称" min-width="220" show-overflow-tooltip />
+        <el-table-column label="分类" min-width="150" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.catalogName || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="上传日期" width="170">
+          <template #header>
+            <el-button link @click="sortBy('createdAt')">
               上传日期
               <span>{{ orderBy === 'createdAt' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-            </th>
-            <th class="sortable" @click="sortBy('elapsed')">
+            </el-button>
+          </template>
+          <template #default="{ row }">{{ row.createdAt || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="已转换时间" width="150">
+          <template #header>
+            <el-button link @click="sortBy('elapsed')">
               已转换时间
               <span>{{ orderBy === 'elapsed' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-            </th>
-            <th>分享者</th>
-            <th>{{ tab === 'failed' ? '失败原因' : '备注' }}</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in displayRecords" :key="row.id">
-            <td>{{ row.coursewareTitle }}</td>
-            <td>{{ row.catalogName || '--' }}</td>
-            <!-- 转码中 tab 的"上传日期"= job 的 createdAt（发布即投递，与上传时刻一致） -->
-            <td>{{ row.createdAt || '--' }}</td>
-            <td>{{ formatSeconds(liveElapsed(row)) }}</td>
-            <td>{{ row.createdByName || '--' }}</td>
-            <td v-if="tab === 'failed'" class="error-cell" :title="row.error || ''">
+            </el-button>
+          </template>
+          <template #default="{ row }">{{ formatSeconds(liveElapsed(row)) }}</template>
+        </el-table-column>
+        <el-table-column label="分享者" width="130">
+          <template #default="{ row }">{{ row.createdByName || '--' }}</template>
+        </el-table-column>
+        <el-table-column :label="tab === 'failed' ? '失败原因' : '备注'" min-width="220">
+          <template #default="{ row }">
+            <span v-if="tab === 'failed'" class="error-cell" :title="row.error || ''">
               {{ truncateError(row.error) }}
-            </td>
-            <td v-else>--</td>
-            <td>
-              <!-- 仅失败行可重试；后端校验 retry_count<3，超限由 code=1 提示 -->
-              <button
-                v-if="tab === 'failed'"
-                type="button"
-                class="retry-btn"
-                :disabled="retryingId === row.id"
-                @click="retry(row)"
-              >
-                重试
-              </button>
-            </td>
-          </tr>
-          <tr v-if="!records.length">
-            <td colspan="7" class="empty-cell">
-              <div class="empty-folder">▱</div>
-              <span>暂无数据</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </span>
+            <span v-else>--</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template #default="{ row }">
+            <el-button
+              v-if="tab === 'failed'"
+              link
+              type="primary"
+              :disabled="retryingId === row.id"
+              @click="retry(row)"
+            >
+              重试
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <PaginationBar
       v-model:page="page"
@@ -308,25 +305,14 @@ header {
   gap: 18px;
   padding: 20px 24px 16px;
 
-  > label {
-    width: 350px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 5px;
-    color: #98a1b2;
+}
 
-    input {
-      min-width: 0;
-      flex: 1;
-      border: none;
-      outline: none;
-      color: #394253;
-      font-size: 13px;
-    }
+.manage-search {
+  width: 350px;
+
+  :deep(.el-input__wrapper) {
+    min-height: 38px;
+    border-radius: 5px;
   }
 }
 
@@ -363,65 +349,36 @@ header {
   padding: 0 24px;
 }
 
-.sortable {
-  cursor: pointer;
-}
-
-.sortable span {
+.media-table span {
   color: #a2a9b7;
   font-size: 11px;
 }
 
-table {
+.media-table {
   width: 100%;
-  border-collapse: collapse;
 
-  th,
-  td {
+  :deep(.el-table__header th) {
     height: 46px;
-    padding: 0 12px;
-    border-bottom: 1px solid #edf0f5;
-    color: #4d5568;
-    text-align: left;
-    font-size: 13px;
-  }
-
-  th {
     background: #f8fafc;
     color: #30384a;
+    font-size: 13px;
     font-weight: 600;
+  }
+
+  :deep(.el-table__row td) {
+    height: 46px;
+    color: #4d5568;
+    font-size: 13px;
   }
 }
 
 .error-cell {
-  max-width: 320px;
+  display: inline-block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #e05a4e;
 }
 
-.retry-btn {
-  border: none;
-  background: transparent;
-  color: #2e7cf6;
-  cursor: pointer;
-
-  &:disabled {
-    color: #c2c8d2;
-    cursor: not-allowed;
-  }
-}
-
-.empty-cell {
-  height: 330px;
-  color: #98a1b2;
-  text-align: center;
-}
-
-.empty-folder {
-  margin-bottom: 12px;
-  color: #d5dae2;
-  font-size: 54px;
-}
 </style>

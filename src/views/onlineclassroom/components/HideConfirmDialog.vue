@@ -12,8 +12,8 @@
           </div>
         </div>
         <footer>
-          <button type="button" @click="emit('close')">取消</button>
-          <button type="button" class="danger" @click="emit('confirm')">确定</button>
+          <el-button @click="emit('close')">取消</el-button>
+          <el-button class="danger" @click="emit('confirm')">确定</el-button>
         </footer>
       </section>
     </div>

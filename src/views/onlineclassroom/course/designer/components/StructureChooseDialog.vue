@@ -6,16 +6,16 @@
         <h3>选择要创建的课程结构</h3>
         <p class="tip">选择后仍可在编辑中切换，切换后任务将保留</p>
         <div class="cards">
-          <button type="button" class="card" @click="emit('choose', 0)">
+          <el-button class="card" @click="emit('choose', 0)">
             <span class="card-icon flat">▤</span>
             <strong>无章节</strong>
             <span class="desc">任务平铺展示，适合内容较少、无需分章的课程</span>
-          </button>
-          <button type="button" class="card" @click="emit('choose', 1)">
+          </el-button>
+          <el-button class="card" @click="emit('choose', 1)">
             <span class="card-icon chaptered">☰</span>
             <strong>有章节</strong>
             <span class="desc">按章节组织任务，自动创建"章节1"，适合体系化课程</span>
-          </button>
+          </el-button>
         </div>
       </section>
     </div>

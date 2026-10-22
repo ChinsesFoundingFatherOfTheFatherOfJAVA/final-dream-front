@@ -1,21 +1,21 @@
 <template>
   <div v-if="detail" class="detail-page">
     <header class="detail-header">
-      <button type="button" class="back-btn" @click="router.push('/kng/courseware')">‹</button>
+      <el-button class="back-btn" @click="router.push('/kng/courseware')">‹</el-button>
       <h1>课件详情</h1>
     </header>
 
     <nav class="detail-tabs">
-      <button
+      <el-button
         v-for="tab in tabs"
         :key="tab.key"
-        type="button"
+       
         :class="{ active: activeTab === tab.key }"
         @click="activeTab = tab.key"
       >
         {{ tab.label }}
-      </button>
-      <button type="button" class="edit-btn" @click="router.push(`/kng/courseware/edit/${detail.id}`)">编辑</button>
+      </el-button>
+      <el-button class="edit-btn" @click="router.push(`/kng/courseware/edit/${detail.id}`)">编辑</el-button>
     </nav>
 
     <main class="detail-content">
@@ -72,15 +72,15 @@
               <div v-else class="cover-placeholder">暂无封面</div>
             </div>
             <nav class="anchor-nav">
-              <button
+              <el-button
                 v-for="item in anchorItems"
                 :key="item.key"
-                type="button"
+               
                 :class="{ active: activeAnchor === item.key }"
                 @click="scrollBasic(item.key)"
               >
                 {{ item.label }}
-              </button>
+              </el-button>
             </nav>
           </aside>
         </div>
@@ -88,64 +88,64 @@
 
       <template v-else-if="activeTab === 'study'">
         <section class="study-filter">
-          <button type="button" class="filter-button" @click="deptPickerVisible = true">
+          <el-button class="filter-button" @click="deptPickerVisible = true">
             {{ deptName || '所属部门' }}
             <span>⌄</span>
-          </button>
-          <select v-model="studyQuery.studyStatus" @change="loadStudyRecords(1)">
-            <option :value="null">学习状态</option>
-            <option :value="1">已完课</option>
-            <option :value="2">学习中</option>
-          </select>
-          <select v-model="studyQuery.finishMethod" @change="loadStudyRecords(1)">
-            <option :value="null">完课方式</option>
-            <option :value="1">培训</option>
-            <option :value="2">自学</option>
-          </select>
-          <label class="study-search">
-            <span>⌕</span>
-            <input v-model.trim="studyQuery.keyword" placeholder="请输入姓名/账号搜索" @keyup.enter="loadStudyRecords(1)" />
-          </label>
+          </el-button>
+          <el-select v-model="studyQuery.studyStatus" placeholder="学习状态" @change="loadStudyRecords(1)">
+            <el-option label="学习状态" :value="null" />
+            <el-option label="已完课" :value="1" />
+            <el-option label="学习中" :value="2" />
+          </el-select>
+          <el-select v-model="studyQuery.finishMethod" placeholder="完课方式" @change="loadStudyRecords(1)">
+            <el-option label="完课方式" :value="null" />
+            <el-option label="培训" :value="1" />
+            <el-option label="自学" :value="2" />
+          </el-select>
+          <el-input
+            v-model.trim="studyQuery.keyword"
+            class="study-search"
+            placeholder="请输入姓名/账号搜索"
+            clearable
+            @keyup.enter="loadStudyRecords(1)"
+          >
+            <template #prefix>⌕</template>
+          </el-input>
         </section>
 
         <div class="study-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>姓名</th>
-                <th>账号</th>
-                <th>所属部门</th>
-                <th>岗位</th>
-                <th>学习状态</th>
-                <th>开始学习时间</th>
-                <th>完成时间</th>
-                <th>累计学习时长</th>
-                <th>完课用时</th>
-                <th>完课方式</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in studyRecords.records" :key="row.userId">
-                <td>{{ row.name }}</td>
-                <td>{{ row.account }}</td>
-                <td>{{ row.deptName || '--' }}</td>
-                <td>{{ row.post || '--' }}</td>
-                <td>
-                  <span class="study-status" :class="`study-${row.studyStatus}`">
-                    <i></i>{{ row.studyStatusDesc }}
-                  </span>
-                </td>
-                <td>{{ row.startStudyTime || '--' }}</td>
-                <td>{{ row.endStudyTime || '--' }}</td>
-                <td>{{ Number(row.studyLenHours || 0).toFixed(2) }} h</td>
-                <td>{{ row.finishCostDays == null ? '--' : `${row.finishCostDays} 天` }}</td>
-                <td>{{ row.finishMethodDesc || '--' }}</td>
-              </tr>
-              <tr v-if="!studyRecords.records.length">
-                <td colspan="10" class="empty-cell">暂无数据</td>
-              </tr>
-            </tbody>
-          </table>
+          <el-table :data="studyRecords.records" row-key="userId" class="study-table" empty-text="暂无数据">
+            <el-table-column prop="name" label="姓名" width="110" />
+            <el-table-column prop="account" label="账号" width="130" />
+            <el-table-column label="所属部门" min-width="180" show-overflow-tooltip>
+              <template #default="{ row }">{{ row.deptName || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="岗位" min-width="130" show-overflow-tooltip>
+              <template #default="{ row }">{{ row.post || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="学习状态" width="110">
+              <template #default="{ row }">
+                <span class="study-status" :class="`study-${row.studyStatus}`">
+                  <i></i>{{ row.studyStatusDesc }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="开始学习时间" width="170">
+              <template #default="{ row }">{{ row.startStudyTime || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="完成时间" width="170">
+              <template #default="{ row }">{{ row.endStudyTime || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="累计学习时长" width="130">
+              <template #default="{ row }">{{ Number(row.studyLenHours || 0).toFixed(2) }} h</template>
+            </el-table-column>
+            <el-table-column label="完课用时" width="110">
+              <template #default="{ row }">{{ row.finishCostDays == null ? '--' : `${row.finishCostDays} 天` }}</template>
+            </el-table-column>
+            <el-table-column label="完课方式" width="110">
+              <template #default="{ row }">{{ row.finishMethodDesc || '--' }}</template>
+            </el-table-column>
+          </el-table>
         </div>
 
         <PaginationBar
@@ -198,10 +198,10 @@
           <article class="chart-card">
             <header>
               <h3>各部门学习完课数据概览</h3>
-              <select v-model="selectedDeptId" @change="loadDeptFinish">
-                <option value="">全部一级部门</option>
-                <option v-for="dept in firstLevelDepts" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
-              </select>
+              <el-select v-model="selectedDeptId" placeholder="全部一级部门" @change="loadDeptFinish">
+                <el-option label="全部一级部门" value="" />
+                <el-option v-for="dept in firstLevelDepts" :key="dept.id" :label="dept.name" :value="dept.id" />
+              </el-select>
             </header>
             <div class="legend">
               <span><i class="study"></i>学习人数</span>
@@ -597,20 +597,22 @@ onMounted(async () => {
   gap: 12px;
   margin-bottom: 16px;
 
-  select,
+  :deep(.el-select),
   .filter-button,
   .study-search {
     height: 38px;
-    border: 1px solid #d9deea;
     border-radius: 5px;
-    background: #fff;
     color: #4d5568;
     font-size: 13px;
   }
 
-  select {
+  :deep(.el-select) {
     width: 160px;
-    padding: 0 10px;
+  }
+
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 38px;
   }
 
   .filter-button {
@@ -624,18 +626,6 @@ onMounted(async () => {
 
   .study-search {
     width: 240px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 0 10px;
-    color: #98a1b2;
-
-    input {
-      min-width: 0;
-      flex: 1;
-      border: none;
-      outline: none;
-    }
   }
 }
 
@@ -643,26 +633,21 @@ onMounted(async () => {
   overflow-x: auto;
 }
 
-table {
+.study-table {
   width: 100%;
-  min-width: 1180px;
-  border-collapse: collapse;
 
-  th,
-  td {
+  :deep(.el-table__header th) {
     height: 46px;
-    padding: 0 12px;
-    border-bottom: 1px solid #edf0f5;
-    color: #4d5568;
-    text-align: left;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  th {
     background: #f8fafc;
     color: #30384a;
+    font-size: 13px;
     font-weight: 600;
+  }
+
+  :deep(.el-table__row td) {
+    height: 46px;
+    color: #4d5568;
+    font-size: 13px;
   }
 }
 
@@ -785,11 +770,12 @@ table {
     align-items: center;
     justify-content: space-between;
 
-    select {
+    :deep(.el-select) {
       width: 180px;
-      height: 34px;
-      padding: 0 9px;
-      border: 1px solid #d9deea;
+    }
+
+    :deep(.el-select__wrapper) {
+      min-height: 34px;
       border-radius: 5px;
     }
   }

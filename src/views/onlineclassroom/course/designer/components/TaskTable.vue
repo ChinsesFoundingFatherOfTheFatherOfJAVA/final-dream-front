@@ -3,15 +3,15 @@
     <div class="table-head">
       <div class="batch-area">
         <template v-if="selected.size > 0">
-          <button type="button" class="batch-btn" @click="emit('batch-delete', selectedTasks)">删除任务</button>
-          <button
+          <el-button class="batch-btn" @click="emit('batch-delete', selectedTasks)">删除任务</el-button>
+          <el-button
             v-if="structureType === 1"
-            type="button"
+           
             class="batch-btn"
             @click="emit('batch-move', selectedTasks)"
           >
             移动到章节
-          </button>
+          </el-button>
           <span class="batch-tip">已选 {{ selected.size }} 项</span>
         </template>
       </div>
@@ -20,88 +20,81 @@
     </div>
 
     <div class="table-wrap">
-      <table>
-        <colgroup>
-          <col class="check-col" />
-          <col class="type-col" />
-          <col />
-          <col class="num-col" />
-          <col class="num-col" />
-          <col class="status-col" />
-          <col class="action-col" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>
-              <input
-                type="checkbox"
-                :checked="allChecked"
-                :indeterminate.prop="someChecked"
-                @change="toggleAll(($event.target as HTMLInputElement).checked)"
-              />
-            </th>
-            <th>类型</th>
-            <th>名称</th>
-            <th>学分</th>
-            <th>时长</th>
-            <th>状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(task, index) in tasks" :key="task.id || `task-${index}`" :class="{ 'row-hidden': task.hidden }">
-            <td>
-              <input
-                type="checkbox"
-                :checked="selected.has(task)"
-                @change="toggleOne(task, ($event.target as HTMLInputElement).checked)"
-              />
-            </td>
-            <td>
-              <span class="type-icon" :style="{ background: typeColor(task.coursewareType) }">
-                {{ typeGlyph(task.coursewareType) }}
+      <el-table
+        :data="tasks"
+        :row-key="taskRowKey"
+        class="task-data-table"
+        empty-text="从上方选择任务类型添加任务"
+        :row-class-name="taskRowClass"
+      >
+        <el-table-column width="44" align="center">
+          <template #header>
+            <el-checkbox
+              :model-value="allChecked"
+              :indeterminate="someChecked"
+              @change="toggleAll"
+            />
+          </template>
+          <template #default="{ row }">
+            <el-checkbox
+              :model-value="selected.has(row)"
+              @change="toggleOne(row, Boolean($event))"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="类型" width="72">
+          <template #default="{ row }">
+              <span class="type-icon" :style="{ background: typeColor(row.coursewareType) }">
+                {{ typeGlyph(row.coursewareType) }}
               </span>
-            </td>
-            <td class="name-cell">
-              <span class="name-text" :title="task.taskName">{{ task.taskName }}</span>
-              <!-- 隐藏为独立标记（与课件状态列互不影响），行置灰 + 标签 -->
-              <span v-if="task.hidden" class="hidden-tag">已隐藏</span>
-            </td>
-            <td>{{ task.credits ?? '--' }}</td>
-            <td>{{ task.durationText || '--' }}</td>
-            <td>
-              <span class="status-text" :class="`status-${task.coursewareStatus}`">
-                <i></i>{{ statusText(task.coursewareStatus) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" min-width="260">
+          <template #default="{ row }">
+            <div class="name-cell">
+              <span class="name-text" :title="row.taskName">{{ row.taskName }}</span>
+              <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="学分" width="90">
+          <template #default="{ row }">{{ row.credits ?? '--' }}</template>
+        </el-table-column>
+        <el-table-column label="时长" width="120">
+          <template #default="{ row }">{{ row.durationText || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="状态" width="104">
+          <template #default="{ row }">
+              <span class="status-text" :class="`status-${row.coursewareStatus}`">
+                <i></i>{{ statusText(row.coursewareStatus) }}
               </span>
-            </td>
-            <td class="action-cell">
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default="{ row }">
               <div class="action-list">
-                <!-- 预览=隐藏确认弹窗入口（截图18）；已隐藏任务再点变"取消隐藏"直接恢复 -->
-                <button type="button" @click="emit('toggle-hide', task)">
-                  {{ task.hidden ? '取消隐藏' : '预览' }}
-                </button>
-                <button type="button" @click="emit('edit', task)">编辑</button>
-                <button type="button" class="more-trigger" @click.stop="toggleMenu(task)">更多⌄</button>
+                <el-button link type="primary" @click="emit('toggle-hide', row)">
+                  {{ row.hidden ? '取消隐藏' : '预览' }}
+                </el-button>
+                <el-button link type="primary" @click="emit('edit', row)">编辑</el-button>
+                <el-dropdown trigger="click" @command="() => emit('remove', row)">
+                  <el-button link class="more-trigger">更多⌄</el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="remove">删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </div>
-              <div v-if="menuTask === task" class="more-menu" @click.stop>
-                <button type="button" @click="emit('remove', task); menuTask = null">删除</button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="!tasks.length">
-            <td colspan="7" class="empty-cell">
-              <div class="empty-folder">▱</div>
-              <span>从上方选择任务类型添加任务</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   TASK_TYPE_ITEMS,
   coursewareStatusText,
@@ -131,7 +124,6 @@ const emit = defineEmits<{
 }>()
 
 const selected = ref(new Set<DesignerTask>())
-const menuTask = ref<DesignerTask | null>(null)
 
 const selectedTasks = computed(() => [...selected.value])
 const allChecked = computed(() => props.tasks.length > 0 && props.tasks.every(task => selected.value.has(task)))
@@ -142,9 +134,11 @@ watch(
   () => props.tasks,
   () => {
     selected.value = new Set()
-    menuTask.value = null
   }
 )
+
+const taskRowKey = (task: DesignerTask) => task.id || `${task.coursewareId}-${task.taskName}`
+const taskRowClass = ({ row }: { row: DesignerTask }) => row.hidden ? 'row-hidden' : ''
 
 function toggleOne(task: DesignerTask, checked: boolean) {
   const next = new Set(selected.value)
@@ -155,10 +149,6 @@ function toggleOne(task: DesignerTask, checked: boolean) {
 
 function toggleAll(checked: boolean) {
   selected.value = checked ? new Set(props.tasks) : new Set()
-}
-
-function toggleMenu(task: DesignerTask) {
-  menuTask.value = menuTask.value === task ? null : task
 }
 
 function statusText(status: number) {
@@ -174,13 +164,6 @@ function typeColor(type: number) {
   return coursewareTypeColor(type)
 }
 
-// 点击空白处收起行内"更多"菜单
-function closeMenuOnClickOutside() {
-  menuTask.value = null
-}
-
-onMounted(() => document.addEventListener('click', closeMenuOnClickOutside))
-onBeforeUnmount(() => document.removeEventListener('click', closeMenuOnClickOutside))
 </script>
 
 <style scoped lang="scss">
@@ -237,54 +220,26 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenuOnClickOuts
   overflow-y: auto;
 }
 
-table {
+.task-data-table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.check-col {
-  width: 44px;
-}
+  :deep(.el-table__header th) {
+    height: 46px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-.type-col {
-  width: 72px;
-}
-
-.num-col {
-  width: 90px;
-}
-
-.status-col {
-  width: 104px;
-}
-
-.action-col {
-  width: 200px;
-}
-
-th,
-td {
-  height: 46px;
-  padding: 0 12px;
-  border-bottom: 1px solid #edf0f5;
-  color: #4d5568;
-  text-align: left;
-  font-size: 13px;
-}
-
-th {
-  background: #f8fafc;
-  color: #667085;
-  font-weight: 600;
-}
-
-tbody tr:hover {
-  background: #fafcff;
+  :deep(.el-table__row td) {
+    height: 46px;
+    color: #4d5568;
+    font-size: 13px;
+  }
 }
 
 /* 隐藏任务行置灰（独立双标记，可取消隐藏恢复） */
-tr.row-hidden {
+.task-data-table :deep(.row-hidden) {
   background: #fafbfc;
 
   td {
@@ -294,12 +249,6 @@ tr.row-hidden {
   .name-text {
     color: #9aa2b1;
   }
-}
-
-input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  accent-color: #2e7cf6;
 }
 
 .type-icon {
@@ -385,46 +334,4 @@ input[type='checkbox'] {
   }
 }
 
-.more-menu {
-  position: absolute;
-  top: 34px;
-  right: 10px;
-  z-index: 30;
-  min-width: 92px;
-  padding: 5px;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(30, 45, 70, 0.16);
-
-  button {
-    display: block;
-    width: 100%;
-    padding: 7px 10px;
-    border: none;
-    border-radius: 5px;
-    background: transparent;
-    color: #4d5568;
-    text-align: left;
-    font-size: 12px;
-    cursor: pointer;
-
-    &:hover {
-      background: #f2f7ff;
-      color: #2e7cf6;
-    }
-  }
-}
-
-.empty-cell {
-  height: 240px;
-  color: #98a1b2;
-  text-align: center;
-}
-
-.empty-folder {
-  margin-bottom: 8px;
-  color: #c7cdd7;
-  font-size: 44px;
-}
 </style>

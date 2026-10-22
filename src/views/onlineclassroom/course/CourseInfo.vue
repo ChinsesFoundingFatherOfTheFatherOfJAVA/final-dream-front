@@ -1,21 +1,21 @@
 <template>
   <div v-if="detail" class="detail-page">
     <header class="detail-header">
-      <button type="button" class="back-btn" @click="router.push('/kng/course')">‹</button>
+      <el-button class="back-btn" @click="router.push('/kng/course')">‹</el-button>
       <h1>课程详情</h1>
     </header>
 
     <nav class="detail-tabs">
-      <button
+      <el-button
         v-for="tab in tabs"
         :key="tab.key"
-        type="button"
+       
         :class="{ active: activeTab === tab.key }"
         @click="activeTab = tab.key"
       >
         {{ tab.label }}
-      </button>
-      <button type="button" class="edit-btn" @click="router.push(`/kng/course/edit/${detail.id}/step1`)">编辑</button>
+      </el-button>
+      <el-button class="edit-btn" @click="router.push(`/kng/course/edit/${detail.id}/step1`)">编辑</el-button>
     </nav>
 
     <main class="detail-content">
@@ -66,15 +66,15 @@
               <div v-else class="cover-placeholder">暂无封面</div>
             </div>
             <nav class="anchor-nav">
-              <button
+              <el-button
                 v-for="item in anchorItems"
                 :key="item.key"
-                type="button"
+               
                 :class="{ active: activeAnchor === item.key }"
                 @click="scrollBasic(item.key)"
               >
                 {{ item.label }}
-              </button>
+              </el-button>
             </nav>
           </aside>
         </div>
@@ -87,56 +87,51 @@
         </p>
 
         <div class="study-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>课件名</th>
-                <th>近7天学习人数 <i class="info-dot" title="近7天学习该课件的人数">i</i></th>
-                <th>总学习人数 <i class="info-dot" title="累计学习该课件的人数">i</i></th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="chapter in chapters" :key="chapter.chapterId || 'flat'">
-                <!-- 有章节：章节行可展开/收起；无章节课程（chapterId=null）：任务平铺不渲染章节行 -->
-                <tr v-if="chapter.chapterId" class="chapter-row">
-                  <td colspan="4">
-                    <button type="button" class="chapter-toggle" @click="toggleChapter(chapter.chapterId)">
-                      <span class="arrow">{{ expandedChapters.has(chapter.chapterId) ? '▾' : '▸' }}</span>
-                      {{ chapter.chapterName }}
-                    </button>
-                  </td>
-                </tr>
-                <tr
-                  v-for="task in chapter.tasks"
-                  v-show="!chapter.chapterId || expandedChapters.has(chapter.chapterId)"
-                  :key="task.coursewareId"
+          <el-table
+            :data="studyRows"
+            row-key="key"
+            class="study-table"
+            empty-text="暂无数据"
+            :span-method="studySpanMethod"
+            :row-class-name="studyRowClass"
+          >
+            <el-table-column label="课件名" min-width="360">
+              <template #default="{ row }">
+                <el-button
+                  v-if="row.kind === 'chapter'"
+                  class="chapter-toggle"
+                  @click="toggleChapter(row.chapterId)"
                 >
-                  <td>
-                    <span class="type-icon" :class="`type-${task.coursewareType}`">{{ typeBadge(task.coursewareType) }}</span>
-                    {{ task.taskName }}
-                  </td>
-                  <td>{{ task.numOfPastweek }}</td>
-                  <td>{{ task.numOfTotal }}</td>
-                  <td>
-                    <button
-                      type="button"
-                      class="link-btn"
-                      @click="router.push(`/kng/course/courseware-study/${detail.id}/${task.coursewareId}`)"
-                    >
-                      查看详情
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="!chapter.tasks.length">
-                  <td colspan="4" class="empty-cell">暂无任务</td>
-                </tr>
+                  <span class="arrow">{{ expandedChapters.has(row.chapterId) ? '▾' : '▸' }}</span>
+                  {{ row.chapterName }}
+                </el-button>
+                <template v-else>
+                  <span class="type-icon" :class="`type-${row.task.coursewareType}`">{{ typeBadge(row.task.coursewareType) }}</span>
+                  {{ row.task.taskName }}
+                </template>
               </template>
-              <tr v-if="!chapters.length">
-                <td colspan="4" class="empty-cell">暂无数据</td>
-              </tr>
-            </tbody>
-          </table>
+            </el-table-column>
+            <el-table-column label="近7天学习人数" width="150">
+              <template #header>近7天学习人数 <i class="info-dot" title="近7天学习该课件的人数">i</i></template>
+              <template #default="{ row }">{{ row.kind === 'task' ? row.task.numOfPastweek : '' }}</template>
+            </el-table-column>
+            <el-table-column label="总学习人数" width="140">
+              <template #header>总学习人数 <i class="info-dot" title="累计学习该课件的人数">i</i></template>
+              <template #default="{ row }">{{ row.kind === 'task' ? row.task.numOfTotal : '' }}</template>
+            </el-table-column>
+            <el-table-column label="操作" width="110">
+              <template #default="{ row }">
+                <el-button
+                  v-if="row.kind === 'task'"
+                  link
+                  type="primary"
+                  @click="router.push(`/kng/course/courseware-study/${detail.id}/${row.task.coursewareId}`)"
+                >
+                  查看详情
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </template>
 
@@ -183,10 +178,10 @@
           <article class="chart-card">
             <header>
               <h3>各部门学习完课数据概览</h3>
-              <select v-model="selectedDeptId" @change="loadDeptFinish">
-                <option value="">全部一级部门</option>
-                <option v-for="dept in firstLevelDepts" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
-              </select>
+              <el-select v-model="selectedDeptId" placeholder="全部一级部门" @change="loadDeptFinish">
+                <el-option label="全部一级部门" value="" />
+                <el-option v-for="dept in firstLevelDepts" :key="dept.id" :label="dept.name" :value="dept.id" />
+              </el-select>
             </header>
             <div class="legend">
               <span><i class="study"></i>学习人数</span>
@@ -220,6 +215,7 @@ import {
   getCourseFinishTimeOverview,
   getCourseStudyOverview,
   type ChapterStudyStat,
+  type ChapterStudyTask,
   type CourseDetail
 } from '@/api/course'
 import { getKngSetting, type KngSetting } from '@/api/kng'
@@ -237,6 +233,32 @@ const permissionInfoSection = ref<HTMLElement | null>(null)
 const functionInfoSection = ref<HTMLElement | null>(null)
 const chapters = ref<ChapterStudyStat[]>([])
 const expandedChapters = ref(new Set<string>())
+type StudyRow =
+  | { kind: 'chapter'; key: string; chapterId: string; chapterName: string }
+  | { kind: 'task'; key: string; task: ChapterStudyTask }
+const studyRows = computed<StudyRow[]>(() => {
+  const rows: StudyRow[] = []
+  for (const chapter of chapters.value) {
+    const chapterId = chapter.chapterId
+    if (chapterId) {
+      rows.push({
+        kind: 'chapter',
+        key: `chapter-${chapterId}`,
+        chapterId,
+        chapterName: chapter.chapterName || ''
+      })
+      if (!expandedChapters.value.has(chapterId)) continue
+    }
+    for (const task of chapter.tasks) {
+      rows.push({
+        kind: 'task',
+        key: `${chapterId || 'flat'}-${task.coursewareId}`,
+        task
+      })
+    }
+  }
+  return rows
+})
 const overview = reactive({ numOf7days: 0, numOftotal: 0, numOfFinish: 0 })
 const finishTime = reactive({
   numInOneDay: 0,
@@ -320,6 +342,13 @@ const deptMax = computed(() => Math.max(1, ...deptData.value.flatMap(item => [it
 function typeBadge(type: number) {
   return type === 2 ? '▶' : type === 3 ? '♫' : type === 4 ? '▣' : type === 6 ? 'SC' : type === 7 ? '<>' : type === 8 ? '↗' : 'P'
 }
+
+const studySpanMethod = ({ row, columnIndex }: { row: StudyRow; columnIndex: number }) => {
+  if (row.kind !== 'chapter') return undefined
+  return columnIndex === 0 ? { rowspan: 1, colspan: 4 } : { rowspan: 0, colspan: 0 }
+}
+
+const studyRowClass = ({ row }: { row: StudyRow }) => row.kind === 'chapter' ? 'chapter-row' : ''
 
 function toggleChapter(chapterId: string) {
   const next = new Set(expandedChapters.value)
@@ -581,25 +610,21 @@ onMounted(async () => {
   overflow-x: auto;
 }
 
-table {
+.study-table {
   width: 100%;
-  min-width: 760px;
-  border-collapse: collapse;
 
-  th,
-  td {
+  :deep(.el-table__header th) {
     height: 46px;
-    padding: 0 12px;
-    border-bottom: 1px solid #edf0f5;
-    color: #4d5568;
-    text-align: left;
-    font-size: 13px;
-  }
-
-  th {
     background: #f8fafc;
     color: #30384a;
+    font-size: 13px;
     font-weight: 600;
+  }
+
+  :deep(.el-table__row td) {
+    height: 46px;
+    color: #4d5568;
+    font-size: 13px;
   }
 }
 
@@ -616,7 +641,7 @@ table {
   cursor: help;
 }
 
-.chapter-row {
+.study-table :deep(.chapter-row) {
   background: #f8fafc;
 
   td {
@@ -787,11 +812,12 @@ table {
     align-items: center;
     justify-content: space-between;
 
-    select {
+    :deep(.el-select) {
       width: 180px;
-      height: 34px;
-      padding: 0 9px;
-      border: 1px solid #d9deea;
+    }
+
+    :deep(.el-select__wrapper) {
+      min-height: 34px;
       border-radius: 5px;
     }
   }

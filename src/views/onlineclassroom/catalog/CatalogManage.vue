@@ -3,42 +3,37 @@
     <section class="catalog-card">
       <header class="toolbar">
         <div class="toolbar-left">
-          <button type="button" class="primary-btn" @click="openCreate">新增分类</button>
-          <button type="button" class="ghost-btn" @click="openBatch">批量新增分类</button>
+          <el-button class="primary-btn" @click="openCreate">新增分类</el-button>
+          <el-button class="ghost-btn" @click="openBatch">批量新增分类</el-button>
         </div>
         <div class="toolbar-right">
-          <label class="search-box">
-            <input v-model.trim="keyword" type="search" placeholder="搜索分类名称" />
-          </label>
+          <el-input
+            v-model.trim="keyword"
+            class="search-box"
+            placeholder="搜索分类名称"
+            clearable
+          />
           <label class="count-mode">
             <span>课程数统计</span>
-            <select v-model="includeChildren">
-              <option :value="true">包含子分类</option>
-              <option :value="false">仅当前分类</option>
-            </select>
+            <el-select v-model="includeChildren">
+              <el-option label="包含子分类" :value="true" />
+              <el-option label="仅当前分类" :value="false" />
+            </el-select>
           </label>
         </div>
       </header>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>分类名称</th>
-              <th>层级</th>
-              <th>课程数</th>
-              <th>更新日期</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="row in rows"
-              :key="row.node.id"
-              :class="{ selected: selectedId === row.node.id }"
-              @click="selectRow(row.node.id)"
-            >
-              <td class="name-cell">
+      <el-table
+        :data="rows"
+        :row-key="catalogRowKey"
+        class="catalog-table"
+        :empty-text="'暂无分类数据'"
+        :row-class-name="catalogRowClass"
+        @row-click="selectCatalogRow"
+      >
+        <el-table-column label="分类名称" min-width="360">
+          <template #default="{ row }">
+            <div class="name-cell">
                 <span
                   v-if="row.node.children?.length"
                   class="expand-icon"
@@ -49,37 +44,41 @@
                 <span class="name-text" :style="{ paddingLeft: `${(row.node.level - 1) * 24}px` }">
                   {{ row.node.name }}
                 </span>
-              </td>
-              <td>{{ row.node.level }} 级</td>
-              <td>{{ countValue(row.node) }}</td>
-              <td>{{ row.node.updateTime || '--' }}</td>
-              <td class="actions" @click.stop>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="层级" width="110">
+          <template #default="{ row }">{{ row.node.level }} 级</template>
+        </el-table-column>
+        <el-table-column label="课程数" width="110">
+          <template #default="{ row }">{{ countValue(row.node) }}</template>
+        </el-table-column>
+        <el-table-column label="更新日期" width="160">
+          <template #default="{ row }">{{ row.node.updateTime || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="190">
+          <template #default="{ row }">
+            <div class="actions" @click.stop>
                 <span class="action-list">
-                  <button type="button" @click="openView(row.node.id)">查看</button>
-                  <button type="button" @click="openEdit(row.node.id)">编辑</button>
-                  <div
-                    class="more-wrap"
-                    @mouseenter="activeMoreId = row.node.id"
-                    @mouseleave="activeMoreId = ''"
-                  >
-                    <button type="button">更多⌄</button>
-                    <div v-if="activeMoreId === row.node.id" class="more-menu">
-                      <button type="button" @click="removeRow(row.node)">删除</button>
-                      <button type="button" @click="openCreateChild(row.node)">创建子分类</button>
-                      <button type="button" @click="openBatchChild(row.node)">批量创建子分类</button>
-                      <button type="button" @click="openMove(row.node, 'tree')">移动此分类（含课程）</button>
-                      <button type="button" @click="openMove(row.node, 'courses')">移动此分类下的课程</button>
-                    </div>
-                  </div>
+                  <el-button link type="primary" @click="openView(row.node.id)">查看</el-button>
+                  <el-button link type="primary" @click="openEdit(row.node.id)">编辑</el-button>
+                  <el-dropdown trigger="click" @command="(command: string) => handleMoreCommand(command, row.node)">
+                    <el-button link type="primary">更多⌄</el-button>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="delete">删除</el-dropdown-item>
+                        <el-dropdown-item command="create-child">创建子分类</el-dropdown-item>
+                        <el-dropdown-item command="batch-child">批量创建子分类</el-dropdown-item>
+                        <el-dropdown-item command="move-tree">移动此分类（含课程）</el-dropdown-item>
+                        <el-dropdown-item command="move-courses">移动此分类下的课程</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
                 </span>
-              </td>
-            </tr>
-            <tr v-if="!rows.length">
-              <td colspan="5" class="empty-cell">暂无分类数据</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
     </section>
 
     <CatalogViewDrawer
@@ -130,8 +129,6 @@ const expanded = ref(new Set<string>())
 const selectedId = ref('')
 const keyword = ref('')
 const includeChildren = ref(true)
-const activeMoreId = ref('')
-
 const viewVisible = ref(false)
 const viewId = ref('')
 const editVisible = ref(false)
@@ -207,6 +204,9 @@ const rows = computed(() => {
 const countValue = (node: KngTreeNode) =>
   includeChildren.value ? node.allCourseCount : node.courseCount
 
+const catalogRowClass = ({ row }: { row: { node: KngTreeNode } }) =>
+  selectedId.value === row.node.id ? 'selected-row' : ''
+
 const pathFor = (id: string) => {
   const names: string[] = []
   let current = byId.value.get(id)
@@ -225,6 +225,7 @@ const parentPathFor = (id: string) => {
 }
 
 const selectedNode = computed(() => selectedId.value ? byId.value.get(selectedId.value) ?? null : null)
+const catalogRowKey = (row: { node: KngTreeNode }) => row.node.id
 
 const reload = async () => {
   tree.value = await getKngCatalogTree()
@@ -240,6 +241,10 @@ const toggleExpand = (id: string) => {
 
 const selectRow = (id: string) => {
   selectedId.value = selectedId.value === id ? '' : id
+}
+
+const selectCatalogRow = (row: { node: KngTreeNode }) => {
+  selectRow(row.node.id)
 }
 
 const openView = (id: string) => {
@@ -275,7 +280,6 @@ const openCreateChild = (node: KngTreeNode) => {
   editParentId.value = node.id
   editParentPath.value = pathFor(node.id)
   editVisible.value = true
-  activeMoreId.value = ''
 }
 
 const openBatch = () => {
@@ -288,7 +292,6 @@ const openBatchChild = (node: KngTreeNode) => {
   batchParentId.value = node.id
   batchParentPath.value = pathFor(node.id)
   batchVisible.value = true
-  activeMoreId.value = ''
 }
 
 const openMove = (node: KngTreeNode, mode: 'tree' | 'courses') => {
@@ -296,11 +299,9 @@ const openMove = (node: KngTreeNode, mode: 'tree' | 'courses') => {
   moveCatalogPath.value = pathFor(node.id)
   moveMode.value = mode
   moveVisible.value = true
-  activeMoreId.value = ''
 }
 
 const removeRow = async (node: KngTreeNode) => {
-  activeMoreId.value = ''
   if (!(await confirmDialog({ message: `确定删除分类「${node.name}」吗？`, danger: true }))) return
   try {
     await deleteKngCatalog(node.id)
@@ -309,6 +310,14 @@ const removeRow = async (node: KngTreeNode) => {
   } catch {
     // 拦截器已提示业务错误
   }
+}
+
+const handleMoreCommand = (command: string, node: KngTreeNode) => {
+  if (command === 'delete') void removeRow(node)
+  else if (command === 'create-child') openCreateChild(node)
+  else if (command === 'batch-child') openBatchChild(node)
+  else if (command === 'move-tree') openMove(node, 'tree')
+  else if (command === 'move-courses') openMove(node, 'courses')
 }
 
 onMounted(reload)
@@ -369,18 +378,8 @@ onMounted(reload)
   color: #596274;
 }
 
-.search-box input,
-.count-mode select {
-  height: 36px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  outline: none;
-  font-size: 13px;
-}
-
-.search-box input {
+.search-box {
   width: 220px;
-  padding: 0 10px;
 }
 
 .count-mode {
@@ -390,70 +389,28 @@ onMounted(reload)
   color: #667085;
   font-size: 12px;
 
-  select {
-    padding: 0 8px;
+  :deep(.el-select) {
+    width: 130px;
   }
 }
 
-.table-wrap {
+.catalog-table {
   width: 100%;
-  max-width: 100%;
-  overflow: visible;
-}
 
-table {
-  width: 100%;
-  min-width: 0;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
+  :deep(.el-table__header th) {
+    height: 42px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-th:nth-child(1),
-td:nth-child(1) {
-  width: 40%;
-}
+  :deep(.el-table__row) {
+    cursor: pointer;
+  }
 
-th:nth-child(2),
-td:nth-child(2) {
-  width: 12%;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-  width: 12%;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-  width: 18%;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-  width: 18%;
-}
-
-th,
-td {
-  height: 48px;
-  padding: 0 14px;
-  border-bottom: 1px solid #edf0f5;
-  text-align: left;
-  font-size: 13px;
-}
-
-th {
-  height: 42px;
-  background: #f8fafc;
-  color: #667085;
-  font-weight: 600;
-}
-
-tbody tr {
-  cursor: pointer;
-
-  &:hover,
-  &.selected {
+  :deep(.el-table__row:hover),
+  :deep(.selected-row) {
     background: #e8f4ff;
   }
 }
@@ -487,55 +444,6 @@ tbody tr {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-
-  > button,
-  .more-wrap > button {
-    border: none;
-    background: transparent;
-    color: #2e7cf6;
-    cursor: pointer;
-  }
-}
-
-.more-wrap {
-  position: relative;
-  display: inline-block;
-}
-
-.more-menu {
-  position: absolute;
-  top: 24px;
-  right: 0;
-  z-index: 10;
-  min-width: 180px;
-  padding: 6px;
-  border: 1px solid #e6eaf1;
-  border-radius: 7px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
-
-  button {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 5px;
-    background: transparent;
-    color: #4d5568;
-    text-align: left;
-    cursor: pointer;
-
-    &:hover {
-      background: #f5f7fb;
-      color: #e75487;
-    }
-  }
-}
-
-.empty-cell {
-  height: 160px;
-  color: #98a1b2;
-  text-align: center;
 }
 
 @media (max-width: 900px) {

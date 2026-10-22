@@ -10,52 +10,64 @@
     <div class="picker-layout">
       <section class="picker-main">
         <div class="tab-line">
-          <button
+          <el-button
             v-for="tab in tabs"
             :key="tab.value"
-            type="button"
+           
             :class="{ active: activeTab === tab.value }"
             @click="switchTab(tab.value)"
           >
             {{ tab.label }}
-          </button>
+          </el-button>
         </div>
 
         <div class="picker-filter">
-          <input v-model.trim="keyword" type="search" :placeholder="placeholder" @keyup.enter="loadCurrent" />
-          <button type="button" @click="loadCurrent">查询</button>
+          <el-input
+            v-model.trim="keyword"
+            :placeholder="placeholder"
+            clearable
+            @keyup.enter="loadCurrent"
+          />
+          <el-button type="primary" @click="loadCurrent">查询</el-button>
         </div>
 
         <div v-if="activeTab === 'dept'" class="subject-list dept-list">
-          <label v-for="row in deptRows" :key="row.id" class="subject-row">
-            <input
-              type="checkbox"
-              :checked="selected.has(subjectKey(4, row.id))"
+          <el-checkbox
+            v-for="row in deptRows"
+            :key="row.id"
+            class="subject-row"
+            :model-value="selected.has(subjectKey(4, row.id))"
               @change="toggle({ subjectType: 4, subjectId: row.id, subjectName: row.name, permCodes: [] })"
-            />
+          >
             <span :style="{ paddingLeft: `${row.depth * 18}px` }">{{ row.name }}</span>
             <small>{{ row.userCount }}人</small>
-          </label>
+          </el-checkbox>
           <div v-if="!deptRows.length" class="empty-tip">暂无部门数据</div>
         </div>
 
         <div v-else class="subject-list">
-          <label v-for="row in pagedRows" :key="row.key" class="subject-row">
-            <input
-              type="checkbox"
-              :checked="selected.has(row.key)"
+          <el-checkbox
+            v-for="row in pagedRows"
+            :key="row.key"
+            class="subject-row"
+            :model-value="selected.has(row.key)"
               @change="toggle(row.item)"
-            />
+          >
             <span>{{ row.item.subjectName }}</span>
             <small v-if="row.remark" class="remark" :title="row.remark">{{ row.remark }}</small>
             <small>{{ row.count }}人</small>
-          </label>
+          </el-checkbox>
           <div v-if="!pagedRows.length" class="empty-tip">暂无数据</div>
           <div class="pager">
             <span>共 {{ total }} 条</span>
-            <button type="button" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
-            <span>{{ page }} / {{ totalPages }}</span>
-            <button type="button" :disabled="page >= totalPages" @click="changePage(page + 1)">下一页</button>
+            <el-pagination
+              :current-page="page"
+              :page-size="pageSize"
+              :total="total"
+              layout="prev, pager, next"
+              background
+              @current-change="changePage"
+            />
           </div>
         </div>
       </section>
@@ -65,14 +77,14 @@
         <div v-if="!selectedItems.length" class="empty-tip">尚未选择</div>
         <div v-for="item in selectedItems" :key="item.key" class="selected-row">
           <span>{{ item.item.subjectName }}</span>
-          <button type="button" @click="removeSelection(item.key)">×</button>
+          <el-button @click="removeSelection(item.key)">×</el-button>
         </div>
       </aside>
     </div>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" @click="confirm">确定</button>
+      <el-button class="btn ghost" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" @click="confirm">确定</el-button>
     </template>
   </KngDrawer>
 </template>
@@ -286,23 +298,13 @@ watch(
   gap: 8px;
   padding: 12px;
 
-  input {
+  :deep(.el-input) {
     flex: 1;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    outline: none;
   }
 
-  button {
-    height: 36px;
-    padding: 0 16px;
-    border: none;
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
     border-radius: 6px;
-    background: #e75487;
-    color: #fff;
-    cursor: pointer;
   }
 }
 
@@ -314,13 +316,23 @@ watch(
 
 .subject-row {
   display: flex;
-  align-items: center;
-  gap: 9px;
+  width: 100%;
   min-height: 36px;
+  margin-right: 0;
   color: #394253;
   font-size: 13px;
 
-  span {
+  :deep(.el-checkbox__label) {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    color: #394253;
+    font-size: 13px;
+  }
+
+  :deep(.el-checkbox__label) > span {
     flex: 1;
   }
 
@@ -380,13 +392,8 @@ watch(
   color: #7a8396;
   font-size: 12px;
 
-  button {
-    height: 30px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 5px;
-    background: #fff;
-    cursor: pointer;
+  :deep(.el-pagination) {
+    margin-left: 4px;
   }
 }
 

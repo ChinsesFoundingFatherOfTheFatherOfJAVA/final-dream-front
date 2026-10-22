@@ -16,7 +16,7 @@
     <section class="table-panel">
       <el-table
         :data="rows"
-        row-key="node.deptId"
+        :row-key="departmentRowKey"
         class="department-table"
         :empty-text="loading ? '正在加载...' : '暂无数据'"
       >
@@ -73,6 +73,7 @@ const expanded = ref<Record<string, boolean>>({})
 const roots = computed(() => buildDepartmentTree(departments.value))
 const rootIds = computed(() => new Set(roots.value.map((root) => root.node.deptId)))
 const matchedPaths = computed(() => collectSearchPaths(departments.value, keyword.value))
+const departmentRowKey = (row: FlatDepartmentRow) => row.node.deptId
 
 function isExpanded(deptId: string) {
   return expanded.value[deptId] ?? rootIds.value.has(deptId)

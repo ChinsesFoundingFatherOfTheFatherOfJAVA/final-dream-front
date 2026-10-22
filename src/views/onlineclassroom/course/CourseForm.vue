@@ -1,7 +1,7 @@
 <template>
   <div class="course-form-page">
     <header class="form-header">
-      <button type="button" class="back-btn" @click="goBack">‹</button>
+      <el-button class="back-btn" @click="goBack">‹</el-button>
       <h1>{{ mode === 'edit' ? '编辑课程' : '创建课程' }}</h1>
     </header>
 
@@ -9,15 +9,15 @@
 
     <div v-else class="form-body">
       <aside class="anchor-nav">
-        <button
+        <el-button
           v-for="item in anchors"
           :key="item.key"
-          type="button"
+         
           :class="{ active: activeAnchor === item.key }"
           @click="scrollTo(item.key)"
         >
           {{ item.label }}
-        </button>
+        </el-button>
       </aside>
 
       <main ref="formScroll" class="form-scroll">
@@ -28,8 +28,12 @@
             <label class="field span-2">
               <span>名称<em>*</em></span>
               <div class="input-wrap">
-                <input v-model.trim="form.title" maxlength="200" placeholder="请输入课程名称" />
-                <small>{{ form.title.length }}/200</small>
+                <el-input
+                  v-model.trim="form.title"
+                  maxlength="200"
+                  show-word-limit
+                  placeholder="请输入课程名称"
+                />
               </div>
               <p v-if="errors.title" class="field-error">{{ errors.title }}</p>
             </label>
@@ -37,13 +41,16 @@
             <label class="field span-2">
               <span>分类<em>*</em></span>
               <div class="inline-control">
-                <select v-model="form.catalogId">
-                  <option value="">请选择分类</option>
-                  <option v-for="node in flatCatalogs" :key="node.id" :value="node.id">
-                    {{ '　'.repeat(Math.max(0, node.level - 1)) }}{{ node.name }}
-                  </option>
-                </select>
-                <button type="button" class="ghost-small" @click="openCatalogWindow">新增分类</button>
+                <el-select v-model="form.catalogId" placeholder="请选择分类">
+                  <el-option label="请选择分类" value="" />
+                  <el-option
+                    v-for="node in flatCatalogs"
+                    :key="node.id"
+                    :label="`${'　'.repeat(Math.max(0, node.level - 1))}${node.name}`"
+                    :value="node.id"
+                  />
+                </el-select>
+                <el-button class="ghost-small" @click="openCatalogWindow">新增分类</el-button>
               </div>
               <p v-if="errors.catalogId" class="field-error">{{ errors.catalogId }}</p>
             </label>
@@ -63,20 +70,26 @@
 
             <div class="field span-2">
               <span>标准时长</span>
-              <div class="radio-stack">
-                <label>
-                  <input v-model="durationMode" type="radio" value="follow" />
-                  <span>跟随学分策略（课程设置-学分策略设置）</span>
-                </label>
-                <label>
-                  <input v-model="durationMode" type="radio" value="custom" />
-                  <span>单独设置时长</span>
-                </label>
-              </div>
+              <el-radio-group v-model="durationMode" class="radio-stack">
+                <el-radio value="follow">跟随学分策略（课程设置-学分策略设置）</el-radio>
+                <el-radio value="custom">单独设置时长</el-radio>
+              </el-radio-group>
               <div class="duration-input" :class="{ disabled: durationMode === 'follow' }">
-                <input v-model.number="form.standardMinutes" type="number" min="0" max="1440" :disabled="durationMode === 'follow'" />
+                <el-input-number
+                  v-model="form.standardMinutes"
+                  :min="0"
+                  :max="1440"
+                  :controls="false"
+                  :disabled="durationMode === 'follow'"
+                />
                 <span>分</span>
-                <input v-model.number="form.standardSeconds" type="number" min="0" max="59" :disabled="durationMode === 'follow'" />
+                <el-input-number
+                  v-model="form.standardSeconds"
+                  :min="0"
+                  :max="59"
+                  :controls="false"
+                  :disabled="durationMode === 'follow'"
+                />
                 <span>秒</span>
                 <small>（无任务时展示的手填值；有任务时详情展示任务时长和）</small>
               </div>
@@ -84,29 +97,25 @@
 
             <div class="field span-2">
               <span>学分<em>*</em></span>
-              <div class="radio-stack">
-                <label>
-                  <input v-model="scoreMode" type="radio" value="follow" />
-                  <span>跟随学分策略（课程跟随时=任务学分和，而非策略折算）</span>
+              <el-radio-group v-model="scoreMode" class="radio-stack">
+                <el-radio value="follow">
+                  跟随学分策略（课程跟随时=任务学分和，而非策略折算）
                   <strong>{{ scoreFollowValue }} 学分</strong>
-                </label>
-                <label>
-                  <input v-model="scoreMode" type="radio" value="custom" />
-                  <span>单独设置学分</span>
-                </label>
+                </el-radio>
+                <el-radio value="custom">单独设置学分</el-radio>
                 <div v-if="scoreMode === 'custom'" class="inline-control compact">
-                  <input v-model.number="form.studyScore" type="number" min="0.1" step="0.1" />
+                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" :controls="false" />
                   <span>学分</span>
                 </div>
-              </div>
+              </el-radio-group>
             </div>
 
             <div class="field span-2">
               <span>完课标准</span>
               <div class="finish-standard">
-                <select v-model.number="form.finishStandardPercent">
-                  <option v-for="value in finishOptions" :key="value" :value="value">{{ value }}%</option>
-                </select>
+                <el-select v-model="form.finishStandardPercent">
+                  <el-option v-for="value in finishOptions" :key="value" :label="`${value}%`" :value="value" />
+                </el-select>
                 <span>完成标准时长的</span>
                 <strong>{{ form.finishStandardPercent }}%</strong>
                 <span>获得学分</span>
@@ -116,8 +125,14 @@
             <label class="field span-2">
               <span>简介</span>
               <div class="textarea-wrap">
-                <textarea v-model="form.description" maxlength="2000" placeholder="请输入课程简介"></textarea>
-                <small>{{ form.description.length }}/2000</small>
+                <el-input
+                  v-model="form.description"
+                  type="textarea"
+                  maxlength="2000"
+                  show-word-limit
+                  :rows="4"
+                  placeholder="请输入课程简介"
+                />
               </div>
             </label>
 
@@ -131,18 +146,18 @@
               <div v-if="form.attachments.length" class="attachment-list">
                 <div v-for="(attachment, index) in form.attachments" :key="attachment.storagePath">
                   <span>{{ attachment.fileName }}</span>
-                  <button type="button" @click="form.attachments.splice(index, 1)">删除</button>
+                  <el-button @click="form.attachments.splice(index, 1)">删除</el-button>
                 </div>
               </div>
             </div>
 
             <label class="field">
               <span>编码</span>
-              <input v-model.trim="form.code" maxlength="100" placeholder="请输入编码" />
+              <el-input v-model.trim="form.code" maxlength="100" placeholder="请输入编码" />
             </label>
             <label class="field">
               <span>版本</span>
-              <input v-model.trim="form.versionStr" maxlength="100" placeholder="请输入版本" />
+              <el-input v-model.trim="form.versionStr" maxlength="100" placeholder="请输入版本" />
             </label>
           </div>
         </section>
@@ -153,7 +168,7 @@
             <span>贡献者<em>*</em></span>
             <div class="contributor-tag">
               <span>{{ contributorText }}</span>
-              <button type="button" aria-label="移除贡献者" @click="contributorRemoved = true">×</button>
+              <el-button aria-label="移除贡献者" @click="contributorRemoved = true">×</el-button>
               <i>...</i>
             </div>
           </div>
@@ -164,10 +179,10 @@
           <div class="permission-form">
             <div class="permission-line">
               <span>浏览权限</span>
-              <div class="radio-stack">
-                <label><input v-model.number="form.viewPermission" type="radio" :value="1" /><span>跟随分类浏览权限</span></label>
-                <label><input v-model.number="form.viewPermission" type="radio" :value="2" /><span>单独设置允许浏览</span></label>
-              </div>
+              <el-radio-group v-model="form.viewPermission" class="radio-stack">
+                <el-radio :value="1">跟随分类浏览权限</el-radio>
+                <el-radio :value="2">单独设置允许浏览</el-radio>
+              </el-radio-group>
             </div>
           </div>
         </section>
@@ -175,14 +190,14 @@
         <section ref="functionSection" class="form-section" data-anchor="function">
           <h2><i></i>功能设置</h2>
           <div class="switch-stack">
-            <label :class="{ disabled: speedLocked }">
-              <input v-model="form.speedEnabled" type="checkbox" :disabled="speedLocked" />
+            <div class="switch-line" :class="{ disabled: speedLocked }">
+              <el-switch v-model="form.speedEnabled" :disabled="speedLocked" />
               <span>开启倍速播放（开启后，学员可以按1.25/1.5/1.75/2倍速播放视频）</span>
-            </label>
-            <label :class="{ disabled: hoursLocked }">
-              <input v-model="form.speedHoursCalc" type="checkbox" :disabled="hoursLocked" />
+            </div>
+            <div class="switch-line" :class="{ disabled: hoursLocked }">
+              <el-switch v-model="form.speedHoursCalc" :disabled="hoursLocked" />
               <span>倍速播放时学习时长也倍速计算（举例：学员2倍速学习5分钟，学习时长算10分钟）</span>
-            </label>
+            </div>
           </div>
         </section>
       </main>
@@ -191,12 +206,12 @@
     <!-- CS-07 底部按钮：暂存关闭（保存表单+保持当前状态返回列表）/ 下一步（保存后进入设计器） -->
     <footer v-if="!formLoading" class="form-footer">
       <span v-if="errors.form" class="form-error">{{ errors.form }}</span>
-      <button type="button" class="ghost-btn" :disabled="saving" @click="submit(false)">
+      <el-button class="ghost-btn" :disabled="saving" @click="submit(false)">
         {{ saving ? '处理中...' : '暂存关闭' }}
-      </button>
-      <button type="button" class="primary-btn" :disabled="saving" @click="submit(true)">
+      </el-button>
+      <el-button class="primary-btn" :disabled="saving" @click="submit(true)">
         {{ saving ? '处理中...' : '下一步' }}
-      </button>
+      </el-button>
     </footer>
   </div>
 </template>
@@ -776,7 +791,13 @@ onMounted(load)
 .switch-stack {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
   gap: 12px;
+
+  :deep(.el-radio) {
+    margin-right: 0;
+  }
 
   label {
     display: flex;
@@ -803,6 +824,19 @@ onMounted(load)
   strong {
     color: #2e7cf6;
     font-weight: 500;
+  }
+}
+
+.switch-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #4d5568;
+  font-size: 13px;
+  line-height: 1.5;
+
+  &.disabled {
+    color: #a7aeba;
   }
 }
 

@@ -12,113 +12,83 @@
           <div class="rule-formula">
             <span class="rule-label">视频/音频：</span>
             <span>每</span>
-            <input v-model.number="form.scoreConf.videoAudio.standardMinutes" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.videoAudio.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>分钟计</span>
-            <input v-model.number="form.scoreConf.videoAudio.score" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.videoAudio.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分（视频和音频上传时会自动获取时长）</span>
           </div>
-          <div class="rule-scope">
-            <label>
-              <input v-model="form.scoreConf.videoAudio.applyToAll" type="radio" :value="false" />
-              应用于新的视频/音频
-            </label>
-            <label>
-              <input v-model="form.scoreConf.videoAudio.applyToAll" type="radio" :value="true" />
-              应用于所有跟随学分策略设置的视频/音频
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.videoAudio.applyToAll" class="rule-scope">
+            <el-radio :value="false">应用于新的视频/音频</el-radio>
+            <el-radio :value="true">应用于所有跟随学分策略设置的视频/音频</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="score-rule">
           <div class="rule-formula">
             <span class="rule-label">文档：</span>
             <span>每</span>
-            <input v-model.number="form.scoreConf.document.pagesPerScore" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.document.pagesPerScore" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>页，计</span>
-            <input v-model.number="form.scoreConf.document.score" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.document.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分</span>
             <span>标准学习时长</span>
-            <input v-model.number="form.scoreConf.document.standardMinutes" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.document.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>分钟</span>
             <span>每个文档最高学分不超过</span>
-            <input v-model.number="form.scoreConf.document.maxScore" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.document.maxScore" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分</span>
           </div>
-          <div class="rule-scope">
-            <label>
-              <input v-model="form.scoreConf.document.applyToAll" type="radio" :value="false" />
-              应用于新的文档
-            </label>
-            <label>
-              <input v-model="form.scoreConf.document.applyToAll" type="radio" :value="true" />
-              应用于所有跟随学分策略设置的文档
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.document.applyToAll" class="rule-scope">
+            <el-radio :value="false">应用于新的文档</el-radio>
+            <el-radio :value="true">应用于所有跟随学分策略设置的文档</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="score-rule">
           <div class="rule-formula">
             <span class="rule-label">微课：</span>
             <span>每</span>
-            <input v-model.number="form.scoreConf.microcourse.standardMinutes" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.microcourse.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>分钟计</span>
-            <input v-model.number="form.scoreConf.microcourse.score" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.microcourse.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分，每个微课最高学分不超过</span>
-            <input v-model.number="form.scoreConf.microcourse.maxScore" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.microcourse.maxScore" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分</span>
           </div>
-          <div class="rule-scope">
-            <label>
-              <input v-model="form.scoreConf.microcourse.applyToAll" type="radio" :value="false" />
-              应用于新的微课
-            </label>
-            <label>
-              <input v-model="form.scoreConf.microcourse.applyToAll" type="radio" :value="true" />
-              应用于所有跟随学分策略设置的微课
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.microcourse.applyToAll" class="rule-scope">
+            <el-radio :value="false">应用于新的微课</el-radio>
+            <el-radio :value="true">应用于所有跟随学分策略设置的微课</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="score-rule">
           <div class="rule-formula">
             <span class="rule-label">Scorm：</span>
             <span>每</span>
-            <input v-model.number="form.scoreConf.scorm.standardMinutes" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.scorm.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>分钟计</span>
-            <input v-model.number="form.scoreConf.scorm.score" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.scorm.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分</span>
           </div>
-          <div class="rule-scope">
-            <label>
-              <input v-model="form.scoreConf.scorm.applyToAll" type="radio" :value="false" />
-              应用于新的 Scorm
-            </label>
-            <label>
-              <input v-model="form.scoreConf.scorm.applyToAll" type="radio" :value="true" />
-              应用于所有跟随学分策略设置的 Scorm
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.scorm.applyToAll" class="rule-scope">
+            <el-radio :value="false">应用于新的 Scorm</el-radio>
+            <el-radio :value="true">应用于所有跟随学分策略设置的 Scorm</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="score-rule">
           <div class="rule-formula">
             <span class="rule-label">HTML：</span>
             <span>每</span>
-            <input v-model.number="form.scoreConf.html.standardMinutes" class="score-num" type="number" min="1" max="1440" />
+            <el-input-number v-model="form.scoreConf.html.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
             <span>分钟计</span>
-            <input v-model.number="form.scoreConf.html.score" class="score-num" type="number" min="0.1" step="0.1" />
+            <el-input-number v-model="form.scoreConf.html.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
             <span>个学分</span>
           </div>
-          <div class="rule-scope">
-            <label>
-              <input v-model="form.scoreConf.html.applyToAll" type="radio" :value="false" />
-              应用于新的 HTML
-            </label>
-            <label>
-              <input v-model="form.scoreConf.html.applyToAll" type="radio" :value="true" />
-              应用于所有跟随学分策略设置的 HTML
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.html.applyToAll" class="rule-scope">
+            <el-radio :value="false">应用于新的 HTML</el-radio>
+            <el-radio :value="true">应用于所有跟随学分策略设置的 HTML</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="course-summary">
@@ -128,16 +98,10 @@
 
         <div class="reward-settings">
           <div class="reward-label">学分发放时间</div>
-          <div class="reward-options">
-            <label>
-              <input v-model.number="form.scoreConf.rewardType" type="radio" :value="0" />
-              每学完一个课件任务就会获得课件的学分
-            </label>
-            <label class="reward-secondary">
-              <input v-model.number="form.scoreConf.rewardType" type="radio" :value="1" />
-              学完课程时发放所有课件的学分
-            </label>
-          </div>
+          <el-radio-group v-model="form.scoreConf.rewardType" class="reward-options">
+            <el-radio :value="0">每学完一个课件任务就会获得课件的学分</el-radio>
+            <el-radio :value="1" class="reward-secondary">学完课程时发放所有课件的学分</el-radio>
+          </el-radio-group>
         </div>
 
         <div class="score-notes">
@@ -156,67 +120,81 @@
       @apply="applyCheat"
     >
       <div class="switch-row">
-        <label class="switch-line">
-          <input v-model="form.cheatConf.antiIdleEnabled" type="checkbox" />
-          <span class="switch-control"></span>
+        <div class="switch-line">
+          <el-switch v-model="form.cheatConf.antiIdleEnabled" />
           <span>开启防挂机功能</span>
-        </label>
-        <button type="button" class="text-link" @click="specialVisible = true">特殊设置</button>
+        </div>
+        <el-button class="text-link" @click="specialVisible = true">特殊设置</el-button>
       </div>
 
       <p class="inline-note">
         系统检测到学员疑似挂机后，会弹出是否在线的弹框，让学员确认是否在学习，可配合人脸识别功能使用，开启人脸识别后，学员触发防挂机时，需要进行人脸识别。
       </p>
 
-      <label class="mode-line">
-        <input v-model.number="form.cheatConf.mode" type="radio" :value="1" :disabled="!form.cheatConf.antiIdleEnabled" />
-        <span>学员在学习过程时，系统在</span>
-        <input v-model.number="form.cheatConf.checkMinutes" type="number" min="1" max="60" :disabled="!form.cheatConf.antiIdleEnabled" />
-        <span>分钟确认学员是否在线，如不在线则停止播放</span>
-      </label>
+      <el-radio-group v-model="form.cheatConf.mode" class="mode-group">
+        <div class="mode-line">
+          <el-radio :value="1" :disabled="!form.cheatConf.antiIdleEnabled">
+            学员在学习过程时，系统在
+          </el-radio>
+          <el-input-number
+            v-model="form.cheatConf.checkMinutes"
+            :min="1"
+            :max="60"
+            :controls="false"
+            :disabled="!form.cheatConf.antiIdleEnabled"
+          />
+          <span>分钟确认学员是否在线，如不在线则停止播放</span>
+        </div>
 
-      <label class="mode-line">
-        <input v-model.number="form.cheatConf.mode" type="radio" :value="2" :disabled="!form.cheatConf.antiIdleEnabled" />
-        <span>学员在学习课程时，系统在</span>
-        <input v-model.number="form.cheatConf.checkMinutes" type="number" min="1" max="60" :disabled="!form.cheatConf.antiIdleEnabled" />
-        <span>分钟确认学员是否在线，学员需要在</span>
-        <input
-          v-model.number="form.cheatConf.confirmSeconds"
-          type="number"
-          min="30"
-          max="600"
-          :disabled="!form.cheatConf.antiIdleEnabled || form.cheatConf.mode !== 2"
-        />
-        <span>秒内点击确认，如未确认本次学习无效（已学完的课程不存在回退学习进度，触发防挂机时系统会暂停播放）</span>
-      </label>
+        <div class="mode-line">
+          <el-radio :value="2" :disabled="!form.cheatConf.antiIdleEnabled">
+            学员在学习课程时，系统在
+          </el-radio>
+          <el-input-number
+            v-model="form.cheatConf.checkMinutes"
+            :min="1"
+            :max="60"
+            :controls="false"
+            :disabled="!form.cheatConf.antiIdleEnabled"
+          />
+          <span>分钟确认学员是否在线，学员需要在</span>
+          <el-input-number
+            v-model="form.cheatConf.confirmSeconds"
+            :min="30"
+            :max="600"
+            :controls="false"
+            :disabled="!form.cheatConf.antiIdleEnabled || form.cheatConf.mode !== 2"
+          />
+          <span>秒内点击确认，如未确认本次学习无效（已学完的课程不存在回退学习进度，触发防挂机时系统会暂停播放）</span>
+        </div>
+      </el-radio-group>
 
       <label class="prompt-field">
         <span>确认学员是否在线提示语</span>
-        <textarea
+        <el-input
           v-model="form.cheatConf.promptText"
+          type="textarea"
           maxlength="250"
-          rows="3"
+          :rows="3"
+          show-word-limit
           :disabled="!form.cheatConf.antiIdleEnabled"
           placeholder="请输入提示语"
-        ></textarea>
-        <small>{{ form.cheatConf.promptText.length }}/250</small>
+        />
       </label>
 
       <div class="switch-block">
-        <label class="switch-line">
-          <input v-model="form.cheatConf.multiCourseEnabled" type="checkbox" />
-          <span class="switch-control"></span>
+        <div class="switch-line">
+          <el-switch v-model="form.cheatConf.multiCourseEnabled" />
           <span>开启防多课程同时学习功能</span>
-        </label>
+        </div>
         <p>同一时间只对一个课程记录学习进度及学分，防止学习者同时打开多个课程学习而获得学习进度及学分。</p>
       </div>
 
       <div class="switch-block">
-        <label class="switch-line">
-          <input v-model="form.cheatConf.forbidDragEnabled" type="checkbox" />
-          <span class="switch-control"></span>
+        <div class="switch-line">
+          <el-switch v-model="form.cheatConf.forbidDragEnabled" />
           <span>禁止拖拽学习</span>
-        </label>
+        </div>
         <p>1. 仅对视频、音频生效；</p>
         <p>2. 开启后，学员可以在已经看过的内容区拖拽进度条（举例：视频有 60 分钟，学员看到了 40 分钟，那么可以在 1-40 分钟间拖拽进度）。</p>
       </div>
@@ -230,32 +208,25 @@
       @apply="applyPlay"
     >
       <div class="switch-row">
-        <label class="switch-line">
-          <input v-model="form.playConf.speedEnabled" type="checkbox" />
-          <span class="switch-control"></span>
+        <div class="switch-line">
+          <el-switch v-model="form.playConf.speedEnabled" />
           <span>开启倍速播放功能</span>
-        </label>
-        <label class="switch-line">
-          <input
+        </div>
+        <div class="switch-line">
+          <el-switch
             v-model="form.playConf.speedHoursCalc"
-            type="checkbox"
             :disabled="!form.playConf.speedEnabled"
           />
-          <span class="switch-control"></span>
           <span>倍速播放时学习时长也倍速计算</span>
-        </label>
+        </div>
       </div>
 
       <div class="play-scope">
         <strong>使用范围</strong>
-        <label>
-          <input v-model.number="form.playConf.speedScope" type="radio" :value="1" />
-          所有课件、课程都支持倍速播放
-        </label>
-        <label>
-          <input v-model.number="form.playConf.speedScope" type="radio" :value="2" />
-          跟随课件或课程各自的功能设置
-        </label>
+        <el-radio-group v-model="form.playConf.speedScope">
+          <el-radio :value="1">所有课件、课程都支持倍速播放</el-radio>
+          <el-radio :value="2">跟随课件或课程各自的功能设置</el-radio>
+        </el-radio-group>
       </div>
     </SettingSection>
 
@@ -266,11 +237,14 @@
       :show-apply="false"
       @toggle="toggleSection('face')"
     >
-      <label class="switch-line">
-        <input v-model="form.faceConf.enabled" type="checkbox" :disabled="faceSaving" @change="applyFace" />
-        <span class="switch-control"></span>
+      <div class="switch-line">
+        <el-switch
+          v-model="form.faceConf.enabled"
+          :disabled="faceSaving"
+          @change="applyFace"
+        />
         <span>开启人脸识别功能（仅 App 端支持人脸识别）</span>
-      </label>
+      </div>
     </SettingSection>
 
     <SpecialSettingDrawer
@@ -496,30 +470,18 @@ onMounted(load)
 }
 
 .score-num {
-  width: 48px;
-  height: 24px;
-  padding: 0 4px;
-  border-radius: 4px;
-  text-align: center;
-}
+  width: 62px;
 
-input[type='number'],
-textarea {
-  height: 26px;
-  padding: 0 6px;
-  border: 1px solid #d9deea;
-  border-radius: 4px;
-  outline: none;
-  font-size: 12px;
-  color: #253047;
-
-  &:focus {
-    border-color: #2e7cf6;
+  :deep(.el-input__wrapper) {
+    min-height: 26px;
+    padding: 0 4px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #d9deea inset;
   }
 
-  &:disabled {
-    background: #f5f7fb;
-    color: #98a1b2;
+  :deep(.el-input__inner) {
+    font-size: 12px;
+    text-align: center;
   }
 }
 
@@ -532,11 +494,8 @@ textarea {
   color: #526071;
   font-size: 12px;
 
-  label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
+  :deep(.el-radio) {
+    margin-right: 28px;
   }
 }
 
@@ -574,16 +533,14 @@ textarea {
   color: #4d5568;
   font-size: 12px;
 
-  label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
+  :deep(.el-radio) {
+    height: 24px;
+    margin-right: 0;
   }
 }
 
 .reward-secondary {
-  margin-left: 38px;
+  margin-left: 38px !important;
 }
 
 .score-notes {
@@ -632,8 +589,19 @@ textarea {
   font-size: 12px;
   line-height: 1.7;
 
-  > input[type='number'] {
+  :deep(.el-radio) {
+    margin-right: 0;
+  }
+
+  :deep(.el-input-number) {
     width: 58px;
+  }
+
+  :deep(.el-input__wrapper) {
+    min-height: 26px;
+    padding: 0 4px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #d9deea inset;
   }
 }
 
@@ -645,19 +613,11 @@ textarea {
   color: #4d5568;
   font-size: 12px;
 
-  textarea {
-    width: 100%;
-    height: auto;
+  :deep(.el-textarea__inner) {
     min-height: 66px;
-    padding: 7px 8px;
+    border-radius: 4px;
     resize: vertical;
     font-family: inherit;
-  }
-
-  small {
-    align-self: flex-end;
-    color: #98a1b2;
-    font-size: 12px;
   }
 }
 
@@ -666,50 +626,11 @@ textarea {
 }
 
 .switch-line {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: #4d5568;
   font-size: 12px;
-  cursor: pointer;
-
-  input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-.switch-control {
-  position: relative;
-  width: 34px;
-  height: 18px;
-  flex-shrink: 0;
-  border-radius: 9px;
-  background: #c9d0dc;
-  transition: background 0.2s;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
-    transition: transform 0.2s;
-  }
-}
-
-.switch-line input:checked + .switch-control {
-  background: #2e7cf6;
-}
-
-.switch-line input:checked + .switch-control::after {
-  transform: translateX(16px);
 }
 
 .play-scope {
@@ -722,11 +643,14 @@ textarea {
   color: #4d5568;
   font-size: 12px;
 
-  label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
+  :deep(.el-radio-group) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 18px;
+  }
+
+  :deep(.el-radio) {
+    margin-right: 0;
   }
 }
 

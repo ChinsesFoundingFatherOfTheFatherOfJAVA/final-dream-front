@@ -26,8 +26,8 @@
     </div>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">关闭</button>
-      <button type="button" class="btn primary" @click="edit">编辑</button>
+      <el-button class="btn ghost" @click="emit('close')">关闭</el-button>
+      <el-button class="btn primary" @click="edit">编辑</el-button>
     </template>
   </KngDrawer>
 </template>

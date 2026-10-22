@@ -24,28 +24,28 @@
       <section class="caption-panel">
         <div class="panel-toolbar">
           <nav>
-            <button
+            <el-button
               v-for="item in languages"
               :key="item.value"
-              type="button"
+             
               :class="{ active: language === item.value }"
               @click="switchLanguage(item.value)"
             >
               {{ item.label }}
-            </button>
+            </el-button>
           </nav>
           <!-- MT-05 右上角【重新生成字幕】：二次确认"将覆盖现有字幕"后重投 subtitle job -->
-          <button type="button" class="regen-btn" :disabled="regenerating" @click="regenerate">
+          <el-button class="regen-btn" :disabled="regenerating" @click="regenerate">
             {{ subtitlesFlag ? '重新生成字幕' : '生成字幕' }}
-          </button>
+          </el-button>
         </div>
 
         <div v-if="!subtitlesFlag" class="caption-empty">
           <div>尚未生成字幕</div>
           <p>开启 AI 字幕后可一键生成四语言字幕</p>
-          <button type="button" class="btn primary" :disabled="regenerating" @click="regenerate">
+          <el-button class="btn primary" :disabled="regenerating" @click="regenerate">
             生成字幕
-          </button>
+          </el-button>
         </div>
 
         <template v-else>
@@ -61,7 +61,7 @@
                 >{{ shortTime(entry.beginTime) }}→{{ shortTime(entry.endTime) }}</span
               >
               <template v-if="editingPosition === position">
-                <input
+                <el-input
                   v-model="editingText"
                   class="entry-input"
                   @keyup.enter="commitEdit"
@@ -69,15 +69,15 @@
                 />
               </template>
               <span v-else class="entry-text" :title="entry.text">{{ entry.text }}</span>
-              <button
+              <el-button
                 v-if="editingPosition !== position"
-                type="button"
+               
                 class="edit-btn"
                 aria-label="编辑"
                 @click="startEdit(position)"
               >
                 ✎
-              </button>
+              </el-button>
             </li>
           </ul>
         </template>
@@ -85,16 +85,15 @@
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
+      <el-button class="btn" @click="emit('close')">取消</el-button>
       <!-- 保存=当前语言整份 PUT（FP-MT-05b）；字幕 job 活跃中后端 code=1 拦截器统一 toast"字幕生成中，稍后保存" -->
-      <button
-        type="button"
+      <el-button
         class="btn primary"
         :disabled="saving || !subtitlesFlag || !entries.length"
         @click="save"
       >
         保存
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>

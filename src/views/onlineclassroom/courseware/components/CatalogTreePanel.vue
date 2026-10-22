@@ -1,11 +1,15 @@
 <template>
   <aside class="catalog-tree-panel">
     <div class="tree-toolbar">
-      <label class="tree-search">
-        <span aria-hidden="true">⌕</span>
-        <input v-model.trim="keyword" type="search" placeholder="搜索分类名称" />
-      </label>
-      <button type="button" class="collapse-btn" title="收起分类树" @click="emit('collapse')">≡</button>
+      <el-input
+        v-model.trim="keyword"
+        class="tree-search"
+        placeholder="搜索分类名称"
+        clearable
+      >
+        <template #prefix>⌕</template>
+      </el-input>
+      <el-button class="collapse-btn" title="收起分类树" @click="emit('collapse')">≡</el-button>
     </div>
 
     <div class="tree-body">
@@ -15,9 +19,9 @@
         :class="{ selected: modelValue === '' }"
         @click="select('')"
       >
-        <button type="button" class="tree-arrow expanded" @click.stop="toggleRoot">
+        <el-button class="tree-arrow expanded" @click.stop="toggleRoot">
           <span />
-        </button>
+        </el-button>
         <span class="tree-label">主课堂</span>
       </div>
 
@@ -30,15 +34,15 @@
           :style="{ paddingLeft: `${12 + row.depth * 18}px` }"
           @click="select(row.node.id)"
         >
-          <button
+          <el-button
             v-if="row.hasChildren"
-            type="button"
+           
             class="tree-arrow"
             :class="{ expanded: row.expanded }"
             @click.stop="toggle(row.node.id)"
           >
             <span />
-          </button>
+          </el-button>
           <span v-else class="tree-arrow placeholder"></span>
           <span class="tree-label">{{ row.node.name }}</span>
         </div>
@@ -48,14 +52,10 @@
 
     <footer class="tree-footer">
       <div class="scope-options">
-        <label>
-          <input v-model.number="scope" type="radio" :value="1" />
-          <span>包含子分类</span>
-        </label>
-        <label>
-          <input v-model.number="scope" type="radio" :value="0" />
-          <span>仅当前分类</span>
-        </label>
+        <el-radio-group v-model="scope">
+          <el-radio :value="1">包含子分类</el-radio>
+          <el-radio :value="0">仅当前分类</el-radio>
+        </el-radio-group>
       </div>
       <div class="tree-total">共 {{ total }} 条</div>
     </footer>

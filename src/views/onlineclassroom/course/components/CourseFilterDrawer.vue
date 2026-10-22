@@ -4,32 +4,52 @@
       <div class="filter-grid">
         <label class="filter-item">
           <span>是否上架</span>
-          <select v-model="form.onSale">
-            <option :value="null">请选择</option>
-            <option :value="1">是</option>
-            <option :value="0">否</option>
-          </select>
+          <el-select v-model="form.onSale" placeholder="请选择">
+            <el-option label="请选择" :value="null" />
+            <el-option label="是" :value="1" />
+            <el-option label="否" :value="0" />
+          </el-select>
         </label>
         <label class="filter-item date-item">
           <span>上传时间</span>
           <div class="date-range">
-            <input v-model="form.uploadTimeStart" type="date" />
+            <el-date-picker
+              v-model="form.uploadTimeStart"
+              type="date"
+              value-format="YYYY-MM-DD"
+              placeholder="开始日期"
+            />
             <i>~</i>
-            <input v-model="form.uploadTimeEnd" type="date" />
+            <el-date-picker
+              v-model="form.uploadTimeEnd"
+              type="date"
+              value-format="YYYY-MM-DD"
+              placeholder="结束日期"
+            />
           </div>
         </label>
         <label class="filter-item date-item">
           <span>更新时间</span>
           <div class="date-range">
-            <input v-model="form.updateTimeStart" type="date" />
+            <el-date-picker
+              v-model="form.updateTimeStart"
+              type="date"
+              value-format="YYYY-MM-DD"
+              placeholder="开始日期"
+            />
             <i>~</i>
-            <input v-model="form.updateTimeEnd" type="date" />
+            <el-date-picker
+              v-model="form.updateTimeEnd"
+              type="date"
+              value-format="YYYY-MM-DD"
+              placeholder="结束日期"
+            />
           </div>
         </label>
       </div>
       <footer>
-        <button type="button" class="primary" @click="confirm">确定</button>
-        <button type="button" @click="emit('close')">取消</button>
+        <el-button class="primary" @click="confirm">确定</el-button>
+        <el-button @click="emit('close')">取消</el-button>
       </footer>
     </div>
   </teleport>
@@ -103,16 +123,16 @@ function confirm() {
   color: #4d5568;
   font-size: 13px;
 
-  select,
-  input {
+  :deep(.el-select),
+  :deep(.el-date-editor) {
     min-width: 0;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
+    width: 100%;
+  }
+
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
     border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    outline: none;
   }
 }
 

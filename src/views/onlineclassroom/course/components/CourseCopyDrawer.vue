@@ -14,8 +14,8 @@
       <h4>请选择目录</h4>
       <div class="tree-wrap">
         <div class="tree-head">
-          <button v-if="rootExpanded" type="button" @click="rootExpanded = false">▾</button>
-          <button v-else type="button" @click="rootExpanded = true">▸</button>
+          <el-button v-if="rootExpanded" @click="rootExpanded = false">▾</el-button>
+          <el-button v-else @click="rootExpanded = true">▸</el-button>
           <strong>主课堂</strong>
         </div>
         <template v-if="rootExpanded">
@@ -25,31 +25,29 @@
             class="tree-row"
             :style="{ paddingLeft: `${22 + row.depth * 24}px` }"
           >
-            <button
+            <el-button
               v-if="row.hasChildren"
-              type="button"
+             
               class="expand-btn"
               @click.stop="toggle(row.node.id)"
             >
               {{ row.expanded ? '▾' : '▸' }}
-            </button>
+            </el-button>
             <span v-else class="expand-placeholder"></span>
-            <label>
-              <input
-                type="checkbox"
-                :checked="selectedId === row.node.id"
-                @change="selectedId = selectedId === row.node.id ? '' : row.node.id"
-              />
-              <span>{{ row.node.name }}</span>
-            </label>
+            <el-checkbox
+              :model-value="selectedId === row.node.id"
+              @change="selectedId = selectedId === row.node.id ? '' : row.node.id"
+            >
+              {{ row.node.name }}
+            </el-checkbox>
           </div>
         </template>
       </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="!selectedId" @click="confirm">确定</button>
+      <el-button class="btn" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="!selectedId" @click="confirm">确定</el-button>
     </template>
   </KngDrawer>
 </template>
@@ -187,17 +185,8 @@ h4 {
   width: 24px;
 }
 
-.tree-row label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  accent-color: #2e7cf6;
+.tree-row :deep(.el-checkbox) {
+  margin-right: 0;
 }
 
 .btn {

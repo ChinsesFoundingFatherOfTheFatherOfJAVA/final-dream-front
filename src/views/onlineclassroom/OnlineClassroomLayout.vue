@@ -1,7 +1,7 @@
 <template>
   <div class="kng-layout">
     <header class="kng-header">
-      <button type="button" class="back-btn" @click="router.push('/homepage')">‹</button>
+      <el-button class="back-btn" @click="router.push('/homepage')">‹</el-button>
       <div>
         <h1>在线课堂</h1>
         <p>企业学习资源运营</p>
@@ -9,16 +9,17 @@
     </header>
     <div class="kng-body">
       <aside class="kng-sidebar">
-        <router-link
-          v-for="item in visibleMenus"
-          :key="item.path"
-          :to="item.path"
-          class="menu-item"
-          :class="{ active: route.path === item.path }"
-        >
-          <span class="menu-icon">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
-        </router-link>
+        <el-menu :default-active="route.path" router class="kng-menu">
+          <el-menu-item
+            v-for="item in visibleMenus"
+            :key="item.path"
+            :index="item.path"
+            class="menu-item"
+          >
+            <span class="menu-icon">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </el-menu-item>
+        </el-menu>
       </aside>
       <main class="kng-content">
         <router-view />
@@ -103,20 +104,22 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   border-right: 1px solid #e6eaf1;
 }
 
+.kng-menu {
+  border-right: none;
+  background: transparent;
+}
+
 .menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   height: 42px;
   margin-bottom: 6px;
   padding: 0 14px;
   border-radius: 7px;
   color: #596274;
-  text-decoration: none;
   font-size: 14px;
+  line-height: 42px;
 
   &:hover,
-  &.active {
+  &.is-active {
     color: #e75487;
     background: #fff1f6;
   }

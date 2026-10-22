@@ -7,40 +7,38 @@
     @close="emit('close')"
   >
     <div class="unlock-form">
-      <div class="section">
-        <label class="radio-row">
-          <input v-model.number="mode" type="radio" :value="1" />
+      <el-radio-group v-model="mode" class="section">
+        <el-radio class="radio-row" :value="1">
           <span class="radio-body">
             <strong>自由学习模式</strong>
             <small>不设学习限制，学员可以在任何时间学习</small>
           </span>
-        </label>
-        <label class="radio-row">
-          <input v-model.number="mode" type="radio" :value="2" />
+        </el-radio>
+        <el-radio class="radio-row" :value="2">
           <span class="radio-body">
             <strong>按顺序学习</strong>
             <small>学员需按配置的解锁顺序依次学习任务</small>
           </span>
-        </label>
-      </div>
+        </el-radio>
+      </el-radio-group>
 
       <div class="section" :class="{ disabled: mode !== 2 }">
         <span class="section-title">解锁单元</span>
-        <label class="radio-row inline">
-          <input v-model.number="unit" type="radio" :value="1" :disabled="mode !== 2" />
-          <span>按内容<em>（默认）</em></span>
-        </label>
-        <label class="radio-row inline">
-          <input v-model.number="unit" type="radio" :value="2" :disabled="mode !== 2" />
-          <span>按章节</span>
-        </label>
+        <el-radio-group v-model="unit">
+          <el-radio class="radio-row inline" :value="1" :disabled="mode !== 2">
+            按内容<em>（默认）</em>
+          </el-radio>
+          <el-radio class="radio-row inline" :value="2" :disabled="mode !== 2">
+            按章节
+          </el-radio>
+        </el-radio-group>
         <small v-if="mode !== 2" class="hint">仅"按顺序学习"时可选择解锁单元</small>
       </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" @click="confirm">确定</button>
+      <el-button class="btn" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" @click="confirm">确定</el-button>
     </template>
   </KngDrawer>
 </template>
@@ -113,19 +111,14 @@ function confirm() {
 .radio-row {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  margin-bottom: 14px;
-  cursor: pointer;
-
-  input {
-    margin-top: 3px;
-    accent-color: #2e7cf6;
-  }
+  height: auto;
+  margin: 0 0 14px;
 
   .radio-body {
     display: flex;
     flex-direction: column;
     gap: 3px;
+    white-space: normal;
 
     strong {
       color: #30384a;
@@ -139,7 +132,11 @@ function confirm() {
     }
   }
 
-  &.inline span {
+  &.inline {
+    margin-bottom: 8px;
+  }
+
+  &.inline :deep(.el-radio__label) {
     color: #4d5568;
     font-size: 13px;
 

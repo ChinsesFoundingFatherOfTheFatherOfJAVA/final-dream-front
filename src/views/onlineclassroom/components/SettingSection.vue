@@ -1,19 +1,19 @@
 <template>
   <section class="setting-section">
-    <button type="button" class="section-header" @click="emit('toggle')">
+    <el-button class="section-header" @click="emit('toggle')">
       <span class="section-title">
         <span class="title-bar"></span>
         <strong>{{ title }}</strong>
       </span>
       <span class="toggle-link">{{ expanded ? '收起' : '展开' }}</span>
-    </button>
+    </el-button>
 
     <div v-if="expanded" class="section-body">
       <slot />
       <div v-if="showApply" class="section-footer">
-        <button type="button" class="apply-btn" :disabled="loading" @click="emit('apply')">
+        <el-button class="apply-btn" :disabled="loading" @click="emit('apply')">
           {{ loading ? '保存中...' : '应用' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </section>

@@ -9,50 +9,47 @@
     <div class="move-form">
       <label class="form-row">
         <span>待移动分类</span>
-        <input :value="catalogPath" readonly />
+        <el-input :model-value="catalogPath" readonly />
       </label>
       <div class="notice">被共享的课件暂不支持移动</div>
       <label class="form-row">
         <span>移动至</span>
-        <input v-model.trim="keyword" placeholder="搜索目标分类" />
+        <el-input v-model.trim="keyword" placeholder="搜索目标分类" clearable />
       </label>
 
       <div class="target-tree">
-        <label class="tree-row root-row">
-          <input v-model="targetId" type="radio" :value="null" />
-          <strong>主课堂</strong>
-        </label>
-        <div
-          v-for="row in targetRows"
-          :key="row.id"
-          class="tree-row"
-          :style="{ paddingLeft: `${row.depth * 18}px` }"
-        >
-          <button
-            v-if="row.hasChildren"
-            type="button"
-            class="expand-btn"
-            :aria-label="row.expanded ? '收起子分类' : '展开子分类'"
-            :aria-expanded="row.expanded"
-            @click.stop="toggleExpand(row.id)"
+        <el-radio-group v-model="targetId" class="tree-radio-group">
+          <el-radio class="tree-row root-row" :value="null">
+            <strong>主课堂</strong>
+          </el-radio>
+          <div
+            v-for="row in targetRows"
+            :key="row.id"
+            class="tree-row"
+            :style="{ paddingLeft: `${row.depth * 18}px` }"
           >
-            {{ row.expanded ? '▾' : '▸' }}
-          </button>
-          <span v-else class="expand-placeholder"></span>
-          <label class="tree-label">
-            <input v-model="targetId" type="radio" :value="row.id" />
-            <span>{{ row.name }}</span>
-          </label>
-        </div>
+            <el-button
+              v-if="row.hasChildren"
+              class="expand-btn"
+              :aria-label="row.expanded ? '收起子分类' : '展开子分类'"
+              :aria-expanded="row.expanded"
+              @click.stop="toggleExpand(row.id)"
+            >
+              {{ row.expanded ? '▾' : '▸' }}
+            </el-button>
+            <span v-else class="expand-placeholder"></span>
+            <el-radio :value="row.id">{{ row.name }}</el-radio>
+          </div>
+        </el-radio-group>
         <div v-if="!targetRows.length" class="empty-tip">暂无匹配分类</div>
       </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="saving" @click="submit">
+      <el-button class="btn ghost" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="saving" @click="submit">
         {{ saving ? '处理中...' : '确定' }}
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>
@@ -171,12 +168,9 @@ watch(() => props.visible, async visible => {
   color: #4d5568;
   font-size: 13px;
 
-  input {
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
     border-radius: 6px;
-    outline: none;
   }
 }
 
@@ -211,9 +205,17 @@ watch(() => props.visible, async visible => {
   }
 }
 
+.tree-radio-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .root-row {
+  width: 100%;
   border-bottom: 1px solid #eef1f6;
-  margin-bottom: 4px;
+  margin: 0 0 4px;
+  margin-right: 0;
 }
 
 .expand-btn,
@@ -232,13 +234,18 @@ watch(() => props.visible, async visible => {
   cursor: pointer;
 }
 
-.tree-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.tree-row :deep(.el-radio) {
   min-width: 0;
-  flex: 1;
-  cursor: pointer;
+  height: 34px;
+  margin-right: 0;
+}
+
+.tree-row :deep(.el-radio__label) {
+  overflow: hidden;
+  color: #394253;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .empty-tip {

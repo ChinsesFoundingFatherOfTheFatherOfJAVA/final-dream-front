@@ -1,7 +1,7 @@
 <template>
   <div class="courseware-form-page">
     <header class="form-header">
-      <button type="button" class="back-btn" @click="goBack">‹</button>
+      <el-button class="back-btn" @click="goBack">‹</el-button>
       <h1>{{ pageTitle }}</h1>
     </header>
 
@@ -35,7 +35,7 @@
             <i :style="{ width: `${row.progress}%` }"></i>
           </div>
           <em>{{ row.progress }}%</em>
-          <button v-if="row.error" type="button" @click="retryRow(row)">重试</button>
+          <el-button v-if="row.error" @click="retryRow(row)">重试</el-button>
         </div>
       </div>
 
@@ -62,15 +62,15 @@
 
     <div v-else-if="stage !== 'upload'" class="form-body">
       <aside class="anchor-nav">
-        <button
+        <el-button
           v-for="item in anchors"
           :key="item.key"
-          type="button"
+         
           :class="{ active: activeAnchor === item.key }"
           @click="scrollTo(item.key)"
         >
           {{ item.label }}
-        </button>
+        </el-button>
       </aside>
 
       <main ref="formScroll" class="form-scroll">
@@ -85,15 +85,19 @@
               </div>
               <div v-for="(link, index) in form.links" :key="index" class="table-row">
                 <span class="drag-handle">⋮⋮</span>
-                <input v-model.trim="link.storagePath" maxlength="500" placeholder="请输入课件网址，建议使用https格式的网址" />
+                <el-input
+                  v-model.trim="link.storagePath"
+                  maxlength="500"
+                  placeholder="请输入课件网址，建议使用https格式的网址"
+                />
                 <span>{{ languageLabel(link.language) }}</span>
                 <div class="row-actions">
-                  <button type="button" @click="openLanguage(link)">设置语种</button>
-                  <button type="button" @click="removeLink(index)">删除</button>
+                  <el-button @click="openLanguage(link)">设置语种</el-button>
+                  <el-button @click="removeLink(index)">删除</el-button>
                 </div>
               </div>
             </div>
-            <button type="button" class="text-btn" @click="addLink">+ 添加外链</button>
+            <el-button class="text-btn" @click="addLink">+ 添加外链</el-button>
           </template>
           <template v-else>
             <input
@@ -116,12 +120,12 @@
                 <span>--</span>
                 <span>{{ languageLabel(file.language) }}</span>
                 <div class="row-actions">
-                  <button type="button" @click="openLanguage(file)">设置语种</button>
-                  <button type="button" @click="removeFile(index)">删除</button>
+                  <el-button @click="openLanguage(file)">设置语种</el-button>
+                  <el-button @click="removeFile(index)">删除</el-button>
                 </div>
               </div>
             </div>
-            <button type="button" class="text-btn" @click="appendFiles">+ 上传文件</button>
+            <el-button class="text-btn" @click="appendFiles">+ 上传文件</el-button>
           </template>
         </section>
 
@@ -131,8 +135,12 @@
             <label class="field span-2">
               <span>名称<em>*</em></span>
               <div class="input-wrap">
-                <input v-model.trim="form.title" maxlength="200" placeholder="请输入课件名称" />
-                <small>{{ form.title.length }}/200</small>
+                <el-input
+                  v-model.trim="form.title"
+                  maxlength="200"
+                  show-word-limit
+                  placeholder="请输入课件名称"
+                />
               </div>
               <p v-if="errors.title" class="field-error">{{ errors.title }}</p>
             </label>
@@ -140,13 +148,16 @@
             <label class="field span-2">
               <span>分类<em>*</em></span>
               <div class="inline-control">
-                <select v-model="form.catalogId">
-                  <option value="">请选择分类</option>
-                  <option v-for="node in flatCatalogs" :key="node.id" :value="node.id">
-                    {{ '　'.repeat(Math.max(0, node.level - 1)) }}{{ node.name }}
-                  </option>
-                </select>
-                <button type="button" class="ghost-small" @click="openCatalogWindow">新增分类</button>
+                <el-select v-model="form.catalogId" placeholder="请选择分类">
+                  <el-option label="请选择分类" value="" />
+                  <el-option
+                    v-for="node in flatCatalogs"
+                    :key="node.id"
+                    :label="`${'　'.repeat(Math.max(0, node.level - 1))}${node.name}`"
+                    :value="node.id"
+                  />
+                </el-select>
+                <el-button class="ghost-small" @click="openCatalogWindow">新增分类</el-button>
               </div>
               <p v-if="errors.catalogId" class="field-error">{{ errors.catalogId }}</p>
             </label>
@@ -167,22 +178,18 @@
             <div v-if="form.type !== 8" class="field span-2">
               <span>{{ durationRequired ? '标准时长' : '标准时长' }}<em v-if="durationRequired">*</em></span>
               <template v-if="showDurationMode">
-                <div class="radio-stack">
-                  <label :class="{ disabled: true }">
-                    <input type="radio" :checked="false" disabled />
-                    <span>跟随学分策略（课程设置-学分策略设置）</span>
+                <el-radio-group v-model="durationMode" class="radio-stack">
+                  <el-radio value="" disabled>
+                    跟随学分策略（课程设置-学分策略设置）
                     <i title="文档解析功能建设中，请单独设置">!</i>
-                  </label>
-                  <label>
-                    <input v-model="durationMode" type="radio" value="custom" />
-                    <span>单独设置时长</span>
-                  </label>
-                </div>
+                  </el-radio>
+                  <el-radio value="custom">单独设置时长</el-radio>
+                </el-radio-group>
               </template>
               <div class="duration-input">
-                <input v-model.number="form.standardMinutes" type="number" min="0" max="1440" />
+                <el-input-number v-model="form.standardMinutes" :min="0" :max="1440" :controls="false" />
                 <span>分</span>
-                <input v-model.number="form.standardSeconds" type="number" min="0" max="59" />
+                <el-input-number v-model="form.standardSeconds" :min="0" :max="59" :controls="false" />
                 <span>秒</span>
                 <small>（获得学分所需的学习时长）</small>
               </div>
@@ -190,21 +197,17 @@
 
             <div v-if="form.type !== 8" class="field span-2">
               <span>学分<em>*</em></span>
-              <div class="radio-stack">
-                <label>
-                  <input v-model="scoreMode" type="radio" value="follow" />
-                  <span>跟随学分策略（课程设置-学分策略设置）</span>
+              <el-radio-group v-model="scoreMode" class="radio-stack">
+                <el-radio value="follow">
+                  跟随学分策略（课程设置-学分策略设置）
                   <strong>{{ calculatedScore }} 学分</strong>
-                </label>
-                <label>
-                  <input v-model="scoreMode" type="radio" value="custom" />
-                  <span>单独设置学分</span>
-                </label>
+                </el-radio>
+                <el-radio value="custom">单独设置学分</el-radio>
                 <div v-if="scoreMode === 'custom'" class="inline-control compact">
-                  <input v-model.number="form.studyScore" type="number" min="0.1" step="0.1" />
+                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" :controls="false" />
                   <span>学分</span>
                 </div>
-              </div>
+              </el-radio-group>
             </div>
 
             <div class="field span-2">
@@ -214,9 +217,9 @@
               </template>
               <template v-else>
                 <div class="finish-standard">
-                  <select v-model.number="form.finishStandardPercent" :disabled="isPublished">
-                    <option v-for="value in finishOptions" :key="value" :value="value">{{ value }}%</option>
-                  </select>
+                  <el-select v-model="form.finishStandardPercent" :disabled="isPublished">
+                    <el-option v-for="value in finishOptions" :key="value" :label="`${value}%`" :value="value" />
+                  </el-select>
                   <span>完成标准时长的</span>
                   <strong>{{ form.finishStandardPercent }}%</strong>
                   <span>获得学分</span>
@@ -228,8 +231,14 @@
             <label class="field span-2">
               <span>简介</span>
               <div class="textarea-wrap">
-                <textarea v-model="form.description" maxlength="2000" placeholder="请输入课件简介"></textarea>
-                <small>{{ form.description.length }}/2000</small>
+                <el-input
+                  v-model="form.description"
+                  type="textarea"
+                  maxlength="2000"
+                  show-word-limit
+                  :rows="4"
+                  placeholder="请输入课件简介"
+                />
               </div>
             </label>
 
@@ -248,18 +257,18 @@
               <div v-if="form.attachmentPaths.length" class="attachment-list">
                 <div v-for="(attachment, index) in form.attachmentPaths" :key="attachment.storagePath">
                   <span>{{ attachment.fileName }}</span>
-                  <button type="button" @click="form.attachmentPaths.splice(index, 1)">删除</button>
+                  <el-button @click="form.attachmentPaths.splice(index, 1)">删除</el-button>
                 </div>
               </div>
             </div>
 
             <label class="field">
               <span>编码</span>
-              <input v-model.trim="form.code" maxlength="100" placeholder="请输入编码" />
+              <el-input v-model.trim="form.code" maxlength="100" placeholder="请输入编码" />
             </label>
             <label class="field">
               <span>版本</span>
-              <input v-model.trim="form.versionStr" maxlength="100" placeholder="请输入版本" />
+              <el-input v-model.trim="form.versionStr" maxlength="100" placeholder="请输入版本" />
             </label>
           </div>
         </section>
@@ -270,7 +279,7 @@
             <span>贡献者<em>*</em></span>
             <div class="contributor-tag">
               <span>{{ contributorText }}</span>
-              <button type="button" aria-label="移除贡献者" @click="removeContributor">×</button>
+              <el-button aria-label="移除贡献者" @click="removeContributor">×</el-button>
               <i>...</i>
             </div>
           </div>
@@ -281,28 +290,23 @@
           <div class="permission-form">
             <div class="permission-line">
               <span>浏览权限</span>
-              <div class="radio-stack">
-                <label><input v-model.number="form.viewPermission" type="radio" :value="1" /><span>跟随分类浏览权限</span></label>
-                <label><input v-model.number="form.viewPermission" type="radio" :value="2" /><span>单独设置允许浏览</span></label>
-              </div>
+              <el-radio-group v-model="form.viewPermission" class="radio-stack">
+                <el-radio :value="1">跟随分类浏览权限</el-radio>
+                <el-radio :value="2">单独设置允许浏览</el-radio>
+              </el-radio-group>
             </div>
 
             <div class="permission-line">
               <span>下载权限</span>
-              <div class="radio-stack">
-                <label>
-                  <input v-model="form.downloadEnabled" type="checkbox" />
-                  <span>允许下载（控制PC端、App端是否允许下载）</span>
-                </label>
-                <label :class="{ disabled: !form.downloadEnabled }">
-                  <input v-model.number="form.downloadPermission" type="radio" :value="1" :disabled="!form.downloadEnabled" />
-                  <span>跟随分类中的「允许下载课件」权限</span>
-                </label>
-                <label :class="{ disabled: !form.downloadEnabled }">
-                  <input v-model.number="form.downloadPermission" type="radio" :value="2" :disabled="!form.downloadEnabled" />
-                  <span>单独设置允许下载</span>
-                </label>
-              </div>
+              <el-radio-group v-model="form.downloadPermission" class="radio-stack">
+                <el-checkbox v-model="form.downloadEnabled">
+                  允许下载（控制PC端、App端是否允许下载）
+                </el-checkbox>
+                <el-radio :value="1" :disabled="!form.downloadEnabled">
+                  跟随分类中的「允许下载课件」权限
+                </el-radio>
+                <el-radio :value="2" :disabled="!form.downloadEnabled">单独设置允许下载</el-radio>
+              </el-radio-group>
             </div>
 
             <div class="permission-line">
@@ -312,20 +316,15 @@
 
             <div class="permission-line">
               <span>App保存课件权限</span>
-              <div class="radio-stack">
-                <label>
-                  <input v-model="form.appSaveEnabled" type="checkbox" />
-                  <span>允许保存（保存后，学员在App内无需流量即可查看，但不能分享、转发）</span>
-                </label>
-                <label :class="{ disabled: !form.appSaveEnabled }">
-                  <input v-model.number="form.appSavePermission" type="radio" :value="1" :disabled="!form.appSaveEnabled" />
-                  <span>跟随分类中的「App保存课件」权限</span>
-                </label>
-                <label :class="{ disabled: !form.appSaveEnabled }">
-                  <input v-model.number="form.appSavePermission" type="radio" :value="2" :disabled="!form.appSaveEnabled" />
-                  <span>单独设置允许保存</span>
-                </label>
-              </div>
+              <el-radio-group v-model="form.appSavePermission" class="radio-stack">
+                <el-checkbox v-model="form.appSaveEnabled">
+                  允许保存（保存后，学员在App内无需流量即可查看，但不能分享、转发）
+                </el-checkbox>
+                <el-radio :value="1" :disabled="!form.appSaveEnabled">
+                  跟随分类中的「App保存课件」权限
+                </el-radio>
+                <el-radio :value="2" :disabled="!form.appSaveEnabled">单独设置允许保存</el-radio>
+              </el-radio-group>
             </div>
           </div>
         </section>
@@ -333,18 +332,18 @@
         <section ref="functionSection" class="form-section" data-anchor="function">
           <h2><i></i>功能设置</h2>
           <div class="switch-stack">
-            <label :class="{ disabled: speedLocked }">
-              <input v-model="form.speedEnabled" type="checkbox" :disabled="speedLocked" />
+            <div class="switch-line" :class="{ disabled: speedLocked }">
+              <el-switch v-model="form.speedEnabled" :disabled="speedLocked" />
               <span>开启倍速播放（开启后，学员可以按1.25/1.5/1.75/2倍速播放视频）</span>
-            </label>
-            <label :class="{ disabled: hoursLocked }">
-              <input v-model="form.speedHoursCalc" type="checkbox" :disabled="hoursLocked" />
+            </div>
+            <div class="switch-line" :class="{ disabled: hoursLocked }">
+              <el-switch v-model="form.speedHoursCalc" :disabled="hoursLocked" />
               <span>倍速播放时学习时长也倍速计算（举例：学员2倍速学习5分钟，学习时长算10分钟）</span>
-            </label>
-            <label>
-              <input v-model="form.aiSubtitleEnabled" type="checkbox" />
+            </div>
+            <div class="switch-line">
+              <el-switch v-model="form.aiSubtitleEnabled" />
               <span>开启AI字幕（开启后，该课件会生成字幕文稿，生成能力待专项上线）</span>
-            </label>
+            </div>
           </div>
         </section>
       </main>
@@ -352,26 +351,22 @@
 
     <footer v-if="stage !== 'upload'" class="form-footer">
       <span v-if="errors.form" class="form-error">{{ errors.form }}</span>
-      <button type="button" class="publish-btn" :disabled="saving" @click="submit">
+      <el-button class="publish-btn" :disabled="saving" @click="submit">
         {{ saving ? '处理中...' : mode === 'edit' ? '保存' : '发布' }}
-      </button>
+      </el-button>
     </footer>
 
-    <teleport to="body">
-      <div v-if="languageVisible" class="language-mask" @click.self="languageVisible = false">
-        <section class="language-dialog">
-          <h3>设置语种</h3>
-          <label v-for="item in languages" :key="item.value">
-            <input v-model="selectedLanguage" type="radio" :value="item.value" />
-            <span>{{ item.label }}</span>
-          </label>
-          <footer>
-            <button type="button" @click="languageVisible = false">取消</button>
-            <button type="button" class="primary" @click="saveLanguage">确定</button>
-          </footer>
-        </section>
-      </div>
-    </teleport>
+    <el-dialog v-model="languageVisible" title="设置语种" width="360px" append-to-body>
+      <el-radio-group v-model="selectedLanguage" class="language-options">
+        <el-radio v-for="item in languages" :key="item.value" :value="item.value">
+          {{ item.label }}
+        </el-radio>
+      </el-radio-group>
+      <template #footer>
+        <el-button @click="languageVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveLanguage">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -1271,7 +1266,13 @@ onMounted(load)
 .switch-stack {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
   gap: 12px;
+
+  :deep(.el-radio) {
+    margin-right: 0;
+  }
 
   label {
     display: flex;
@@ -1293,6 +1294,19 @@ onMounted(load)
 
   span {
     line-height: 1.5;
+  }
+}
+
+.switch-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #4d5568;
+  font-size: 13px;
+  line-height: 1.5;
+
+  &.disabled {
+    color: #a7aeba;
   }
 }
 

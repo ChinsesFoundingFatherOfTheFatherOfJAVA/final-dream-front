@@ -3,7 +3,7 @@
   <aside class="chapter-panel">
     <header class="panel-head">
       <span class="title">章节</span>
-      <button type="button" class="add-btn" @click="emit('add')">+ 添加章节</button>
+      <el-button class="add-btn" @click="emit('add')">+ 添加章节</el-button>
     </header>
 
     <div class="chapter-list">
@@ -18,16 +18,15 @@
           <span class="chapter-name" :title="chapter.name">{{ chapter.name }}</span>
           <span class="task-count">{{ chapter.tasks.length }} 个任务</span>
         </div>
-        <button
-          type="button"
+        <el-button
           class="more-btn"
           @click.stop="toggleMenu(index)"
         >
           ⋯
-        </button>
+        </el-button>
         <div v-if="menuIndex === index" class="more-menu" @click.stop>
-          <button type="button" @click="emit('edit', index); menuIndex = -1">编辑</button>
-          <button type="button" @click="emit('remove', index); menuIndex = -1">删除</button>
+          <el-button @click="emit('edit', index); menuIndex = -1">编辑</el-button>
+          <el-button @click="emit('remove', index); menuIndex = -1">删除</el-button>
         </div>
       </div>
 

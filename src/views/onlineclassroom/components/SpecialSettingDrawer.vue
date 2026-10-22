@@ -12,18 +12,17 @@
 
     <div class="special-section">
       <h4>App学习</h4>
-      <label class="switch-line">
-        <input v-model="localValue" type="checkbox" />
-        <span class="switch-control"></span>
+      <div class="switch-line">
+        <el-switch v-model="localValue" />
         <span>允许音频、视频课程后台播放</span>
-      </label>
+      </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="saving" @click="emit('save', localValue)">
+      <el-button class="btn ghost" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="saving" @click="emit('save', localValue)">
         {{ saving ? '保存中...' : '确定' }}
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>
@@ -83,45 +82,6 @@ watch(
   gap: 10px;
   color: #4d5568;
   font-size: 13px;
-  cursor: pointer;
-
-  input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-.switch-control {
-  position: relative;
-  width: 38px;
-  height: 20px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #c9d0dc;
-  transition: background 0.2s;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
-    transition: transform 0.2s;
-  }
-
-}
-
-.switch-line input:checked + .switch-control {
-  background: #2e7cf6;
-}
-
-.switch-line input:checked + .switch-control::after {
-  transform: translateX(18px);
 }
 
 .btn {

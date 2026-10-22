@@ -9,11 +9,16 @@
     <div class="batch-form">
       <label class="form-row">
         <span>所属分类</span>
-        <input :value="parentPath" readonly />
+        <el-input :model-value="parentPath" readonly />
       </label>
       <label class="content-field">
         <span>分类内容</span>
-        <textarea v-model="content" rows="12" placeholder="分类名称1&#10; 子分类名称01&#10;分类名称2"></textarea>
+        <el-input
+          v-model="content"
+          type="textarea"
+          :rows="12"
+          placeholder="分类名称1&#10; 子分类名称01&#10;分类名称2"
+        />
       </label>
       <div class="tips">
         <p>1. 课程分类总层级最多支持 10 级，超出后无法创建成功。</p>
@@ -24,10 +29,10 @@
     </div>
 
     <template #footer>
-      <button type="button" class="btn ghost" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="saving" @click="submit">
+      <el-button class="btn ghost" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="saving" @click="submit">
         {{ saving ? '创建中...' : '确定' }}
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>
@@ -91,25 +96,17 @@ const submit = async () => {
   color: #4d5568;
   font-size: 13px;
 
-  input,
-  textarea {
-    border: 1px solid #d9deea;
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
     border-radius: 6px;
-    outline: none;
-  }
-
-  input {
-    height: 36px;
-    padding: 0 10px;
   }
 }
 
 .content-field {
   align-items: flex-start;
 
-  textarea {
-    padding: 10px;
-    resize: vertical;
+  :deep(.el-textarea__inner) {
+    border-radius: 6px;
     font-family: inherit;
     line-height: 1.6;
   }

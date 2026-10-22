@@ -9,69 +9,79 @@
   >
     <div class="picker-body">
       <div class="filter-row">
-        <select v-model="catalogId" class="filter-select catalog-select" @change="reload(1)">
-          <option value="">全部分类</option>
-          <option v-for="node in catalogOptions" :key="node.id" :value="node.id">
-            {{ '　'.repeat(node.depth) }}{{ node.name }}
-          </option>
-        </select>
-        <select v-model="typeFilter" class="filter-select" @change="reload(1)">
-          <option :value="null">全部类型</option>
-          <option v-for="item in typeOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
-        </select>
-        <label class="keyword-box">
-          <span>⌕</span>
-          <input v-model.trim="keyword" type="search" placeholder="搜索课件名称" @keyup.enter="reload(1)" />
-        </label>
-        <button type="button" class="search-btn" @click="reload(1)">搜索</button>
+        <el-select v-model="catalogId" class="filter-select catalog-select" placeholder="全部分类" @change="reload(1)">
+          <el-option label="全部分类" value="" />
+          <el-option
+            v-for="node in catalogOptions"
+            :key="node.id"
+            :label="`${'　'.repeat(node.depth)}${node.name}`"
+            :value="node.id"
+          />
+        </el-select>
+        <el-select v-model="typeFilter" class="filter-select" placeholder="全部类型" @change="reload(1)">
+          <el-option label="全部类型" :value="null" />
+          <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <el-input
+          v-model.trim="keyword"
+          class="keyword-box"
+          placeholder="搜索课件名称"
+          clearable
+          @keyup.enter="reload(1)"
+        >
+          <template #prefix>⌕</template>
+        </el-input>
+        <el-button class="search-btn" @click="reload(1)">搜索</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input
-                  v-if="!single"
-                  type="checkbox"
-                  :checked="allPageChecked"
-                  :indeterminate.prop="somePageChecked"
-                  @change="toggleAllPage(($event.target as HTMLInputElement).checked)"
-                />
-              </th>
-              <th>名称</th>
-              <th>状态</th>
-              <th>学分</th>
-              <th>时长</th>
-              <th>过期时间</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in page.records" :key="row.id" :class="{ checked: isSelected(row.id) }">
-              <td class="check-col">
-                <input
-                  type="checkbox"
-                  :checked="isSelected(row.id)"
-                  @change="toggleRow(row, ($event.target as HTMLInputElement).checked)"
-                />
-              </td>
-              <td class="title-cell">
+        <el-table
+          v-loading="loading"
+          :data="page.records"
+          row-key="id"
+          class="picker-table"
+          empty-text="暂无符合条件的已发布课件"
+          :row-class-name="pickerRowClass"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox
+                v-if="!single"
+                :model-value="allPageChecked"
+                :indeterminate="somePageChecked"
+                @change="toggleAllPage"
+              />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="isSelected(row.id)"
+                @change="toggleRow(row, Boolean($event))"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="名称" min-width="280">
+            <template #default="{ row }">
+              <div class="title-cell">
                 <span class="type-icon" :style="{ background: typeColor(row.type) }">{{ typeGlyph(row.type) }}</span>
                 <span class="title-text" :title="row.title">{{ row.title }}</span>
-              </td>
-              <td>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" width="100">
+            <template #default="{ row }">
                 <span class="status-text" :class="`status-${row.status}`"><i></i>{{ row.statusDesc }}</span>
-              </td>
-              <td>{{ snapshotOf(row.id)?.credits ?? '--' }}</td>
-              <td>{{ snapshotOf(row.id)?.durationText || '--' }}</td>
-              <td>--</td>
-            </tr>
-            <tr v-if="!loading && !page.records.length">
-              <td colspan="6" class="empty-cell">暂无符合条件的已发布课件</td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="loading" class="table-loading">加载中...</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="学分" width="90">
+            <template #default="{ row }">{{ snapshotOf(row.id)?.credits ?? '--' }}</template>
+          </el-table-column>
+          <el-table-column label="时长" width="130">
+            <template #default="{ row }">{{ snapshotOf(row.id)?.durationText || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="过期时间" width="110">
+            <template #default>--</template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <PaginationBar v-model:page="pageNo" v-model:page-size="pageSize" :total="page.total" @change="reload()" />
@@ -81,12 +91,12 @@
       <div class="picker-footer">
         <div v-if="!single" class="left">
           <span class="selected-count">已选择 {{ selected.size }}/{{ PICKER_MAX_SELECTED }}</span>
-          <button type="button" class="text-btn" @click="selectAllFiltered">全选筛选结果</button>
-          <button type="button" class="text-btn" @click="clearAll">清除所有</button>
+          <el-button class="text-btn" @click="selectAllFiltered">全选筛选结果</el-button>
+          <el-button class="text-btn" @click="clearAll">清除所有</el-button>
         </div>
         <div class="right">
-          <button type="button" class="btn" @click="emit('close')">取消</button>
-          <button type="button" class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</button>
+          <el-button class="btn" @click="emit('close')">取消</el-button>
+          <el-button class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</el-button>
         </div>
       </div>
     </template>
@@ -194,6 +204,9 @@ function typeColor(type: number) {
 function isSelected(id: string) {
   return selected.value.has(id)
 }
+
+const pickerRowClass = ({ row }: { row: CoursewareListItem }) =>
+  isSelected(row.id) ? 'checked-row' : ''
 
 /** 拉取当前页并按需补齐学分/时长快照（失败静默，仅影响列展示为 "--"） */
 async function reload(nextPage?: number) {
@@ -354,14 +367,14 @@ watch(
 }
 
 .filter-select {
-  height: 34px;
   max-width: 190px;
-  padding: 0 8px;
-  border: 1px solid #d9deea;
   border-radius: 6px;
-  background: #fff;
   color: #4d5568;
   font-size: 13px;
+
+  :deep(.el-select__wrapper) {
+    min-height: 34px;
+  }
 }
 
 .catalog-select {
@@ -372,22 +385,10 @@ watch(
   flex: 1;
   min-width: 160px;
   max-width: 260px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0 10px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  color: #98a1b2;
 
-  input {
-    min-width: 0;
-    flex: 1;
-    border: none;
-    outline: none;
-    color: #394253;
-    font-size: 13px;
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
   }
 }
 
@@ -413,44 +414,26 @@ watch(
   flex: 1;
 }
 
-table {
+.picker-table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.check-col {
-  width: 44px;
-}
+  :deep(.el-table__header th) {
+    height: 44px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-th,
-td {
-  height: 44px;
-  padding: 0 10px;
-  border-bottom: 1px solid #edf0f5;
-  color: #4d5568;
-  text-align: left;
-  font-size: 13px;
-}
+  :deep(.el-table__row td) {
+    height: 44px;
+    color: #4d5568;
+    font-size: 13px;
+  }
 
-th {
-  background: #f8fafc;
-  color: #667085;
-  font-weight: 600;
-}
-
-tbody tr:hover {
-  background: #fafcff;
-}
-
-tbody tr.checked {
-  background: #f2f7ff;
-}
-
-input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  accent-color: #2e7cf6;
+  :deep(.checked-row) {
+    background: #f2f7ff;
+  }
 }
 
 .title-cell {
@@ -500,22 +483,6 @@ input[type='checkbox'] {
 
 .status-1 i {
   background: #f0a13b;
-}
-
-.empty-cell {
-  height: 180px;
-  color: #98a1b2;
-  text-align: center;
-}
-
-.table-loading {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.75);
-  color: #7b8496;
-  font-size: 13px;
 }
 
 .picker-footer {

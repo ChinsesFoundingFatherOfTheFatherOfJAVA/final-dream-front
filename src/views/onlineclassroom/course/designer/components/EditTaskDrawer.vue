@@ -10,14 +10,19 @@
     <div class="edit-task-form">
       <label class="field">
         <span class="label">课件名称<em>*</em></span>
-        <input v-model.trim="taskName" type="text" maxlength="200" placeholder="请输入任务名称" />
+        <el-input
+          v-model.trim="taskName"
+          maxlength="200"
+          show-word-limit
+          placeholder="请输入任务名称"
+        />
       </label>
 
       <div class="field">
         <span class="label">选择课件</span>
         <div class="courseware-row">
           <span class="courseware-name" :title="coursewareTitle">{{ coursewareTitle || '--' }}</span>
-          <button type="button" class="mini-btn" @click="pickerVisible = true">...</button>
+          <el-button class="mini-btn" @click="pickerVisible = true">...</el-button>
         </div>
       </div>
 
@@ -26,21 +31,21 @@
         <div class="snapshot-row">
           <span>学分：{{ credits ?? '--' }}</span>
           <span>时长：{{ durationText || '--' }}</span>
-          <button
+          <el-button
             v-if="coursewareId"
-            type="button"
+           
             class="link-btn"
             @click="simpleEditVisible = true"
           >
             编辑课件
-          </button>
+          </el-button>
         </div>
       </div>
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" @click="confirm">确定</button>
+      <el-button class="btn" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" @click="confirm">确定</el-button>
     </template>
   </KngDrawer>
 
@@ -193,19 +198,10 @@ function confirm() {
     }
   }
 
-  input[type='text'] {
-    box-sizing: border-box;
+  :deep(.el-input__wrapper) {
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d9deea;
     border-radius: 6px;
-    color: #30384a;
     font-size: 13px;
-    outline: none;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
   }
 }
 

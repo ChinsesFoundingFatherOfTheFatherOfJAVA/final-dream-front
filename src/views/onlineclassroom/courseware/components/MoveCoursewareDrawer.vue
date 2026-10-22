@@ -8,15 +8,19 @@
   >
     <div class="move-body">
       <h4>请选择课堂</h4>
-      <select v-model="classroom" class="classroom-select">
-        <option value="main">主课堂</option>
-      </select>
+      <el-select v-model="classroom" class="classroom-select">
+        <el-option label="主课堂" value="main" />
+      </el-select>
 
       <h4>请选择分类</h4>
-      <label class="tree-search">
-        <span>⌕</span>
-        <input v-model.trim="keyword" type="search" placeholder="请输入课程分类名称搜索" />
-      </label>
+      <el-input
+        v-model.trim="keyword"
+        class="tree-search"
+        placeholder="请输入课程分类名称搜索"
+        clearable
+      >
+        <template #prefix>⌕</template>
+      </el-input>
       <div class="tree-wrap">
         <div class="tree-row root-row" :class="{ selected: selectedId === '' }" @click="selectedId = ''">
           <span class="expand-placeholder"></span>
@@ -30,14 +34,14 @@
           :style="{ paddingLeft: `${row.depth * 22}px` }"
           @click="selectedId = row.node.id"
         >
-          <button
+          <el-button
             v-if="row.hasChildren"
-            type="button"
+           
             class="expand-btn"
             @click.stop="toggle(row.node.id)"
           >
             {{ row.expanded ? '▾' : '▸' }}
-          </button>
+          </el-button>
           <span v-else class="expand-placeholder"></span>
           <span>{{ row.node.name }}</span>
         </div>
@@ -45,10 +49,10 @@
     </div>
 
     <template #footer>
-      <button type="button" class="btn" @click="emit('close')">取消</button>
-      <button type="button" class="btn primary" :disabled="!selectedId" @click="emit('confirm', selectedId)">
+      <el-button class="btn" @click="emit('close')">取消</el-button>
+      <el-button class="btn primary" :disabled="!selectedId" @click="emit('confirm', selectedId)">
         确定
-      </button>
+      </el-button>
     </template>
   </KngDrawer>
 </template>
@@ -162,36 +166,14 @@ h4 {
 }
 
 .classroom-select,
-.tree-search input {
-  width: 100%;
-  height: 38px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
-  outline: none;
-}
-
-.classroom-select {
-  padding: 0 10px;
-}
-
 .tree-search {
-  height: 38px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 10px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  color: #98a1b2;
+  width: 100%;
+}
 
-  input {
-    height: auto;
-    flex: 1;
-    padding: 0;
-    border: none;
-  }
+.classroom-select :deep(.el-select__wrapper),
+.tree-search :deep(.el-input__wrapper) {
+  min-height: 38px;
+  border-radius: 6px;
 }
 
 .tree-wrap {

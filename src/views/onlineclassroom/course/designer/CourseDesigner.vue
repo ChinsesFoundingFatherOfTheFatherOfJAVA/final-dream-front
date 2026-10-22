@@ -3,25 +3,25 @@
     <!-- 顶栏（截图09）：← 返回 / 课程名 / 结构切换 / 解锁模式下拉+暂存关闭+保存（右对齐） -->
     <header class="top-bar">
       <div class="bar-left">
-        <button type="button" class="back-btn" @click="backToList">← 返回列表</button>
+        <el-button class="back-btn" @click="backToList">← 返回列表</el-button>
         <span class="divider"></span>
         <h1 class="course-name" :title="courseTitle">{{ courseTitle || '课程设计器' }}</h1>
         <!-- 顶栏按钮：有章节↔无章节 切换（CS-07a） -->
-        <button type="button" class="toggle-btn" @click="toggleStructure">
+        <el-button class="toggle-btn" @click="toggleStructure">
           {{ structureType === 1 ? '切换为无章节' : '切换为章节模式' }}
-        </button>
+        </el-button>
       </div>
       <div class="bar-right">
-        <button type="button" class="mode-btn" @click="unlockVisible = true">
+        <el-button class="mode-btn" @click="unlockVisible = true">
           {{ unlockMode === UNLOCK_MODE_ORDER ? '按顺序学习' : '自由学习模式' }}
           <span class="caret">▼</span>
-        </button>
-        <button type="button" class="btn ghost" :disabled="saving || loading" @click="submitDesigner(false)">
+        </el-button>
+        <el-button class="btn ghost" :disabled="saving || loading" @click="submitDesigner(false)">
           暂存关闭
-        </button>
-        <button type="button" class="btn primary" :disabled="saving || loading" @click="submitDesigner(true)">
+        </el-button>
+        <el-button class="btn primary" :disabled="saving || loading" @click="submitDesigner(true)">
           {{ saving ? '保存中...' : '保存' }}
-        </button>
+        </el-button>
       </div>
     </header>
 

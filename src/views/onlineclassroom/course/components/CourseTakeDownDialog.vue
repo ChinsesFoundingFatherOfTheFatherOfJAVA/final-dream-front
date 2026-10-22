@@ -10,10 +10,10 @@
           </div>
         </div>
         <footer>
-          <button type="button" @click="emit('close')">取消</button>
-          <button type="button" class="danger" :disabled="remaining > 0" @click="emit('confirm')">
+          <el-button @click="emit('close')">取消</el-button>
+          <el-button class="danger" :disabled="remaining > 0" @click="emit('confirm')">
             {{ remaining > 0 ? `下架(${remaining}s)` : '下架' }}
-          </button>
+          </el-button>
         </footer>
       </section>
     </div>
