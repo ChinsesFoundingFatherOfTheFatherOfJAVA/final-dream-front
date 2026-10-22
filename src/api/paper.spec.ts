@@ -71,6 +71,7 @@ const exerciseAllApis = async () => {
   await paper.batchPaper('delete', [id])
   await paper.getPaperEditCanvas(id)
   await paper.getPaperQuesList(id, 1, 10, -1, -1, '')
+  await paper.exportPaperQuestions(id, { type: 0, levelType: -1, keyword: '' })
   await paper.addPaperQuestion(id, { sectionIndex: 0, score: 1, libId: 'l1', question: {} })
   await paper.pickPaperQuestions(id, [{ quesId: qid, score: 1, sectionIndex: 0 }])
   await paper.updatePaperQuestion(id, qid, { score: 2 })

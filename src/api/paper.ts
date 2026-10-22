@@ -1,4 +1,4 @@
-import request, { downloadBlob } from './request'
+import request, { downloadBlob, saveBlob } from './request'
 
 /**
  * 测练中心·试卷管理 API（07 接口文档：经网关 /api/exam）。
@@ -266,6 +266,17 @@ export function getPaperQuesList(paperId: string, current: number, limit: number
   return request.get<unknown, { records: PaperQuesItem[]; total: number }>(`/exam/paper/${paperId}/questions`, {
     params: { current, limit, type, levelType, keyword }
   })
+}
+
+/** 只读考试回看页：按当前筛选导出试卷试题列表。 */
+export async function exportPaperQuestions(
+  paperId: string,
+  params: { type?: number; levelType?: number; keyword?: string } = {}
+) {
+  saveBlob(
+    await downloadBlob(`/exam/paper/${paperId}/questions/export`, { params }),
+    '试卷试题.xlsx'
+  )
 }
 
 /** 4.3 添加题目（同源写入） */

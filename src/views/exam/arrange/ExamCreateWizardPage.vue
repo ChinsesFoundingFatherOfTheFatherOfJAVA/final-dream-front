@@ -39,7 +39,7 @@
             <label class="form-row">
               <span class="row-label required">试卷分类</span>
               <el-select disabled>
-                <el-option  :label="paper?.catalogName || '默认试卷分类'" />
+                <el-option :value="paper?.catalogId || 'root'" :label="paper?.catalogName || '默认试卷分类'" />
               </el-select>
             </label>
             <div class="form-row">
@@ -149,6 +149,9 @@
             <el-input v-model.trim="roQuery.keyword" class="ro-search" placeholder="请输入试题名称搜索"
                    @keyup.enter="loadRoQuestions(1)" />
             <el-button class="btn" @click="loadRoQuestions(1)">搜索</el-button>
+            <el-button class="btn export-btn" :disabled="roLoading || roExporting" @click="exportRoQuestions">
+              导出数据
+            </el-button>
           </div>
 
           <div class="ro-table-wrap">
@@ -203,7 +206,10 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
-import { createPaper, getPaperDetail, getPaperQuesList, type PaperItem, type PaperQuesItem } from '@/api/paper'
+import {
+  createPaper, exportPaperQuestions, getPaperDetail, getPaperQuesList,
+  type PaperItem, type PaperQuesItem
+} from '@/api/paper'
 import { createArrange, getArrangeDetail } from '@/api/arrange'
 import PublishFormPanel from './components/PublishFormPanel.vue'
 import PaperPickDrawer from './components/PaperPickDrawer.vue'
@@ -248,6 +254,7 @@ const roQues = ref<PaperQuesItem[]>([])
 const roTotal = ref(0)
 const roPage = ref(1)
 const roLoading = ref(false)
+const roExporting = ref(false)
 
 const paperBuildType = computed(() => paper.value?.buildType ?? 0)
 
@@ -390,6 +397,24 @@ const loadRoQuestions = async (page = roPage.value) => {
     roTotal.value = 0
   } finally {
     roLoading.value = false
+  }
+}
+
+/** 只读回看：导出当前筛选下的试卷试题列表。 */
+const exportRoQuestions = async () => {
+  if (!paperId.value || roExporting.value) return
+  roExporting.value = true
+  try {
+    await exportPaperQuestions(paperId.value, {
+      type: roQuery.type,
+      levelType: roQuery.levelType,
+      keyword: roQuery.keyword
+    })
+    toast.success('导出已开始下载')
+  } catch {
+    toast.error('导出失败，请重试')
+  } finally {
+    roExporting.value = false
   }
 }
 
