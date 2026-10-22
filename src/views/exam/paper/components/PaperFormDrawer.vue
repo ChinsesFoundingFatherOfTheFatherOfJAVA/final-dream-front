@@ -28,7 +28,7 @@
 
         <div class="form-item">
           <label class="form-label required">试卷名称</label>
-          <input v-model="name" maxlength="200" placeholder="请输入" />
+          <el-input v-model="name" maxlength="200" placeholder="请输入" />
           <div class="char-count">{{ name.length }}/200</div>
         </div>
 
@@ -36,11 +36,11 @@
           <label class="form-label required">出卷方式</label>
           <div class="radio-row">
             <label class="radio-item">
-              <input v-model.number="buildType" type="radio" :value="0" :disabled="mode === 'edit'" />
+              <el-radio v-model.number="buildType" :value="0" :disabled="mode === 'edit'" />
               <span>固定出卷</span>
             </label>
             <label class="radio-item">
-              <input v-model.number="buildType" type="radio" :value="1" :disabled="mode === 'edit'" />
+              <el-radio v-model.number="buildType" :value="1" :disabled="mode === 'edit'" />
               <span>随机出卷</span>
             </label>
           </div>
@@ -51,11 +51,11 @@
           <label class="form-label">试卷保密</label>
           <div class="radio-row">
             <label class="radio-item">
-              <input v-model.number="secrecy" type="radio" :value="0" />
+              <el-radio v-model.number="secrecy" :value="0" />
               <span>公开</span>
             </label>
             <label class="radio-item">
-              <input v-model.number="secrecy" type="radio" :value="1" />
+              <el-radio v-model.number="secrecy" :value="1" />
               <span>保密 <em class="note-inline">（仅支持创建者及超级管理员可编辑）</em></span>
             </label>
           </div>
@@ -63,10 +63,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="handleSave">
           {{ saving ? '保存中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

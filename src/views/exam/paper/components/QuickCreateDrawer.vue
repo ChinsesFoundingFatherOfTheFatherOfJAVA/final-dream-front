@@ -15,9 +15,9 @@
             <div class="step-main">
               <p class="step-title">点击「下载」按钮下载需要导入的模板文件。</p>
               <p class="step-warn">请仔细阅读模板中的说明，并按要求格式填写导入的数据。</p>
-              <button class="btn primary" type="button" :disabled="downloading" @click="downloadTemplate">
+              <el-button class="btn primary" :disabled="downloading" @click="downloadTemplate">
                 {{ downloading ? '下载中…' : '下载' }}
-              </button>
+              </el-button>
             </div>
           </li>
 
@@ -26,10 +26,10 @@
             <span class="step-no">2</span>
             <div class="step-main">
               <p class="step-title">选择试题所属题库。</p>
-              <select v-model="libId" class="field">
-                <option value="">选择题库</option>
-                <option v-for="lib in libs" :key="lib.id" :value="lib.id">{{ lib.name }}</option>
-              </select>
+              <el-select v-model="libId" class="field">
+                <el-option value="" label="选择题库" />
+                <el-option v-for="lib in libs" :key="lib.id" :value="lib.id" :label="lib.name" />
+              </el-select>
               <p class="step-hint">整卷题目都会写入该题库；找不到目标库可先去「题库管理」新建。</p>
             </div>
           </li>
@@ -57,11 +57,11 @@
               </div>
               <div class="radio-row">
                 <label class="radio-item">
-                  <input v-model.number="secrecy" type="radio" :value="0" />
+                  <el-radio v-model.number="secrecy" :value="0" />
                   <span>公开</span>
                 </label>
                 <label class="radio-item">
-                  <input v-model.number="secrecy" type="radio" :value="1" />
+                  <el-radio v-model.number="secrecy" :value="1" />
                   <span>保密 <em class="note-inline">（仅支持创建者及超级管理员可编辑）</em></span>
                 </label>
               </div>
@@ -97,9 +97,9 @@
                 <input ref="fileInput" type="file" class="hidden-file" accept=".xlsx,.xls" @change="onPicked" />
               </div>
 
-              <button class="btn primary import-btn" type="button" :disabled="!canImport || importing" @click="doImport">
+              <el-button class="btn primary import-btn" :disabled="!canImport || importing" @click="doImport">
                 {{ importing ? `导入中 ${percent}%` : '开始导入' }}
-              </button>
+              </el-button>
               <span v-if="!canImport" class="need-tip">请先完成上方第 2、3 步</span>
             </div>
           </li>
@@ -119,10 +119,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">关闭</button>
-        <button v-if="result" class="btn primary" type="button" @click="emit('imported', result.paperId); emit('close')">
+        <el-button class="btn" @click="emit('close')">关闭</el-button>
+        <el-button v-if="result" class="btn primary" @click="emit('imported', result.paperId); emit('close')">
           完成（刷新列表）
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

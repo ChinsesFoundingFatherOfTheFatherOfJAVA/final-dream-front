@@ -9,56 +9,50 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <select v-model="libId" class="filter-select" @change="reload(1)">
-            <option value="">选择题库</option>
-            <option v-for="lib in libs" :key="lib.id" :value="lib.id">{{ lib.name }}</option>
-          </select>
-          <select v-model.number="type" class="filter-select" @change="reload(1)">
-            <option :value="-1">全部题型</option>
-            <option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-          </select>
-          <select v-model.number="levelType" class="filter-select" @change="reload(1)">
-            <option :value="-1">全部难度</option>
-            <option :value="0">易</option>
-            <option :value="1">中</option>
-            <option :value="2">难</option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="请输入试题名称搜索" @keyup.enter="reload(1)" />
-          <button class="btn-primary" type="button" @click="reload(1)">查询</button>
+          <el-select v-model="libId" class="filter-select" @change="reload(1)">
+            <el-option value="" label="选择题库" />
+            <el-option v-for="lib in libs" :key="lib.id" :value="lib.id" :label="lib.name" />
+          </el-select>
+          <el-select v-model="type" class="filter-select" @change="reload(1)">
+            <el-option :value="-1" label="全部题型" />
+            <el-option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
+          </el-select>
+          <el-select v-model="levelType" class="filter-select" @change="reload(1)">
+            <el-option :value="-1" label="全部难度" />
+            <el-option :value="0" label="易" />
+            <el-option :value="1" label="中" />
+            <el-option :value="2" label="难" />
+          </el-select>
+          <el-input v-model.trim="keyword" placeholder="请输入试题名称搜索" @keyup.enter="reload(1)" />
+          <el-button class="btn-primary" @click="reload(1)">查询</el-button>
         </div>
 
         <div class="main-area">
           <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th class="check-col">
-                    <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                           @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-                  </th>
-                  <th>试题名称</th><th class="col-sm">题型</th><th class="col-sm">难度</th>
-                  <th class="col-point">考核点</th><th class="col-score">分值</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in records" :key="row.id" :class="{ checked: picked.has(row.id) }">
-                  <td class="check-col">
-                    <input type="checkbox" :checked="picked.has(row.id)"
-                           @change="toggle(row, ($event.target as HTMLInputElement).checked)" />
-                  </td>
-                  <td class="col-name" :title="row.summary">{{ row.summary }}</td>
-                  <td class="col-sm">{{ TYPE_LABELS[row.type] ?? '--' }}</td>
-                  <td class="col-sm">{{ LEVEL_LABELS[row.levelType] ?? '--' }}</td>
-                  <td class="col-point" :title="row.mainPointName">{{ row.mainPointName || '--' }}</td>
-                  <td class="col-score">
-                    <input v-model.number="scores[row.id]" type="number" min="0" step="0.5" class="score-input" />
-                  </td>
-                </tr>
-                <tr v-if="!loading && !records.length">
-                  <td colspan="6" class="empty-cell">请先选择题库，或该题库下没有可选题</td>
-                </tr>
-              </tbody>
-            </table>
+            <el-table
+              v-loading="loading"
+              :data="records"
+              row-key="id"
+              empty-text="请先选择题库，或该题库下没有可选题"
+            >
+              <el-table-column width="44" align="center">
+                <template #header>
+                  <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+                </template>
+                <template #default="{ row }">
+                  <el-checkbox :model-value="picked.has(row.id)" @change="toggle(row, Boolean($event))" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="summary" label="试题名称" min-width="260" show-overflow-tooltip />
+              <el-table-column label="题型" width="100"><template #default="{ row }">{{ TYPE_LABELS[row.type] ?? '--' }}</template></el-table-column>
+              <el-table-column label="难度" width="90"><template #default="{ row }">{{ LEVEL_LABELS[row.levelType] ?? '--' }}</template></el-table-column>
+              <el-table-column label="考核点" width="140" show-overflow-tooltip><template #default="{ row }">{{ row.mainPointName || '--' }}</template></el-table-column>
+              <el-table-column label="分值" width="110">
+                <template #default="{ row }">
+                  <el-input-number v-model="scores[row.id]" :min="0" :step="0.5" class="score-input" :controls="false" />
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
 
           <aside class="picked-panel">
@@ -75,17 +69,22 @@
 
         <div class="pagination">
           <span>共 {{ total }} 条</span>
-          <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">‹</button>
-          <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-          <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">›</button>
+          <el-pagination
+            v-model:current-page="pageNo"
+            :page-size="pageSize"
+            :total="total"
+            layout="prev, pager, next"
+            background
+            @current-change="reload"
+          />
         </div>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!picked.size || saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!picked.size || saving" @click="confirm">
           {{ saving ? '添加中…' : `确定（${picked.size} 题）` }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

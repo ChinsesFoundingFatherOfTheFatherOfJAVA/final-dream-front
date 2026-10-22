@@ -10,7 +10,7 @@
       <div class="drawer-body">
         <div v-if="batch" class="batch-tip">已选 {{ count }} 个{{ api === 'paper' ? '试卷' : '题库' }}，将统一移动到所选分类</div>
 
-        <input v-model.trim="keyword" type="search" placeholder="请输入分类名称搜索" />
+        <el-input v-model.trim="keyword" placeholder="请输入分类名称搜索" />
 
         <div class="tree-scroll">
           <div
@@ -34,10 +34,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="!targetId || saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!targetId || saving" @click="handleSave">
           {{ saving ? '保存中...' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

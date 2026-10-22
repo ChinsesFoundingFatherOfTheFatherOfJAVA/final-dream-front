@@ -12,32 +12,32 @@
         <div v-for="point in list" :key="point.id" class="point-row"
              @mouseenter="hoverId = point.id" @mouseleave="hoverId = ''">
           <template v-if="editingId !== '' && editingId === point.id">
-            <input v-model.trim="editingName" placeholder="考核点名称" @keyup.enter="confirmEdit(point)" />
-            <button class="icon-btn" type="button" @click="confirmEdit(point)">✓</button>
-            <button class="icon-btn" type="button" @click="editingId = ''">×</button>
+            <el-input v-model.trim="editingName" placeholder="考核点名称" @keyup.enter="confirmEdit(point)" />
+            <el-button class="icon-btn" @click="confirmEdit(point)">✓</el-button>
+            <el-button class="icon-btn" @click="editingId = ''">×</el-button>
           </template>
           <template v-else>
             <span class="point-name">{{ point.name }}</span>
             <span v-if="point.defaultPoint === 1" class="default-tag">默认</span>
             <span v-show="hoverId === point.id" class="row-actions">
-              <button class="icon-btn" type="button" title="编辑" @click="startEdit(point)">✎</button>
-              <button class="icon-btn danger" type="button" title="删除"
-                      :disabled="point.defaultPoint === 1" @click="remove(point)">🗑</button>
+              <el-button class="icon-btn" title="编辑" @click="startEdit(point)">✎</el-button>
+              <el-button class="icon-btn danger" title="删除"
+                      :disabled="point.defaultPoint === 1" @click="remove(point)">🗑</el-button>
             </span>
           </template>
         </div>
 
         <div v-if="adding" class="point-row">
-          <input v-model.trim="newName" placeholder="考核点名称" @keyup.enter="confirmAdd" />
-          <button class="icon-btn" type="button" @click="confirmAdd">✓</button>
-          <button class="icon-btn" type="button" @click="adding = false; newName = ''">×</button>
+          <el-input v-model.trim="newName" placeholder="考核点名称" @keyup.enter="confirmAdd" />
+          <el-button class="icon-btn" @click="confirmAdd">✓</el-button>
+          <el-button class="icon-btn" @click="adding = false; newName = ''">×</el-button>
         </div>
 
         <p v-if="!loading && !list.length" class="empty">该题库下暂无考核点</p>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="adding = true; newName = ''">+ 添加考核点</button>
+        <el-button class="btn" @click="adding = true; newName = ''">+ 添加考核点</el-button>
         <span class="tip">改动即时保存</span>
       </div>
     </div>

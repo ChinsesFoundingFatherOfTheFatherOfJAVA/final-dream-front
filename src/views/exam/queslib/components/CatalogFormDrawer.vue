@@ -27,14 +27,13 @@
           <div class="section-title">基本信息</div>
           <div class="form-item">
             <label class="form-label required">分类名称</label>
-            <textarea
+            <el-input
               v-if="mode === 'create'"
-              v-model="catalogText"
-              rows="6"
+              v-model="catalogText" :rows="6"
               maxlength="10000"
               placeholder="示例：&#10;分类名称1&#10;  子分类名称01&#10;    子分类名称001&#10;分类名称2"
-            ></textarea>
-            <input v-else v-model="editName" maxlength="200" class="name-input" />
+             type="textarea" />
+            <el-input v-else v-model="editName" maxlength="200" class="name-input" />
           </div>
           <div v-if="mode === 'create'" class="fill-notice">
             <p>填写须知：</p>
@@ -62,12 +61,12 @@
             </div>
           </div>
           <label class="checkbox-item">
-            <input type="checkbox" v-model="inheritParentAuth" :disabled="inheritLocked" />
+            <el-checkbox v-model="inheritParentAuth" :disabled="inheritLocked" />
             <span>继承一级分类权限</span>
           </label>
           <p class="checkbox-note">勾选后使用一级分类权限覆盖当前分类权限，不允许修改</p>
           <label class="checkbox-item">
-            <input type="checkbox" v-model="childInheritCurrentAuth" />
+            <el-checkbox v-model="childInheritCurrentAuth" />
             <span>所有子分类继承当前分类权限</span>
           </label>
           <p class="checkbox-note">勾选后所有子分类权限将被当前分类覆盖，不允许修改</p>
@@ -75,10 +74,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="handleSave">
           {{ saving ? '保存中...' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
 

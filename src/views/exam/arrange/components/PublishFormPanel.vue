@@ -12,13 +12,13 @@
         <div class="field">
           <span class="label required">考试名称</span>
           <div class="input-wrap">
-            <input v-model.trim="form.name" maxlength="1000" placeholder="请输入考试名称" />
+            <el-input v-model.trim="form.name" maxlength="1000" placeholder="请输入考试名称" />
             <em>{{ form.name.length }}/1000</em>
           </div>
 
           <label class="check-line">
-            <input type="checkbox" :checked="form.important === 1"
-                   @change="setFlag(form, 'important', ($event.target as HTMLInputElement).checked)" />
+            <el-checkbox :model-value="form.important === 1"
+                   @change="setFlag(form, 'important', Boolean($event))" />
             <span>重要考试</span>
             <i class="help" title="标记后，考试列表会突出显示">?</i>
           </label>
@@ -33,16 +33,14 @@
 
         <div class="field">
           <span class="label required">考试分类</span>
-          <select v-model="form.catalogId">
-            <option v-for="c in flatCatalogs" :key="c.id" :value="c.id">
-              {{ '　'.repeat(c.level) }}{{ c.name }}
-            </option>
-          </select>
+          <el-select v-model="form.catalogId">
+            <el-option v-for="c in flatCatalogs" :key="c.id" :value="c.id" :label="'　'.repeat(c.level) + c.name" />
+          </el-select>
         </div>
 
         <div class="field" :class="{ locked: published }">
           <span class="label">编号</span>
-          <input v-model.trim="form.code" placeholder="请输入" :disabled="published" />
+          <el-input v-model.trim="form.code" placeholder="请输入" :disabled="published" />
           <em v-if="published" class="lock-hint">已发布后不可改</em>
         </div>
 
@@ -70,17 +68,17 @@
         <div class="field required">
           <span class="label required">入场时间</span>
           <div class="range">
-            <input v-model="form.entryStartAt" type="datetime-local" />
+            <el-date-picker v-model="form.entryStartAt" type="datetime" value-format="YYYY-MM-DDTHH:mm" />
             <span class="tilde">至</span>
-            <input v-model="form.entryEndAt" type="datetime-local" />
+            <el-date-picker v-model="form.entryEndAt" type="datetime" value-format="YYYY-MM-DDTHH:mm" />
           </div>
         </div>
 
         <div class="field" :class="{ locked: published }">
           <span class="label">是否必修</span>
           <div class="radio-row">
-            <label><input v-model.number="form.requiredType" type="radio" :value="1" :disabled="published" /> 必修</label>
-            <label><input v-model.number="form.requiredType" type="radio" :value="2" :disabled="published" /> 选修</label>
+            <label><el-radio v-model.number="form.requiredType" :value="1" :disabled="published" /> 必修</label>
+            <label><el-radio v-model.number="form.requiredType" :value="2" :disabled="published" /> 选修</label>
           </div>
         </div>
 
@@ -89,16 +87,16 @@
           <p class="hint">当前试卷分数：{{ paperScoreText }} 分</p>
           <div class="radio-row">
             <span class="radio-pair">
-              <label><input v-model.number="form.passScoreType" type="radio" :value="1" :disabled="published" /> 固定分数</label>
+              <label><el-radio v-model.number="form.passScoreType" :value="1" :disabled="published" /> 固定分数</label>
               <span class="inline-input">
-                <input v-model.number="form.passScore" type="number" min="0" step="0.5" :disabled="published || form.passScoreType !== 1" />
+                <el-input-number v-model="form.passScore" :min="0" :step="0.5" :disabled="published || form.passScoreType !== 1" :controls="false" />
                 <em>分</em>
               </span>
             </span>
             <span class="radio-pair">
-              <label><input v-model.number="form.passScoreType" type="radio" :value="2" :disabled="published" /> 总分比例</label>
+              <label><el-radio v-model.number="form.passScoreType" :value="2" :disabled="published" /> 总分比例</label>
               <span class="inline-input">
-                <input v-model.number="form.passRatio" type="number" min="0" max="100" step="1" :disabled="published || form.passScoreType !== 2" />
+                <el-input-number v-model="form.passRatio" :min="0" :max="100" :step="1" :disabled="published || form.passScoreType !== 2" :controls="false" />
                 <em>%</em>
               </span>
             </span>
@@ -108,19 +106,19 @@
         <div class="field" :class="{ locked: published }">
           <span class="label">学员奖励</span>
           <div class="radio-row">
-            <label><input v-model.number="form.rewardType" type="radio" :value="1" :disabled="published" /> 考试归档后</label>
-            <label><input v-model.number="form.rewardType" type="radio" :value="2" :disabled="published" /> 考试通过后</label>
+            <label><el-radio v-model.number="form.rewardType" :value="1" :disabled="published" /> 考试归档后</label>
+            <label><el-radio v-model.number="form.rewardType" :value="2" :disabled="published" /> 考试通过后</label>
           </div>
           <div class="reward-box">
             <label class="reward-line">
               获得
-              <input v-model.number="form.rewardCredit" type="number" min="0" step="0.5" :disabled="published" />
+              <el-input-number v-model="form.rewardCredit" :min="0" :step="0.5" :disabled="published" :controls="false" />
               学分
               <i class="help" title="考试完成后发放的学分">?</i>
             </label>
             <label class="reward-line">
               获得
-              <input v-model.number="form.rewardPoints" type="number" min="0" step="1" :disabled="published" />
+              <el-input-number v-model="form.rewardPoints" :min="0" :step="1" :disabled="published" :controls="false" />
               积分
               <i class="help" title="考试完成后发放的积分">?</i>
             </label>
@@ -139,11 +137,11 @@
           <template v-if="form.internalEnabled === 1">
             <div class="radio-row">
               <label>
-                <input v-model="form.participantScope" type="radio" value="assigned" :disabled="published" />
+                <el-radio v-model="form.participantScope" value="assigned" :disabled="published" />
                 指定员工参与
               </label>
               <label>
-                <input v-model="form.participantScope" type="radio" value="all" :disabled="published" />
+                <el-radio v-model="form.participantScope" value="all" :disabled="published" />
                 全员参与
               </label>
             </div>
@@ -173,18 +171,18 @@
           <span class="label">优秀分数</span>
           <div class="radio-row">
             <span class="radio-pair">
-              <label><input v-model.number="form.excellentScoreType" type="radio" :value="1" /> 固定分数</label>
+              <label><el-radio v-model.number="form.excellentScoreType" :value="1" /> 固定分数</label>
               <span class="inline-input">
-                <input v-model.number="form.excellentScore" type="number" min="0" step="0.5"
-                       :disabled="form.excellentScoreType !== 1" />
+                <el-input-number v-model="form.excellentScore" :min="0" :step="0.5"
+                       :disabled="form.excellentScoreType !== 1" :controls="false" />
                 <em>分</em>
               </span>
             </span>
             <span class="radio-pair">
-              <label><input v-model.number="form.excellentScoreType" type="radio" :value="2" /> 总分比例</label>
+              <label><el-radio v-model.number="form.excellentScoreType" :value="2" /> 总分比例</label>
               <span class="inline-input">
-                <input v-model.number="form.excellentRatio" type="number" min="0" max="100" step="1"
-                       :disabled="form.excellentScoreType !== 2" />
+                <el-input-number v-model="form.excellentRatio" :min="0" :max="100" :step="1"
+                       :disabled="form.excellentScoreType !== 2" :controls="false" />
                 <em>%</em>
               </span>
             </span>
@@ -221,7 +219,7 @@
         <div class="field">
           <span class="label">考试说明</span>
           <div class="textarea-wrap">
-            <textarea v-model="form.description" maxlength="10000" rows="5" placeholder="请输入考试说明"></textarea>
+            <el-input v-model="form.description" maxlength="10000" :rows="5" placeholder="请输入考试说明" type="textarea" />
             <em>{{ form.description.length }}/10000</em>
           </div>
         </div>
@@ -246,10 +244,10 @@
 
     <!-- ============ 更多设置 ============ -->
     <section class="more-card">
-      <button class="more-toggle" type="button" @click="moreOpen = !moreOpen">
+      <el-button class="more-toggle" @click="moreOpen = !moreOpen">
         {{ moreOpen ? '收起更多设置' : '展开更多设置' }}
         <span class="chev" :class="{ open: moreOpen }">⌃</span>
-      </button>
+      </el-button>
 
       <div v-show="moreOpen" class="more-grid">
         <!-- 左栏 -->
@@ -268,14 +266,14 @@
                 <i class="help" title="到点自动发布，未发布前仍可修改配置">?</i>
               </div>
               <div v-if="advanced.scheduledPublish" class="sub-line">
-                <input v-model="advanced.scheduledPublishAt" type="datetime-local" />
+                <el-date-picker v-model="advanced.scheduledPublishAt" type="datetime" value-format="YYYY-MM-DDTHH:mm" />
               </div>
               <div class="switch-line">
                 <ToggleSwitch v-model="advanced.scheduledEnd" />
                 <span>定时结束考试</span>
               </div>
               <div v-if="advanced.scheduledEnd" class="sub-line">
-                <input v-model="advanced.scheduledEndAt" type="datetime-local" />
+                <el-date-picker v-model="advanced.scheduledEndAt" type="datetime" value-format="YYYY-MM-DDTHH:mm" />
               </div>
               <div class="switch-line">
                 <ToggleSwitch v-model="advanced.wrongToWrongBook" />
@@ -287,8 +285,8 @@
                 <span>固定 IP 考试</span>
                 <i class="help" title="只允许配置的 IP 段参加考试">?</i>
               </div>
-              <textarea v-if="advanced.fixedIp" v-model="fixedIpText" class="ip-input" rows="2"
-                        placeholder="每行一个 IP，例如 10.0.0.1"></textarea>
+              <el-input v-if="advanced.fixedIp" v-model="fixedIpText" class="ip-input" :rows="2"
+                        placeholder="每行一个 IP，例如 10.0.0.1" type="textarea" />
             </div>
           </div>
 
@@ -304,7 +302,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.durationEnabled" />
                 <span>统一考试时长</span>
                 <span v-if="advanced.examSetting.durationEnabled" class="inline-input">
-                  <input v-model.number="advanced.examSetting.durationMin" type="number" min="1" />
+                  <el-input-number v-model="advanced.examSetting.durationMin" :min="1" :controls="false" />
                   <em>分钟</em>
                 </span>
                 <i class="help" title="从开考起计时，到时自动交卷">?</i>
@@ -313,7 +311,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.minAnswerEnabled" />
                 <span>最短答题时长</span>
                 <span v-if="advanced.examSetting.minAnswerEnabled" class="inline-input">
-                  <input v-model.number="advanced.examSetting.minAnswerMin" type="number" min="0" />
+                  <el-input-number v-model="advanced.examSetting.minAnswerMin" :min="0" :controls="false" />
                   <em>分钟</em>
                 </span>
                 <i class="help" title="未满最短答题时长不允许交卷">?</i>
@@ -326,7 +324,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.repeatEnabled" />
                 <span>允许重复考试次数</span>
                 <span v-if="advanced.examSetting.repeatEnabled" class="inline-input">
-                  <input v-model.number="advanced.examSetting.repeatLimit" type="number" min="2" />
+                  <el-input-number v-model="advanced.examSetting.repeatLimit" :min="2" :controls="false" />
                   <em>次</em>
                 </span>
                 <i class="help" title="开启后可多次参加，取最高成绩">?</i>
@@ -339,7 +337,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.lateLimitEnabled" />
                 <span>允许迟到</span>
                 <span v-if="advanced.examSetting.lateLimitEnabled" class="inline-input">
-                  <input v-model.number="advanced.examSetting.lateLimitMin" type="number" min="0" />
+                  <el-input-number v-model="advanced.examSetting.lateLimitMin" :min="0" :controls="false" />
                   <em>分钟</em>
                 </span>
               </div>
@@ -377,18 +375,18 @@
               </div>
               <div v-if="advanced.answerView.viewScore" class="sub-box">
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewScoreValue === 1"
-                         @change="setFlag(advanced.answerView, 'viewScoreValue', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewScoreValue === 1"
+                         @change="setFlag(advanced.answerView, 'viewScoreValue', Boolean($event))" />
                   <span>允许学员查看考试分数</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewPassFlag === 1"
-                         @change="setFlag(advanced.answerView, 'viewPassFlag', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewPassFlag === 1"
+                         @change="setFlag(advanced.answerView, 'viewPassFlag', Boolean($event))" />
                   <span>允许学员查看是否通过标识</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewPointScore === 1"
-                         @change="setFlag(advanced.answerView, 'viewPointScore', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewPointScore === 1"
+                         @change="setFlag(advanced.answerView, 'viewPointScore', Boolean($event))" />
                   <span>允许学员查看考核点得分情况</span>
                 </label>
               </div>
@@ -399,28 +397,28 @@
               </div>
               <div v-if="advanced.answerView.viewAnswerDetail" class="sub-box">
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.wrongOnly === 1"
-                         @change="setFlag(advanced.answerView, 'wrongOnly', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.wrongOnly === 1"
+                         @change="setFlag(advanced.answerView, 'wrongOnly', Boolean($event))" />
                   <span>仅支持学员查看错题</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewAnswer === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnswer', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewAnswer === 1"
+                         @change="setFlag(advanced.answerView, 'viewAnswer', Boolean($event))" />
                   <span>允许学员查看考试答案</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewAnalysis === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnalysis', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewAnalysis === 1"
+                         @change="setFlag(advanced.answerView, 'viewAnalysis', Boolean($event))" />
                   <span>允许学员查看考试解析</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.viewAnswerTimeRange === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnswerTimeRange', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.viewAnswerTimeRange === 1"
+                         @change="setFlag(advanced.answerView, 'viewAnswerTimeRange', Boolean($event))" />
                   <span>允许查看答题时间范围</span>
                 </label>
                 <label class="check-line">
-                  <input type="checkbox" :checked="advanced.answerView.forbidPdfDownload === 1"
-                         @change="setFlag(advanced.answerView, 'forbidPdfDownload', ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="advanced.answerView.forbidPdfDownload === 1"
+                         @change="setFlag(advanced.answerView, 'forbidPdfDownload', Boolean($event))" />
                   <span>不允许学员下载 PDF 答题结果</span>
                 </label>
               </div>
@@ -457,7 +455,7 @@
                 <ToggleSwitch v-model="advanced.antiCheat.screenSwitchEnabled" :disabled="published" />
                 <span>考试切屏限制</span>
                 <span v-if="advanced.antiCheat.screenSwitchEnabled" class="inline-input">
-                  <input v-model.number="advanced.antiCheat.screenSwitchLimit" type="number" min="1" :disabled="published" />
+                  <el-input-number v-model="advanced.antiCheat.screenSwitchLimit" :min="1" :disabled="published" :controls="false" />
                   <em>次</em>
                 </span>
                 <i class="help" title="超过限制次数自动交卷">?</i>
@@ -474,18 +472,18 @@
             <div class="radio-line">
               <span>复制下载图片</span>
               <div class="radio-row">
-                <label><input type="radio" :value="0" :checked="advanced.security.copyDownloadImage !== 1"
+                <label><el-radio :value="0" :model-value="advanced.security.copyDownloadImage !== 1"
                               @change="setFlag(advanced.security, 'copyDownloadImage', false)" /> 禁止</label>
-                <label><input type="radio" :value="1" :checked="advanced.security.copyDownloadImage === 1"
+                <label><el-radio :value="1" :model-value="advanced.security.copyDownloadImage === 1"
                               @change="setFlag(advanced.security, 'copyDownloadImage', true)" /> 允许</label>
               </div>
             </div>
             <div class="radio-line">
               <span>复制文字</span>
               <div class="radio-row">
-                <label><input type="radio" :value="0" :checked="advanced.security.copyText !== 1"
+                <label><el-radio :value="0" :model-value="advanced.security.copyText !== 1"
                               @change="setFlag(advanced.security, 'copyText', false)" /> 禁止</label>
-                <label><input type="radio" :value="1" :checked="advanced.security.copyText === 1"
+                <label><el-radio :value="1" :model-value="advanced.security.copyText === 1"
                               @change="setFlag(advanced.security, 'copyText', true)" /> 允许</label>
               </div>
             </div>
@@ -503,11 +501,11 @@
               </div>
               <div v-if="advanced.learningTask.enabled" class="radio-rows">
                 <label class="radio-option">
-                  <input type="radio" value="pass" v-model="advanced.learningTask.removeOn" :disabled="published" />
+                  <el-radio value="pass" v-model="advanced.learningTask.removeOn" :disabled="published" />
                   <span>考试通过移除任务卡</span>
                 </label>
                 <label class="radio-option">
-                  <input type="radio" value="submit" v-model="advanced.learningTask.removeOn" :disabled="published" />
+                  <el-radio value="submit" v-model="advanced.learningTask.removeOn" :disabled="published" />
                   <span>考试提交移除任务卡</span>
                 </label>
               </div>
@@ -529,12 +527,12 @@
     </section>
 
     <div class="actions">
-      <button class="btn" type="button" :disabled="saving" @click="save(false)">
+      <el-button class="btn" :disabled="saving" @click="save(false)">
         {{ saving ? '保存中…' : '保存草稿' }}
-      </button>
-      <button class="btn primary" type="button" :disabled="saving" @click="save(true)">
+      </el-button>
+      <el-button class="btn primary" :disabled="saving" @click="save(true)">
         {{ published ? '更新后发布' : '发布考试' }}
-      </button>
+      </el-button>
     </div>
 
     <UserMultiPickerDrawer v-if="picker"

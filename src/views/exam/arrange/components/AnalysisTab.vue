@@ -40,8 +40,8 @@
         <div class="block-head">
           <p class="block-title">正确率统计</p>
           <div class="dim-tabs">
-            <button v-for="d in DIMENSIONS" :key="d.value" class="dim-tab" type="button"
-                    :class="{ active: dimension === d.value }" @click="switchDimension(d.value)">{{ d.label }}</button>
+            <el-button v-for="d in DIMENSIONS" :key="d.value" class="dim-tab"
+                    :class="{ active: dimension === d.value }" @click="switchDimension(d.value)">{{ d.label }}</el-button>
           </div>
         </div>
         <div ref="chartRef" class="chart"></div>

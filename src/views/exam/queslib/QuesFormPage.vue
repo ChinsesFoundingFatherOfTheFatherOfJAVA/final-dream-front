@@ -3,14 +3,14 @@
        type=5 组合题时，下半换成"子题列表"，每条子题复用同一个 QuesBodyForm。 -->
   <div class="ques-form">
     <header class="form-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ isEdit ? '编辑试题' : '新建试题' }}</h1>
       <div class="header-actions">
-        <button class="btn" type="button" @click="goBack">返回</button>
-        <button v-if="!isEdit" class="btn" type="button" :disabled="saving" @click="save(true)">保存并新增</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="save(false)">
+        <el-button class="btn" @click="goBack">返回</el-button>
+        <el-button v-if="!isEdit" class="btn" :disabled="saving" @click="save(true)">保存并新增</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="save(false)">
           {{ saving ? '保存中…' : '保存' }}
-        </button>
+        </el-button>
       </div>
     </header>
 
@@ -19,15 +19,15 @@
       <div class="grid">
         <label class="field">
           <span>题库</span>
-          <input :value="libName" disabled />
+          <el-input :model-value="libName" disabled />
         </label>
         <label class="field">
           <span>难度级别</span>
-          <select v-model.number="form.levelType">
-            <option :value="0">易</option>
-            <option :value="1">中</option>
-            <option :value="2">难</option>
-          </select>
+          <el-select v-model="form.levelType">
+            <el-option :value="0" label="易" />
+            <el-option :value="1" label="中" />
+            <el-option :value="2" label="难" />
+          </el-select>
         </label>
         <div class="field">
           <span>考核点</span>
@@ -36,9 +36,9 @@
         </div>
         <label class="field">
           <span>题型</span>
-          <select v-model.number="form.type" :disabled="isEdit">
-            <option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-          </select>
+          <el-select v-model="form.type" :disabled="isEdit">
+            <el-option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
+          </el-select>
         </label>
       </div>
     </section>
@@ -51,16 +51,16 @@
       <template v-if="form.type === 5">
         <div class="sub-header">
           <span class="sub-title">子题（{{ subQuestions.length }}）</span>
-          <button class="btn" type="button" @click="addSub">+ 新增子题</button>
+          <el-button class="btn" @click="addSub">+ 新增子题</el-button>
         </div>
 
         <div v-for="(sub, index) in subQuestions" :key="index" class="sub-card">
           <div class="sub-top">
             <span class="sub-index">子题 {{ index + 1 }}</span>
-            <select v-model.number="sub.type" class="sub-type">
-              <option v-for="(label, value) in SUB_TYPE_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-            </select>
-            <button class="icon-btn danger" type="button" @click="subQuestions.splice(index, 1)">×</button>
+            <el-select v-model="sub.type" class="sub-type">
+              <el-option v-for="(label, value) in SUB_TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
+            </el-select>
+            <el-button class="icon-btn danger" @click="subQuestions.splice(index, 1)">×</el-button>
           </div>
           <QuesBodyForm :type="sub.type" :body="sub.body" />
         </div>

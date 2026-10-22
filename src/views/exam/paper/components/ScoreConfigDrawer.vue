@@ -24,9 +24,8 @@
               <td class="col-type">{{ t.label }}</td>
               <td v-for="lv in LEVELS" :key="lv.value" class="cell">
                 <div class="cell-score">
-                  <input v-model.number="cellOf(t.value, lv.value).score"
-                         type="number" min="0" step="0.5" class="num"
-                         @input="clampCell(cellOf(t.value, lv.value))" />
+                  <el-input-number v-model="cellOf(t.value, lv.value).score" :min="0" :step="0.5" class="num"
+                         @input="clampCell(cellOf(t.value, lv.value))" :controls="false" />
                   <span class="unit">分</span>
                 </div>
 
@@ -34,18 +33,17 @@
                 <div v-if="t.value === 1" class="miss-block">
                   <div class="miss-row">
                     <span class="miss-label">漏选</span>
-                    <input v-model.number="cellOf(t.value, lv.value).missScore"
-                           type="number" min="0" :max="cellOf(t.value, lv.value).score" step="0.5" class="num small"
-                           @input="clampCell(cellOf(t.value, lv.value))" />
+                    <el-input-number v-model="cellOf(t.value, lv.value).missScore" :min="0" :max="cellOf(t.value, lv.value).score" :step="0.5" class="num small"
+                           @input="clampCell(cellOf(t.value, lv.value))" :controls="false" />
                     <span class="unit">分</span>
                   </div>
                   <label class="miss-radio">
-                    <input type="radio" :name="`miss-${lv.value}`" :value="0"
+                    <el-radio :name="`miss-${lv.value}`" :value="0"
                            v-model.number="cellOf(t.value, lv.value).missScoreType" />
                     <span>统一</span>
                   </label>
                   <label class="miss-radio">
-                    <input type="radio" :name="`miss-${lv.value}`" :value="2"
+                    <el-radio :name="`miss-${lv.value}`" :value="2"
                            v-model.number="cellOf(t.value, lv.value).missScoreType" />
                     <span>按漏选数量均分</span>
                   </label>
@@ -57,10 +55,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="handleSave">
           {{ saving ? '保存中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

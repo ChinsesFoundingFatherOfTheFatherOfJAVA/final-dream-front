@@ -3,17 +3,17 @@
        支持加粗/斜体/下划线/列表 + 图片/视频/音频插入（媒体经 /api/exam/file/upload 落盘）。 -->
   <div class="rich-editor" :class="{ compact }">
     <div class="toolbar">
-      <button type="button" title="加粗" @mousedown.prevent @click="exec('bold')"><b>B</b></button>
-      <button type="button" title="斜体" @mousedown.prevent @click="exec('italic')"><i>I</i></button>
-      <button type="button" title="下划线" @mousedown.prevent @click="exec('underline')"><u>U</u></button>
-      <button type="button" title="无序列表" @mousedown.prevent @click="exec('insertUnorderedList')">•</button>
-      <button type="button" title="有序列表" @mousedown.prevent @click="exec('insertOrderedList')">1.</button>
+      <el-button title="加粗" @mousedown.prevent @click="exec('bold')"><b>B</b></el-button>
+      <el-button title="斜体" @mousedown.prevent @click="exec('italic')"><i>I</i></el-button>
+      <el-button title="下划线" @mousedown.prevent @click="exec('underline')"><u>U</u></el-button>
+      <el-button title="无序列表" @mousedown.prevent @click="exec('insertUnorderedList')">•</el-button>
+      <el-button title="有序列表" @mousedown.prevent @click="exec('insertOrderedList')">1.</el-button>
       <span class="sep"></span>
-      <button type="button" title="插入图片" @mousedown.prevent @click="pick('image/*')">图片</button>
-      <button type="button" title="插入视频" @mousedown.prevent @click="pick('video/*')">视频</button>
-      <button type="button" title="插入音频" @mousedown.prevent @click="pick('audio/*')">音频</button>
+      <el-button title="插入图片" @mousedown.prevent @click="pick('image/*')">图片</el-button>
+      <el-button title="插入视频" @mousedown.prevent @click="pick('video/*')">视频</el-button>
+      <el-button title="插入音频" @mousedown.prevent @click="pick('audio/*')">音频</el-button>
       <span class="sep"></span>
-      <button type="button" title="清除格式" @mousedown.prevent @click="exec('removeFormat')">清格式</button>
+      <el-button title="清除格式" @mousedown.prevent @click="exec('removeFormat')">清格式</el-button>
       <span v-if="uploading" class="upload-tip">上传中 {{ percent }}%</span>
     </div>
 

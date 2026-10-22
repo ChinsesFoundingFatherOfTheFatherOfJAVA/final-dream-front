@@ -15,9 +15,9 @@
             <div class="step-main">
               <p class="step-title">下载模板</p>
               <p class="step-hint">先下载标准模板，按模板填写后再上传；模板列结构与「导出试题」一致。</p>
-              <button class="btn" type="button" :disabled="downloading" @click="downloadTemplate">
+              <el-button class="btn" :disabled="downloading" @click="downloadTemplate">
                 {{ downloading ? '下载中…' : `下载${format === 'word' ? 'Word' : 'Excel'}模板` }}
-              </button>
+              </el-button>
             </div>
           </li>
 
@@ -45,9 +45,9 @@
                 ⚠ 请勿修改模板的表头与列顺序；填写错误的行不会被导入，系统会在下方逐行提示原因。
               </p>
 
-              <button class="btn primary" type="button" :disabled="!file || importing" @click="doImport">
+              <el-button class="btn primary" :disabled="!file || importing" @click="doImport">
                 {{ importing ? `导入中 ${percent}%` : '开始导入' }}
-              </button>
+              </el-button>
             </div>
           </li>
         </ol>
@@ -66,10 +66,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">关闭</button>
-        <button v-if="result?.successCount" class="btn primary" type="button" @click="emit('imported'); emit('close')">
+        <el-button class="btn" @click="emit('close')">关闭</el-button>
+        <el-button v-if="result?.successCount" class="btn primary" @click="emit('imported'); emit('close')">
           完成（刷新列表）
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

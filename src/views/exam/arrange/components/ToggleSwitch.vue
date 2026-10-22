@@ -1,8 +1,8 @@
 <template>
   <!-- 开关（Element 同款样式）：值统一用 0/1，和后端 JSON 设置保持一致 -->
   <label class="toggle" :class="{ disabled }">
-    <input type="checkbox" :checked="on" :disabled="disabled"
-           @change="onChange(($event.target as HTMLInputElement).checked)" />
+    <el-checkbox :model-value="on" :disabled="disabled"
+           @change="onChange(Boolean($event))" />
     <span class="slider"></span>
   </label>
 </template>

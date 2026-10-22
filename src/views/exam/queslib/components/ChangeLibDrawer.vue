@@ -10,19 +10,19 @@
 
       <div class="drawer-body">
         <div class="toolbar">
-          <button class="btn primary" type="button" @click="showCreateLib = true">新建题库</button>
-          <select v-model="catalogId" class="filter-select" @change="reload(1)">
-            <option value="">全部分类</option>
-            <option v-for="item in flatCatalogs" :key="item.id" :value="item.id">{{ item.name }}</option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="请输入题库名称搜索" @keyup.enter="reload(1)" />
-          <button class="btn" type="button" @click="reload(1)">搜索</button>
+          <el-button class="btn primary" @click="showCreateLib = true">新建题库</el-button>
+          <el-select v-model="catalogId" class="filter-select" @change="reload(1)">
+            <el-option value="" label="全部分类" />
+            <el-option v-for="item in flatCatalogs" :key="item.id" :value="item.id" :label="item.name" />
+          </el-select>
+          <el-input v-model.trim="keyword" placeholder="请输入题库名称搜索" @keyup.enter="reload(1)" />
+          <el-button class="btn" @click="reload(1)">搜索</el-button>
         </div>
 
         <div class="lib-list">
           <div v-for="lib in libs" :key="lib.id" class="lib-row"
                :class="{ active: pickedId === lib.id }" @click="pick(lib.id)">
-            <input type="radio" :checked="pickedId === lib.id" />
+            <el-radio :model-value="pickedId === lib.id" />
             <span class="lib-name">{{ lib.name }}</span>
             <span class="lib-cat">{{ lib.catalogName }}</span>
           </div>
@@ -36,10 +36,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!pickedId || saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!pickedId || saving" @click="confirm">
           {{ saving ? '迁移中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
 

@@ -2,10 +2,10 @@
   <!-- F21 答卷详情页（/exam/result?ueId=）：考生信息 + 大题分组 + 逐题作答 + 导出 PDF -->
   <div class="result-page">
     <header class="result-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1 class="title">{{ data?.arrName || '答卷详情' }}</h1>
       <div class="header-actions">
-        <button class="btn" type="button" :disabled="!data" @click="downloadPdf">导出 PDF</button>
+        <el-button class="btn" :disabled="!data" @click="downloadPdf">导出 PDF</el-button>
       </div>
     </header>
 

@@ -2,15 +2,15 @@
   <!-- FP-07 试卷管理页（截图02）：页头 + 基本信息 + 试题列表 + 跨模块跳转 -->
   <div class="paper-detail">
     <header class="detail-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1 class="paper-name">
         {{ paper?.name || '试卷管理' }}
         <span class="build-tag">{{ paper?.buildType === 1 ? '随机出卷' : '固定出卷' }}</span>
         <span v-if="paper?.status === 4" class="status-tag">已发布</span>
       </h1>
       <div class="header-actions">
-        <button v-if="paper && paper.status !== 4" class="btn primary" type="button" @click="doRelease">发布</button>
-        <button class="btn" type="button" @click="goEdit">编辑</button>
+        <el-button v-if="paper && paper.status !== 4" class="btn primary" @click="doRelease">发布</el-button>
+        <el-button class="btn" @click="goEdit">编辑</el-button>
       </div>
     </header>
 
@@ -21,12 +21,12 @@
       <div class="info-item"><span>总分</span><strong>{{ paper?.totalScore ?? 0 }}</strong></div>
       <div class="info-item"><span>试题数</span><strong>{{ paper?.totalQuesQty ?? 0 }}</strong></div>
       <!-- FP-07：编辑基本信息（分类树 + 名称200字 + 保密）走抽屉，与新建共用组件 -->
-      <button v-if="paper" class="edit-info-link" type="button" @click="showEditInfo = true">编辑基本信息</button>
+      <el-button v-if="paper" class="edit-info-link" @click="showEditInfo = true">编辑基本信息</el-button>
     </section>
 
     <div class="tabs">
-      <button class="tab" type="button" :class="{ active: tab === 'ques' }" @click="switchTab('ques')">试题列表</button>
-      <button class="tab" type="button" :class="{ active: tab === 'overview' }" @click="switchTab('overview')">概览</button>
+      <el-button class="tab" :class="{ active: tab === 'ques' }" @click="switchTab('ques')">试题列表</el-button>
+      <el-button class="tab" :class="{ active: tab === 'overview' }" @click="switchTab('overview')">概览</el-button>
     </div>
 
     <section v-if="tab === 'overview'" class="list-card">
@@ -49,68 +49,51 @@
 
     <section v-else class="list-card">
       <div class="filter-row">
-        <select v-model.number="type" class="filter-select" @change="reload(1)">
-          <option :value="-1">全部题型</option>
-          <option :value="0">单选题</option>
-          <option :value="1">多选题</option>
-          <option :value="2">判断题</option>
-          <option :value="3">填空题</option>
-          <option :value="4">问答题</option>
-        </select>
-        <select v-model.number="levelType" class="filter-select" @change="reload(1)">
-          <option :value="-1">全部难度</option>
-          <option :value="0">易</option>
-          <option :value="1">中</option>
-          <option :value="2">难</option>
-        </select>
-        <input v-model.trim="keyword" type="search" placeholder="请输入试题名称搜索" @keyup.enter="reload(1)" />
-        <button class="btn primary" type="button" @click="reload(1)">查询</button>
+        <el-select v-model="type" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="全部题型" />
+          <el-option :value="0" label="单选题" />
+          <el-option :value="1" label="多选题" />
+          <el-option :value="2" label="判断题" />
+          <el-option :value="3" label="填空题" />
+          <el-option :value="4" label="问答题" />
+        </el-select>
+        <el-select v-model="levelType" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="全部难度" />
+          <el-option :value="0" label="易" />
+          <el-option :value="1" label="中" />
+          <el-option :value="2" label="难" />
+        </el-select>
+        <el-input v-model.trim="keyword" placeholder="请输入试题名称搜索" @keyup.enter="reload(1)" />
+        <el-button class="btn primary" @click="reload(1)">查询</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="col-name">试题名称</th>
-              <th class="col-sm">题型</th>
-              <th class="col-point">考核点</th>
-              <th class="col-lib">所属题库</th>
-              <th class="col-sm">难度</th>
-              <th class="col-sm">分值</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in records" :key="row.quesId">
-              <!-- 跨模块跳转：带 quesId，题库详情页只展示该题 -->
-              <td class="col-name">
-                <span class="link" :title="row.summary"
-                      @click="goQues(row)">{{ row.summary }}</span>
-              </td>
-              <td class="col-sm">{{ typeLabel(row.type) }}</td>
-              <td class="col-point" :title="row.mainPointName">{{ row.mainPointName || '--' }}</td>
-              <td class="col-lib">
-                <span class="link" @click="goLib(row)">{{ row.libName || '--' }}</span>
-              </td>
-              <td class="col-sm">{{ levelLabel(row.levelType) }}</td>
-              <td class="col-sm">{{ row.score }}</td>
-            </tr>
-            <tr v-if="!loading && !records.length">
-              <td colspan="6" class="empty-cell">暂无试题</td>
-            </tr>
-          </tbody>
-        </table>
+        <el-table v-loading="loading" :data="records" row-key="quesId" empty-text="暂无试题">
+          <el-table-column label="试题名称" min-width="300">
+            <template #default="{ row }"><el-button link type="primary" @click="goQues(row)">{{ row.summary }}</el-button></template>
+          </el-table-column>
+          <el-table-column label="题型" width="100"><template #default="{ row }">{{ typeLabel(row.type) }}</template></el-table-column>
+          <el-table-column label="考核点" width="140" show-overflow-tooltip><template #default="{ row }">{{ row.mainPointName || '--' }}</template></el-table-column>
+          <el-table-column label="所属题库" min-width="160">
+            <template #default="{ row }"><el-button link type="primary" @click="goLib(row)">{{ row.libName || '--' }}</el-button></template>
+          </el-table-column>
+          <el-table-column label="难度" width="90"><template #default="{ row }">{{ levelLabel(row.levelType) }}</template></el-table-column>
+          <el-table-column prop="score" label="分值" width="90" />
+        </el-table>
       </div>
 
       <div class="pagination">
         <span>共 {{ total }} 条</span>
-        <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-        <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-        <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
-        <select v-model.number="pageSize" @change="reload(1)">
-          <option :value="10">10 条/页</option>
-          <option :value="20">20 条/页</option>
-          <option :value="50">50 条/页</option>
-        </select>
+        <el-pagination
+          v-model:current-page="pageNo"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          :total="total"
+          layout="sizes, prev, pager, next"
+          background
+          @size-change="reload(1)"
+          @current-change="reload"
+        />
       </div>
     </section>
 

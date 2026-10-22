@@ -15,7 +15,7 @@
             <span>变更字段</span>
             <div class="field-grid">
               <label v-for="f in FIELD_OPTIONS" :key="f.key" class="field-item">
-                <input type="checkbox" :value="f.key" v-model="changedFields" />
+                <el-checkbox :value="f.key" v-model="changedFields" />
                 <span>{{ f.label }}</span>
               </label>
             </div>
@@ -23,12 +23,12 @@
 
           <label class="field">
             <span>通知标题</span>
-            <input v-model.trim="form.title" maxlength="200" placeholder="如：考试信息变更通知" />
+            <el-input v-model.trim="form.title" maxlength="200" placeholder="如：考试信息变更通知" />
           </label>
 
           <label class="field">
             <span>通知正文</span>
-            <textarea v-model="form.content" rows="4" placeholder="留空则由后端按变更字段自动生成"></textarea>
+            <el-input v-model="form.content" :rows="4" placeholder="留空则由后端按变更字段自动生成" type="textarea" />
           </label>
 
           <div class="preview-tip" v-if="recipientQty !== null">
@@ -36,8 +36,8 @@
           </div>
 
           <div class="actions">
-            <button class="btn" type="button" :disabled="busy" @click="doPreview">生成预览</button>
-            <button class="btn primary" type="button" :disabled="busy" @click="doSend">发送通知</button>
+            <el-button class="btn" :disabled="busy" @click="doPreview">生成预览</el-button>
+            <el-button class="btn primary" :disabled="busy" @click="doSend">发送通知</el-button>
           </div>
           <p class="hint">发送后进入平台通用通知通道投递队列；学员端通知列表由通知服务提供。</p>
         </section>

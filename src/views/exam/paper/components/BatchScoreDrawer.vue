@@ -12,7 +12,7 @@
 
         <div v-for="item in rows" :key="item.sectionIndex" class="score-row">
           <label class="check-item">
-            <input type="checkbox" v-model="item.checked" />
+            <el-checkbox v-model="item.checked" />
             <span class="type-name">{{ item.label }}</span>
             <span class="count">（{{ item.count }} 题）</span>
           </label>
@@ -20,20 +20,20 @@
           <div class="score-fields">
             <label class="field">
               <span>每题分值</span>
-              <input v-model.number="item.score" type="number" min="0" step="0.5"
-                     :disabled="!item.checked" @input="clampMiss(item)" />
+              <el-input-number v-model="item.score" :min="0" :step="0.5"
+                     :disabled="!item.checked" @input="clampMiss(item)" :controls="false" />
             </label>
 
             <template v-if="item.sectionIndex === 1">
               <label class="field">
                 <span>漏选得分</span>
-                <input v-model.number="item.missScore" type="number" min="0" :max="item.score" step="0.5"
-                       :disabled="!item.checked" @input="clampMiss(item)" />
+                <el-input-number v-model="item.missScore" :min="0" :max="item.score" :step="0.5"
+                       :disabled="!item.checked" @input="clampMiss(item)" :controls="false" />
               </label>
               <div class="radio-row">
-                <label><input v-model.number="item.missScoreType" type="radio" :value="0" :disabled="!item.checked" /> 不漏选得分</label>
-                <label><input v-model.number="item.missScoreType" type="radio" :value="1" :disabled="!item.checked" /> 统一得</label>
-                <label><input v-model.number="item.missScoreType" type="radio" :value="2" :disabled="!item.checked" /> 按漏选数量均分</label>
+                <label><el-radio v-model.number="item.missScoreType" :value="0" :disabled="!item.checked" /> 不漏选得分</label>
+                <label><el-radio v-model.number="item.missScoreType" :value="1" :disabled="!item.checked" /> 统一得</label>
+                <label><el-radio v-model.number="item.missScoreType" :value="2" :disabled="!item.checked" /> 按漏选数量均分</label>
               </div>
             </template>
           </div>
@@ -41,10 +41,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!checkedRows.length || saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!checkedRows.length || saving" @click="confirm">
           {{ saving ? '设置中…' : `确定（${checkedRows.length} 个大题）` }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

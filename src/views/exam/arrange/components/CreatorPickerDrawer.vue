@@ -10,65 +10,51 @@
       <div class="drawer-body">
         <section class="main">
           <div class="filters">
-            <select v-model="deptPath" class="f-select dept" @change="reload(1)">
-              <option value="">选择部门</option>
-              <option v-for="d in departments" :key="d.deptPath" :value="d.deptPath">
-                {{ '　'.repeat(Math.max(0, (d.deptLevel ?? 1) - 1)) }}{{ d.deptName }}
-              </option>
-            </select>
+            <el-select v-model="deptPath" class="f-select dept" @change="reload(1)">
+              <el-option value="" label="选择部门" />
+              <el-option v-for="d in departments" :key="d.deptPath" :value="d.deptPath" :label="'　'.repeat(Math.max(0, (d.deptLevel ?? 1) - 1)) + d.deptName" />
+            </el-select>
             <label class="part-time" title="当前组织数据不区分部门兼职人员">
-              <input type="checkbox" checked disabled /> 包含部门兼职人员
+              <el-checkbox model-value disabled /> 包含部门兼职人员
             </label>
-            <select v-model="field" class="f-select field" @change="reload(1)">
-              <option value="name">姓名</option>
-              <option value="account">账号</option>
-              <option value="employeeNo">工号</option>
-            </select>
-            <input v-model.trim="keyword" class="f-input" :placeholder="placeholder"
+            <el-select v-model="field" class="f-select field" @change="reload(1)">
+              <el-option value="name" label="姓名" />
+              <el-option value="account" label="账号" />
+              <el-option value="employeeNo" label="工号" />
+            </el-select>
+            <el-input v-model.trim="keyword" class="f-input" :placeholder="placeholder"
                    @keyup.enter="reload(1)" />
-            <button class="btn" type="button" @click="reload(1)">搜索</button>
+            <el-button class="btn" @click="reload(1)">搜索</el-button>
           </div>
 
           <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th class="check-col">
-                    <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                           @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-                  </th>
-                  <th>姓名</th>
-                  <th>账号</th>
-                  <th>工号</th>
-                  <th>部门</th>
-                  <th>岗位</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="u in list" :key="u.userId" :class="{ picked: isPicked(u) }">
-                  <td class="check-col">
-                    <input type="checkbox" :checked="isPicked(u)" @change="toggle(u)" />
-                  </td>
-                  <td>{{ u.fullname || '--' }}</td>
-                  <td>{{ u.account || '--' }}</td>
-                  <td>{{ u.employeeNo || '--' }}</td>
-                  <td class="ellipsis" :title="u.deptName">{{ u.deptName || '--' }}</td>
-                  <td class="ellipsis" :title="u.positionName || ''">{{ u.positionName || '--' }}</td>
-                </tr>
-                <tr v-if="!loading && !list.length">
-                  <td colspan="6" class="empty-cell">暂无数据</td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-if="loading" class="table-loading">加载中...</div>
+            <el-table v-loading="loading" :data="list" row-key="userId" empty-text="暂无数据">
+              <el-table-column width="44" align="center">
+                <template #header>
+                  <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+                </template>
+                <template #default="{ row }">
+                  <el-checkbox :model-value="isPicked(row)" @change="toggle(row)" />
+                </template>
+              </el-table-column>
+              <el-table-column label="姓名" min-width="110"><template #default="{ row }">{{ row.fullname || '--' }}</template></el-table-column>
+              <el-table-column label="账号" min-width="120"><template #default="{ row }">{{ row.account || '--' }}</template></el-table-column>
+              <el-table-column label="工号" width="120"><template #default="{ row }">{{ row.employeeNo || '--' }}</template></el-table-column>
+              <el-table-column label="部门" min-width="160" show-overflow-tooltip><template #default="{ row }">{{ row.deptName || '--' }}</template></el-table-column>
+              <el-table-column label="岗位" min-width="120"><template #default="{ row }">{{ row.positionName || '--' }}</template></el-table-column>
+            </el-table>
           </div>
 
           <div class="pagination">
             <span>共 {{ total }} 条</span>
-            <button :disabled="page <= 1" type="button" @click="reload(page - 1)">‹</button>
-            <button v-for="p in pageNumbers" :key="p" type="button"
-                    :class="{ active: p === page }" @click="reload(p)">{{ p }}</button>
-            <button :disabled="page >= maxPage" type="button" @click="reload(page + 1)">›</button>
+            <el-pagination
+              :current-page="page"
+              :page-size="20"
+              :total="total"
+              layout="prev, pager, next"
+              background
+              @current-change="reload"
+            />
           </div>
         </section>
 
@@ -81,13 +67,13 @@
               <i @click="remove(u)">×</i>
             </span>
           </div>
-          <button v-if="picked.length" class="clear-btn" type="button" @click="picked = []">清空</button>
+          <el-button v-if="picked.length" class="clear-btn" @click="picked = []">清空</el-button>
         </aside>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="$emit('close')">取消</button>
-        <button class="btn primary" type="button" @click="confirm">确定</button>
+        <el-button class="btn" @click="$emit('close')">取消</el-button>
+        <el-button class="btn primary" @click="confirm">确定</el-button>
       </div>
     </div>
   </div>

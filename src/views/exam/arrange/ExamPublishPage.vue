@@ -3,7 +3,7 @@
        新建时是向导第三步，已发布时是同页编辑（白名单），保存入口显示「更新后发布」 -->
   <div class="publish-page">
     <header class="publish-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ arrange?.name || '发布考试' }}</h1>
       <span v-if="arrange?.status === 4" class="status-tag">已发布</span>
     </header>

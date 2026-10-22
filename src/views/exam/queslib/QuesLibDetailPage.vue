@@ -4,14 +4,14 @@
        这里如实标注"待实施"，避免点进来是一片空白让人以为页面坏了。 -->
   <div class="lib-detail">
     <header class="detail-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1 class="lib-name">
         {{ lib?.name || '题库详情' }}
         <span v-if="lib?.secrecy === 1" class="secrecy-tag">保密</span>
       </h1>
       <div class="header-actions">
-        <button class="btn" type="button" @click="showShare = true">共享题库</button>
-        <button class="btn" type="button" @click="showTransfer = true">转移题库</button>
+        <el-button class="btn" @click="showShare = true">共享题库</el-button>
+        <el-button class="btn" @click="showTransfer = true">转移题库</el-button>
       </div>
     </header>
 
@@ -21,18 +21,18 @@
       <div class="info-item"><span>题库保密</span><strong>{{ lib?.secrecy === 1 ? '保密' : '公开' }}</strong></div>
       <div class="info-item"><span>考核点</span><strong>{{ lib?.pointQty ?? 0 }}</strong></div>
       <div class="info-item"><span>试题数</span><strong>{{ lib?.totalQuesQty ?? 0 }}</strong></div>
-      <button class="link-btn" type="button" @click="showEdit = true">编辑基本信息</button>
+      <el-button class="link-btn" @click="showEdit = true">编辑基本信息</el-button>
     </section>
 
     <div class="tabs">
-      <button
+      <el-button
         v-for="item in tabs"
         :key="item.key"
-        type="button"
+       
         class="tab"
         :class="{ active: tab === item.key }"
         @click="tab = item.key"
-      >{{ item.label }}</button>
+      >{{ item.label }}</el-button>
     </div>
 
     <!-- 试题详情 tab：FP-07 真实列表（筛选/排序/分页/查看/删除） -->

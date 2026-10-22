@@ -2,33 +2,33 @@
   <!-- FP-07 试题列表（截图08）：筛选行 + 表格 + 分页；编辑页(FP-08)由父组件接路由。 -->
   <div class="ques-list">
     <div class="filter-row">
-      <select v-model.number="filters.type" class="filter-select">
-        <option :value="-1">全部题型</option>
-        <option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-      </select>
-      <select v-model.number="filters.levelType" class="filter-select">
-        <option :value="-1">全部难度</option>
-        <option v-for="(label, value) in LEVEL_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-      </select>
-      <select v-model="filters.pointId" class="filter-select">
-        <option value="">全部考核点</option>
-        <option v-for="point in points" :key="point.id" :value="point.id">{{ point.name }}</option>
-      </select>
-      <select v-model.number="filters.disabled" class="filter-select">
-        <option :value="-1">全部状态</option>
-        <option :value="0">启用</option>
-        <option :value="1">禁用</option>
-      </select>
-      <input v-model.trim="filters.keyword" type="search" placeholder="请输入试题名称、创建人姓名或账号搜索"
+      <el-select v-model="filters.type" class="filter-select">
+        <el-option :value="-1" label="全部题型" />
+        <el-option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
+      </el-select>
+      <el-select v-model="filters.levelType" class="filter-select">
+        <el-option :value="-1" label="全部难度" />
+        <el-option v-for="(label, value) in LEVEL_LABELS" :key="value" :value="Number(value)" :label="label" />
+      </el-select>
+      <el-select v-model="filters.pointId" class="filter-select">
+        <el-option value="" label="全部考核点" />
+        <el-option v-for="point in points" :key="point.id" :value="point.id" :label="point.name" />
+      </el-select>
+      <el-select v-model="filters.disabled" class="filter-select">
+        <el-option :value="-1" label="全部状态" />
+        <el-option :value="0" label="启用" />
+        <el-option :value="1" label="禁用" />
+      </el-select>
+      <el-input v-model.trim="filters.keyword" placeholder="请输入试题名称、创建人姓名或账号搜索"
              @keyup.enter="reload(1)" />
-      <button class="btn-primary" type="button" @click="reload(1)">查询</button>
-      <button class="btn" type="button" @click="createQues">手动建题</button>
-      <button class="btn" type="button" @click="emit('quick-create')">快速建题</button>
-      <button class="btn" type="button" @click="emit('ai-create')">AI建题</button>
+      <el-button class="btn-primary" @click="reload(1)">查询</el-button>
+      <el-button class="btn" @click="createQues">手动建题</el-button>
+      <el-button class="btn" @click="emit('quick-create')">快速建题</el-button>
+      <el-button class="btn" @click="emit('ai-create')">AI建题</el-button>
 
       <!-- 试题查重：五题型（无组合题），查完自动切到"仅看重复题" -->
       <div class="dup-wrap">
-        <button class="btn" type="button" @click="showDupMenu = !showDupMenu">试题查重 ▾</button>
+        <el-button class="btn" @click="showDupMenu = !showDupMenu">试题查重 ▾</el-button>
         <div v-if="showDupMenu" class="dup-menu">
           <div v-for="item in DUP_TYPES" :key="item.type" class="dup-item" @click="runDuplicate(item.type)">
             <span>{{ item.label }}</span>
@@ -38,7 +38,7 @@
       </div>
       <!-- 导入：下载模板 → 上传 → 逐行错误明细（FP-12） -->
       <div class="dup-wrap">
-        <button class="btn" type="button" @click="showImportMenu = !showImportMenu">导入试题 ▾</button>
+        <el-button class="btn" @click="showImportMenu = !showImportMenu">导入试题 ▾</el-button>
         <div v-if="showImportMenu" class="dup-menu">
           <div class="dup-item" @click="emit('import', 'excel'); showImportMenu = false">Excel 导入</div>
           <div class="dup-item" @click="emit('import', 'word'); showImportMenu = false">Word 导入</div>
@@ -47,7 +47,7 @@
 
       <!-- 导出：按当前筛选条件导出 Excel（5 Sheet 分题型）/ Word（按题型分节） -->
       <div class="dup-wrap">
-        <button class="btn" type="button" @click="showExportMenu = !showExportMenu">导出试题 ▾</button>
+        <el-button class="btn" @click="showExportMenu = !showExportMenu">导出试题 ▾</el-button>
         <div v-if="showExportMenu" class="dup-menu">
           <div class="dup-item" @click="exportFile('excel')">Excel 导出</div>
           <div class="dup-item" @click="exportFile('word')">Word 导出</div>
@@ -62,81 +62,78 @@
     <!-- FP-15 批量操作：勾选后出现 -->
     <div v-if="selectedIds.size" class="batch-bar">
       <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
-      <button class="btn" type="button" @click="batchDisable(1)">批量禁用</button>
-      <button class="btn" type="button" @click="batchDisable(0)">批量启用</button>
-      <button class="btn danger" type="button" @click="batchDelete">批量删除</button>
-      <button class="btn" type="button" @click="showChangeLib = true">批量换库</button>
-      <button class="btn" type="button" @click="showSetPoint = true">设置考核点</button>
-      <button class="link" type="button" @click="clearSelection">清除所选</button>
+      <el-button class="btn" @click="batchDisable(1)">批量禁用</el-button>
+      <el-button class="btn" @click="batchDisable(0)">批量启用</el-button>
+      <el-button class="btn danger" @click="batchDelete">批量删除</el-button>
+      <el-button class="btn" @click="showChangeLib = true">批量换库</el-button>
+      <el-button class="btn" @click="showSetPoint = true">设置考核点</el-button>
+      <el-button class="link" @click="clearSelection">清除所选</el-button>
     </div>
 
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th class="check-col">
-              <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                     @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-            </th>
-            <th class="col-name">试题名称</th>
-            <th class="col-sm">题型</th>
-            <th class="col-point">考核点</th>
-            <th class="col-sm">难度</th>
-            <th class="col-user">创建人</th>
-            <th class="col-time sortable" @click="toggleSort('createTime')">
-              创建日期<span v-if="orderby === 'createTime'" class="sort-mark">{{ asc ? '↑' : '↓' }}</span>
-            </th>
-            <th class="col-user">更新人</th>
-            <th class="col-time sortable" @click="toggleSort('updateTime')">
-              更新日期<span v-if="orderby === 'updateTime'" class="sort-mark">{{ asc ? '↑' : '↓' }}</span>
-            </th>
-            <th class="col-op">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in records" :key="row.id" :class="{ checked: selectedIds.has(row.id) }">
-            <td class="check-col">
-              <input type="checkbox" :checked="selectedIds.has(row.id)"
-                     @change="toggleRow(row.id, ($event.target as HTMLInputElement).checked)" />
-            </td>
-            <td class="col-name">
+      <el-table
+        v-loading="loading"
+        :data="records"
+        row-key="id"
+        class="ques-table"
+        empty-text="暂无试题"
+      >
+        <el-table-column width="44" align="center">
+          <template #header>
+            <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+          </template>
+          <template #default="{ row }">
+            <el-checkbox :model-value="selectedIds.has(row.id)" @change="toggleRow(row.id, Boolean($event))" />
+          </template>
+        </el-table-column>
+        <el-table-column label="试题名称" min-width="280">
+          <template #default="{ row }">
+            <div>
               <span class="name-text" :class="{ secret: row.disabled === 1 }" :title="row.summary">{{ row.summary }}</span>
               <span v-if="row.duplicate === 1" class="tag-warn">重复</span>
               <span v-if="row.isMultiMediaType === 1" class="tag-media">媒体</span>
-            </td>
-            <td class="col-sm">{{ typeLabel(row.type) }}</td>
-            <td class="col-point" :title="row.pointNames">{{ row.mainPointName || '--' }}</td>
-            <td class="col-sm">{{ levelLabel(row.levelType) }}</td>
-            <td class="col-user">
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="题型" width="100"><template #default="{ row }">{{ typeLabel(row.type) }}</template></el-table-column>
+        <el-table-column label="考核点" width="140" show-overflow-tooltip><template #default="{ row }">{{ row.mainPointName || '--' }}</template></el-table-column>
+        <el-table-column label="难度" width="90"><template #default="{ row }">{{ levelLabel(row.levelType) }}</template></el-table-column>
+        <el-table-column label="创建人" width="150">
+          <template #default="{ row }">
               {{ row.createFullname || '--' }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span>
-            </td>
-            <td class="col-time">{{ row.createTime || '--' }}</td>
-            <td class="col-user">{{ row.updateFullname || '--' }}</td>
-            <td class="col-time">{{ row.updateTime || '--' }}</td>
-            <td class="col-op">
-              <button class="link" type="button" @click="emit('edit', row.id)">编辑</button>
-              <button class="link" type="button" @click="openView(row.id)">查看</button>
-              <button class="link danger" type="button" @click="onDelete(row)">删除</button>
-            </td>
-          </tr>
-          <tr v-if="!loading && !records.length">
-            <td colspan="10" class="empty-cell">暂无试题</td>
-          </tr>
-        </tbody>
-      </table>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" width="170">
+          <template #header><el-button link @click="toggleSort('createTime')">创建日期 {{ orderby === 'createTime' ? (asc ? '↑' : '↓') : '' }}</el-button></template>
+          <template #default="{ row }">{{ row.createTime || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="更新人" width="130"><template #default="{ row }">{{ row.updateFullname || '--' }}</template></el-table-column>
+        <el-table-column label="更新日期" width="170">
+          <template #header><el-button link @click="toggleSort('updateTime')">更新日期 {{ orderby === 'updateTime' ? (asc ? '↑' : '↓') : '' }}</el-button></template>
+          <template #default="{ row }">{{ row.updateTime || '--' }}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="160" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="emit('edit', row.id)">编辑</el-button>
+            <el-button link @click="openView(row.id)">查看</el-button>
+            <el-button link type="danger" @click="onDelete(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
     <div class="pagination">
       <span>共 {{ total }} 条</span>
-      <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-      <span class="page-no">{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-      <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
-      <select v-model.number="pageSize" class="page-size" @change="reload(1)">
-        <option :value="10">10 条/页</option>
-        <option :value="20">20 条/页</option>
-        <option :value="50">50 条/页</option>
-        <option :value="100">100 条/页</option>
-      </select>
+      <el-pagination
+        v-model:current-page="pageNo"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="total"
+        layout="sizes, prev, pager, next"
+        background
+        @size-change="reload(1)"
+        @current-change="reload"
+      />
     </div>
 
     <!-- FP-15 批量换库 / 设置考核点 -->
@@ -200,10 +197,10 @@
           <div class="view-row"><label>更新日期</label><span>{{ currentViewRow?.updateTime || '--' }}</span></div>
         </div>
         <div class="view-footer">
-          <button class="btn" type="button" :disabled="currentViewIndex <= 0" @click="moveView(-1)">上一题</button>
-          <button class="btn" type="button"
+          <el-button class="btn" :disabled="currentViewIndex <= 0" @click="moveView(-1)">上一题</el-button>
+          <el-button class="btn"
                   :disabled="currentViewIndex < 0 || currentViewIndex >= records.length - 1"
-                  @click="moveView(1)">下一题</button>
+                  @click="moveView(1)">下一题</el-button>
         </div>
       </div>
     </div>

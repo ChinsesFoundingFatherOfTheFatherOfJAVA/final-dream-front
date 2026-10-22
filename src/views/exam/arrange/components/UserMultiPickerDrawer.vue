@@ -10,33 +10,21 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <input v-model.trim="keyword" type="search" placeholder="姓名/账号搜索" @keyup.enter="search()" />
-          <button class="btn primary" type="button" @click="search()">查询</button>
+          <el-input v-model.trim="keyword" placeholder="姓名/账号搜索" @keyup.enter="search()" />
+          <el-button class="btn primary" @click="search()">查询</el-button>
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="check-col"></th>
-                <th>姓名</th>
-                <th>账号</th>
-                <th>部门</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="u in list" :key="u.userId" @click="toggle(u.userId, u.fullname)">
-                <td class="check-col">
-                  <input type="checkbox" :checked="picked.has(u.userId)"
-                         @click.stop="toggle(u.userId, u.fullname)" />
-                </td>
-                <td>{{ u.fullname }}</td>
-                <td>{{ u.account }}</td>
-                <td>{{ u.deptName || '--' }}</td>
-              </tr>
-              <tr v-if="!list.length"><td colspan="4" class="empty-cell">没有匹配的人员</td></tr>
-            </tbody>
-          </table>
+          <el-table :data="list" row-key="userId" empty-text="没有匹配的人员" @row-click="(row: any) => toggle(row.userId, row.fullname)">
+            <el-table-column width="44" align="center">
+              <template #default="{ row }">
+                <el-checkbox :model-value="picked.has(row.userId)" @click.stop="toggle(row.userId, row.fullname)" />
+              </template>
+            </el-table-column>
+            <el-table-column prop="fullname" label="姓名" min-width="110" />
+            <el-table-column prop="account" label="账号" min-width="120" />
+            <el-table-column label="部门" min-width="160"><template #default="{ row }">{{ row.deptName || '--' }}</template></el-table-column>
+          </el-table>
         </div>
 
         <div class="picked-line">
@@ -48,8 +36,8 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" @click="confirm">确定</button>
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" @click="confirm">确定</el-button>
       </div>
     </div>
   </div>

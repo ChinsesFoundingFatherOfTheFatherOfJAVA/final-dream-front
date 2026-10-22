@@ -5,7 +5,7 @@
       <div class="placeholder-icon">🏗</div>
       <h2>功能建设中</h2>
       <p>该模块暂未开放，敬请期待</p>
-      <button class="back-btn" @click="router.push('/exam/queslib')">返回题库管理</button>
+      <el-button class="back-btn" @click="router.push('/exam/queslib')">返回题库管理</el-button>
     </div>
   </div>
 </template>

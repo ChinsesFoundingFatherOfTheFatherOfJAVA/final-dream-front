@@ -28,7 +28,7 @@
 
         <div class="form-item">
           <label class="form-label required">题库名称</label>
-          <input v-model="name" maxlength="200" placeholder="请输入" />
+          <el-input v-model="name" maxlength="200" placeholder="请输入" />
           <div class="char-count">{{ name.length }}/200</div>
         </div>
 
@@ -36,11 +36,11 @@
           <label class="form-label">题库保密</label>
           <div class="radio-row">
             <label class="radio-item" :class="{ active: secrecy === 0 }">
-              <input type="radio" :value="0" v-model="secrecy" />
+              <el-radio :value="0" v-model="secrecy" />
               <span>公开</span>
             </label>
             <label class="radio-item" :class="{ active: secrecy === 1 }">
-              <input type="radio" :value="1" v-model="secrecy" />
+              <el-radio :value="1" v-model="secrecy" />
               <span>保密</span>
             </label>
           </div>
@@ -49,10 +49,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">{{ mode === 'create' ? '取消' : '取消' }}</button>
-        <button class="btn primary" :disabled="saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">{{ mode === 'create' ? '取消' : '取消' }}</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="handleSave">
           {{ saving ? '保存中...' : (mode === 'create' ? '确定' : '确认') }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

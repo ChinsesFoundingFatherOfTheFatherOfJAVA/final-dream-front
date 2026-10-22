@@ -4,8 +4,8 @@
     <!-- 左：分类树 -->
     <aside class="catalog-panel">
       <div class="panel-toolbar">
-        <input v-model.trim="catalogKeyword" type="search" placeholder="请输入分类名称搜索" />
-        <button class="btn-outline" @click="showCreateCatalog = true">新建题库分类</button>
+        <el-input v-model.trim="catalogKeyword" placeholder="请输入分类名称搜索" />
+        <el-button class="btn-outline" @click="showCreateCatalog = true">新建题库分类</el-button>
       </div>
       <div class="tree-scroll">
         <div
@@ -37,97 +37,94 @@
     <!-- 右：题库列表 -->
     <section class="lib-panel">
       <div class="toolbar-row">
-        <button class="btn-primary" @click="showCreateLib = true">新建题库</button>
+        <el-button class="btn-primary" @click="showCreateLib = true">新建题库</el-button>
         <div class="batch-group" v-if="selectedLibIds.size">
-          <button class="btn-outline" @click="batchDelete">删除</button>
-          <button class="btn-outline" @click="showBatchTransfer = true">转移</button>
-          <button class="btn-outline" @click="showBatchCatalog = true">修改分类</button>
+          <el-button class="btn-outline" @click="batchDelete">删除</el-button>
+          <el-button class="btn-outline" @click="showBatchTransfer = true">转移</el-button>
+          <el-button class="btn-outline" @click="showBatchCatalog = true">修改分类</el-button>
         </div>
         <span v-else class="batch-label">批量操作</span>
       </div>
 
       <div class="filter-row">
-        <select v-model="queryType" class="filter-select" @change="reload(1)">
-          <option :value="0">全部题库</option>
-          <option :value="1">我创建的</option>
-          <option :value="2">共享给我的</option>
-        </select>
-        <select v-model="disabledFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">启用状态</option>
-          <option :value="0">启用</option>
-          <option :value="1">禁用</option>
-        </select>
-        <input v-model.trim="keyword" type="search" class="keyword-input"
+        <el-select v-model="queryType" class="filter-select" @change="reload(1)">
+          <el-option :value="0" label="全部题库" />
+          <el-option :value="1" label="我创建的" />
+          <el-option :value="2" label="共享给我的" />
+        </el-select>
+        <el-select v-model="disabledFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="启用状态" />
+          <el-option :value="0" label="启用" />
+          <el-option :value="1" label="禁用" />
+        </el-select>
+        <el-input v-model.trim="keyword" class="keyword-input"
                placeholder="请输入题库名称搜索" @keyup.enter="reload(1)" />
-        <button class="search-btn" @click="reload(1)">搜索</button>
-        <button class="btn-outline export-btn" @click="toast.warn('导出数据待 FP-13 实施')">导出数据</button>
+        <el-button class="search-btn" @click="reload(1)">搜索</el-button>
+        <el-button class="btn-outline export-btn" @click="toast.warn('导出数据待 FP-13 实施')">导出数据</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input type="checkbox" :checked="allPageChecked" :indeterminate.prop="somePageChecked"
-                       @change="toggleAllPage(($event.target as HTMLInputElement).checked)" />
-              </th>
-              <!-- 数据行有 8 列，表头此前漏了这一列（FP-04 遗留），导致"题库名称"表头缺失 -->
-              <th>题库名称</th>
-              <th class="sortable" @click="sortBy('totalQuesQty')">试题数 {{ orderIcon('totalQuesQty') }}</th>
-              <th>考核点</th>
-              <th>创建人</th>
-              <th class="sortable" @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</th>
-              <th>启用</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in page.records" :key="row.id" :class="{ checked: selectedLibIds.has(row.id) }">
-              <td class="check-col">
-                <input type="checkbox" :checked="selectedLibIds.has(row.id)"
-                       @change="toggleLib(row.id, ($event.target as HTMLInputElement).checked)" />
-              </td>
-              <td>
-                <span class="lib-name" :title="row.name" @click="openDetail(row)">
-                  {{ row.name }}
-                </span>
-                <span v-if="row.secrecy === 1" class="secrecy-tag">保密</span>
-              </td>
-              <td>{{ row.totalQuesQty }}</td>
-              <td>{{ row.pointQty }}</td>
-              <td>{{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span></td>
-              <td>{{ row.updateTime }}</td>
-              <td>
-                <!-- 启用绿点：悬浮显示"禁用"文字，点击切换（截图02） -->
-                <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'"
-                      @click="toggleDisabled(row)">
+        <el-table
+          v-loading="loading"
+          :data="page.records"
+          row-key="id"
+          class="lib-table"
+          empty-text="暂无题库"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox :model-value="allPageChecked" :indeterminate="somePageChecked" @change="toggleAllPage" />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox :model-value="selectedLibIds.has(row.id)" @change="toggleLib(row.id, Boolean($event))" />
+            </template>
+          </el-table-column>
+          <el-table-column label="题库名称" min-width="220">
+            <template #default="{ row }">
+              <el-button link type="primary" class="lib-name" @click="openDetail(row)">{{ row.name }}</el-button>
+              <span v-if="row.secrecy === 1" class="secrecy-tag">保密</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="试题数" width="110">
+            <template #header><el-button link @click="sortBy('totalQuesQty')">试题数 {{ orderIcon('totalQuesQty') }}</el-button></template>
+            <template #default="{ row }">{{ row.totalQuesQty }}</template>
+          </el-table-column>
+          <el-table-column prop="pointQty" label="考核点" width="100" />
+          <el-table-column label="创建人" width="160">
+            <template #default="{ row }">{{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span></template>
+          </el-table-column>
+          <el-table-column label="更新日期" width="170">
+            <template #header><el-button link @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</el-button></template>
+            <template #default="{ row }">{{ row.updateTime }}</template>
+          </el-table-column>
+          <el-table-column label="启用" width="100">
+            <template #default="{ row }">
+                <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'" @click="toggleDisabled(row)">
                   <i class="enable-dot" :class="{ off: row.disabled === 1 }"></i>
                   <span>{{ row.disabled === 0 ? '启用' : '禁用' }}</span>
                 </span>
-              </td>
-              <td class="op-col">
-                <span class="op-link" @click="openDetail(row)">管理</span>
-                <span class="op-link more" @click="openMoreMenu(row, $event)">更多<span class="more-arrow">▾</span></span>
-              </td>
-            </tr>
-            <tr v-if="!loading && !page.records.length">
-              <td colspan="8" class="empty-cell">暂无题库</td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="loading" class="table-loading">加载中...</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="openDetail(row)">管理</el-button>
+              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多▾</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <div class="pagination">
-        <button :disabled="pageNo <= 1" @click="reload(pageNo - 1)">上一页</button>
-        <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(page.total / pageSize)) }}</span>
-        <button :disabled="pageNo >= Math.ceil(page.total / pageSize)" @click="reload(pageNo + 1)">下一页</button>
-        <select v-model.number="pageSize" @change="reload(1)">
-          <option :value="10">10 条/页</option>
-          <option :value="20">20 条/页</option>
-          <option :value="50">50 条/页</option>
-          <option :value="100">100 条/页</option>
-        </select>
+        <el-pagination
+          v-model:current-page="pageNo"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="page.total"
+          layout="sizes, prev, pager, next"
+          background
+          @size-change="reload(1)"
+          @current-change="reload"
+        />
         <span class="total-count">共 {{ page.total }} 条</span>
       </div>
     </section>

@@ -13,132 +13,133 @@
 
     <section class="arrange-panel">
       <div class="toolbar-row">
-        <button class="btn-primary" type="button" @click="openTypeMenu($event)">新建考试</button>
+        <el-button class="btn-primary" @click="openTypeMenu($event)">新建考试</el-button>
         <div v-if="selectedIds.size" class="batch-group">
-          <button class="btn-outline" type="button" @click="batchEnd">批量结束</button>
-          <button class="btn-outline" type="button" @click="batchDelete">批量删除</button>
+          <el-button class="btn-outline" @click="batchEnd">批量结束</el-button>
+          <el-button class="btn-outline" @click="batchDelete">批量删除</el-button>
         </div>
         <span v-else class="batch-label">批量操作</span>
-        <button class="btn-outline export-btn" type="button" @click="doExport">导出数据</button>
+        <el-button class="btn-outline export-btn" @click="doExport">导出数据</el-button>
       </div>
 
       <div class="filter-row">
-        <select v-model.number="scopeFilter" class="filter-select" @change="reload(1)">
-          <option :value="0">全部考试</option>
-          <option :value="1">我创建的</option>
-          <option :value="2">我负责的</option>
-        </select>
+        <el-select v-model="scopeFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="0" label="全部考试" />
+          <el-option :value="1" label="我创建的" />
+          <el-option :value="2" label="我负责的" />
+        </el-select>
         <div class="creator-picker">
-          <button class="filter-select picker-trigger" type="button" @click="showCreatorDrawer = true">
+          <el-button class="filter-select picker-trigger" @click="showCreatorDrawer = true">
             {{ creatorLabel }}
             <span v-if="creatorFilters.length" class="clear-x" @click.stop="clearCreator">×</span>
-          </button>
+          </el-button>
         </div>
-        <select v-model="examTypeFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">考试类型</option>
-          <option :value="1">线上考试</option>
-        </select>
-        <select v-model.number="statusFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">考试状态</option>
-          <option :value="0">未发布</option>
-          <option :value="2">进行中</option>
-          <option :value="3">已结束</option>
-        </select>
-        <select v-model.number="arrangeTypeFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">安排方式</option>
-          <option :value="0">单独安排</option>
-          <option :value="1">批量安排</option>
-        </select>
-        <input v-model.trim="keyword" type="search" class="keyword-input"
+        <el-select v-model="examTypeFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="考试类型" />
+          <el-option :value="1" label="线上考试" />
+        </el-select>
+        <el-select v-model="statusFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="考试状态" />
+          <el-option :value="0" label="未发布" />
+          <el-option :value="2" label="进行中" />
+          <el-option :value="3" label="已结束" />
+        </el-select>
+        <el-select v-model="arrangeTypeFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="安排方式" />
+          <el-option :value="0" label="单独安排" />
+          <el-option :value="1" label="批量安排" />
+        </el-select>
+        <el-input v-model.trim="keyword" class="keyword-input"
                placeholder="请输入考试名称、编号、创建人搜索" @keyup.enter="reload(1)" />
-        <button class="search-btn" type="button" @click="reload(1)">搜索</button>
+        <el-button class="search-btn" @click="reload(1)">搜索</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                       @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-              </th>
-              <th class="col-name">考试名称</th>
-              <th class="col-sm">考试类型</th>
-              <th class="col-sm">考试状态</th>
-              <th class="col-time sortable" @click="toggleSort('entryStartAt')">
-                入场时间<span class="sort-arrow">{{ sortIcon('entryStartAt') }}</span>
-              </th>
-              <th class="col-user">创建人</th>
-              <th class="col-time sortable" @click="toggleSort('createdAt')">
-                创建时间<span class="sort-arrow">{{ sortIcon('createdAt') }}</span>
-              </th>
-              <th class="col-user">负责人</th>
-              <th class="col-sm sortable" @click="toggleSort('arrangedQty')">
-                安排人数<span class="sort-arrow">{{ sortIcon('arrangedQty') }}</span>
-              </th>
-              <th class="col-sm sortable" @click="toggleSort('submittedQty')">
-                已交卷<span class="sort-arrow">{{ sortIcon('submittedQty') }}</span>
-              </th>
-              <th class="col-sm sortable" @click="toggleSort('passedQty')">
-                已通过<span class="sort-arrow">{{ sortIcon('passedQty') }}</span>
-              </th>
-              <th class="col-sm sortable" @click="toggleSort('passRate')">
-                通过率<span class="sort-arrow">{{ sortIcon('passRate') }}</span>
-              </th>
-              <th class="col-op">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in page.list" :key="row.id" :class="{ checked: selectedIds.has(row.id) }">
-              <td class="check-col">
-                <input type="checkbox" :checked="selectedIds.has(row.id)"
-                       @change="toggleSelect(row.id, ($event.target as HTMLInputElement).checked)" />
-              </td>
-              <td class="col-name">
-                <span class="arrange-name" :title="row.name" @click="goDetail(row)">{{ row.name }}</span>
-              </td>
-              <td class="col-sm">{{ ARRANGE_EXAM_TYPE_TEXT[row.examType] || '线上考试' }}</td>
-              <td class="col-sm">
-                <span class="status-cell">
-                  <i class="status-dot" :class="'s' + row.status"></i>
-                  <span>{{ statusText(row.status) }}</span>
-                </span>
-              </td>
-              <td class="col-time">{{ row.entryStartAt || '不限' }}</td>
-              <td class="col-user">
-                {{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span>
-              </td>
-              <td class="col-time">{{ row.createdAt }}</td>
-              <td class="col-user">{{ (row.ownerNames || []).join('、') || '--' }}</td>
-              <td class="col-sm">{{ row.arrangedQty }}</td>
-              <td class="col-sm">{{ row.submittedQty }}</td>
-              <td class="col-sm">{{ row.passedQty }}</td>
-              <td class="col-sm">{{ formatRate(row.passRate) }}</td>
-              <td class="col-op">
-                <span v-if="row.status === 0" class="op-link" @click="doPublish(row)">发布</span>
-                <span v-else class="op-link" @click="goDetail(row)">管理</span>
-                <span class="op-link more" @click="openMoreMenu(row, $event)">更多<span class="more-arrow">▾</span></span>
-              </td>
-            </tr>
-            <tr v-if="!loading && !page.list.length">
-              <td colspan="13" class="empty-cell">暂无考试</td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="loading" class="table-loading">加载中...</div>
+        <el-table
+          v-loading="loading"
+          :data="page.list"
+          row-key="id"
+          class="arrange-table"
+          empty-text="暂无考试"
+          :row-class-name="arrangeRowClass"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="selectedIds.has(row.id)"
+                @change="toggleSelect(row.id, Boolean($event))"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="考试名称" min-width="240">
+            <template #default="{ row }">
+              <el-button link type="primary" class="arrange-name" @click="goDetail(row)">{{ row.name }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="考试类型" width="100">
+            <template #default="{ row }">{{ ARRANGE_EXAM_TYPE_TEXT[row.examType] || '线上考试' }}</template>
+          </el-table-column>
+          <el-table-column label="考试状态" width="110">
+            <template #default="{ row }">
+              <span class="status-cell"><i class="status-dot" :class="'s' + row.status"></i>{{ statusText(row.status) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="入场时间" width="170">
+            <template #header><el-button link @click="toggleSort('entryStartAt')">入场时间 {{ sortIcon('entryStartAt') }}</el-button></template>
+            <template #default="{ row }">{{ row.entryStartAt || '不限' }}</template>
+          </el-table-column>
+          <el-table-column label="创建人" width="150">
+            <template #default="{ row }">{{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span></template>
+          </el-table-column>
+          <el-table-column label="创建时间" width="170">
+            <template #header><el-button link @click="toggleSort('createdAt')">创建时间 {{ sortIcon('createdAt') }}</el-button></template>
+            <template #default="{ row }">{{ row.createdAt }}</template>
+          </el-table-column>
+          <el-table-column label="负责人" width="140">
+            <template #default="{ row }">{{ (row.ownerNames || []).join('、') || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="安排人数" width="100">
+            <template #header><el-button link @click="toggleSort('arrangedQty')">安排人数 {{ sortIcon('arrangedQty') }}</el-button></template>
+            <template #default="{ row }">{{ row.arrangedQty }}</template>
+          </el-table-column>
+          <el-table-column label="已交卷" width="90">
+            <template #header><el-button link @click="toggleSort('submittedQty')">已交卷 {{ sortIcon('submittedQty') }}</el-button></template>
+            <template #default="{ row }">{{ row.submittedQty }}</template>
+          </el-table-column>
+          <el-table-column label="已通过" width="90">
+            <template #header><el-button link @click="toggleSort('passedQty')">已通过 {{ sortIcon('passedQty') }}</el-button></template>
+            <template #default="{ row }">{{ row.passedQty }}</template>
+          </el-table-column>
+          <el-table-column label="通过率" width="90">
+            <template #header><el-button link @click="toggleSort('passRate')">通过率 {{ sortIcon('passRate') }}</el-button></template>
+            <template #default="{ row }">{{ formatRate(row.passRate) }}</template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="row.status === 0 ? doPublish(row) : goDetail(row)">
+                {{ row.status === 0 ? '发布' : '管理' }}
+              </el-button>
+              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多▾</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <div class="pagination">
         <span>共 {{ page.total }} 条</span>
-        <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-        <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(page.total / pageSize)) }}</span>
-        <button :disabled="pageNo >= Math.ceil(page.total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
-        <select v-model.number="pageSize" @change="reload(1)">
-          <option :value="10">10 条/页</option>
-          <option :value="20">20 条/页</option>
-          <option :value="50">50 条/页</option>
-          <option :value="100">100 条/页</option>
-        </select>
+        <el-pagination
+          v-model:current-page="pageNo"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="page.total"
+          layout="sizes, prev, pager, next"
+          background
+          @size-change="reload(1)"
+          @current-change="reload"
+        />
       </div>
     </section>
 
@@ -202,8 +203,8 @@
         <div class="link-body">
           <p class="link-name">{{ linkRow.name }}</p>
           <div class="link-row">
-            <input :value="linkUrl" readonly />
-            <button class="btn primary" type="button" @click="copyLink">复制</button>
+            <el-input :model-value="linkUrl" readonly />
+            <el-button class="btn primary" @click="copyLink">复制</el-button>
           </div>
           <p class="link-note">学员通过该链接加入考试；二维码命待引入 qrcode.vue 后补。</p>
         </div>
@@ -328,6 +329,8 @@ const allChecked = computed(() =>
   page.list.length > 0 && page.list.every(r => selectedIds.value.has(r.id)))
 const someChecked = computed(() =>
   page.list.some(r => selectedIds.value.has(r.id)) && !allChecked.value)
+const arrangeRowClass = ({ row }: { row: ArrangeItem }) =>
+  selectedIds.value.has(row.id) ? 'checked-row' : ''
 
 const loadTree = async () => {
   try {

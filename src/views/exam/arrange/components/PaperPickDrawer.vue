@@ -9,40 +9,32 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <select v-model="catalogId" class="filter-select" @change="reload(1)">
-            <option value="root">全部分类</option>
-            <option v-for="c in flatCatalogs" :key="c.id" :value="c.id">{{ '　'.repeat(c.level) }}{{ c.name }}</option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="请输入试卷名称搜索" @keyup.enter="reload(1)" />
-          <button class="btn primary" type="button" @click="reload(1)">查询</button>
+          <el-select v-model="catalogId" class="filter-select" @change="reload(1)">
+            <el-option value="root" label="全部分类" />
+            <el-option v-for="c in flatCatalogs" :key="c.id" :value="c.id" :label="'　'.repeat(c.level) + c.name" />
+          </el-select>
+          <el-input v-model.trim="keyword" placeholder="请输入试卷名称搜索" @keyup.enter="reload(1)" />
+          <el-button class="btn primary" @click="reload(1)">查询</el-button>
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="check-col"></th>
-                <th>试卷名称</th><th class="col-sm">出卷方式</th>
-                <th class="col-sm">试题数</th><th class="col-sm">总分</th>
-                <th class="col-sm">试卷状态</th><th class="col-time">更新日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in records" :key="p.id" :class="{ picked: picked?.id === p.id }"
-                  @click="picked = p">
-                <td class="check-col"><input type="radio" :checked="picked?.id === p.id" /></td>
-                <td class="col-name" :title="p.name">{{ p.name }}</td>
-                <td class="col-sm">{{ p.buildType === 1 ? '随机出卷' : '固定出卷' }}</td>
-                <td class="col-sm">{{ p.totalQuesQty }}</td>
-                <td class="col-sm">{{ p.totalScore }}</td>
-                <td class="col-sm">
-                  <span :class="['tag', p.status === 4 ? 'ok' : 'warn']">{{ p.status === 4 ? '已发布' : '未发布' }}</span>
-                </td>
-                <td class="col-time">{{ p.updateTime }}</td>
-              </tr>
-              <tr v-if="!records.length"><td colspan="7" class="empty-cell">没有可选试卷</td></tr>
-            </tbody>
-          </table>
+          <el-table :data="records" row-key="id" empty-text="没有可选试卷" @row-click="(row: any) => picked = row">
+            <el-table-column width="44" align="center">
+              <template #default="{ row }">
+                <el-radio :model-value="picked?.id" :value="row.id" @change="picked = row" />
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="试卷名称" min-width="200" show-overflow-tooltip />
+            <el-table-column label="出卷方式" width="110"><template #default="{ row }">{{ row.buildType === 1 ? '随机出卷' : '固定出卷' }}</template></el-table-column>
+            <el-table-column prop="totalQuesQty" label="试题数" width="90" />
+            <el-table-column prop="totalScore" label="总分" width="90" />
+            <el-table-column label="试卷状态" width="110">
+              <template #default="{ row }">
+                  <span :class="['tag', row.status === 4 ? 'ok' : 'warn']">{{ row.status === 4 ? '已发布' : '未发布' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="updateTime" label="更新日期" width="170" />
+          </el-table>
         </div>
 
         <p v-if="picked && picked.status !== 4" class="warn">
@@ -51,15 +43,13 @@
 
         <div class="pagination">
           <span>共 {{ total }} 条</span>
-          <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-          <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-          <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
+          <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :total="total" layout="prev, pager, next" background @current-change="reload" />
         </div>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!picked" @click="confirm">确定</button>
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!picked" @click="confirm">确定</el-button>
       </div>
     </div>
   </div>

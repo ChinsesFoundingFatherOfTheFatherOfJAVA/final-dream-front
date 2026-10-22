@@ -31,10 +31,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="!picked || saving" @click="handleTransfer">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!picked || saving" @click="handleTransfer">
           {{ saving ? '转移中...' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
 

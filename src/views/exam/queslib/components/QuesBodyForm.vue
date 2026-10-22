@@ -21,18 +21,18 @@
         <span class="option-key">{{ String.fromCharCode(65 + index) }}</span>
         <RichTextEditor v-model="opt.itemContent" class="option-editor" compact placeholder="选项内容（可含富文本/图片）" />
         <label class="answer-flag">
-          <input v-if="type === 0" type="radio" :checked="opt.answer === 1"
+          <el-radio v-if="type === 0" :model-value="opt.answer === 1"
                  @change="setSingleAnswer(index)" />
-          <input v-else type="checkbox" :checked="opt.answer === 1"
-                 @change="opt.answer = ($event.target as HTMLInputElement).checked ? 1 : 0" />
+          <el-checkbox v-else :model-value="opt.answer === 1"
+                 @change="opt.answer = Boolean($event) ? 1 : 0" />
           正确答案
         </label>
-        <button class="icon-btn" type="button" :disabled="index === 0" @click="moveOption(index, -1)">↑</button>
-        <button class="icon-btn" type="button" :disabled="index === body.options.length - 1" @click="moveOption(index, 1)">↓</button>
-        <button class="icon-btn danger" type="button" :disabled="body.options.length <= 2"
-                @click="body.options.splice(index, 1)">×</button>
+        <el-button class="icon-btn" :disabled="index === 0" @click="moveOption(index, -1)">↑</el-button>
+        <el-button class="icon-btn" :disabled="index === body.options.length - 1" @click="moveOption(index, 1)">↓</el-button>
+        <el-button class="icon-btn danger" :disabled="body.options.length <= 2"
+                @click="body.options.splice(index, 1)">×</el-button>
       </div>
-      <button class="btn" type="button" :disabled="body.options.length >= 12" @click="addOption">+ 新增选项</button>
+      <el-button class="btn" :disabled="body.options.length >= 12" @click="addOption">+ 新增选项</el-button>
     </div>
 
     <!-- 判断题 -->
@@ -40,41 +40,41 @@
       <label class="block-label required">选项内容</label>
       <div class="option-row">
         <span class="option-key">对</span>
-        <input v-model.trim="body.judgeCorrect" placeholder="正确选项内容" />
+        <el-input v-model.trim="body.judgeCorrect" placeholder="正确选项内容" />
       </div>
       <div class="option-row">
         <span class="option-key">错</span>
-        <input v-model.trim="body.judgeWrong" placeholder="错误选项内容" />
+        <el-input v-model.trim="body.judgeWrong" placeholder="错误选项内容" />
       </div>
       <label class="block-label">参考答案</label>
       <div class="radio-row">
-        <label><input v-model.number="body.judgeAnswer" type="radio" :value="0" /> 正确</label>
-        <label><input v-model.number="body.judgeAnswer" type="radio" :value="1" /> 错误</label>
+        <label><el-radio v-model.number="body.judgeAnswer" :value="0" /> 正确</label>
+        <label><el-radio v-model.number="body.judgeAnswer" :value="1" /> 错误</label>
       </div>
     </div>
 
     <!-- 填空题 -->
     <div v-else-if="type === 3" class="block">
       <label class="block-label required">填空答案</label>
-      <textarea v-model.trim="body.answerContent" rows="4"
-                placeholder="每行一个空的答案，与题干中 _(1)_ _(2)_ 顺序对应"></textarea>
+      <el-input v-model.trim="body.answerContent" :rows="4"
+                placeholder="每行一个空的答案，与题干中 _(1)_ _(2)_ 顺序对应" type="textarea" />
     </div>
 
     <!-- 问答题 -->
     <div v-else-if="type === 4" class="block">
       <label class="block-label">参考答案</label>
-      <textarea v-model.trim="body.answerContent" rows="4"></textarea>
+      <el-input v-model.trim="body.answerContent" :rows="4" type="textarea" />
 
       <label class="block-label">关键词及占比</label>
       <div v-for="(kw, index) in body.keywords" :key="index" class="option-row">
-        <input v-model.trim="kw.keyword" placeholder="关键词" />
-        <input v-model.number="kw.scoreRatio" type="number" min="0" max="100" class="score-input" />
+        <el-input v-model.trim="kw.keyword" placeholder="关键词" />
+        <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" :controls="false" />
         <span class="percent">%</span>
-        <button class="icon-btn danger" type="button" @click="body.keywords.splice(index, 1)">×</button>
+        <el-button class="icon-btn danger" @click="body.keywords.splice(index, 1)">×</el-button>
       </div>
-      <button class="btn" type="button" @click="body.keywords.push({ keyword: '', scoreRatio: 0 })">
+      <el-button class="btn" @click="body.keywords.push({ keyword: '', scoreRatio: 0 })">
         + 新增关键词
-      </button>
+      </el-button>
     </div>
 
     <div class="block">

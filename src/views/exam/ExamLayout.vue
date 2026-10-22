@@ -2,7 +2,7 @@
   <!-- 测练中心布局（截图02：题库分组菜单 + 五个未建设项 → PlaceholderPage） -->
   <div class="exam-layout">
     <header class="exam-header">
-      <button type="button" class="back-btn" @click="router.push('/homepage')">‹</button>
+      <el-button class="back-btn" @click="router.push('/homepage')">‹</el-button>
       <div>
         <h1>测练中心</h1>
         <p>题库与考试管理</p>

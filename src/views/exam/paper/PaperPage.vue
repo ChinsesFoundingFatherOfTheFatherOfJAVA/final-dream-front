@@ -13,120 +13,132 @@
 
     <section class="paper-panel">
       <div class="toolbar-row">
-        <button class="btn-primary" type="button" @click="openCreatePaper">新建试卷</button>
-        <button class="btn-outline" type="button" @click="showQuickCreate = true">快速出卷</button>
-        <button class="btn-outline" type="button" @click="showScoreConfig = true">设置默认分值</button>
+        <el-button class="btn-primary" @click="openCreatePaper">新建试卷</el-button>
+        <el-button class="btn-outline" @click="showQuickCreate = true">快速出卷</el-button>
+        <el-button class="btn-outline" @click="showScoreConfig = true">设置默认分值</el-button>
         <div v-if="selectedPaperIds.size" class="batch-group">
-          <button class="btn-outline" type="button" @click="batchDelete">删除</button>
-          <button class="btn-outline" type="button" @click="showBatchTransfer = true">转移</button>
-          <button class="btn-outline" type="button" @click="showBatchCatalog = true">修改分类</button>
+          <el-button class="btn-outline" @click="batchDelete">删除</el-button>
+          <el-button class="btn-outline" @click="showBatchTransfer = true">转移</el-button>
+          <el-button class="btn-outline" @click="showBatchCatalog = true">修改分类</el-button>
         </div>
         <span v-else class="batch-label">批量操作</span>
       </div>
 
       <!-- 筛选两行（截图01） -->
       <div class="filter-row">
-        <select v-model.number="queryType" class="filter-select" @change="reload(1)">
-          <option :value="0">全部试卷</option>
-          <option :value="1">我创建的</option>
-          <option :value="2">共享给我的</option>
-        </select>
-        <select v-model.number="buildTypeFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">出卷方式</option>
-          <option :value="0">固定出卷</option>
-          <option :value="1">随机出卷</option>
-        </select>
-        <select v-model.number="statusFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">试卷状态</option>
-          <option :value="0">未发布</option>
-          <option :value="4">已发布</option>
-        </select>
-        <select v-model.number="disabledFilter" class="filter-select" @change="reload(1)">
-          <option :value="-1">启用状态</option>
-          <option :value="0">启用</option>
-          <option :value="1">禁用</option>
-        </select>
-        <input v-model.trim="keyword" type="search" class="keyword-input"
+        <el-select v-model="queryType" class="filter-select" @change="reload(1)">
+          <el-option :value="0" label="全部试卷" />
+          <el-option :value="1" label="我创建的" />
+          <el-option :value="2" label="共享给我的" />
+        </el-select>
+        <el-select v-model="buildTypeFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="出卷方式" />
+          <el-option :value="0" label="固定出卷" />
+          <el-option :value="1" label="随机出卷" />
+        </el-select>
+        <el-select v-model="statusFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="试卷状态" />
+          <el-option :value="0" label="未发布" />
+          <el-option :value="4" label="已发布" />
+        </el-select>
+        <el-select v-model="disabledFilter" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="启用状态" />
+          <el-option :value="0" label="启用" />
+          <el-option :value="1" label="禁用" />
+        </el-select>
+        <el-input v-model.trim="keyword" class="keyword-input"
                placeholder="请输入试卷名称搜索" @keyup.enter="reload(1)" />
-        <button class="search-btn" type="button" @click="reload(1)">搜索</button>
-        <button class="btn-outline" type="button" @click="exportData">导出数据</button>
+        <el-button class="search-btn" @click="reload(1)">搜索</el-button>
+        <el-button class="btn-outline" @click="exportData">导出数据</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input type="checkbox" :checked="allPageChecked" :indeterminate.prop="somePageChecked"
-                       @change="toggleAllPage(($event.target as HTMLInputElement).checked)" />
-              </th>
-              <th class="col-name">试卷名称</th>
-              <th class="col-sm">出卷方式</th>
-              <th class="col-sm sortable" @click="sortBy('usedQty')">引用次数 {{ orderIcon('usedQty') }}</th>
-              <th class="col-user">创建人</th>
-              <th class="col-time sortable" @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</th>
-              <th class="col-sm">试卷状态</th>
-              <th class="col-sm">启用</th>
-              <th class="col-op">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in page.records" :key="row.id" :class="{ checked: selectedPaperIds.has(row.id) }">
-              <td class="check-col">
-                <input type="checkbox" :checked="selectedPaperIds.has(row.id)"
-                       @change="toggleSelect(row.id, ($event.target as HTMLInputElement).checked)" />
-              </td>
-              <td class="col-name">
+        <el-table
+          v-loading="loading"
+          :data="page.records"
+          row-key="id"
+          class="paper-table"
+          empty-text="暂无试卷"
+        >
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox :model-value="allPageChecked" :indeterminate="somePageChecked" @change="toggleAllPage" />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="selectedPaperIds.has(row.id)"
+                @change="toggleSelect(row.id, Boolean($event))"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="试卷名称" min-width="220">
+            <template #default="{ row }">
+              <div>
                 <span class="paper-name" :title="row.name">{{ row.name }}</span>
                 <span v-if="row.secrecy === 1" class="secrecy-tag">保密</span>
-              </td>
-              <td class="col-sm">{{ row.buildType === 1 ? '随机出卷' : '固定出卷' }}</td>
-              <td class="col-sm">
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="出卷方式" width="110">
+            <template #default="{ row }">{{ row.buildType === 1 ? '随机出卷' : '固定出卷' }}</template>
+          </el-table-column>
+          <el-table-column label="引用次数" width="110">
+            <template #header><el-button link @click="sortBy('usedQty')">引用次数 {{ orderIcon('usedQty') }}</el-button></template>
+            <template #default="{ row }">
                 <span v-if="row.usedQty > 0" class="used-link" @click="openUseDrawer(row)">{{ row.usedQty }}</span>
                 <span v-else>{{ row.usedQty }}</span>
-              </td>
-              <td class="col-user">
+            </template>
+          </el-table-column>
+          <el-table-column label="创建人" width="150">
+            <template #default="{ row }">
                 {{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span>
-              </td>
-              <td class="col-time">{{ row.updateTime }}</td>
-              <td class="col-sm">
+            </template>
+          </el-table-column>
+          <el-table-column label="更新日期" width="170">
+            <template #header><el-button link @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</el-button></template>
+            <template #default="{ row }">{{ row.updateTime }}</template>
+          </el-table-column>
+          <el-table-column label="试卷状态" width="110">
+            <template #default="{ row }">
                 <!-- 仅两态：0=已保存灰点 / 4=已发布绿点 -->
                 <span class="status-cell">
                   <i class="status-dot" :class="{ published: row.status === 4 }"></i>
                   <span>{{ row.status === 4 ? '已发布' : '已保存' }}</span>
                 </span>
-              </td>
-              <td class="col-sm">
+            </template>
+          </el-table-column>
+          <el-table-column label="启用" width="100">
+            <template #default="{ row }">
                 <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'"
                       @click="toggleDisabled(row)">
                   <i class="enable-dot" :class="{ off: row.disabled === 1 }"></i>
                   <span>{{ row.disabled === 0 ? '启用' : '禁用' }}</span>
                 </span>
-              </td>
-              <td class="col-op">
-                <span v-if="row.status !== 4" class="op-link" @click="releaseRow(row)">发布</span>
-                <span v-else class="op-link" @click="goManageRow(row)">管理</span>
-                <span class="op-link more" @click="openMoreMenu(row, $event)">更多<span class="more-arrow">▾</span></span>
-              </td>
-            </tr>
-            <tr v-if="!loading && !page.records.length">
-              <td colspan="9" class="empty-cell">暂无试卷</td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="loading" class="table-loading">加载中...</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="row.status !== 4 ? releaseRow(row) : goManageRow(row)">
+                {{ row.status !== 4 ? '发布' : '管理' }}
+              </el-button>
+              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多▾</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <div class="pagination">
         <span>共 {{ page.total }} 条</span>
-        <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-        <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(page.total / pageSize)) }}</span>
-        <button :disabled="pageNo >= Math.ceil(page.total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
-        <select v-model.number="pageSize" @change="reload(1)">
-          <option :value="10">10 条/页</option>
-          <option :value="20">20 条/页</option>
-          <option :value="50">50 条/页</option>
-        </select>
+        <el-pagination
+          v-model:current-page="pageNo"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          :total="page.total"
+          layout="sizes, prev, pager, next"
+          background
+          @size-change="reload(1)"
+          @current-change="reload"
+        />
       </div>
     </section>
 

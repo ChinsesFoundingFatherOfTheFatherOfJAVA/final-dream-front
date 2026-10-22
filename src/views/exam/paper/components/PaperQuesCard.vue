@@ -55,17 +55,17 @@
         <div class="setting-row combo-setting">
           <label class="setting-item">
             <span>题库</span>
-            <select v-model="libId">
-              <option v-for="lib in libOptions" :key="lib.id" :value="lib.id">{{ lib.name }}</option>
-            </select>
+            <el-select v-model="libId">
+              <el-option v-for="lib in libOptions" :key="lib.id" :value="lib.id" :label="lib.name" />
+            </el-select>
           </label>
           <label class="setting-item">
             <span>难度</span>
-            <select v-model.number="levelType">
-              <option :value="0">易</option>
-              <option :value="1">中</option>
-              <option :value="2">难</option>
-            </select>
+            <el-select v-model="levelType">
+              <el-option :value="0" label="易" />
+              <el-option :value="1" label="中" />
+              <el-option :value="2" label="难" />
+            </el-select>
           </label>
           <!-- 不能用 label 包裹：label 会把点击转发给内部第一个可聚焦控件（考核点抽屉的「编辑」按钮），
                导致点选考核点时抽屉被误开。 -->
@@ -103,7 +103,7 @@
             <div class="setting-row">
               <label class="setting-item">
                 <span>此题分值</span>
-                <input v-model.number="editingSub.score" type="number" min="0" step="0.5" class="num" />
+                <el-input-number v-model="editingSub.score" :min="0" :step="0.5" class="num" :controls="false" />
                 <span>分</span>
               </label>
               <template v-if="editingSub.type === 1">
@@ -113,8 +113,8 @@
               </template>
             </div>
             <div class="card-actions">
-              <button class="btn" type="button" @click="editingSub = null">取消</button>
-              <button class="btn primary" type="button" :disabled="saving" @click="confirmSub">确定小题</button>
+              <el-button class="btn" @click="editingSub = null">取消</el-button>
+              <el-button class="btn primary" :disabled="saving" @click="confirmSub">确定小题</el-button>
             </div>
           </div>
 
@@ -122,17 +122,17 @@
           <div v-else class="sub-picker">
             <p class="picker-tip">请选择小题题型</p>
             <div class="picker-btns">
-              <button v-for="t in SUB_TYPES" :key="t.type" class="picker-btn" type="button"
-                      @click="startSub(t.type)">{{ t.label }}</button>
+              <el-button v-for="t in SUB_TYPES" :key="t.type" class="picker-btn"
+                      @click="startSub(t.type)">{{ t.label }}</el-button>
             </div>
           </div>
         </template>
 
         <div class="card-actions">
-          <button class="btn" type="button" @click="cancel">{{ isDraft ? '取消' : '收起' }}</button>
-          <button v-if="!parentReady" class="btn primary" type="button" :disabled="saving" @click="saveParent">
+          <el-button class="btn" @click="cancel">{{ isDraft ? '取消' : '收起' }}</el-button>
+          <el-button v-if="!parentReady" class="btn primary" :disabled="saving" @click="saveParent">
             {{ saving ? '保存中…' : '确定' }}
-          </button>
+          </el-button>
         </div>
       </template>
 
@@ -145,21 +145,21 @@
           <template v-if="!published">
             <label class="setting-item">
               <span>题库</span>
-              <select v-model="libId">
-                <option v-for="lib in libOptions" :key="lib.id" :value="lib.id">{{ lib.name }}</option>
-              </select>
+              <el-select v-model="libId">
+                <el-option v-for="lib in libOptions" :key="lib.id" :value="lib.id" :label="lib.name" />
+              </el-select>
             </label>
             <label class="setting-item">
               <span>难度</span>
-              <select v-model.number="levelType">
-                <option :value="0">易</option>
-                <option :value="1">中</option>
-                <option :value="2">难</option>
-              </select>
+              <el-select v-model="levelType">
+                <el-option :value="0" label="易" />
+                <el-option :value="1" label="中" />
+                <el-option :value="2" label="难" />
+              </el-select>
             </label>
             <label class="setting-item">
               <span>此题分值</span>
-              <input v-model.number="score" type="number" min="0" step="0.5" class="num" />
+              <el-input-number v-model="score" :min="0" :step="0.5" class="num" :controls="false" />
               <span>分</span>
             </label>
             <!-- 同组合题：div 包裹，避免 label 把点击转发给抽屉里的按钮 -->
@@ -174,10 +174,10 @@
         </div>
 
         <div class="card-actions">
-          <button class="btn" type="button" @click="cancel">{{ isDraft ? '取消' : '收起' }}</button>
-          <button class="btn primary" type="button" :disabled="saving" @click="save">
+          <el-button class="btn" @click="cancel">{{ isDraft ? '取消' : '收起' }}</el-button>
+          <el-button class="btn primary" :disabled="saving" @click="save">
             {{ saving ? '保存中…' : '确定' }}
-          </button>
+          </el-button>
         </div>
       </template>
     </div>

@@ -11,10 +11,10 @@
         <div class="filter-row">
           <div class="dept-select">
             <!-- 必须 .stop：否则冒泡到 .drawer-body 的关闭处理，刚打开就被关掉，表现为"点了没反应" -->
-            <button type="button" class="dept-trigger" @click.stop="showDeptPicker = !showDeptPicker">
+            <el-button class="dept-trigger" @click.stop="showDeptPicker = !showDeptPicker">
               <span :class="{ placeholder: !deptId }">{{ selectedDeptName }}</span>
               <span class="select-arrow">▾</span>
-            </button>
+            </el-button>
             <!-- 部门是多层级数据，必须树状展示（平铺下拉在 8000+ 人员的组织里不可用） -->
             <div v-if="showDeptPicker" class="dept-dropdown" @click.stop>
               <DeptTree
@@ -29,45 +29,33 @@
               />
             </div>
           </div>
-          <select v-model="searchField" class="filter-select">
-            <option value="name">姓名</option>
-            <option value="account">账号</option>
-            <option value="employeeNo">工号</option>
-          </select>
-          <input v-model.trim="keyword" type="search" :placeholder="`请输入${fieldLabel}搜索`"
+          <el-select v-model="searchField" class="filter-select">
+            <el-option value="name" label="姓名" />
+            <el-option value="account" label="账号" />
+            <el-option value="employeeNo" label="工号" />
+          </el-select>
+          <el-input v-model.trim="keyword" :placeholder="`请输入${fieldLabel}搜索`"
                  @keyup.enter="reload(1)" />
-          <button class="search-btn" @click="reload(1)">搜索</button>
+          <el-button class="search-btn" @click="reload(1)">搜索</el-button>
         </div>
 
         <div class="main-area">
           <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th class="check-col">
-                    <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                           @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-                  </th>
-                  <th>姓名</th><th>账号</th><th>工号</th><th>部门</th><th>岗位</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="u in records" :key="u.userId" :class="{ checked: isSelected(u) }">
-                  <td class="check-col">
-                    <input type="checkbox" :checked="isSelected(u)"
-                           @change="toggle(u, ($event.target as HTMLInputElement).checked)" />
-                  </td>
-                  <td>{{ u.name }}</td>
-                  <td>{{ u.account }}</td>
-                  <td>{{ u.employeeNo || '--' }}</td>
-                  <td>{{ u.deptName || '--' }}</td>
-                  <td>{{ u.positionName || '--' }}</td>
-                </tr>
-                <tr v-if="!loading && !records.length">
-                  <td colspan="6" class="empty-cell">暂无人员</td>
-                </tr>
-              </tbody>
-            </table>
+            <el-table v-loading="loading" :data="records" row-key="userId" empty-text="暂无人员">
+              <el-table-column width="44" align="center">
+                <template #header>
+                  <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+                </template>
+                <template #default="{ row }">
+                  <el-checkbox :model-value="isSelected(row)" @change="toggle(row, Boolean($event))" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="姓名" min-width="110" />
+              <el-table-column prop="account" label="账号" min-width="120" />
+              <el-table-column label="工号" width="120"><template #default="{ row }">{{ row.employeeNo || '--' }}</template></el-table-column>
+              <el-table-column label="部门" min-width="160" show-overflow-tooltip><template #default="{ row }">{{ row.deptName || '--' }}</template></el-table-column>
+              <el-table-column label="岗位" min-width="120"><template #default="{ row }">{{ row.positionName || '--' }}</template></el-table-column>
+            </el-table>
           </div>
 
           <aside class="selected-panel">
@@ -84,15 +72,13 @@
 
         <div class="pagination">
           <span>共 {{ total }} 条</span>
-          <button :disabled="pageNo <= 1" @click="reload(pageNo - 1)">‹</button>
-          <span class="page-no">{{ pageNo }}</span>
-          <button :disabled="pageNo >= Math.ceil(total / pageSize)" @click="reload(pageNo + 1)">›</button>
+          <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :total="total" layout="prev, pager, next" background @current-change="reload" />
         </div>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</button>
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</el-button>
       </div>
     </div>
   </div>

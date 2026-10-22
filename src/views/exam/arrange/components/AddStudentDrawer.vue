@@ -9,52 +9,44 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <select v-model="deptPath" class="filter-select" @change="reload">
-            <option value="">全部部门</option>
-            <option v-for="dept in departments" :key="dept.deptPath" :value="dept.deptPath">
-              {{ '　'.repeat(Math.max(0, dept.deptLevel - 1)) }}{{ dept.deptName }}
-            </option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="姓名/账号搜索" @keyup.enter="reload" />
-          <button class="btn primary" type="button" @click="reload">查询</button>
+          <el-select v-model="deptPath" class="filter-select" @change="reload">
+            <el-option value="" label="全部部门" />
+            <el-option v-for="dept in departments" :key="dept.deptPath" :value="dept.deptPath" :label="'　'.repeat(Math.max(0, dept.deptLevel - 1)) + dept.deptName" />
+          </el-select>
+          <el-input v-model.trim="keyword" placeholder="姓名/账号搜索" @keyup.enter="reload" />
+          <el-button class="btn primary" @click="reload">查询</el-button>
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="check-col">
-                  <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                         @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-                </th>
-                <th>姓名</th><th>账号</th><th>部门</th><th>岗位</th><th class="col-sm">状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="u in list" :key="u.userId" :class="{ added: u.added }">
-                <td class="check-col">
-                  <input type="checkbox" :disabled="u.added" :checked="picked.has(u.userId)"
-                         @change="toggle(u.userId, ($event.target as HTMLInputElement).checked)" />
-                </td>
-                <td>{{ u.fullname }}</td>
-                <td>{{ u.account }}</td>
-                <td>{{ u.deptName || '--' }}</td>
-                <td>{{ u.positionName || '--' }}</td>
-                <td class="col-sm">{{ u.added ? '已在名单' : '' }}</td>
-              </tr>
-              <tr v-if="!list.length"><td colspan="6" class="empty-cell">没有可选学员</td></tr>
-            </tbody>
-          </table>
+          <el-table :data="list" row-key="userId" empty-text="没有可选学员">
+            <el-table-column width="44" align="center">
+              <template #header>
+                <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+              </template>
+              <template #default="{ row }">
+                <el-checkbox
+                  :model-value="picked.has(row.userId)"
+                  :disabled="row.added"
+                  @change="toggle(row.userId, Boolean($event))"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column prop="fullname" label="姓名" min-width="110" />
+            <el-table-column prop="account" label="账号" min-width="120" />
+            <el-table-column label="部门" min-width="160"><template #default="{ row }">{{ row.deptName || '--' }}</template></el-table-column>
+            <el-table-column label="岗位" min-width="120"><template #default="{ row }">{{ row.positionName || '--' }}</template></el-table-column>
+            <el-table-column label="状态" width="100"><template #default="{ row }">{{ row.added ? '已在名单' : '' }}</template></el-table-column>
+          </el-table>
         </div>
 
         <p class="picked-tip">已选 {{ picked.size }} 人（名单内 {{ selectedCount }} 人）</p>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!picked.size || saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!picked.size || saving" @click="confirm">
           {{ saving ? '添加中…' : `确定（${picked.size}）` }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

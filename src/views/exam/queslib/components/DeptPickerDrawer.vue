@@ -21,8 +21,8 @@
 
       <div class="drawer-footer">
         <span class="picked-count">已选 {{ selectedIds.length }} 个部门</span>
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="!selectedIds.length" @click="confirmPick">确定</button>
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!selectedIds.length" @click="confirmPick">确定</el-button>
       </div>
     </div>
   </div>

@@ -13,8 +13,8 @@
 
         <div class="point-list">
           <label v-for="point in points" :key="point.id" class="point-row">
-            <input type="checkbox" :checked="pickedIds.includes(point.id)"
-                   @change="toggle(point.id, ($event.target as HTMLInputElement).checked)" />
+            <el-checkbox :model-value="pickedIds.includes(point.id)"
+                   @change="toggle(point.id, Boolean($event))" />
             <span class="point-name">{{ point.name }}</span>
             <span v-if="point.defaultPoint === 1" class="default-tag">默认</span>
           </label>
@@ -24,10 +24,10 @@
 
       <div class="drawer-footer">
         <span class="picked-count">已勾选 {{ pickedIds.length }} 个考核点</span>
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="confirm">
           {{ saving ? '设置中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

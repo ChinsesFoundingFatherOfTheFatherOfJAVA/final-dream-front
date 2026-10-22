@@ -2,14 +2,14 @@
   <!-- F15/F16/F17/F18 创建考试向导：① 创建试卷 ② 编辑试题 ③ 发布考试 -->
   <div class="wizard-page">
     <header class="wizard-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>创建考试</h1>
       <span class="type-tag">{{ typeLabel }}</span>
       <span v-if="published" class="status-tag">已发布 · 前两步只读</span>
       <ExamWizardSteps class="wizard-steps" :current="step" :can-jump="canJump" @jump="jump" />
       <div class="header-actions">
-        <button class="btn" type="button" :disabled="step <= 1" @click="prevStep">上一步</button>
-        <button class="btn primary" type="button" :disabled="busy" @click="nextStep">{{ nextLabel }}</button>
+        <el-button class="btn" :disabled="step <= 1" @click="prevStep">上一步</el-button>
+        <el-button class="btn primary" :disabled="busy" @click="nextStep">{{ nextLabel }}</el-button>
       </div>
     </header>
 
@@ -20,11 +20,11 @@
           <p class="readonly-banner">考试已发布，本步骤仅供回看，不能修改。</p>
           <!-- 已发布回看：与原平台一致，保留三种创建方式的 tab，但表单整体置灰只读 -->
           <div class="way-tabs readonly-tabs" role="tablist">
-            <button v-for="w in WAYS" :key="w.key" class="way-tab" type="button"
+            <el-button v-for="w in WAYS" :key="w.key" class="way-tab"
                     :class="{ active: w.key === 'new' }" disabled>
               <span class="way-icon" :class="w.key">{{ w.icon }}</span>
               <span>{{ w.label }}</span>
-            </button>
+            </el-button>
           </div>
           <p class="cycle-note">
             注：若开启循环考试，当选择“固定出卷”“导入试卷”时，循环考试每次试卷相同；当选择“随机出卷”时，循环考试每次试卷随机。
@@ -33,27 +33,27 @@
             <label class="form-row">
               <span class="row-label required">试卷名称</span>
               <span class="input-wrap">
-                <input :value="paper?.name || ''" disabled />
+                <el-input :model-value="paper?.name || ''" disabled />
               </span>
             </label>
             <label class="form-row">
               <span class="row-label required">试卷分类</span>
-              <select disabled>
-                <option>{{ paper?.catalogName || '默认试卷分类' }}</option>
-              </select>
+              <el-select disabled>
+                <el-option  :label="paper?.catalogName || '默认试卷分类'" />
+              </el-select>
             </label>
             <div class="form-row">
               <span class="row-label">出卷方式</span>
               <span class="pill-group">
-                <button class="pill" type="button" :class="{ active: paperBuildType === 0 }" disabled>固定出卷</button>
-                <button class="pill" type="button" :class="{ active: paperBuildType === 1 }" disabled>随机出卷</button>
+                <el-button class="pill" :class="{ active: paperBuildType === 0 }" disabled>固定出卷</el-button>
+                <el-button class="pill" :class="{ active: paperBuildType === 1 }" disabled>随机出卷</el-button>
               </span>
             </div>
             <div class="form-row">
               <span class="row-label">试卷保密</span>
               <span class="radio-inline">
-                <label><input type="radio" :checked="paper?.secrecy !== 1" disabled /> 公开</label>
-                <label><input type="radio" :checked="paper?.secrecy === 1" disabled /> 保密</label>
+                <label><el-radio :model-value="paper?.secrecy !== 1" disabled /> 公开</label>
+                <label><el-radio :model-value="paper?.secrecy === 1" disabled /> 保密</label>
                 <em>（仅支持创建者及超级管理员可编辑）</em>
               </span>
             </div>
@@ -67,12 +67,12 @@
 
           <!-- 三种创建方式：点 tab 只显示对应内容（截图20） -->
           <div class="way-tabs" role="tablist">
-            <button v-for="w in WAYS" :key="w.key" class="way-tab" type="button" role="tab"
+            <el-button v-for="w in WAYS" :key="w.key" class="way-tab" role="tab"
                     :class="{ active: way === w.key }" :aria-selected="way === w.key"
                     @click="way = w.key">
               <span class="way-icon" :class="w.key">{{ w.icon }}</span>
               <span>{{ w.label }}</span>
-            </button>
+            </el-button>
           </div>
 
           <p class="cycle-note">
@@ -84,30 +84,30 @@
             <label class="form-row">
               <span class="row-label required">试卷名称</span>
               <span class="input-wrap">
-                <input v-model.trim="newPaper.name" maxlength="200" placeholder="请输入试卷名称" />
+                <el-input v-model.trim="newPaper.name" maxlength="200" placeholder="请输入试卷名称" />
                 <em>{{ newPaper.name.length }}/200</em>
               </span>
             </label>
             <label class="form-row">
               <span class="row-label required">试卷分类</span>
-              <select v-model="newPaper.catalogId">
-                <option value="root">默认试卷分类</option>
-              </select>
+              <el-select v-model="newPaper.catalogId">
+                <el-option value="root" label="默认试卷分类" />
+              </el-select>
             </label>
             <div class="form-row">
               <span class="row-label">出卷方式</span>
               <span class="pill-group">
-                <button class="pill" type="button" :class="{ active: newPaper.buildType === 0 }"
-                        @click="newPaper.buildType = 0">固定出卷</button>
-                <button class="pill" type="button" :class="{ active: newPaper.buildType === 1 }"
-                        @click="newPaper.buildType = 1">随机出卷</button>
+                <el-button class="pill" :class="{ active: newPaper.buildType === 0 }"
+                        @click="newPaper.buildType = 0">固定出卷</el-button>
+                <el-button class="pill" :class="{ active: newPaper.buildType === 1 }"
+                        @click="newPaper.buildType = 1">随机出卷</el-button>
               </span>
             </div>
             <div class="form-row">
               <span class="row-label">试卷保密</span>
               <span class="radio-inline">
-                <label><input v-model.number="newPaper.secrecy" type="radio" :value="0" /> 公开</label>
-                <label><input v-model.number="newPaper.secrecy" type="radio" :value="1" /> 保密</label>
+                <label><el-radio v-model.number="newPaper.secrecy" :value="0" /> 公开</label>
+                <label><el-radio v-model.number="newPaper.secrecy" :value="1" /> 保密</label>
                 <em>（仅支持创建者及超级管理员可编辑）</em>
               </span>
             </div>
@@ -116,13 +116,13 @@
           <!-- 选择试卷 -->
           <div v-else-if="way === 'pick'" class="way-panel">
             <p class="way-desc">复用「试卷管理」里已建好的试卷，不会复制题目。</p>
-            <button class="btn primary" type="button" :disabled="busy" @click="showPick = true">选择试卷</button>
+            <el-button class="btn primary" :disabled="busy" @click="showPick = true">选择试卷</el-button>
           </div>
 
           <!-- 导入试卷 -->
           <div v-else class="way-panel">
             <p class="way-desc">下载 Excel 模板填好题目后导入，一份表生成一整张固定卷。</p>
-            <button class="btn primary" type="button" :disabled="busy" @click="showImport = true">导入试卷</button>
+            <el-button class="btn primary" :disabled="busy" @click="showImport = true">导入试卷</el-button>
           </div>
         </template>
       </section>
@@ -138,51 +138,32 @@
           </div>
 
           <div class="ro-filter">
-            <select v-model.number="roQuery.type" class="ro-select" @change="loadRoQuestions(1)">
-              <option :value="-1">题型</option>
-              <option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-            </select>
-            <select v-model.number="roQuery.levelType" class="ro-select" @change="loadRoQuestions(1)">
-              <option :value="-1">难度</option>
-              <option v-for="(label, value) in LEVEL_LABELS" :key="value" :value="Number(value)">{{ label }}</option>
-            </select>
-            <input v-model.trim="roQuery.keyword" class="ro-search" placeholder="请输入试题名称搜索"
+            <el-select v-model="roQuery.type" class="ro-select" @change="loadRoQuestions(1)">
+              <el-option :value="-1" label="题型" />
+              <el-option v-for="(label, value) in TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
+            </el-select>
+            <el-select v-model="roQuery.levelType" class="ro-select" @change="loadRoQuestions(1)">
+              <el-option :value="-1" label="难度" />
+              <el-option v-for="(label, value) in LEVEL_LABELS" :key="value" :value="Number(value)" :label="label" />
+            </el-select>
+            <el-input v-model.trim="roQuery.keyword" class="ro-search" placeholder="请输入试题名称搜索"
                    @keyup.enter="loadRoQuestions(1)" />
-            <button class="btn" type="button" @click="loadRoQuestions(1)">搜索</button>
+            <el-button class="btn" @click="loadRoQuestions(1)">搜索</el-button>
           </div>
 
           <div class="ro-table-wrap">
-            <table class="ro-table">
-              <thead>
-                <tr>
-                  <th>试题名称</th>
-                  <th class="w-type">题型</th>
-                  <th class="w-point">考核点</th>
-                  <th class="w-lib">所属题库</th>
-                  <th class="w-level">难度</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="q in roQues" :key="q.quesId">
-                  <td class="q-name">{{ q.summary }}</td>
-                  <td>{{ TYPE_LABELS[q.type] || '--' }}</td>
-                  <td class="ellipsis" :title="q.mainPointName">{{ q.mainPointName || '--' }}</td>
-                  <td class="ellipsis" :title="q.libName">{{ q.libName || '--' }}</td>
-                  <td>{{ LEVEL_LABELS[q.levelType] || '--' }}</td>
-                </tr>
-                <tr v-if="!roLoading && !roQues.length">
-                  <td colspan="5" class="empty-cell">暂无试题</td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-if="roLoading" class="table-loading">加载中...</div>
+            <el-table v-loading="roLoading" :data="roQues" row-key="quesId" class="ro-table" empty-text="暂无试题">
+              <el-table-column prop="summary" label="试题名称" min-width="260" show-overflow-tooltip />
+              <el-table-column label="题型" width="100"><template #default="{ row }">{{ TYPE_LABELS[row.type] || '--' }}</template></el-table-column>
+              <el-table-column label="考核点" width="140" show-overflow-tooltip><template #default="{ row }">{{ row.mainPointName || '--' }}</template></el-table-column>
+              <el-table-column label="所属题库" min-width="160" show-overflow-tooltip><template #default="{ row }">{{ row.libName || '--' }}</template></el-table-column>
+              <el-table-column label="难度" width="90"><template #default="{ row }">{{ LEVEL_LABELS[row.levelType] || '--' }}</template></el-table-column>
+            </el-table>
           </div>
 
           <div class="ro-pagination">
             <span>共 {{ roTotal }} 条</span>
-            <button :disabled="roPage <= 1" type="button" @click="loadRoQuestions(roPage - 1)">上一页</button>
-            <span>{{ roPage }} / {{ Math.max(1, Math.ceil(roTotal / 10)) }}</span>
-            <button :disabled="roPage >= Math.ceil(roTotal / 10)" type="button" @click="loadRoQuestions(roPage + 1)">下一页</button>
+            <el-pagination v-model:current-page="roPage" :page-size="10" :total="roTotal" layout="prev, pager, next" background @current-change="loadRoQuestions" />
           </div>
         </template>
 
@@ -196,8 +177,8 @@
           </div>
           <p class="panel-tip">题目编辑复用试卷管理模块的编辑器；改完点右上角「下一步」回到发布配置。</p>
           <div class="panel-actions">
-            <button class="btn primary" type="button" @click="goEditPaper">去编辑试题</button>
-            <button class="btn" type="button" @click="step = 3">直接进入发布配置</button>
+            <el-button class="btn primary" @click="goEditPaper">去编辑试题</el-button>
+            <el-button class="btn" @click="step = 3">直接进入发布配置</el-button>
           </div>
         </template>
       </section>

@@ -3,20 +3,20 @@
        + 选择题型面板 + 大题画布（可编辑题卡）+ 右侧统计与大题概览 -->
   <div class="quick-edit">
     <header class="edit-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ paper?.name || '固定出卷' }}</h1>
       <span class="save-hint"><i class="hint-dot"></i>{{ saveHint }}</span>
       <!-- 创建考试流程的第②步：三步条 + 右上角上一步/下一步（截图25） -->
       <ExamWizardSteps v-if="arrangeId" class="paper-steps" :current="2" :can-jump="canJumpStep" @jump="jumpStep" />
       <div class="header-actions">
-        <button class="btn" type="button" @click="notReady('预览')">预览</button>
-        <button class="btn" type="button" @click="notReady('导出')">导出</button>
+        <el-button class="btn" @click="notReady('预览')">预览</el-button>
+        <el-button class="btn" @click="notReady('导出')">导出</el-button>
         <template v-if="arrangeId">
-          <button class="btn" type="button" @click="jumpStep(1)">上一步</button>
-          <button class="btn primary" type="button" @click="goPublish">下一步</button>
+          <el-button class="btn" @click="jumpStep(1)">上一步</el-button>
+          <el-button class="btn primary" @click="goPublish">下一步</el-button>
         </template>
         <template v-else>
-          <button v-if="!published" class="btn primary" type="button" @click="doRelease">发布</button>
+          <el-button v-if="!published" class="btn primary" @click="doRelease">发布</el-button>
           <span v-else class="sync-btn">同步试卷至考试</span>
         </template>
       </div>
@@ -25,29 +25,29 @@
     <div class="edit-body">
       <!-- 左侧竖排 tab -->
       <nav class="tab-rail">
-        <button class="rail-tab" type="button" :class="{ active: tab === 'type' }" @click="tab = 'type'">
+        <el-button class="rail-tab" :class="{ active: tab === 'type' }" @click="tab = 'type'">
           <span class="rail-icon">▦</span>
           <span class="rail-text">题型</span>
-        </button>
-        <button class="rail-tab" type="button" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
+        </el-button>
+        <el-button class="rail-tab" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
           <span class="rail-icon">◔</span>
           <span class="rail-text">概览</span>
-        </button>
+        </el-button>
       </nav>
 
       <template v-if="tab === 'type'">
         <!-- 选择题型 -->
         <aside class="type-panel">
           <p class="panel-title">选择题型</p>
-          <button v-for="item in TYPE_BUTTONS" :key="item.type" class="type-btn" type="button"
+          <el-button v-for="item in TYPE_BUTTONS" :key="item.type" class="type-btn"
                   :disabled="published" @click="addCard(item.type)">
             <span class="type-icon">{{ item.icon }}</span>{{ item.label }}
-          </button>
+          </el-button>
 
           <div class="panel-foot">
-            <button class="foot-btn" type="button" :disabled="published" @click="showAi = true">AI出题</button>
-            <button class="foot-btn" type="button" :disabled="published" @click="openPick(-1)">从题库选题</button>
-            <button class="foot-btn" type="button" :disabled="published" @click="showImport = true">导入</button>
+            <el-button class="foot-btn" :disabled="published" @click="showAi = true">AI出题</el-button>
+            <el-button class="foot-btn" :disabled="published" @click="openPick(-1)">从题库选题</el-button>
+            <el-button class="foot-btn" :disabled="published" @click="showImport = true">导入</el-button>
           </div>
         </aside>
 
@@ -115,16 +115,16 @@
             <div class="stat-cell"><b>{{ totalQty }}</b><span>试题</span></div>
             <div class="stat-cell"><b>{{ totalScore.toFixed(2) }}</b><span>总分</span></div>
           </div>
-          <button class="stat-link" type="button" :disabled="published" @click="showBatchScore = true">
+          <el-button class="stat-link" :disabled="published" @click="showBatchScore = true">
             快速设置全部分数
-          </button>
+          </el-button>
 
           <div class="group-list">
             <div v-for="(section, si) in sections" :key="section.sectionIndex" class="group-item">
               <p class="group-title">{{ chineseNo(si) }}、{{ typeLabel(section.sectionIndex) }}</p>
               <div class="group-boxes">
-                <button v-for="n in sectionQty(section)" :key="n" class="group-box" type="button"
-                        @click="scrollToCard(section, n)">{{ n }}</button>
+                <el-button v-for="n in sectionQty(section)" :key="n" class="group-box"
+                        @click="scrollToCard(section, n)">{{ n }}</el-button>
               </div>
             </div>
             <p v-if="!sections.length" class="group-empty">暂无大题</p>

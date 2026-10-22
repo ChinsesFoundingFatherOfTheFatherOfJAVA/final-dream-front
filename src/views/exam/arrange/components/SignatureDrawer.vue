@@ -9,36 +9,28 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <input v-model.trim="keyword" type="search" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
-          <button class="btn primary" type="button" @click="reload(1)">查询</button>
-          <button class="btn" type="button" @click="doExport">导出</button>
+          <el-input v-model.trim="keyword" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
+          <el-button class="btn primary" @click="reload(1)">查询</el-button>
+          <el-button class="btn" @click="doExport">导出</el-button>
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>账号</th><th>姓名</th><th class="col-sign">签名</th><th class="col-time">签名时间</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in list" :key="row.id">
-                <td>{{ row.account || '--' }}</td>
-                <td>{{ row.fullname || '--' }}</td>
-                <td class="col-sign">
+          <el-table :data="list" row-key="id" empty-text="暂无签名记录">
+            <el-table-column label="账号" min-width="130"><template #default="{ row }">{{ row.account || '--' }}</template></el-table-column>
+            <el-table-column label="姓名" min-width="110"><template #default="{ row }">{{ row.fullname || '--' }}</template></el-table-column>
+            <el-table-column label="签名" width="160">
+              <template #default="{ row }">
                   <img v-if="row.signatureUrl" :src="row.signatureUrl" alt="签名" class="sign-img" />
                   <span v-else class="muted">--</span>
-                </td>
-                <td class="col-time">{{ row.signedAt || '--' }}</td>
-              </tr>
-              <tr v-if="!list.length"><td colspan="4" class="empty-cell">暂无签名记录</td></tr>
-            </tbody>
-          </table>
+              </template>
+            </el-table-column>
+            <el-table-column label="签名时间" width="170"><template #default="{ row }">{{ row.signedAt || '--' }}</template></el-table-column>
+          </el-table>
         </div>
 
         <div class="pagination">
           <span>共 {{ total }} 条</span>
-          <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-          <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-          <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
+          <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :total="total" layout="prev, pager, next" background @current-change="reload" />
         </div>
       </div>
     </div>

@@ -11,22 +11,22 @@
       <div class="drawer-body">
         <div class="mode-row">
           <label class="mode-radio">
-            <input v-model.number="sourceType" type="radio" :value="0" />
+            <el-radio v-model.number="sourceType" :value="0" />
             <span>按题库</span>
           </label>
           <label class="mode-radio">
-            <input v-model.number="sourceType" type="radio" :value="1" />
+            <el-radio v-model.number="sourceType" :value="1" />
             <span>按考核点</span>
           </label>
           <span v-if="sourceType === 1" class="hint">按考核点时，未勾选考核点表示该库全部考核点</span>
         </div>
 
         <div class="toolbar">
-          <select v-model="catalogFilter" class="catalog-filter">
-            <option value="">分类</option>
-            <option v-for="c in catalogs" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
-          <input v-model.trim="keyword" type="search" placeholder="题库/考核点" />
+          <el-select v-model="catalogFilter" class="catalog-filter">
+            <el-option value="" label="分类" />
+            <el-option v-for="c in catalogs" :key="c.id" :value="c.id" :label="c.name" />
+          </el-select>
+          <el-input v-model.trim="keyword" placeholder="题库/考核点" />
         </div>
 
         <div class="main-area">
@@ -39,8 +39,8 @@
                       @click.stop="toggleExpand(lib.id)">›</span>
                 <span v-else class="expand-placeholder"></span>
 
-                <input type="checkbox" :checked="isLibPicked(lib.id)"
-                       @change="toggleLib(lib.id, ($event.target as HTMLInputElement).checked)" />
+                <el-checkbox :model-value="isLibPicked(lib.id)"
+                       @change="toggleLib(lib.id, Boolean($event))" />
                 <span class="lib-name" @click="toggleLib(lib.id, !isLibPicked(lib.id))">{{ lib.name }}</span>
                 <span class="lib-cat">{{ lib.catalogName }}</span>
               </div>
@@ -48,8 +48,8 @@
               <!-- 展开的考核点（跨库多选） -->
               <template v-if="sourceType === 1 && expanded.has(lib.id)">
                 <div v-for="point in pointsOf(lib.id)" :key="point.id" class="point-row">
-                  <input type="checkbox" :checked="pickedPoints.has(point.id)"
-                         @change="togglePoint(lib.id, point.id, ($event.target as HTMLInputElement).checked)" />
+                  <el-checkbox :model-value="pickedPoints.has(point.id)"
+                         @change="togglePoint(lib.id, point.id, Boolean($event))" />
                   <span class="point-name">{{ point.name }}</span>
                 </div>
                 <p v-if="!loadingPoints.has(lib.id) && !pointsOf(lib.id).length" class="point-empty">
@@ -92,10 +92,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!hasPicked || saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!hasPicked || saving" @click="confirm">
           {{ saving ? '保存中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

@@ -4,20 +4,20 @@
        来源为「按题库」时首列是题库；来源为「按考核点」时首列变考点名，且每个考点各有一套表单。 -->
   <div class="auto-edit">
     <header class="edit-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ paper?.name || '随机出卷' }}</h1>
       <span class="save-hint"><i class="hint-dot"></i>{{ saveHint }}</span>
       <!-- 创建考试流程的第②步：三步条 + 右上角上一步/下一步（截图25） -->
       <ExamWizardSteps v-if="arrangeId" class="paper-steps" :current="2" :can-jump="canJumpStep" @jump="jumpStep" />
       <div class="header-actions">
-        <button class="btn" type="button" @click="notReady('预览')">预览</button>
-        <button class="btn" type="button" @click="notReady('导出')">导出</button>
+        <el-button class="btn" @click="notReady('预览')">预览</el-button>
+        <el-button class="btn" @click="notReady('导出')">导出</el-button>
         <template v-if="arrangeId">
-          <button class="btn" type="button" @click="jumpStep(1)">上一步</button>
-          <button class="btn primary" type="button" @click="goPublish">下一步</button>
+          <el-button class="btn" @click="jumpStep(1)">上一步</el-button>
+          <el-button class="btn primary" @click="goPublish">下一步</el-button>
         </template>
         <template v-else>
-          <button v-if="!published" class="btn primary" type="button" @click="doRelease">发布</button>
+          <el-button v-if="!published" class="btn primary" @click="doRelease">发布</el-button>
           <span v-else class="sync-btn">同步试卷至考试</span>
         </template>
       </div>
@@ -25,14 +25,14 @@
 
     <div class="edit-body">
       <nav class="tab-rail">
-        <button class="rail-tab" type="button" :class="{ active: tab === 'type' }" @click="tab = 'type'">
+        <el-button class="rail-tab" :class="{ active: tab === 'type' }" @click="tab = 'type'">
           <span class="rail-icon">▦</span>
           <span class="rail-text">题型</span>
-        </button>
-        <button class="rail-tab" type="button" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
+        </el-button>
+        <el-button class="rail-tab" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
           <span class="rail-icon">◔</span>
           <span class="rail-text">概览</span>
-        </button>
+        </el-button>
       </nav>
 
       <section v-if="tab === 'type'" class="config">
@@ -43,18 +43,18 @@
             <div class="mode-line">
               <span class="mode-label required">抽题方式</span>
               <label v-for="m in MODES" :key="m.value" class="mode-radio">
-                <input type="radio" :value="m.value" :checked="quesMode === m.value"
+                <el-radio :value="m.value" :model-value="quesMode === m.value"
                        :disabled="published" @change="changeMode(m.value)" />
                 <span>{{ m.label }}</span>
               </label>
             </div>
 
             <div class="config-actions">
-              <button class="btn primary" type="button" :disabled="published" @click="openSource">
+              <el-button class="btn primary" :disabled="published" @click="openSource">
                 选择抽题来源 ▾
-              </button>
-              <button class="btn" type="button" :disabled="published || !strategies.length"
-                      @click="showQuickStrategy = true">快速设置抽题策略</button>
+              </el-button>
+              <el-button class="btn" :disabled="published || !strategies.length"
+                      @click="showQuickStrategy = true">快速设置抽题策略</el-button>
             </div>
           </div>
 

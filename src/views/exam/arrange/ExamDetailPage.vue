@@ -2,107 +2,97 @@
   <!-- F6/F7/F8/F9/F10/F12 考试详情：页头 + 三 tab（考生情况 / 试题分析 / 统计分析） -->
   <div class="detail-page">
     <header class="detail-header">
-      <button class="back-btn" type="button" aria-label="返回" @click="goBack">‹</button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1 class="exam-name">
         {{ arrange?.name || '考试详情' }}
         <span class="status-tag" :class="'s' + (arrange?.status ?? 0)">{{ statusText }}</span>
       </h1>
       <div class="header-actions">
-        <button class="btn" type="button" @click="openLink">考试链接</button>
-        <button class="btn" type="button" @click="showNotice = true">变更通知</button>
-        <button v-if="arrange && arrange.status === 0" class="btn primary" type="button" @click="doPublish">发布</button>
-        <button v-if="arrange && arrange.status === 2" class="btn" type="button" @click="doEnd">结束考试</button>
+        <el-button class="btn" @click="openLink">考试链接</el-button>
+        <el-button class="btn" @click="showNotice = true">变更通知</el-button>
+        <el-button v-if="arrange && arrange.status === 0" class="btn primary" @click="doPublish">发布</el-button>
+        <el-button v-if="arrange && arrange.status === 2" class="btn" @click="doEnd">结束考试</el-button>
       </div>
     </header>
 
     <div class="tabs">
-      <button class="tab" type="button" :class="{ active: tab === 'student' }" @click="tab = 'student'">考生情况</button>
-      <button class="tab" type="button" :class="{ active: tab === 'question' }" @click="tab = 'question'">试题分析</button>
-      <button class="tab" type="button" :class="{ active: tab === 'analysis' }" @click="tab = 'analysis'">统计分析</button>
+      <el-button class="tab" :class="{ active: tab === 'student' }" @click="tab = 'student'">考生情况</el-button>
+      <el-button class="tab" :class="{ active: tab === 'question' }" @click="tab = 'question'">试题分析</el-button>
+      <el-button class="tab" :class="{ active: tab === 'analysis' }" @click="tab = 'analysis'">统计分析</el-button>
     </div>
 
     <!-- ===== 考生情况 ===== -->
     <section v-if="tab === 'student'" class="list-card">
       <div class="toolbar-row">
-        <button class="btn primary" type="button" @click="showAdd = true">添加学员</button>
-        <button class="btn" type="button" :disabled="!selectedIds.size" @click="doRemove">批量移除</button>
-        <button class="btn" type="button" :disabled="selectedIds.size !== 1" @click="doRetakeSelected">安排补考</button>
-        <button class="btn" type="button" @click="doSync">同步试卷</button>
-        <button class="btn" type="button" @click="doAnalyze">分析数据</button>
-        <button class="btn" type="button" :disabled="!selectedIds.size" @click="doUrge">催促</button>
-        <button class="btn" type="button" @click="showSignature = true">签名记录</button>
-        <button class="btn" type="button" @click="showColumns = true">列设置</button>
-        <button class="btn export-btn" type="button" @click="openExportMenu($event)">导出数据</button>
+        <el-button class="btn primary" @click="showAdd = true">添加学员</el-button>
+        <el-button class="btn" :disabled="!selectedIds.size" @click="doRemove">批量移除</el-button>
+        <el-button class="btn" :disabled="selectedIds.size !== 1" @click="doRetakeSelected">安排补考</el-button>
+        <el-button class="btn" @click="doSync">同步试卷</el-button>
+        <el-button class="btn" @click="doAnalyze">分析数据</el-button>
+        <el-button class="btn" :disabled="!selectedIds.size" @click="doUrge">催促</el-button>
+        <el-button class="btn" @click="showSignature = true">签名记录</el-button>
+        <el-button class="btn" @click="showColumns = true">列设置</el-button>
+        <el-button class="btn export-btn" @click="openExportMenu($event)">导出数据</el-button>
       </div>
 
       <div class="filter-row">
-        <select v-model.number="query.examStatus" class="filter-select" @change="reload(1)">
-          <option :value="-1">考试状态</option>
-          <option :value="0">未开始</option>
-          <option :value="1">考试中</option>
-          <option :value="2">批阅中</option>
-          <option :value="3">已完成</option>
-          <option :value="4">重新考试</option>
-        </select>
-        <select v-model.number="query.passStatus" class="filter-select" @change="reload(1)">
-          <option :value="-1">通过状态</option>
-          <option :value="1">通过</option>
-          <option :value="0">不通过</option>
-          <option :value="2">未知</option>
-        </select>
-        <input v-model.trim="query.keyword" type="search" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
-        <button class="btn primary" type="button" @click="reload(1)">查询</button>
+        <el-select v-model="query.examStatus" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="考试状态" />
+          <el-option :value="0" label="未开始" />
+          <el-option :value="1" label="考试中" />
+          <el-option :value="2" label="批阅中" />
+          <el-option :value="3" label="已完成" />
+          <el-option :value="4" label="重新考试" />
+        </el-select>
+        <el-select v-model="query.passStatus" class="filter-select" @change="reload(1)">
+          <el-option :value="-1" label="通过状态" />
+          <el-option :value="1" label="通过" />
+          <el-option :value="0" label="不通过" />
+          <el-option :value="2" label="未知" />
+        </el-select>
+        <el-input v-model.trim="query.keyword" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
+        <el-button class="btn primary" @click="reload(1)">查询</el-button>
       </div>
 
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input type="checkbox" :checked="allChecked" :indeterminate.prop="someChecked"
-                       @change="toggleAll(($event.target as HTMLInputElement).checked)" />
-              </th>
-              <th v-for="c in tableColumns" :key="c" :class="colClass(c)">{{ columnLabel(c) }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in students" :key="row.id" :class="{ checked: selectedIds.has(row.id) }">
-              <td class="check-col">
-                <input type="checkbox" :checked="selectedIds.has(row.id)"
-                       @change="toggleSelect(row.id, ($event.target as HTMLInputElement).checked)" />
-              </td>
-              <td v-for="c in tableColumns" :key="c" :class="colClass(c)">
-                <template v-if="c === 'account'">{{ row.account || '--' }}</template>
-                <template v-else-if="c === 'fullname'">{{ row.fullname || '--' }}</template>
-                <template v-else-if="c === 'deptName'">{{ row.deptName || '--' }}</template>
-                <template v-else-if="c === 'positionName'">{{ row.positionName || '--' }}</template>
-                <template v-else-if="c === 'examStatus'">{{ STUDENT_STATUS_TEXT[row.examStatus] ?? '--' }}</template>
-                <template v-else-if="c === 'passStatus'">
-                  <span :class="['pass-tag', 'p' + row.passStatus]">{{ STUDENT_PASS_TEXT[row.passStatus] ?? '--' }}</span>
-                </template>
-                <template v-else-if="c === 'score'">{{ row.score ?? 0 }}</template>
-                <template v-else-if="c === 'highestScore'">{{ row.highestScore ?? 0 }}</template>
-                <template v-else-if="c === 'attemptQty'">{{ row.attemptQty ?? 0 }}</template>
-                <template v-else-if="c === 'submitAt'">{{ row.submitAt || '--' }}</template>
-                <template v-else-if="c === 'operation'">
-                  <span v-if="row.currentAttemptId" class="op-link" @click="openResult(row)">答卷</span>
-                  <span v-if="row.canRetake" class="op-link" @click="doRetake(row)">安排补考</span>
-                  <span v-else-if="row.retakeUsed === 1" class="op-muted">已补考</span>
-                </template>
-              </td>
-            </tr>
-            <tr v-if="!students.length">
-              <td :colspan="tableColumns.length + 1" class="empty-cell">暂无考生，点「添加学员」安排</td>
-            </tr>
-          </tbody>
-        </table>
+        <el-table :data="students" row-key="id" empty-text="暂无考生，点「添加学员」安排">
+          <el-table-column width="44" align="center">
+            <template #header>
+              <el-checkbox :model-value="allChecked" :indeterminate="someChecked" @change="toggleAll" />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox :model-value="selectedIds.has(row.id)" @change="toggleSelect(row.id, Boolean($event))" />
+            </template>
+          </el-table-column>
+          <el-table-column v-for="c in tableColumns" :key="c" :label="columnLabel(c)" :min-width="c === 'operation' ? 150 : 110">
+            <template #default="{ row }">
+              <template v-if="c === 'account'">{{ row.account || '--' }}</template>
+              <template v-else-if="c === 'fullname'">{{ row.fullname || '--' }}</template>
+              <template v-else-if="c === 'deptName'">{{ row.deptName || '--' }}</template>
+              <template v-else-if="c === 'positionName'">{{ row.positionName || '--' }}</template>
+              <template v-else-if="c === 'examStatus'">{{ STUDENT_STATUS_TEXT[row.examStatus] ?? '--' }}</template>
+              <template v-else-if="c === 'passStatus'">
+                <el-tag :type="row.passStatus === 1 ? 'success' : row.passStatus === 0 ? 'danger' : 'info'">
+                  {{ STUDENT_PASS_TEXT[row.passStatus] ?? '--' }}
+                </el-tag>
+              </template>
+              <template v-else-if="c === 'score'">{{ row.score ?? 0 }}</template>
+              <template v-else-if="c === 'highestScore'">{{ row.highestScore ?? 0 }}</template>
+              <template v-else-if="c === 'attemptQty'">{{ row.attemptQty ?? 0 }}</template>
+              <template v-else-if="c === 'submitAt'">{{ row.submitAt || '--' }}</template>
+              <template v-else-if="c === 'operation'">
+                <el-button v-if="row.currentAttemptId" link type="primary" @click="openResult(row)">答卷</el-button>
+                <el-button v-if="row.canRetake" link type="primary" @click="doRetake(row)">安排补考</el-button>
+                <span v-else-if="row.retakeUsed === 1" class="op-muted">已补考</span>
+              </template>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <div class="pagination">
         <span>共 {{ total }} 条</span>
-        <button :disabled="pageNo <= 1" type="button" @click="reload(pageNo - 1)">上一页</button>
-        <span>{{ pageNo }} / {{ Math.max(1, Math.ceil(total / pageSize)) }}</span>
-        <button :disabled="pageNo >= Math.ceil(total / pageSize)" type="button" @click="reload(pageNo + 1)">下一页</button>
+        <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :total="total" layout="prev, pager, next" background @current-change="reload" />
       </div>
     </section>
 

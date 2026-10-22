@@ -9,38 +9,28 @@
 
       <div class="drawer-body">
         <div class="filter-row">
-          <select v-model.number="sourceType" class="filter-select">
-            <option :value="-1">全部类型</option>
-            <option :value="1">课程安排</option>
-            <option :value="2">单独安排</option>
-          </select>
+          <el-select v-model="sourceType" class="filter-select">
+            <el-option :value="-1" label="全部类型" />
+            <el-option :value="1" label="课程安排" />
+            <el-option :value="2" label="单独安排" />
+          </el-select>
           <span class="count">共 {{ filtered.length }} 条引用</span>
-          <button class="btn" type="button" :disabled="!filtered.length" @click="exportCsv">导出数据</button>
+          <el-button class="btn" :disabled="!filtered.length" @click="exportCsv">导出数据</el-button>
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>引用方</th><th class="col-sm">类型</th><th class="col-user">创建人</th><th class="col-sm">状态</th><th class="col-time">时间</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in filtered" :key="row.id">
-                <td>{{ row.refName || '--' }}</td>
-                <td class="col-sm">{{ row.sourceType === 2 ? '单独安排' : '课程安排' }}</td>
-                <td class="col-user">{{ row.creatorName || '--' }}</td>
-                <td class="col-sm">{{ row.status || '--' }}</td>
-                <td class="col-time">{{ row.createdAt || '--' }}</td>
-              </tr>
-              <tr v-if="!loading && !filtered.length">
-                <td colspan="5" class="empty-cell">该试卷暂未被引用</td>
-              </tr>
-            </tbody>
-          </table>
+          <el-table v-loading="loading" :data="filtered" row-key="id" empty-text="该试卷暂未被引用">
+            <el-table-column label="引用方" min-width="180"><template #default="{ row }">{{ row.refName || '--' }}</template></el-table-column>
+            <el-table-column label="类型" width="110"><template #default="{ row }">{{ row.sourceType === 2 ? '单独安排' : '课程安排' }}</template></el-table-column>
+            <el-table-column label="创建人" width="130"><template #default="{ row }">{{ row.creatorName || '--' }}</template></el-table-column>
+            <el-table-column label="状态" width="100"><template #default="{ row }">{{ row.status || '--' }}</template></el-table-column>
+            <el-table-column label="时间" width="170"><template #default="{ row }">{{ row.createdAt || '--' }}</template></el-table-column>
+          </el-table>
         </div>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn primary" type="button" @click="emit('close')">关闭</button>
+        <el-button class="btn primary" @click="emit('close')">关闭</el-button>
       </div>
     </div>
   </div>

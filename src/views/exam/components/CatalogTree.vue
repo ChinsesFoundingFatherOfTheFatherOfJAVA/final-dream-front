@@ -3,8 +3,8 @@
        两侧数据结构与交互完全一致（05 FP-04：与题库分类树组件完全复用）。 -->
   <aside class="catalog-panel">
     <div class="panel-toolbar">
-      <input v-model.trim="keyword" type="search" :placeholder="searchPlaceholder" />
-      <button class="btn-outline" type="button" @click="emit('create')">{{ createLabel }}</button>
+      <el-input v-model.trim="keyword" :placeholder="searchPlaceholder" />
+      <el-button class="btn-outline" @click="emit('create')">{{ createLabel }}</el-button>
     </div>
     <div class="tree-scroll">
       <div

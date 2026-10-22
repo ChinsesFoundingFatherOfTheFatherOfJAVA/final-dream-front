@@ -16,7 +16,7 @@
         <div class="block">
           <p class="block-label required">抽题方式</p>
           <label v-for="opt in OPTIONS" :key="opt.mode" class="mode-radio">
-            <input type="radio" :value="opt.mode" v-model.number="mode" />
+            <el-radio :value="opt.mode" v-model.number="mode" />
             <span>{{ opt.label }}</span>
           </label>
 
@@ -25,7 +25,7 @@
             <div v-for="lv in LEVELS" :key="lv.value" class="band-cell">
               <p class="band-title">{{ lv.label }}</p>
               <div class="band-input">
-                <input v-model.number="values[lv.value]" type="number" min="0" />
+                <el-input-number v-model="values[lv.value]" :min="0" :controls="false" />
                 <span class="max-hint">≤{{ maxOfLevel(lv.value) }}</span>
               </div>
             </div>
@@ -36,7 +36,7 @@
             <div v-for="t in TYPE_KEYS" :key="t.key" class="band-cell">
               <p class="band-title">{{ t.label }}</p>
               <div class="band-input">
-                <input v-model.number="typeValues[t.key]" type="number" min="0" />
+                <el-input-number v-model="typeValues[t.key]" :min="0" :controls="false" />
                 <span class="max-hint">≤{{ maxOfType(t.key) }}</span>
               </div>
             </div>
@@ -47,7 +47,7 @@
             <div class="band-cell wide">
               <p class="band-title">抽题数量</p>
               <div class="band-input">
-                <input v-model.number="needValue" type="number" min="0" />
+                <el-input-number v-model="needValue" :min="0" :controls="false" />
                 <span class="max-hint">≤{{ maxOfNeed }}</span>
               </div>
             </div>
@@ -56,10 +56,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="confirm">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="confirm">
           {{ saving ? '保存中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

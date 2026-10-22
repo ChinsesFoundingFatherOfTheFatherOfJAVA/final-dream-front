@@ -8,7 +8,7 @@
       </div>
 
       <div class="drawer-body">
-        <input v-model.trim="keyword" type="search" placeholder="请输入分类名称搜索" />
+        <el-input v-model.trim="keyword" placeholder="请输入分类名称搜索" />
 
         <div class="tree-scroll">
           <div
@@ -32,10 +32,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="!targetId || moving" @click="handleMove">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!targetId || moving" @click="handleMove">
           {{ moving ? '移动中...' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

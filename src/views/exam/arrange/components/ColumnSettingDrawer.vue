@@ -19,25 +19,25 @@
               @dragend="onDragEnd">
             <span class="drag-handle" title="拖拽调整顺序">⠿</span>
             <label class="col-check">
-              <input type="checkbox" :disabled="isLocked(c.key)" :checked="c.visible"
-                     @change="toggle(i, ($event.target as HTMLInputElement).checked)" />
+              <el-checkbox :disabled="isLocked(c.key)" :model-value="c.visible"
+                     @change="toggle(i, Boolean($event))" />
               <span :class="{ locked: isLocked(c.key) }">{{ labelOf(c.key) }}</span>
             </label>
             <span class="col-actions">
-              <button class="mini" type="button" :disabled="i === 0" @click="move(i, -1)">↑</button>
-              <button class="mini" type="button" :disabled="i === columns.length - 1" @click="move(i, 1)">↓</button>
+              <el-button class="mini" :disabled="i === 0" @click="move(i, -1)">↑</el-button>
+              <el-button class="mini" :disabled="i === columns.length - 1" @click="move(i, 1)">↓</el-button>
             </span>
           </li>
         </ul>
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" type="button" @click="resetDefault">恢复默认</button>
+        <el-button class="btn" @click="resetDefault">恢复默认</el-button>
         <span class="spacer"></span>
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="saving" @click="save">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="save">
           {{ saving ? '保存中…' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

@@ -25,9 +25,9 @@
         <p v-if="!allPoints.length" class="empty">该题库下暂无考核点</p>
       </div>
 
-      <button class="edit-btn" type="button" @click="openEditor">
+      <el-button class="edit-btn" @click="openEditor">
         <span class="pencil">✎</span> 编辑
-      </button>
+      </el-button>
     </div>
 
     <PointEditorDrawer

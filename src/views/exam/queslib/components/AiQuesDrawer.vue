@@ -6,10 +6,10 @@
       <div class="drawer-header">
         <!-- 原平台是同一页面上用左侧两个 tab 切换 AI建题 / 快速建题，这里对齐同一形态 -->
         <div class="mode-tabs">
-          <button type="button" class="mode-tab" :class="{ active: mode === 'ai' }"
-                  @click="switchMode('ai')">AI建题</button>
-          <button type="button" class="mode-tab" :class="{ active: mode === 'quick' }"
-                  @click="switchMode('quick')">快速建题</button>
+          <el-button class="mode-tab" :class="{ active: mode === 'ai' }"
+                  @click="switchMode('ai')">AI建题</el-button>
+          <el-button class="mode-tab" :class="{ active: mode === 'quick' }"
+                  @click="switchMode('quick')">快速建题</el-button>
         </div>
         <span class="close-btn" @click="emit('close')">×</span>
       </div>
@@ -18,14 +18,14 @@
         <!-- 左区：素材与数量 -->
         <section v-if="mode === 'ai'" class="left-pane">
           <label class="form-label">素材文本<span class="hint">（≤5000 字）</span></label>
-          <textarea v-model.trim="materialText" rows="10" maxlength="20000"
-                    placeholder="粘贴产品资料、课件内容等，AI 将严格依据素材出题"></textarea>
+          <el-input v-model.trim="materialText" :rows="10" maxlength="20000"
+                    placeholder="粘贴产品资料、课件内容等，AI 将严格依据素材出题" type="textarea" />
           <div class="char-count">{{ materialText.length }} 字</div>
 
           <div class="upload-row">
-            <button class="btn" type="button" :disabled="parsing" @click="pickFile">
+            <el-button class="btn" :disabled="parsing" @click="pickFile">
               {{ parsing ? `解析中 ${parsePercent}%` : '上传文件解析' }}
-            </button>
+            </el-button>
             <span class="hint">支持 .doc/.docx/.ppt/.pptx/.pdf</span>
             <input ref="fileInput" type="file" class="file-input"
                    accept=".doc,.docx,.ppt,.pptx,.pps,.pdf" @change="onFileChange" />
@@ -35,23 +35,23 @@
           <div class="count-grid">
             <label v-for="item in COUNT_ITEMS" :key="item.key" class="count-item">
               <span>{{ item.label }}</span>
-              <input v-model.number="counts[item.key]" type="number" min="0" max="35" />
+              <el-input-number v-model="counts[item.key]" :min="0" :max="35" :controls="false" />
             </label>
           </div>
 
-          <button class="btn-primary generate" type="button" :disabled="generating" @click="generate">
+          <el-button class="btn-primary generate" :disabled="generating" @click="generate">
             {{ generating ? '生成中（最长约 120s）…' : `生成试题（共 ${totalCount} 题）` }}
-          </button>
+          </el-button>
         </section>
         <section v-else class="left-pane">
           <label class="form-label">
             格式化文本<span class="hint">（≤10000 字）</span>
-            <button class="link" type="button" @click="showFormatHelp = !showFormatHelp">
+            <el-button class="link" @click="showFormatHelp = !showFormatHelp">
               {{ showFormatHelp ? '收起标准格式' : '查看标准格式示例' }}
-            </button>
+            </el-button>
           </label>
-          <textarea ref="quickTextarea" v-model="quickText" rows="12" maxlength="10000"
-                    placeholder="[单选题][中]题干&#10;A. 选项一&#10;B. 选项二&#10;答案: A"></textarea>
+          <el-input ref="quickTextarea" v-model="quickText" :rows="12" maxlength="10000"
+                    placeholder="[单选题][中]题干&#10;A. 选项一&#10;B. 选项二&#10;答案: A" type="textarea" />
           <div class="char-count">{{ quickText.length }} 字</div>
 
           <div v-if="showFormatHelp" class="format-help">
@@ -66,33 +66,33 @@
                 <li>判断题答案支持"错误"、"正确"或者"错"、"对"；</li>
                 <li>填空题多个答案之间用"；"分隔；</li>
               </ul>
-              <button class="rule-toggle" type="button" @click="showFormatHelp = false">收起 ^</button>
+              <el-button class="rule-toggle" @click="showFormatHelp = false">收起 ^</el-button>
             </div>
 
             <!-- 题型示例（照截图23：标题 + 题型 tab + 示例正文） -->
             <p class="example-title">题型示例</p>
             <div class="example-tabs">
-              <button v-for="tab in FORMAT_TABS" :key="tab.key" type="button"
+              <el-button v-for="tab in FORMAT_TABS" :key="tab.key"
                       class="example-tab" :class="{ active: formatTab === tab.key }"
-                      @click="formatTab = tab.key">{{ tab.label }}</button>
+                      @click="formatTab = tab.key">{{ tab.label }}</el-button>
             </div>
             <pre class="example-body">{{ FORMAT_EXAMPLES[formatTab] }}</pre>
           </div>
 
           <div class="insert-row">
             <span class="hint">设为</span>
-            <button v-for="label in QUICK_TYPES" :key="label" class="chip" type="button"
-                    @click="insertMarker(`[${label}]`)">{{ label }}</button>
+            <el-button v-for="label in QUICK_TYPES" :key="label" class="chip"
+                    @click="insertMarker(`[${label}]`)">{{ label }}</el-button>
           </div>
           <div class="insert-row">
             <span class="hint">难度</span>
-            <button v-for="label in QUICK_LEVELS" :key="label" class="chip" type="button"
-                    @click="insertMarker(`[${label}]`)">{{ label }}</button>
+            <el-button v-for="label in QUICK_LEVELS" :key="label" class="chip"
+                    @click="insertMarker(`[${label}]`)">{{ label }}</el-button>
           </div>
 
-          <button class="btn-primary generate" type="button" :disabled="generating" @click="generate">
+          <el-button class="btn-primary generate" :disabled="generating" @click="generate">
             生成试题
-          </button>
+          </el-button>
 
           <div v-if="issues.length" class="issue-box">
             <p v-for="issue in issues" :key="issue.line">
@@ -105,7 +105,7 @@
         <section class="right-pane">
           <div class="right-header">
             <span>生成结果（{{ drafts.length }}）</span>
-            <button v-if="drafts.length" class="link danger" type="button" @click="drafts = []">清空</button>
+            <el-button v-if="drafts.length" class="link danger" @click="drafts = []">清空</el-button>
           </div>
 
           <div class="card-list">
@@ -114,7 +114,7 @@
                 <span class="tag">{{ typeLabel(card.data.type) }}</span>
                 <span class="level">{{ levelLabel(card.data.levelType) }}</span>
                 <span class="expand-hint">{{ card.expanded ? '收起' : '点击展开编辑' }}</span>
-                <button class="link danger" type="button" @click.stop="drafts.splice(index, 1)">删除</button>
+                <el-button class="link danger" @click.stop="drafts.splice(index, 1)">删除</el-button>
               </div>
 
               <!-- 折叠态：预览 -->
@@ -137,15 +137,15 @@
               <template v-else>
                 <div class="edit-row">
                   <label class="edit-label">难度</label>
-                  <select v-model.number="card.data.levelType" class="edit-select">
-                    <option :value="0">易</option>
-                    <option :value="1">中</option>
-                    <option :value="2">难</option>
-                  </select>
+                  <el-select v-model="card.data.levelType" class="edit-select">
+                    <el-option :value="0" label="易" />
+                    <el-option :value="1" label="中" />
+                    <el-option :value="2" label="难" />
+                  </el-select>
                 </div>
 
                 <label class="edit-label">题干</label>
-                <textarea v-model="card.data.stem" rows="3"></textarea>
+                <el-input v-model="card.data.stem" :rows="3" type="textarea" />
 
                 <template v-if="card.data.type === 0 || card.data.type === 1">
                   <label class="edit-label">选项（勾选正确答案，拖手柄可调序）</label>
@@ -156,43 +156,43 @@
                     <span class="drag-handle" draggable="true" title="拖拽调整顺序"
                           @dragstart="cardDragIndex = i" @dragend="cardDragIndex = null">⠿</span>
                     <span class="option-key">{{ String.fromCharCode(65 + i) }}</span>
-                    <input v-model="card.data.options[i]" />
+                    <el-input v-model="card.data.options[i]" />
                     <label class="answer-flag">
-                      <input type="checkbox" :checked="isCorrect(card.data, i)"
-                             @change="toggleCorrect(card.data, i, ($event.target as HTMLInputElement).checked)" />
+                      <el-checkbox :model-value="isCorrect(card.data, i)"
+                             @change="toggleCorrect(card.data, i, Boolean($event))" />
                       正确
                     </label>
-                    <button class="link danger" type="button" :disabled="card.data.options.length <= 2"
-                            @click="card.data.options.splice(i, 1)">×</button>
+                    <el-button class="link danger" :disabled="card.data.options.length <= 2"
+                            @click="card.data.options.splice(i, 1)">×</el-button>
                   </div>
-                  <button class="btn small" type="button" :disabled="card.data.options.length >= 12"
-                          @click="card.data.options.push('')">+ 新增选项</button>
+                  <el-button class="btn small" :disabled="card.data.options.length >= 12"
+                          @click="card.data.options.push('')">+ 新增选项</el-button>
                 </template>
 
                 <template v-else-if="card.data.type === 2">
                   <label class="edit-label">参考答案</label>
                   <div class="radio-row">
-                    <label><input v-model="card.data.answer" type="radio" value="正确" /> 正确</label>
-                    <label><input v-model="card.data.answer" type="radio" value="错误" /> 错误</label>
+                    <label><el-radio v-model="card.data.answer" value="正确" /> 正确</label>
+                    <label><el-radio v-model="card.data.answer" value="错误" /> 错误</label>
                   </div>
                 </template>
 
                 <template v-else>
                   <label class="edit-label">参考答案</label>
-                  <textarea v-model="card.data.answer" rows="3"></textarea>
+                  <el-input v-model="card.data.answer" :rows="3" type="textarea" />
                   <template v-if="card.data.type === 4">
                     <label class="edit-label">关键词及占比</label>
                     <div v-for="(kw, i) in card.data.keywords" :key="i" class="edit-option">
-                      <input v-model="kw.keyword" placeholder="关键词" />
-                      <input v-model.number="kw.scoreRatio" type="number" min="0" max="100" class="score-input" />
+                      <el-input v-model="kw.keyword" placeholder="关键词" />
+                      <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" :controls="false" />
                       <span class="percent">%</span>
-                      <button class="link danger" type="button" @click="card.data.keywords.splice(i, 1)">×</button>
+                      <el-button class="link danger" @click="card.data.keywords.splice(i, 1)">×</el-button>
                     </div>
                   </template>
                 </template>
 
                 <label class="edit-label">试题解析</label>
-                <textarea v-model="card.data.analysis" rows="2"></textarea>
+                <el-input v-model="card.data.analysis" :rows="2" type="textarea" />
               </template>
             </article>
 
@@ -205,10 +205,10 @@
 
       <div class="drawer-footer">
         <span class="footer-tip">{{ materialText.length > 5000 ? '⚠ 粘贴文本超过 5000 字，建议精简' : '' }}</span>
-        <button class="btn" type="button" @click="emit('close')">取消</button>
-        <button class="btn primary" type="button" :disabled="!drafts.length || saving" @click="saveAll">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="!drafts.length || saving" @click="saveAll">
           {{ saving ? '录入中…' : `确定录入（${drafts.length}）` }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>

@@ -38,10 +38,10 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn" @click="emit('close')">取消</button>
-        <button class="btn primary" :disabled="saving" @click="handleSave">
+        <el-button class="btn" @click="emit('close')">取消</el-button>
+        <el-button class="btn primary" :disabled="saving" @click="handleSave">
           {{ saving ? '保存中...' : '确定' }}
-        </button>
+        </el-button>
       </div>
     </div>
 
