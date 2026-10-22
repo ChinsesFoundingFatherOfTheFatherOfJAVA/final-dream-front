@@ -8,9 +8,9 @@
 
 ## 2. 技术栈与结构
 
-- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus · Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
-- 目录：`src/api`（按后端模块拆分的请求封装）、`src/views`（admin / student / onlineclassroom / auth）、
-  `src/components/layout`（AdminLayout/EnterpriseLayout/TopNav）、`src/stores`（auth/training）、`src/utils`、`src/mock`、`src/types`。
+- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus（依赖已安装，`main.ts` 当前未全局 `app.use`）· Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
+- 目录：`src/api`（按后端模块拆分的请求封装）、`src/views`（admin / student / onlineclassroom / auth / exam）、
+  `src/components/layout`（AdminLayout/EnterpriseLayout/AdminTopNav/StudentTopNav）、`src/stores`（auth/training）、`src/utils`、`src/mock`、`src/types`。
 - 测试：Vitest + @vue/test-utils（`npm run test`）；类型检查 `vue-tsc`（`npm run build` 自带 type-check）。
 
 ## 3. 铁律（违反即返工）
@@ -25,7 +25,8 @@
    不要手拼后端地址。
 3. **类型契约**：新增接口先在 `src/types/*.ts` 补类型，`src/api/*.ts` 按后端模块一一对应
    （sm→StaffManagement、act→AtualCombatTraining、kng→OnlineClassroom、student/speechAdmin→SpeechTraining）。
-   后端 id 全部是 string，前端类型用 `ID = string`，不要把 id 当 number。
+   后端 id 类型按各接口实际契约：SM/Exam 使用 string，ST/ACT 旧接口（project/template/flow）使用 number；
+   不要跨模块强行统一，新增类型以实际 DTO 为准。
 4. **WebSocket**：AI 助手 WS 直连 8082（网关 WebMVC 版不支持 WS upgrade，见 vite.config.ts 代理注释与
    `复刻平台前端/AI助手WS接入说明.md`）；不要试图把 WS 收进网关路由。
 5. **路由权限**：`meta.requiresAuth / requiresAdmin / permission / permissionAny`（如 `kng:courseware`、
