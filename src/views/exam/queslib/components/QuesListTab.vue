@@ -135,6 +135,7 @@
         <option :value="10">10 条/页</option>
         <option :value="20">20 条/页</option>
         <option :value="50">50 条/页</option>
+        <option :value="100">100 条/页</option>
       </select>
     </div>
 
@@ -195,6 +196,14 @@
             <label>考核点</label>
             <span>{{ viewDetail.points.map(p => p.name).join('；') }}</span>
           </div>
+          <div class="view-row"><label>更新人</label><span>{{ currentViewRow?.updateFullname || '--' }}</span></div>
+          <div class="view-row"><label>更新日期</label><span>{{ currentViewRow?.updateTime || '--' }}</span></div>
+        </div>
+        <div class="view-footer">
+          <button class="btn" type="button" :disabled="currentViewIndex <= 0" @click="moveView(-1)">上一题</button>
+          <button class="btn" type="button"
+                  :disabled="currentViewIndex < 0 || currentViewIndex >= records.length - 1"
+                  @click="moveView(1)">下一题</button>
         </div>
       </div>
     </div>
@@ -236,6 +245,8 @@ const orderby = ref<'updateTime' | 'createTime'>('updateTime')
 const asc = ref(false)
 const loading = ref(false)
 const viewDetail = ref<QuesDetail | null>(null)
+const currentViewRow = computed(() => records.value.find(row => row.id === viewDetail.value?.id))
+const currentViewIndex = computed(() => currentViewRow.value ? records.value.indexOf(currentViewRow.value) : -1)
 /** 查重：五题型（组合题不参与），condition 记录哪些题型已经查过。 */
 const DUP_TYPES = [
   { type: 0, label: '单选题', key: 'singleStatus' as const },
@@ -395,6 +406,14 @@ const openView = async (id: string) => {
   try {
     viewDetail.value = await getQuesDetail(id)
   } catch { /* 拦截器已提示 */ }
+}
+
+const moveView = (delta: number) => {
+  const next = currentViewIndex.value + delta
+  const row = records.value[next]
+  if (next >= 0 && next < records.value.length && row) {
+    void openView(row.id)
+  }
 }
 
 const onDelete = async (row: QuesItem) => {
@@ -643,6 +662,14 @@ tr.checked td { background: #f0f7ff; }
 }
 
 .view-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+
+.view-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid #eee;
+}
 
 .view-row {
   display: flex;
