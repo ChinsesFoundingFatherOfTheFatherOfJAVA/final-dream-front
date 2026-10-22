@@ -19,7 +19,7 @@
         <option :value="0">启用</option>
         <option :value="1">禁用</option>
       </select>
-      <input v-model.trim="filters.keyword" type="search" placeholder="请输入试题名称搜索"
+      <input v-model.trim="filters.keyword" type="search" placeholder="请输入试题名称、创建人姓名或账号搜索"
              @keyup.enter="reload(1)" />
       <button class="btn-primary" type="button" @click="reload(1)">查询</button>
       <button class="btn" type="button" @click="createQues">手动建题</button>
@@ -107,7 +107,9 @@
             <td class="col-sm">{{ typeLabel(row.type) }}</td>
             <td class="col-point" :title="row.pointNames">{{ row.mainPointName || '--' }}</td>
             <td class="col-sm">{{ levelLabel(row.levelType) }}</td>
-            <td class="col-user">{{ row.createFullname || '--' }}</td>
+            <td class="col-user">
+              {{ row.createFullname || '--' }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span>
+            </td>
             <td class="col-time">{{ row.createTime || '--' }}</td>
             <td class="col-user">{{ row.updateFullname || '--' }}</td>
             <td class="col-time">{{ row.updateTime || '--' }}</td>
@@ -493,6 +495,7 @@ tr.checked td { background: #f0f7ff; }
 .col-name { min-width: 220px; max-width: 360px; }
 .col-point { min-width: 120px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .col-user { min-width: 90px; white-space: nowrap; }
+.account-no { color: #8a92a5; font-size: 12px; margin-left: 2px; }
 .col-time { min-width: 140px; white-space: nowrap; color: #667; }
 .col-sm { min-width: 62px; white-space: nowrap; }
 .col-op { min-width: 130px; white-space: nowrap; }
