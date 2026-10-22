@@ -27,30 +27,30 @@
       <div class="header-actions">
         <!-- 草稿：发布主题 + AI 设计助手 -->
         <template v-if="detail.status === 0">
-          <button class="btn btn-primary" @click="openPublish">🚀 发布主题</button>
-          <button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</button>
+          <el-button class="btn btn-primary" @click="openPublish">🚀 发布主题</el-button>
+          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
         </template>
 
         <!-- 发布中（初始化中）：AI 设计助手 + 导出报表(禁用) -->
         <template v-else-if="detail.status === 1">
-          <button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</button>
-          <button class="btn btn-outline" disabled title="初始化完成后可导出">导出报表</button>
+          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
+          <el-button class="btn btn-outline" disabled title="初始化完成后可导出">导出报表</el-button>
         </template>
 
         <!-- 已结束：仅导出报表 -->
         <template v-else-if="detail.status === 5">
-          <button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</button>
+          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</el-button>
         </template>
 
         <!-- 已发布 / 已暂停：既有按钮组 -->
         <template v-else>
-          <button class="btn btn-outline" @click="onPauseResume">
+          <el-button class="btn btn-outline" @click="onPauseResume">
             {{ detail.status === 4 ? '恢复' : '暂停' }}
-          </button>
-          <button class="btn btn-outline btn-danger" @click="onFinish">结束</button>
-          <button class="btn btn-outline" @click="comingSoon('功能建设中')">分享</button>
-          <button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</button>
-          <button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</button>
+          </el-button>
+          <el-button class="btn btn-outline btn-danger" @click="onFinish">结束</el-button>
+          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">分享</el-button>
+          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</el-button>
+          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
         </template>
       </div>
     </div>
@@ -64,18 +64,18 @@
         <span class="banner-text">{{ initBannerText }}</span>
       </div>
       <div class="banner-right">
-        <button
+        <el-button
           v-if="progressFailed"
           class="banner-action"
           :disabled="retrying"
           @click="onRetryInit"
         >
           {{ retrying ? '重试中…' : '重新初始化' }}
-        </button>
-        <button v-else-if="progressStatus === 1" class="banner-toggle" @click="bannerCollapsed = !bannerCollapsed">
+        </el-button>
+        <el-button v-else-if="progressStatus === 1" class="banner-toggle" @click="bannerCollapsed = !bannerCollapsed">
           {{ bannerCollapsed ? '展开' : '收起' }}
-        </button>
-        <button v-else class="banner-toggle" @click="dismissDoneBanner">知道了</button>
+        </el-button>
+        <el-button v-else class="banner-toggle" @click="dismissDoneBanner">知道了</el-button>
       </div>
       <div v-if="progressStatus === 1 && !bannerCollapsed" class="banner-bar">
         <div class="bar-fill" :style="{ width: progressPercent + '%' }"></div>
@@ -132,10 +132,10 @@
             </ul>
           </div>
           <div class="publish-footer">
-            <button class="btn-cancel" @click="publishVisible = false">取消</button>
-            <button class="btn-publish" :disabled="publishing" @click="doPublish">
+            <el-button class="btn-cancel" @click="publishVisible = false">取消</el-button>
+            <el-button class="btn-publish" :disabled="publishing" @click="doPublish">
               {{ publishing ? '发布中…' : '确认发布' }}
-            </button>
+            </el-button>
           </div>
         </div>
       </div>

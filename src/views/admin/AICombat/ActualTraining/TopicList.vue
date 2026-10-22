@@ -6,45 +6,44 @@
         <h2 class="page-title">训练主题管理</h2>
         <p class="page-subtitle">管理所有训练主题</p>
       </div>
-      <button class="btn-create" @click="goCreate">+ 创建新主题</button>
+      <el-button class="btn-create" @click="goCreate">+ 创建新主题</el-button>
     </div>
 
     <!-- FP-04 五个筛选条件（归属/来源为占位，前端不传值） -->
     <div class="filter-bar">
-      <select v-model="filters.jurisdiction" class="filter-select" title="归属（占位）">
-        <option value="1">我管辖的</option>
-        <option value="2">我负责的</option>
-      </select>
-      <select v-model="filters.status" class="filter-select" @change="fetchList">
-        <option value="">所有状态</option>
-        <option value="0">草稿</option>
-        <option value="1">发布中</option>
-        <option value="2">发布失败</option>
-        <option value="3">已发布</option>
-        <option value="4">已暂停</option>
-        <option value="5">已结束</option>
-      </select>
-      <select v-model="filters.themeMode" class="filter-select" @change="fetchList">
-        <option value="">所有模式</option>
-        <option value="1">日常训练</option>
-        <option value="2">通关考核</option>
-        <option value="3">训考一体</option>
-      </select>
-      <select v-model="filters.sourceType" class="filter-select" title="来源（占位）">
-        <option value="">来源</option>
-        <option value="1">单独安排</option>
-        <option value="2">项目安排</option>
-      </select>
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input
+      <el-select v-model="filters.jurisdiction" class="filter-select" title="归属（占位）">
+        <el-option label="我管辖的" value="1" />
+        <el-option label="我负责的" value="2" />
+      </el-select>
+      <el-select v-model="filters.status" class="filter-select" placeholder="所有状态" @change="fetchList">
+        <el-option label="所有状态" value="" />
+        <el-option label="草稿" value="0" />
+        <el-option label="发布中" value="1" />
+        <el-option label="发布失败" value="2" />
+        <el-option label="已发布" value="3" />
+        <el-option label="已暂停" value="4" />
+        <el-option label="已结束" value="5" />
+      </el-select>
+      <el-select v-model="filters.themeMode" class="filter-select" placeholder="所有模式" @change="fetchList">
+        <el-option label="所有模式" value="" />
+        <el-option label="日常训练" value="1" />
+        <el-option label="通关考核" value="2" />
+        <el-option label="训考一体" value="3" />
+      </el-select>
+      <el-select v-model="filters.sourceType" class="filter-select" title="来源（占位）">
+        <el-option label="来源" value="" />
+        <el-option label="单独安排" value="1" />
+        <el-option label="项目安排" value="2" />
+      </el-select>
+      <el-input
           v-model="filters.keyword"
-          type="text"
           class="search-input"
           placeholder="搜索主题..."
+          clearable
           @keyup.enter="fetchList"
-        />
-      </div>
+      >
+        <template #prefix>🔍</template>
+      </el-input>
     </div>
 
     <!-- FP-05 主题卡片列表 -->
@@ -195,43 +194,24 @@ function formatUpdatedAt(time: string | null): string {
 }
 
 .filter-select {
-  height: 34px;
   min-width: 110px;
-  padding: 0 10px;
-  border: 1px solid #dcdfe6;
   border-radius: 6px;
   font-size: 14px;
   color: #333;
-  background: #fff;
-  outline: none;
-  cursor: pointer;
 
-  &:focus { border-color: #1890ff; }
+  :deep(.el-select__wrapper) {
+    min-height: 34px;
+  }
 }
 
-.search-box {
-  position: relative;
+.search-input {
+  width: 200px;
 
-  .search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 13px;
-  }
-
-  .search-input {
-    width: 200px;
-    height: 34px;
-    padding: 0 12px 0 30px;
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
     border: 1px solid #dcdfe6;
     border-radius: 6px;
     font-size: 14px;
-    color: #333;
-    outline: none;
-
-    &::placeholder { color: #bbb; }
-    &:focus { border-color: #1890ff; }
   }
 }
 

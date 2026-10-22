@@ -3,21 +3,26 @@
     <!-- 工具栏（静态壳，均只提示） -->
     <div class="toolbar">
       <div class="toolbar-left">
-        <button class="btn btn-primary" @click="comingSoon('学员功能建设中')">添加学员</button>
-        <button class="btn btn-orange" @click="comingSoon('学员功能建设中')">一键催促（{{ participantCount }} 人）</button>
-        <button class="btn btn-gray" disabled title="学员功能建设中">导出报告(PDF)</button>
+        <el-button class="btn btn-primary" @click="comingSoon('学员功能建设中')">添加学员</el-button>
+        <el-button class="btn btn-orange" @click="comingSoon('学员功能建设中')">一键催促（{{ participantCount }} 人）</el-button>
+        <el-button class="btn btn-gray" disabled title="学员功能建设中">导出报告(PDF)</el-button>
       </div>
       <div class="toolbar-right">
         <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" placeholder="搜索学员姓名 / 账号 / 工号..." @focus="comingSoon('学员功能建设中')" />
+          <el-input
+            class="search-input"
+            placeholder="搜索学员姓名 / 账号 / 工号..."
+            @focus="comingSoon('学员功能建设中')"
+          >
+            <template #prefix>🔍</template>
+          </el-input>
         </div>
-        <select class="toolbar-select" @change="comingSoon('学员功能建设中')">
-          <option>部门</option>
-        </select>
-        <select class="toolbar-select" @change="comingSoon('学员功能建设中')">
-          <option>全部状态</option>
-        </select>
+        <el-select class="toolbar-select" model-value="" @change="comingSoon('学员功能建设中')">
+          <el-option label="部门" value="" />
+        </el-select>
+        <el-select class="toolbar-select" model-value="" @change="comingSoon('学员功能建设中')">
+          <el-option label="全部状态" value="" />
+        </el-select>
       </div>
     </div>
 
@@ -35,41 +40,24 @@
 
     <!-- 空数据表格（静态壳） -->
     <div class="table-wrap">
-      <table class="student-table">
-        <thead>
-          <tr>
-            <th>学员姓名</th>
-            <th>部门</th>
-            <th>来源</th>
-            <th>状态</th>
-            <th>场景通过</th>
-            <th>练习次数</th>
-            <th>平均得分</th>
-            <th>训练均分</th>
-            <th>最近活跃</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="10" class="empty-cell">
-              <div class="empty-icon">👥</div>
-              <p class="empty-text">学员功能建设中，敬请期待</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table :data="[]" class="student-table" empty-text="学员功能建设中，敬请期待">
+        <el-table-column prop="name" label="学员姓名" min-width="120" />
+        <el-table-column prop="dept" label="部门" min-width="150" />
+        <el-table-column prop="source" label="来源" width="100" />
+        <el-table-column prop="status" label="状态" width="100" />
+        <el-table-column prop="scenePass" label="场景通过" width="100" />
+        <el-table-column prop="times" label="练习次数" width="100" />
+        <el-table-column prop="avg" label="平均得分" width="100" />
+        <el-table-column prop="trainAvg" label="训练均分" width="100" />
+        <el-table-column prop="activeAt" label="最近活跃" width="140" />
+        <el-table-column prop="operation" label="操作" width="100" />
+      </el-table>
     </div>
 
     <!-- 表尾 -->
     <div class="table-footer">
       <span class="total">共 {{ participantCount }} 条</span>
-      <div class="pager">
-        <button class="page-btn" disabled>&lt;</button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn" disabled>&gt;</button>
-        <span class="page-size">10 条/页</span>
-      </div>
+      <el-pagination :total="participantCount" :page-size="10" layout="prev, pager, next, sizes" disabled />
       <span class="foot-note">场景完成率 100% 的学员无法被催促</span>
     </div>
   </div>
@@ -117,40 +105,23 @@ defineProps<{ participantCount: number }>()
   }
 
   .search-box {
-    position: relative;
-
-    .search-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-    }
-
     .search-input {
       width: 220px;
-      height: 32px;
-      padding: 0 12px 0 28px;
-      border: 1px solid #dcdfe6;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #333;
-      outline: none;
 
-      &::placeholder { color: #bbb; }
+      :deep(.el-input__wrapper) {
+        min-height: 32px;
+        border-radius: 4px;
+      }
     }
   }
 
   .toolbar-select {
-    height: 32px;
-    padding: 0 10px;
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
-    background: #fff;
-    outline: none;
-    cursor: pointer;
+    width: 120px;
+
+    :deep(.el-select__wrapper) {
+      min-height: 32px;
+      border-radius: 4px;
+    }
   }
 }
 

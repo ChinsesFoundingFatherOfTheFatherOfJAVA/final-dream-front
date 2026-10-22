@@ -25,13 +25,13 @@
           我来帮你把方向变成一套可演练的训练主题。
         </p>
         <div class="empty-samples">
-          <button
+          <el-button
             v-for="s in samples"
             :key="s"
             class="sample-chip"
             :disabled="store.inputDisabled"
             @click="useSample(s)"
-          >{{ s }}</button>
+          >{{ s }}</el-button>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
       </template>
     </div>
 
-    <button v-if="showScrollBtn" class="scroll-bottom-btn" @click="scrollToBottom(true)">↓</button>
+    <el-button v-if="showScrollBtn" class="scroll-bottom-btn" @click="scrollToBottom(true)">↓</el-button>
 
     <!-- 输入区 -->
     <div class="chat-input-area">
@@ -68,21 +68,21 @@
             :accept="acceptAttr"
             @change="onFileChange"
           />
-          <button class="tool-btn" :disabled="store.inputDisabled || uploading" @click="pickFile">
+          <el-button class="tool-btn" :disabled="store.inputDisabled || uploading" @click="pickFile">
             {{ uploading ? '上传中…' : '📎 上传资料' }}
-          </button>
-          <button
+          </el-button>
+          <el-button
             class="tool-btn"
             :class="{ recording }"
             :disabled="store.inputDisabled || recognizing"
             @click="toggleVoice"
           >
             {{ recording ? `⏹ 录音中 ${recordSeconds}s` : recognizing ? '识别中…' : ' 语音输入' }}
-          </button>
+          </el-button>
           <span class="tool-hint">支持 ppt / pptx / doc / docx / pdf / txt / md</span>
         </div>
 
-        <button class="send-btn" :disabled="store.inputDisabled || !draft.trim()" @click="send">发送</button>
+        <el-button class="send-btn" :disabled="store.inputDisabled || !draft.trim()" @click="send">发送</el-button>
       </div>
     </div>
   </div>

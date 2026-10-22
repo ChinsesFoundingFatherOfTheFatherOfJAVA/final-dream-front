@@ -25,7 +25,7 @@
         </div>
       </nav>
       <div class="menu-footer">
-        <button class="collapse-btn" title="收起菜单" @click="comingSoon('功能建设中')">⇤</button>
+        <el-button class="collapse-btn" title="收起菜单" @click="comingSoon('功能建设中')">⇤</el-button>
       </div>
     </aside>
 

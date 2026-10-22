@@ -42,13 +42,13 @@
       <div class="scope-row">
         <span class="scope-label">统计范围 <span class="info-icon">ⓘ</span></span>
         <div class="segmented">
-          <button
+          <el-button
             v-for="opt in scopeOptions"
             :key="opt.value"
             class="seg-btn"
             :class="{ active: scope === opt.value }"
             @click="scope = opt.value"
-          >{{ opt.label }}</button>
+          >{{ opt.label }}</el-button>
         </div>
       </div>
 
@@ -114,41 +114,38 @@
       <!-- 维度掌握变化 -->
       <div class="panel">
         <div class="panel-title">维度掌握变化 <span class="info-icon">ⓘ</span></div>
-        <table class="change-table">
-          <thead>
-            <tr>
-              <th>维度</th>
-              <th>首次 → 最近</th>
-              <th>变化幅度</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="dim in currentDimensions" :key="dim.id">
-              <td>{{ dim.dimensionName }}</td>
-              <template v-if="changeOf(dim.dimensionName)">
-                <td class="change-scores">
-                  {{ changeOf(dim.dimensionName)!.firstScore }} → {{ changeOf(dim.dimensionName)!.lastScore }}
-                </td>
-                <td>
-                  <div v-if="changeOf(dim.dimensionName)!.notSecondTime" class="not-second">未练第 2 次</div>
+        <el-table :data="currentDimensions" row-key="id" class="change-table">
+          <el-table-column prop="dimensionName" label="维度" min-width="140" />
+          <el-table-column label="首次 → 最近" min-width="160">
+            <template #default="{ row }">
+              <template v-if="changeOf(row.dimensionName)">
+                <span class="change-scores">
+                  {{ changeOf(row.dimensionName)!.firstScore }} → {{ changeOf(row.dimensionName)!.lastScore }}
+                </span>
+              </template>
+              <span v-else class="change-empty">该维度暂无练习数据</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="变化幅度" min-width="220">
+            <template #default="{ row }">
+              <template v-if="changeOf(row.dimensionName)">
+                  <div v-if="changeOf(row.dimensionName)!.notSecondTime" class="not-second">未练第 2 次</div>
                   <div v-else class="change-bar-cell">
                     <div class="change-track">
                       <div
                         class="change-fill"
-                        :class="changeOf(dim.dimensionName)!.delta >= 0 ? 'up' : 'down'"
-                        :style="{ width: Math.min(100, Math.abs(changeOf(dim.dimensionName)!.delta) * 8) + '%' }"
+                        :class="changeOf(row.dimensionName)!.delta >= 0 ? 'up' : 'down'"
+                        :style="{ width: Math.min(100, Math.abs(changeOf(row.dimensionName)!.delta) * 8) + '%' }"
                       ></div>
                     </div>
-                    <span class="change-num" :class="changeOf(dim.dimensionName)!.delta >= 0 ? 'up' : 'down'">
-                      {{ changeOf(dim.dimensionName)!.delta > 0 ? '+' : '' }}{{ changeOf(dim.dimensionName)!.delta }}
+                    <span class="change-num" :class="changeOf(row.dimensionName)!.delta >= 0 ? 'up' : 'down'">
+                      {{ changeOf(row.dimensionName)!.delta > 0 ? '+' : '' }}{{ changeOf(row.dimensionName)!.delta }}
                     </span>
                   </div>
-                </td>
               </template>
-              <td v-else colspan="2" class="change-empty">该维度暂无练习数据</td>
-            </tr>
-          </tbody>
-        </table>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </div>

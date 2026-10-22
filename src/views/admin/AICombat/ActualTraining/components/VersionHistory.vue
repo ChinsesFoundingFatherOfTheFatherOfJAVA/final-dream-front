@@ -31,7 +31,7 @@
       </div>
       <div class="version-foot">
         <span class="creator">创建者：{{ v.creator }}</span>
-        <button v-if="!v.current" class="rollback-btn" @click="onRollback(v.versionNo)">回滚到此版本</button>
+        <el-button v-if="!v.current" class="rollback-btn" @click="onRollback(v.versionNo)">回滚到此版本</el-button>
       </div>
     </div>
 

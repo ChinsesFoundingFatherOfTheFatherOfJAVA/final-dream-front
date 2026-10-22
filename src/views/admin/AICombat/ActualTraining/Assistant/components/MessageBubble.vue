@@ -63,9 +63,9 @@
             <p v-if="parseDone(block) && eventSummary(block)" class="event-summary">{{ eventSummary(block) }}</p>
             <!-- 展开查看解析结果：点开才按会话拉取（解析产物在 act_ai_material.extract_text） -->
             <div v-if="parseDone(block)" class="parse-expand">
-              <button class="parse-toggle" @click="toggleParseDetail(block)">
+              <el-button class="parse-toggle" @click="toggleParseDetail(block)">
                 {{ parseDetailOpen(block) ? '收起解析结果' : '查看解析结果' }}
-              </button>
+              </el-button>
               <div v-if="parseDetailOpen(block)" class="parse-detail">
                 <p v-if="parseDetailLoading" class="parse-hint">正在读取解析内容…</p>
                 <p v-else-if="!parseDetailList.length" class="parse-hint">没有可展示的解析内容</p>
@@ -154,7 +154,7 @@
               <span class="event-version">v{{ str(block.params.version) }}</span>
             </div>
             <p class="event-hint">可前往主题详情查看场景单元与评估标准</p>
-            <button v-if="detailLink" class="event-link" @click="goDetail">查看主题详情 →</button>
+            <el-button v-if="detailLink" class="event-link" @click="goDetail">查看主题详情 →</el-button>
           </template>
 
           <!-- 其它 bizType / 未知 action：兜底展示 -->

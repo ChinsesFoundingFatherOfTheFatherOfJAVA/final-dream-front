@@ -23,15 +23,19 @@
         <div class="form-item">
           <label class="form-label"><span class="required">*</span>主题名称</label>
           <div class="name-row">
-            <input v-model="form.basic.themeName" type="text" class="form-input" maxlength="50" placeholder="请输入主题名称" />
-            <span class="char-counter">{{ form.basic.themeName.length }}/50</span>
+            <el-input v-model="form.basic.themeName" maxlength="50" show-word-limit placeholder="请输入主题名称" />
           </div>
         </div>
         <div class="form-item">
           <label class="form-label">主题描述</label>
           <div class="desc-wrap">
-            <textarea v-model="form.basic.themeDesc" class="form-textarea" maxlength="100" placeholder="请输入主题描述"></textarea>
-            <span class="char-counter">{{ (form.basic.themeDesc || '').length }}/100</span>
+            <el-input
+              v-model="form.basic.themeDesc"
+              type="textarea"
+              maxlength="100"
+              show-word-limit
+              placeholder="请输入主题描述"
+            />
           </div>
         </div>
         <div class="form-item">
@@ -46,11 +50,23 @@
         </div>
         <div class="form-item">
           <label class="form-label">计划开始时间</label>
-          <input v-model="planStart" type="datetime-local" class="form-input half" />
+          <el-date-picker
+            v-model="planStart"
+            type="datetime"
+            value-format="YYYY-MM-DDTHH:mm"
+            placeholder="计划开始时间"
+            class="half"
+          />
         </div>
         <div class="form-item">
           <label class="form-label">计划结束时间</label>
-          <input v-model="planEnd" type="datetime-local" class="form-input half" />
+          <el-date-picker
+            v-model="planEnd"
+            type="datetime"
+            value-format="YYYY-MM-DDTHH:mm"
+            placeholder="计划结束时间"
+            class="half"
+          />
         </div>
 
         <div class="fold-panel">
@@ -86,7 +102,7 @@
               <span class="capacity-note">剩余企业容量：{{ remainingCapacity }} 次</span>
             </div>
             <div class="input-with-unit">
-              <input v-model.number="form.access.totalDrillCount" type="number" min="1" class="form-input narrow" />
+              <el-input-number v-model="form.access.totalDrillCount" :min="1" :controls="false" />
               <span class="unit">次</span>
             </div>
             <p class="field-hint">ℹ 学员在本主题内可练习的总演练次数</p>
@@ -94,19 +110,14 @@
           <div class="form-item">
             <label class="form-label"><span class="required">*</span>单个学员每个场景演练机会</label>
             <div class="radio-line">
-              <label class="radio-item">
-                <input v-model="perSceneUnlimited" type="radio" :value="true" />
-                <span>不限</span>
-              </label>
-              <label class="radio-item">
-                <input v-model="perSceneUnlimited" type="radio" :value="false" />
-                <span>限制最多</span>
-              </label>
-              <input
-                v-model.number="perSceneLimitInput"
-                type="number"
-                min="1"
-                class="form-input tiny"
+              <el-radio-group v-model="perSceneUnlimited">
+                <el-radio :value="true">不限</el-radio>
+                <el-radio :value="false">限制最多</el-radio>
+              </el-radio-group>
+              <el-input-number
+                v-model="perSceneLimitInput"
+                :min="1"
+                :controls="false"
                 :disabled="perSceneUnlimited"
               />
               <span class="unit">次</span>
@@ -152,10 +163,7 @@
               <div class="sub-title">支持游客访问</div>
               <p class="sub-desc">开启后分享链接支持游客扫码进入，数据单独统计</p>
             </div>
-            <label class="switch">
-              <input v-model="form.access.guestAccessEnabled" type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <el-switch v-model="form.access.guestAccessEnabled" />
           </div>
           <a class="blue-link" @click="comingSoon('功能建设中')">配置游客信息收集 →</a>
         </div>
@@ -202,10 +210,7 @@
                 <div class="mode-title purple">● 训练模式</div>
                 <p class="mode-desc">AI 专注角色扮演，每轮对话结束后根据开启的辅助能力给予反馈，帮助学员在真实场景中持续提升</p>
               </div>
-              <label class="switch">
-                <input v-model="form.strategy.trainingModeEnabled" type="checkbox" />
-                <span class="slider"></span>
-              </label>
+              <el-switch v-model="form.strategy.trainingModeEnabled" />
             </div>
             <div v-if="form.strategy.trainingModeEnabled" class="ai-ability">
               <div class="ability-left">
@@ -213,7 +218,7 @@
                 <p class="sub-desc">练习中每轮对话后实时呈现，帮助学员即时改进</p>
                 <div class="ability-card" :class="{ selected: true }">
                   <label class="check-line">
-                    <input type="checkbox" checked disabled />
+                    <el-checkbox model-value disabled />
                     <span class="ability-name">教练点评 <span class="must-tag">必选</span></span>
                   </label>
                   <p class="ability-desc">对话中 AI 实时分析学员回答，在表现突出、应对欠佳或触犯禁忌等关键时刻即时表扬或纠偏（按需触发，非每轮出现）</p>
@@ -223,8 +228,11 @@
                   :class="{ selected: form.strategy.suggestionEnabled }"
                   @click="form.strategy.suggestionEnabled = !form.strategy.suggestionEnabled"
                 >
-                  <label class="check-line">
-                    <input type="checkbox" :checked="form.strategy.suggestionEnabled" @click.stop />
+                  <label class="check-line" @click.stop>
+                    <el-checkbox
+                      :model-value="form.strategy.suggestionEnabled"
+                      @change="form.strategy.suggestionEnabled = Boolean($event)"
+                    />
                     <span class="ability-name">应对建议</span>
                   </label>
                   <p class="ability-desc">AI 陪练发言后、学员应答前，学员可点击「生成建议」按需获取应对分析与示范话术</p>
@@ -257,48 +265,35 @@
                 <div class="mode-title gray">● 考核模式</div>
                 <p class="mode-desc">全程无 AI 辅助，还原真实客户，用于正式评估</p>
               </div>
-              <label class="switch">
-                <input v-model="form.strategy.assessmentModeEnabled" type="checkbox" />
-                <span class="slider"></span>
-              </label>
+              <el-switch v-model="form.strategy.assessmentModeEnabled" />
             </div>
             <div v-if="form.strategy.assessmentModeEnabled" class="anti-cheat">
               <div class="sub-title">防作弊</div>
               <div class="form-item">
                 <div class="label-row">
                   <label class="form-label">人脸识别</label>
-                  <label class="switch small">
-                    <input v-model="form.strategy.antiCheat.faceCheckEnabled" type="checkbox" />
-                    <span class="slider"></span>
-                  </label>
+                  <el-switch v-model="form.strategy.antiCheat.faceCheckEnabled" size="small" />
                 </div>
-                <div v-if="form.strategy.antiCheat.faceCheckEnabled" class="radio-line">
-                  <label class="radio-item">
-                    <input v-model="form.strategy.antiCheat.faceCheckStage" type="radio" value="before" />
-                    <span>考核前检测</span>
-                  </label>
-                  <label class="radio-item">
-                    <input v-model="form.strategy.antiCheat.faceCheckStage" type="radio" value="ongoing" />
-                    <span>考核中持续检测</span>
-                  </label>
-                </div>
+                <el-radio-group
+                  v-if="form.strategy.antiCheat.faceCheckEnabled"
+                  v-model="form.strategy.antiCheat.faceCheckStage"
+                  class="radio-line"
+                >
+                  <el-radio value="before">考核前检测</el-radio>
+                  <el-radio value="ongoing">考核中持续检测</el-radio>
+                </el-radio-group>
               </div>
               <div class="form-item">
                 <label class="form-label">切屏检测</label>
                 <div class="radio-line">
-                  <label class="radio-item">
-                    <input v-model="form.strategy.antiCheat.screenSwitchMode" type="radio" value="forbid" />
-                    <span>不允许切屏</span>
-                  </label>
-                  <label class="radio-item">
-                    <input v-model="form.strategy.antiCheat.screenSwitchMode" type="radio" value="allow" />
-                    <span>允许</span>
-                  </label>
-                  <input
-                    v-model.number="form.strategy.antiCheat.screenSwitchLimit"
-                    type="number"
-                    min="0"
-                    class="form-input tiny"
+                  <el-radio-group v-model="form.strategy.antiCheat.screenSwitchMode">
+                    <el-radio value="forbid">不允许切屏</el-radio>
+                    <el-radio value="allow">允许</el-radio>
+                  </el-radio-group>
+                  <el-input-number
+                    v-model="form.strategy.antiCheat.screenSwitchLimit"
+                    :min="0"
+                    :controls="false"
                     :disabled="form.strategy.antiCheat.screenSwitchMode !== 'allow'"
                   />
                   <span class="unit">次</span>
@@ -345,13 +340,13 @@
           <div class="sub-title">主题难度</div>
           <p class="sub-desc">设置本主题的整体难度等级，将展示在主题头部。</p>
           <div class="difficulty-row">
-            <button
+            <el-button
               v-for="d in [1, 2, 3]"
               :key="d"
               class="difficulty-btn"
               :class="{ selected: form.strategy.difficulty === d }"
               @click="form.strategy.difficulty = d"
-            >{{ difficultyStars(d) }} {{ ACT_DIFFICULTY_TEXT[d] }}</button>
+            >{{ difficultyStars(d) }} {{ ACT_DIFFICULTY_TEXT[d] }}</el-button>
           </div>
         </div>
 
@@ -361,10 +356,7 @@
               <div class="sub-title">允许学员自定义难度</div>
               <p class="sub-desc">开启后学员在自定义练习和随机练习时可自行选择难度等级</p>
             </div>
-            <label class="switch">
-              <input v-model="form.strategy.allowCustomDifficulty" type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <el-switch v-model="form.strategy.allowCustomDifficulty" />
           </div>
         </div>
       </section>
@@ -385,7 +377,11 @@
                 <div class="select-card-desc">累计多次练习的达标次数，不要求连续</div>
                 <div v-if="form.passStandard.scenePassType === 1" class="pass-count-row" @click.stop>
                   累计达标
-                  <input v-model.number="form.passStandard.scenePassCount" type="number" min="1" class="form-input tiny" />
+                  <el-input-number
+                    v-model="form.passStandard.scenePassCount"
+                    :min="1"
+                    :controls="false"
+                  />
                   次，即通过该场景
                 </div>
               </div>
@@ -430,7 +426,7 @@
               <div class="overview-value">{{ contentOverview.evaluationDimensionCount }} <span class="overview-unit">个</span></div>
             </div>
           </div>
-          <button class="ai-design-btn" @click="goAssistant">⚡ 进入 AI 设计助手 调整内容</button>
+          <el-button class="ai-design-btn" @click="goAssistant">⚡ 进入 AI 设计助手 调整内容</el-button>
           <p class="ai-design-hint">在 AI 助手中可以调整场景设计、客户画像、冰山模型、评估标准和练习限制</p>
         </div>
       </section>
@@ -439,8 +435,8 @@
 
     <!-- 底部共用操作条 -->
     <div class="settings-footer">
-      <button class="btn-cancel" @click="reload">取消</button>
-      <button class="btn-save" :disabled="saving || themeStatus === 5" @click="onSave">{{ saving ? '保存中…' : '保存设置' }}</button>
+      <el-button class="btn-cancel" @click="reload">取消</el-button>
+      <el-button class="btn-save" :disabled="saving || themeStatus === 5" @click="onSave">{{ saving ? '保存中…' : '保存设置' }}</el-button>
     </div>
   </div>
 </template>

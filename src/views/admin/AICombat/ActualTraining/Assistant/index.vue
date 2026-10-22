@@ -2,20 +2,20 @@
   <div class="assistant-page" :class="store.panelVisible ? 'two-column' : 'single-column'">
     <!-- 页头：返回 + 标题 -->
     <div class="page-head">
-      <button class="back-btn" @click="goList">‹ 返回训练主题</button>
+      <el-button class="back-btn" @click="goList">‹ 返回训练主题</el-button>
       <div class="head-title">
         AI 设计助手
         <span v-if="store.readOnly" class="readonly-tag">主题已结束 · 只读</span>
       </div>
       <div class="head-right">
-        <button
+        <el-button
           v-if="mockEnabled"
           class="debug-btn"
           title="模拟服务端断开，验证指数退避重连与消息恢复"
           @click="store.simulateDrop()"
         >
           断线测试
-        </button>
+        </el-button>
         <span class="head-hint">{{ store.panelVisible ? '左侧对话 · 右侧主题产物' : '对话中，方向明确后自动展开产物面板' }}</span>
       </div>
     </div>
@@ -25,7 +25,7 @@
       <div v-if="initError" class="init-error">
         <div class="err-icon">⚠️</div>
         <p class="err-text">{{ initError }}</p>
-        <button class="err-retry" @click="bootstrap">重试</button>
+        <el-button class="err-retry" @click="bootstrap">重试</el-button>
       </div>
       <template v-else>
         <ChatColumn class="chat-slot" />

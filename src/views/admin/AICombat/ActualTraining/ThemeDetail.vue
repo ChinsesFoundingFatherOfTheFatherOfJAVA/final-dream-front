@@ -8,7 +8,7 @@
 
       <!-- FP-10 Tab 导航 -->
       <div class="tab-bar">
-        <button
+        <el-button
           v-for="t in tabs"
           :key="t.key"
           class="tab-item"
@@ -17,7 +17,7 @@
         >
           {{ t.label }}
           <span v-if="t.key === 'versions'" class="tab-count">({{ detail.versionCount }})</span>
-        </button>
+        </el-button>
       </div>
 
       <!-- Tab 内容区 -->

@@ -7,21 +7,21 @@
         <div class="panel-sub">
           <span class="version">v{{ artifact?.versionNo || '1' }}</span>
           <span class="status-badge" :class="artifactStatusClass">{{ artifactStatusText }}</span>
-          <button v-if="detailThemeId" class="detail-link" @click="goDetail">查看主题详情 →</button>
+          <el-button v-if="detailThemeId" class="detail-link" @click="goDetail">查看主题详情 →</el-button>
         </div>
       </div>
-      <button
+      <el-button
         class="confirm-btn"
         :disabled="!artifact || confirming || store.readOnly"
         @click="openConfirm"
       >
         {{ confirming ? '保存中…' : '确认' }}
-      </button>
+      </el-button>
     </div>
 
     <!-- 五 Tab -->
     <div class="panel-tabs">
-      <button
+      <el-button
         v-for="t in tabs"
         :key="t.key"
         class="panel-tab"
@@ -30,7 +30,7 @@
       >
         {{ t.label }}
         <span v-if="t.count" class="tab-badge">{{ t.count }}</span>
-      </button>
+      </el-button>
     </div>
 
     <!-- Tab 内容 -->
