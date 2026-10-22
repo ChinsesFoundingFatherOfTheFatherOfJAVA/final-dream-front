@@ -1,0 +1,382 @@
+{
+  "capturedAt": "2026-10-22T02:45:02.596Z",
+  "viewport": "1540x925",
+  "routes": [
+    {
+      "name": "AdminHome",
+      "route": "/homepage",
+      "finalUrl": "http://localhost:3000/#/homepage",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "EnterpriseStaff",
+      "route": "/enterprise/staff",
+      "finalUrl": "http://localhost:3000/#/enterprise/staff",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "EnterpriseDepartments",
+      "route": "/enterprise/departments",
+      "finalUrl": "http://localhost:3000/#/enterprise/departments",
+      "title": "测练中心",
+      "textLength": 474,
+      "errors": []
+    },
+    {
+      "name": "RoleManagement",
+      "route": "/enterprise/roles",
+      "finalUrl": "http://localhost:3000/#/enterprise/roles",
+      "title": "测练中心",
+      "textLength": 113,
+      "errors": []
+    },
+    {
+      "name": "KngCatalog",
+      "route": "/kng/catalog",
+      "finalUrl": "http://localhost:3000/#/kng/catalog",
+      "title": "测练中心",
+      "textLength": 163,
+      "errors": []
+    },
+    {
+      "name": "KngCourseware",
+      "route": "/kng/courseware",
+      "finalUrl": "http://localhost:3000/#/kng/courseware",
+      "title": "测练中心",
+      "textLength": 303,
+      "errors": []
+    },
+    {
+      "name": "KngCourse",
+      "route": "/kng/course",
+      "finalUrl": "http://localhost:3000/#/kng/course",
+      "title": "测练中心",
+      "textLength": 207,
+      "errors": []
+    },
+    {
+      "name": "KngCoursewareTranscode",
+      "route": "/kng/courseware/transcode",
+      "finalUrl": "http://localhost:3000/#/kng/courseware/transcode",
+      "title": "测练中心",
+      "textLength": 162,
+      "errors": []
+    },
+    {
+      "name": "KngCoursewareSubtitles",
+      "route": "/kng/courseware/subtitles",
+      "finalUrl": "http://localhost:3000/#/kng/courseware/subtitles",
+      "title": "测练中心",
+      "textLength": 134,
+      "errors": []
+    },
+    {
+      "name": "KngCourseCreate",
+      "route": "/kng/course/create/step1",
+      "finalUrl": "http://localhost:3000/#/kng/course/create/step1",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "KngSetting",
+      "route": "/kng/setting",
+      "finalUrl": "http://localhost:3000/#/kng/setting",
+      "title": "测练中心",
+      "textLength": 84,
+      "errors": []
+    },
+    {
+      "name": "SpeechTrainingCenter",
+      "route": "/sparring/newmanage",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage",
+      "title": "测练中心",
+      "textLength": 248,
+      "errors": []
+    },
+    {
+      "name": "EditProject",
+      "route": "/sparring/newmanage/edit2",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage/edit2",
+      "title": "测练中心",
+      "textLength": 285,
+      "errors": []
+    },
+    {
+      "name": "SpeechTemplate",
+      "route": "/sparring/newtemplate",
+      "finalUrl": "http://localhost:3000/#/sparring/newtemplate",
+      "title": "测练中心",
+      "textLength": 254,
+      "errors": []
+    },
+    {
+      "name": "ActualTopicList",
+      "route": "/sparring/freesimulate/topic",
+      "finalUrl": "http://localhost:3000/#/sparring/freesimulate/topic",
+      "title": "测练中心",
+      "textLength": 352,
+      "errors": []
+    },
+    {
+      "name": "ExamQuesLib",
+      "route": "/exam/queslib",
+      "finalUrl": "http://localhost:3000/#/exam/queslib",
+      "title": "测练中心",
+      "textLength": 288,
+      "errors": []
+    },
+    {
+      "name": "ExamPaper",
+      "route": "/exam/paper",
+      "finalUrl": "http://localhost:3000/#/exam/paper",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ExamMgmt",
+      "route": "/exam/exam-mgmt",
+      "finalUrl": "http://localhost:3000/#/exam/exam-mgmt",
+      "title": "测练中心",
+      "textLength": 460,
+      "errors": []
+    },
+    {
+      "name": "ExamReview",
+      "route": "/exam/exam-review",
+      "finalUrl": "http://localhost:3000/#/exam/exam-review",
+      "title": "测练中心",
+      "textLength": 115,
+      "errors": []
+    },
+    {
+      "name": "ExamPractice",
+      "route": "/exam/practice",
+      "finalUrl": "http://localhost:3000/#/exam/practice",
+      "title": "测练中心",
+      "textLength": 115,
+      "errors": []
+    },
+    {
+      "name": "ExamFeedback",
+      "route": "/exam/feedback",
+      "finalUrl": "http://localhost:3000/#/exam/feedback",
+      "title": "测练中心",
+      "textLength": 115,
+      "errors": []
+    },
+    {
+      "name": "ExamField",
+      "route": "/exam/field",
+      "finalUrl": "http://localhost:3000/#/exam/field",
+      "title": "测练中心",
+      "textLength": 115,
+      "errors": []
+    },
+    {
+      "name": "StudentHomePage",
+      "route": "/study/home",
+      "finalUrl": "http://localhost:3000/#/study/home",
+      "title": "测练中心",
+      "textLength": 211,
+      "errors": []
+    },
+    {
+      "name": "StudentHome",
+      "route": "/study/userhome",
+      "finalUrl": "http://localhost:3000/#/study/userhome",
+      "title": "测练中心",
+      "textLength": 201,
+      "errors": []
+    },
+    {
+      "name": "SpeechList",
+      "route": "/sparring/web/speech/list",
+      "finalUrl": "http://localhost:3000/#/sparring/web/speech/list",
+      "title": "测练中心",
+      "textLength": 105,
+      "errors": []
+    },
+    {
+      "name": "StudentReport",
+      "route": "/sparring/web/studentReport",
+      "finalUrl": "http://localhost:3000/#/sparring/web/studentReport",
+      "title": "测练中心",
+      "textLength": 105,
+      "errors": []
+    },
+    {
+      "name": "PracticeReport",
+      "route": "/sparring/standpracticereport",
+      "finalUrl": "http://localhost:3000/#/sparring/standpracticereport",
+      "title": "测练中心",
+      "textLength": 105,
+      "errors": []
+    },
+    {
+      "name": "Forbidden",
+      "route": "/403",
+      "finalUrl": "http://localhost:3000/#/403",
+      "title": "测练中心",
+      "textLength": 50,
+      "errors": []
+    },
+    {
+      "name": "NotFound",
+      "route": "/missing-baseline-page",
+      "finalUrl": "http://localhost:3000/#/missing-baseline-page",
+      "title": "测练中心",
+      "textLength": 38,
+      "errors": []
+    },
+    {
+      "name": "ExamQuesLibDetail",
+      "route": "/exam/queslib/detail?libId=2109552974241972226",
+      "finalUrl": "http://localhost:3000/#/exam/queslib/detail?libId=2109552974241972226",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ExamQuesDetail",
+      "route": "/exam/quesdetail?libId=2109552974241972226",
+      "finalUrl": "http://localhost:3000/#/exam/quesdetail?libId=2109552974241972226",
+      "title": "测练中心",
+      "textLength": 412,
+      "errors": []
+    },
+    {
+      "name": "ExamPaperDetail",
+      "route": "/exam/paper/detail?paperId=2112445762243624961",
+      "finalUrl": "http://localhost:3000/#/exam/paper/detail?paperId=2112445762243624961",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ExamPaperQuick",
+      "route": "/exam/paper/quick?paperId=2112445762243624961",
+      "finalUrl": "http://localhost:3000/#/exam/paper/quick?paperId=2112445762243624961",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ExamPaperAuto",
+      "route": "/exam/paper/auto?paperId=2109929953893982210",
+      "finalUrl": "http://localhost:3000/#/exam/paper/auto?paperId=2109929953893982210",
+      "title": "测练中心",
+      "textLength": 301,
+      "errors": []
+    },
+    {
+      "name": "ExamMgmtDetail",
+      "route": "/exam/exam-mgmt/detail?arrangeId=2112378120178630658",
+      "finalUrl": "http://localhost:3000/#/exam/exam-mgmt/detail?arrangeId=2112378120178630658",
+      "title": "测练中心",
+      "textLength": 260,
+      "errors": []
+    },
+    {
+      "name": "ExamMgmtPublish",
+      "route": "/exam/exam-mgmt/publish?arrangeId=2112378120178630658",
+      "finalUrl": "http://localhost:3000/#/exam/exam-mgmt/create?examType=onlineExam&arrangeId=2112378120178630658&step=3",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ExamMgmtCreateStep3",
+      "route": "/exam/exam-mgmt/create?examType=onlineExam&arrangeId=2112378120178630658&step=3",
+      "finalUrl": "http://localhost:3000/#/exam/exam-mgmt/create?examType=onlineExam&arrangeId=2112378120178630658&step=3",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "KngCoursewareInfo",
+      "route": "/kng/courseware/info/2108066655313530882",
+      "finalUrl": "http://localhost:3000/#/kng/courseware/info/2108066655313530882",
+      "title": "测练中心",
+      "textLength": 347,
+      "errors": []
+    },
+    {
+      "name": "KngCoursewareEdit",
+      "route": "/kng/courseware/edit/2108066655313530882",
+      "finalUrl": "http://localhost:3000/#/kng/courseware/edit/2108066655313530882",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ProjectConsoleOverview",
+      "route": "/sparring/newmanage/console/22/overview",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage/console/22/overview",
+      "title": "测练中心",
+      "textLength": 480,
+      "errors": []
+    },
+    {
+      "name": "FlowDesign",
+      "route": "/sparring/newmanage/console/22/flow",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage/console/22/flow",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ProjectBasic",
+      "route": "/sparring/newmanage/console/22/basic",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage/console/22/basic",
+      "title": "测练中心",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ProjectStudents",
+      "route": "/sparring/newmanage/console/22/student",
+      "finalUrl": "http://localhost:3000/#/sparring/newmanage/console/22/student",
+      "title": "超级管理员 - 学员管理",
+      "textLength": 404,
+      "errors": []
+    },
+    {
+      "name": "TemplateConsole",
+      "route": "/sparring/newtemplate/console/1",
+      "finalUrl": "http://localhost:3000/#/sparring/newtemplate/console/1",
+      "title": "超级管理员 - 学员管理",
+      "textLength": 320,
+      "errors": []
+    },
+    {
+      "name": "ActualThemeDetail",
+      "route": "/sparring/freesimulate/theme/2101880270428770306",
+      "finalUrl": "http://localhost:3000/#/sparring/freesimulate/theme/2101880270428770306",
+      "title": "超级管理员 - 学员管理",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "ActualAssistant",
+      "route": "/sparring/freesimulate/assistant/2101880270428770306",
+      "finalUrl": "http://localhost:3000/#/sparring/freesimulate/assistant/2101880270428770306",
+      "title": "超级管理员 - 学员管理",
+      "textLength": 500,
+      "errors": []
+    },
+    {
+      "name": "Login",
+      "route": "/login",
+      "finalUrl": "http://localhost:3000/#/login",
+      "title": "测练中心",
+      "textLength": 29,
+      "errors": []
+    }
+  ]
+}
