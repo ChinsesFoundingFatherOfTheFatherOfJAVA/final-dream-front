@@ -1,40 +1,41 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ElMessage } from 'element-plus'
 import { toast } from './toast'
 
-const boxes = () => Array.from(document.querySelectorAll('.qt-toast'))
+vi.mock('element-plus', () => ({ ElMessage: vi.fn() }))
 
 describe('toast', () => {
   beforeEach(() => {
-    vi.useFakeTimers()
-    document.body.innerHTML = ''
+    vi.mocked(ElMessage).mockClear()
   })
 
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
-  it('提示以非阻塞方式出现在 DOM 中', () => {
+  it('错误提示保持原 API，并映射为 Element Plus error', () => {
     toast.error('报告查询失败')
-    expect(boxes()).toHaveLength(1)
-    expect(boxes()[0]?.textContent).toBe('报告查询失败')
+    expect(ElMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ message: '报告查询失败', type: 'error', grouping: true })
+    )
   })
 
-  it('超时自动消失', () => {
+  it('支持自定义超时时间', () => {
     toast.error('会消失', 1000)
-    vi.advanceTimersByTime(1500)
-    expect(boxes()).toHaveLength(0)
+    expect(ElMessage).toHaveBeenCalledWith(expect.objectContaining({ duration: 1000 }))
   })
 
-  it('同屏最多 4 条，最早的先被挤掉：轮询连续失败不会堆满全屏', () => {
-    for (let i = 0; i < 6; i++) toast.error(`第${i}条`)
-    const texts = boxes().map((el) => el.textContent)
-    expect(texts).toHaveLength(4)
-    expect(texts[0]).toBe('第2条')
+  it('同名消息分组，轮询连续失败不会堆满全屏', () => {
+    toast.error('网络错误')
+    toast.error('网络错误')
+    expect(ElMessage).toHaveBeenCalledTimes(2)
+    const calls = vi.mocked(ElMessage).mock.calls as unknown as Array<[Record<string, unknown>]>
+    expect(calls.every(([options]) => options?.grouping)).toBe(true)
   })
 
-  it('容器带 aria-live，读屏能读到', () => {
+  it('warn/success 分别映射为 warning/success', () => {
     toast.warn('注意')
-    const box = document.querySelector('.qt-toast-box')
-    expect(box?.getAttribute('aria-live')).toBe('polite')
+    toast.success('已保存')
+    expect(ElMessage).toHaveBeenNthCalledWith(1, expect.objectContaining({ type: 'warning' }))
+    expect(ElMessage).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ message: '✓ 已保存', type: 'success' })
+    )
   })
 })
