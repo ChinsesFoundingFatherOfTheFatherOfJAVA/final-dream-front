@@ -70,178 +70,195 @@
 
         <!-- 抽题表 -->
         <div v-else class="table-card">
-          <table class="matrix pick-table">
-            <thead>
-              <tr>
-                <th class="col-lib">{{ isPointSource ? '考核点名称' : '题库名称' }} ▾</th>
-                <template v-if="quesMode === 0">
-                  <th class="col-level">难度</th>
-                  <th v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ t.label }}</th>
-                </template>
-                <template v-else-if="quesMode === 1">
-                  <th v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ t.label }}</th>
-                </template>
-                <template v-else-if="quesMode === 2">
-                  <th v-for="lv in LEVELS" :key="lv.value" class="col-cell">{{ lv.label }}</th>
-                </template>
-                <template v-else>
-                  <th class="col-cell">试题数量</th>
-                </template>
-                <th class="col-op">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="item in strategies" :key="rowKey(item)">
-                <!-- 题型+难度：一个来源占三行 -->
-                <template v-if="quesMode === 0">
-                  <tr v-for="(lv, li) in LEVELS" :key="rowKey(item) + '-' + lv.value">
-                    <td v-if="li === 0" :rowspan="LEVELS.length" class="col-lib lib-cell">
-                      <SourceMeta :item="item" :point-source="isPointSource" :total="rowScore(item)" />
-                    </td>
-                    <td class="col-level">{{ lv.label }}</td>
-                    <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">
-                      <QuantityCell :value="cellQty(item, lv.value, t.key)"
-                                    :max="cellMax(item, lv.value, t.key)" :disabled="published"
-                                    @change="setCellQty(item, lv.value, t.key, $event)" />
-                    </td>
-                    <td v-if="li === 0" :rowspan="LEVELS.length" class="col-op">
-                      <span class="link" @click="removeSource(item)">移除</span>
-                    </td>
-                  </tr>
-                </template>
-
-                <!-- 其它三态：一个来源一行 -->
-                <tr v-else>
-                  <td class="col-lib lib-cell">
-                    <SourceMeta :item="item" :point-source="isPointSource" :total="rowScore(item)" />
-                  </td>
-                  <template v-if="quesMode === 1">
-                    <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">
-                      <QuantityCell :value="typeQty(item, t.key)" :max="typeMax(item, t.key)"
-                                    :disabled="published" @change="setTypeQty(item, t.key, $event)" />
-                    </td>
-                  </template>
-                  <template v-else-if="quesMode === 2">
-                    <td v-for="lv in LEVELS" :key="lv.value" class="col-cell">
-                      <QuantityCell :value="levelQty(item, lv.value)" :max="levelMax(item, lv.value)"
-                                    :disabled="published" @change="setLevelQty(item, lv.value, $event)" />
-                    </td>
-                  </template>
-                  <template v-else>
-                    <td class="col-cell">
-                      <QuantityCell :value="needQty(item)" :max="needMax(item)" :disabled="published"
-                                    @change="setNeedQty(item, $event)" />
-                    </td>
-                  </template>
-                  <td class="col-op"><span class="link" @click="removeSource(item)">移除</span></td>
-                </tr>
+          <el-table
+            :data="pickTableRows"
+            row-key="key"
+            class="matrix pick-table"
+            border
+            :span-method="pickSpanMethod"
+            :row-class-name="matrixRowClass"
+          >
+            <el-table-column :label="`${isPointSource ? '考核点名称' : '题库名称'} ▾`" min-width="300" class-name="lib-cell">
+              <template #default="{ row }">
+                <span v-if="row.sumRow">合计（题数）</span>
+                <SourceMeta
+                  v-else-if="row.item"
+                  :item="row.item"
+                  :point-source="isPointSource"
+                  :total="rowScore(row.item)"
+                />
               </template>
+            </el-table-column>
 
-              <tr class="sum-row">
-                <td class="col-lib">合计（题数）</td>
-                <template v-if="quesMode === 0">
-                  <td class="col-level"></td>
-                  <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ summaryOfType(t.key) }}</td>
+            <el-table-column v-if="quesMode === 0" label="难度" width="80" align="center">
+              <template #default="{ row }">{{ row.level?.label }}</template>
+            </el-table-column>
+
+            <template v-if="quesMode === 0 || quesMode === 1">
+              <el-table-column
+                v-for="t in TYPE_KEYS"
+                :key="t.key"
+                :label="t.label"
+                min-width="180"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.sumRow">{{ summaryOfType(t.key) }}</span>
+                  <QuantityCell
+                    v-else-if="row.item && (quesMode === 1 || row.level)"
+                    :value="quesMode === 0 && row.level ? cellQty(row.item, row.level.value, t.key) : typeQty(row.item, t.key)"
+                    :max="quesMode === 0 && row.level ? cellMax(row.item, row.level.value, t.key) : typeMax(row.item, t.key)"
+                    :disabled="published"
+                    @change="quesMode === 0 && row.level
+                      ? setCellQty(row.item, row.level.value, t.key, $event)
+                      : setTypeQty(row.item, t.key, $event)"
+                  />
                 </template>
-                <template v-else-if="quesMode === 1">
-                  <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ summaryOfType(t.key) }}</td>
+              </el-table-column>
+            </template>
+
+            <template v-else-if="quesMode === 2">
+              <el-table-column
+                v-for="lv in LEVELS"
+                :key="lv.value"
+                :label="lv.label"
+                min-width="180"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.sumRow">{{ summaryOfLevel(lv.value) }}</span>
+                  <QuantityCell
+                    v-else-if="row.item"
+                    :value="levelQty(row.item, lv.value)"
+                    :max="levelMax(row.item, lv.value)"
+                    :disabled="published"
+                    @change="setLevelQty(row.item, lv.value, $event)"
+                  />
                 </template>
-                <template v-else-if="quesMode === 2">
-                  <td v-for="lv in LEVELS" :key="lv.value" class="col-cell">{{ summaryOfLevel(lv.value) }}</td>
-                </template>
-                <template v-else>
-                  <td class="col-cell">{{ summary?.quesQty ?? 0 }}</td>
-                </template>
-                <td class="col-op"></td>
-              </tr>
-            </tbody>
-          </table>
+              </el-table-column>
+            </template>
+
+            <el-table-column v-else label="试题数量" min-width="120" align="center">
+              <template #default="{ row }">
+                <span v-if="row.sumRow">{{ summary?.quesQty ?? 0 }}</span>
+                <QuantityCell
+                  v-else-if="row.item"
+                  :value="needQty(row.item)"
+                  :max="needMax(row.item)"
+                  :disabled="published"
+                  @change="setNeedQty(row.item, $event)"
+                />
+              </template>
+            </el-table-column>
+
+            <el-table-column label="操作" width="90" align="center">
+              <template #default="{ row }">
+                <span
+                  v-if="!row.sumRow && row.item && (quesMode !== 0 || row.levelIndex === 0)"
+                  class="link"
+                  @click="removeSource(row.item)"
+                >移除</span>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
 
         <!-- 设定分值表：整卷共用一套（原平台行为——不按题库/考点分行，避免考点多时逐个设分） -->
         <div v-if="strategies.length" class="table-card">
-          <table class="matrix score-table">
-            <thead>
-              <tr>
-                <th class="col-head">设定分值</th>
-                <template v-if="quesMode === 0">
-                  <th class="col-level">难度</th>
-                  <th v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ t.label }}</th>
+          <el-table
+            :data="scoreTableRows"
+            row-key="key"
+            class="matrix score-table"
+            border
+            :span-method="scoreSpanMethod"
+            :row-class-name="matrixRowClass"
+          >
+            <el-table-column label="设定分值" min-width="260" class-name="col-head">
+              <template #default="{ row }">{{ row.head }}</template>
+            </el-table-column>
+
+            <el-table-column v-if="quesMode === 0" label="难度" width="80" align="center">
+              <template #default="{ row }">{{ row.level?.label }}</template>
+            </el-table-column>
+
+            <template v-if="quesMode === 0 || quesMode === 1">
+              <el-table-column
+                v-for="t in TYPE_KEYS"
+                :key="t.key"
+                :label="t.label"
+                min-width="180"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.sumRow">{{ scoreSumOfType(t.key) }}</span>
+                  <ScoreCell
+                    v-else-if="quesMode === 0 && row.level"
+                    :key-prefix="t.key"
+                    :label="t.key === 'multi' ? '满分' : ''"
+                    :score="cellScore(row.level.value, t.key)"
+                    :miss-score="cellMiss(row.level.value)"
+                    :miss-type="cellMissType(row.level.value)"
+                    :disabled="published"
+                    @score="setCellScore(row.level.value, t.key, $event)"
+                    @miss="setCellMiss(row.level.value, $event)"
+                    @miss-type="setCellMissType(row.level.value, $event)"
+                  />
+                  <ScoreCell
+                    v-else
+                    :key-prefix="t.key"
+                    :label="t.key === 'multi' ? '满分' : ''"
+                    :score="typeScore(t.key)"
+                    :miss-score="typeMiss(t.key)"
+                    :miss-type="typeMissType(t.key)"
+                    :disabled="published"
+                    @score="setTypeScore(t.key, $event)"
+                    @miss="setTypeMiss(t.key, $event)"
+                    @miss-type="setTypeMissType(t.key, $event)"
+                  />
                 </template>
-                <template v-else-if="quesMode === 1">
-                  <th v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ t.label }}</th>
+              </el-table-column>
+            </template>
+
+            <template v-else-if="quesMode === 2">
+              <el-table-column
+                v-for="lv in LEVELS"
+                :key="lv.value"
+                :label="lv.label"
+                min-width="180"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.sumRow">{{ scoreSumOfLevel(lv.value) }}</span>
+                  <ScoreCell
+                    v-else
+                    key-prefix=""
+                    label=""
+                    :score="levelScore(lv.value)"
+                    :miss-score="0"
+                    :miss-type="0"
+                    :disabled="published"
+                    @score="setLevelScore(lv.value, $event)"
+                  />
                 </template>
-                <template v-else-if="quesMode === 2">
-                  <th v-for="lv in LEVELS" :key="lv.value" class="col-cell">{{ lv.label }}</th>
-                </template>
-                <template v-else>
-                  <th class="col-cell">分值</th>
-                </template>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="quesMode === 0">
-                <tr v-for="(lv, li) in LEVELS" :key="'s-' + lv.value">
-                  <td v-if="li === 0" :rowspan="LEVELS.length" class="col-head">根据题型和难度设置分值</td>
-                  <td class="col-level">{{ lv.label }}</td>
-                  <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">
-                    <ScoreCell :key-prefix="t.key" :label="t.key === 'multi' ? '满分' : ''"
-                               :score="cellScore(lv.value, t.key)" :miss-score="cellMiss(lv.value)"
-                               :miss-type="cellMissType(lv.value)" :disabled="published"
-                               @score="setCellScore(lv.value, t.key, $event)"
-                               @miss="setCellMiss(lv.value, $event)"
-                               @miss-type="setCellMissType(lv.value, $event)" />
-                  </td>
-                </tr>
+              </el-table-column>
+            </template>
+
+            <el-table-column v-else label="分值" min-width="120" align="center">
+              <template #default="{ row }">
+                <span v-if="row.sumRow">{{ Number(summary?.totalScore ?? 0).toFixed(2) }}</span>
+                <ScoreCell
+                  v-else
+                  key-prefix=""
+                  label=""
+                  :score="singleScore()"
+                  :miss-score="0"
+                  :miss-type="0"
+                  :disabled="published"
+                  @score="setSingleScore($event)"
+                />
               </template>
-
-              <tr v-else-if="quesMode === 1">
-                <td class="col-head">根据题型设置分值</td>
-                <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">
-                  <ScoreCell :key-prefix="t.key" :label="t.key === 'multi' ? '满分' : ''"
-                             :score="typeScore(t.key)" :miss-score="typeMiss(t.key)"
-                             :miss-type="typeMissType(t.key)" :disabled="published"
-                             @score="setTypeScore(t.key, $event)"
-                             @miss="setTypeMiss(t.key, $event)"
-                             @miss-type="setTypeMissType(t.key, $event)" />
-                </td>
-              </tr>
-
-              <tr v-else-if="quesMode === 2">
-                <td class="col-head">根据难度设置分值</td>
-                <td v-for="lv in LEVELS" :key="lv.value" class="col-cell">
-                  <ScoreCell key-prefix="" label="" :score="levelScore(lv.value)"
-                             :miss-score="0" :miss-type="0" :disabled="published"
-                             @score="setLevelScore(lv.value, $event)" />
-                </td>
-              </tr>
-
-              <tr v-else>
-                <td class="col-head">根据数量设置分值</td>
-                <td class="col-cell">
-                  <ScoreCell key-prefix="" label="" :score="singleScore()" :miss-score="0"
-                             :miss-type="0" :disabled="published" @score="setSingleScore($event)" />
-                </td>
-              </tr>
-
-              <tr class="sum-row">
-                <td class="col-head">合计（总分）</td>
-                <template v-if="quesMode === 0">
-                  <td class="col-level"></td>
-                  <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ scoreSumOfType(t.key) }}</td>
-                </template>
-                <template v-else-if="quesMode === 1">
-                  <td v-for="t in TYPE_KEYS" :key="t.key" class="col-cell">{{ scoreSumOfType(t.key) }}</td>
-                </template>
-                <template v-else-if="quesMode === 2">
-                  <td v-for="lv in LEVELS" :key="lv.value" class="col-cell">{{ scoreSumOfLevel(lv.value) }}</td>
-                </template>
-                <template v-else>
-                  <td class="col-cell">{{ Number(summary?.totalScore ?? 0).toFixed(2) }}</td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+            </el-table-column>
+          </el-table>
         </div>
       </section>
 
@@ -271,6 +288,7 @@
 
 <script setup lang="ts">
 import { computed, defineComponent, h, onMounted, ref } from 'vue'
+import { ElInputNumber, ElRadio, ElRadioGroup } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
 import { confirmDialog } from '@/utils/confirmDialog'
@@ -304,6 +322,23 @@ const TYPE_KEYS = [
   { key: 'qa', label: '问答题' }
 ]
 const LEVELS = [{ value: 0, label: '易' }, { value: 1, label: '中' }, { value: 2, label: '难' }]
+type LevelOption = (typeof LEVELS)[number]
+
+interface PickTableRow {
+  key: string
+  item: StrategyItem | null
+  level?: LevelOption
+  levelIndex: number
+  sumRow: boolean
+}
+
+interface ScoreTableRow {
+  key: string
+  head: string
+  level?: LevelOption
+  levelIndex: number
+  sumRow: boolean
+}
 
 const paper = ref<PaperDetail | null>(null)
 const strategies = ref<StrategyItem[]>([])
@@ -390,6 +425,69 @@ const scoreSumOfType = (key: string) =>
   Number(strategies.value.reduce((sum, item) => sum + typeQty(item, key) * typeScore(key), 0).toFixed(2))
 const scoreSumOfLevel = (level: number) =>
   Number(strategies.value.reduce((sum, item) => sum + levelQty(item, level) * levelScore(level), 0).toFixed(2))
+
+/**
+ * Element Plus 表格需要在同一份扁平数据上做 rowspan；
+ * 这里把「按题型+难度」展开成三行，其余抽题方式保持一来源一行。
+ */
+const pickTableRows = computed<PickTableRow[]>(() => {
+  const rows: PickTableRow[] = []
+  for (const item of strategies.value) {
+    if (quesMode.value === 0) {
+      LEVELS.forEach((level, levelIndex) => {
+        rows.push({ key: `${rowKey(item)}-${level.value}`, item, level, levelIndex, sumRow: false })
+      })
+    } else {
+      rows.push({ key: rowKey(item), item, levelIndex: 0, sumRow: false })
+    }
+  }
+  rows.push({ key: '__sum__', item: null, levelIndex: 0, sumRow: true })
+  return rows
+})
+
+/** 分值表同样是整卷一套，按难度模式展开三行，其余模式只保留一行。 */
+const scoreTableRows = computed<ScoreTableRow[]>(() => {
+  if (quesMode.value === 0) {
+    return [
+      ...LEVELS.map((level, levelIndex) => ({
+        key: `score-${level.value}`,
+        head: levelIndex === 0 ? '根据题型和难度设置分值' : '',
+        level,
+        levelIndex,
+        sumRow: false
+      })),
+      { key: 'score-sum', head: '合计（总分）', levelIndex: 0, sumRow: true }
+    ]
+  }
+  const head = quesMode.value === 1
+    ? '根据题型设置分值'
+    : quesMode.value === 2
+      ? '根据难度设置分值'
+      : '根据数量设置分值'
+  return [
+    { key: 'score-single', head, levelIndex: 0, sumRow: false },
+    { key: 'score-sum', head: '合计（总分）', levelIndex: 0, sumRow: true }
+  ]
+})
+
+const matrixRowClass = ({ row }: { row: PickTableRow | ScoreTableRow }) =>
+  row.sumRow ? 'matrix-sum-row' : ''
+
+/** 题型+难度模式下，来源列和操作列跨三行；合计行保持单行。 */
+const pickSpanMethod = ({ row, columnIndex }: { row: PickTableRow; columnIndex: number }) => {
+  if (quesMode.value !== 0 || row.sumRow || !row.item) return [1, 1]
+  const operationColumn = TYPE_KEYS.length + 2
+  if (columnIndex === 0 || columnIndex === operationColumn) {
+    return row.levelIndex === 0 ? [LEVELS.length, 1] : [0, 0]
+  }
+  return [1, 1]
+}
+
+/** 分值表首列在题型+难度模式下跨三行。 */
+const scoreSpanMethod = ({ row, columnIndex }: { row: ScoreTableRow; columnIndex: number }) => {
+  if (quesMode.value !== 0 || row.sumRow || columnIndex !== 0) return [1, 1]
+  return row.levelIndex === 0 ? [LEVELS.length, 1] : [0, 0]
+}
 
 // ---------------- 写回 ----------------
 /** 所有写回都要带 indicatorId，否则按考核点模式会定位到别的行。 */
@@ -613,9 +711,14 @@ const QuantityCell = defineComponent({
   },
   emits: ['change'],
   setup: (p, { emit }) => () => h('div', { class: 'qty-cell' }, [
-    h('input', {
-      type: 'number', min: 0, class: 'qty-input', value: p.value, disabled: p.disabled,
-      onChange: (e: Event) => emit('change', Number((e.target as HTMLInputElement).value) || 0)
+    h(ElInputNumber, {
+      modelValue: p.value,
+      min: 0,
+      controls: false,
+      class: 'qty-input',
+      style: { width: '86px' },
+      disabled: p.disabled,
+      'onUpdate:modelValue': (value: number | undefined) => emit('change', Number(value) || 0)
     }),
     h('span', { class: 'max-hint' }, `≤${p.max}`)
   ])
@@ -635,9 +738,15 @@ const ScoreCell = defineComponent({
     const nodes: ReturnType<typeof h>[] = [
       h('div', { class: 'score-line' }, [
         p.label ? h('span', { class: 'score-label' }, p.label) : null,
-        h('input', {
-          type: 'number', min: 0, step: 0.5, class: 'score-input', value: p.score, disabled: p.disabled,
-          onChange: (e: Event) => emit('score', Number((e.target as HTMLInputElement).value) || 0)
+        h(ElInputNumber, {
+          modelValue: p.score,
+          min: 0,
+          step: 0.5,
+          controls: false,
+          class: 'score-input',
+          style: { width: '78px' },
+          disabled: p.disabled,
+          'onUpdate:modelValue': (value: number | undefined) => emit('score', Number(value) || 0)
         }),
         h('span', { class: 'score-unit' }, '分')
       ])
@@ -645,24 +754,27 @@ const ScoreCell = defineComponent({
     if (p.keyPrefix === 'multi') {
       nodes.push(h('div', { class: 'miss-block' }, [
         h('p', { class: 'miss-title' }, '漏选得分'),
-        h('label', { class: 'miss-radio' }, [
-          h('input', {
-            type: 'radio', checked: p.missType === 0, disabled: p.disabled,
-            onChange: () => emit('miss-type', 0)
-          }),
-          h('span', {}, '统一得'),
-          h('input', {
-            type: 'number', min: 0, step: 0.5, class: 'miss-input', value: p.missScore, disabled: p.disabled,
-            onChange: (e: Event) => emit('miss', Number((e.target as HTMLInputElement).value) || 0)
-          }),
-          h('span', {}, '分')
-        ]),
-        h('label', { class: 'miss-radio' }, [
-          h('input', {
-            type: 'radio', checked: p.missType === 2, disabled: p.disabled,
-            onChange: () => emit('miss-type', 2)
-          }),
-          h('span', {}, '按漏选数量均分')
+        h(ElRadioGroup, {
+          modelValue: p.missType,
+          disabled: p.disabled,
+          class: 'miss-radio-group',
+          'onUpdate:modelValue': (value: string | number | boolean | undefined) => emit('miss-type', Number(value))
+        }, () => [
+          h(ElRadio, { value: 0, class: 'miss-radio' }, () => [
+            h('span', {}, '统一得'),
+            h(ElInputNumber, {
+              modelValue: p.missScore,
+              min: 0,
+              step: 0.5,
+              controls: false,
+              class: 'miss-input',
+              style: { width: '64px', margin: '0 2px' },
+              disabled: p.disabled,
+              'onUpdate:modelValue': (value: number | undefined) => emit('miss', Number(value) || 0)
+            }),
+            h('span', {}, '分')
+          ]),
+          h(ElRadio, { value: 2, class: 'miss-radio' }, () => '按漏选数量均分')
         ])
       ]))
     }
@@ -746,17 +858,34 @@ const ScoreCell = defineComponent({
 .table-card { margin-top: 18px; }
 
 .matrix {
-  width: 100%; border-collapse: collapse; font-size: 13px;
+  width: 100%; font-size: 13px;
 
-  th, td { border: 1px solid #eef1f6; padding: 10px 12px; text-align: center; vertical-align: middle; }
-  th { background: #f7f8fa; color: #303133; font-weight: 500; }
-  .col-lib { width: 300px; text-align: left; }
-  .col-level { width: 80px; color: #4a5368; }
-  .col-cell { min-width: 120px; }
-  .col-op { width: 90px; }
-  .col-head { width: 260px; text-align: left; color: #303133; }
+  :deep(.el-table__header th) {
+    height: 44px;
+    background: #f7f8fa;
+    color: #303133;
+    font-weight: 500;
+  }
 
-  .sum-row td { background: #f7f8fa; color: #303133; }
+  :deep(.el-table__cell) {
+    padding: 10px 12px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  :deep(.lib-cell) {
+    text-align: left;
+  }
+
+  :deep(.col-head) {
+    color: #303133;
+    text-align: left;
+  }
+
+  :deep(.matrix-sum-row td) {
+    background: #f7f8fa;
+    color: #303133;
+  }
 }
 
 .lib-cell { text-align: left !important; }
@@ -772,10 +901,9 @@ const ScoreCell = defineComponent({
   display: flex; align-items: center; justify-content: center; gap: 6px;
 
   .qty-input {
-    width: 66px; border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 5px 6px; font-size: 13px; outline: none; text-align: center;
-    &:focus { border-color: #1890ff; }
-    &:disabled { background: #f5f7fa; }
+    width: 86px;
+
+    .el-input__inner { text-align: center; }
   }
   .max-hint { font-size: 12px; color: #8a92a5; }
 }
@@ -785,11 +913,10 @@ const ScoreCell = defineComponent({
 
   .score-label { font-size: 12px; color: #4a5368; }
   .score-input, .miss-input {
-    width: 66px; border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 5px 6px; font-size: 13px; outline: none; text-align: center;
-    &:focus { border-color: #1890ff; }
-    &:disabled { background: #f5f7fa; }
+    .el-input__inner { text-align: center; }
   }
+  .score-input { width: 78px; }
+  .miss-input { width: 64px; }
   .score-unit { font-size: 12px; color: #8a92a5; }
 }
 
@@ -797,10 +924,12 @@ const ScoreCell = defineComponent({
   margin-top: 10px; text-align: left;
 
   .miss-title { margin: 0 0 6px; font-size: 12px; color: #4a5368; }
+  .miss-radio-group { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
   .miss-radio {
-    display: flex; align-items: center; gap: 4px; margin-bottom: 6px;
-    font-size: 12px; color: #4a5368; cursor: pointer;
-    input[type="radio"] { margin: 0; accent-color: #1890ff; }
+    height: auto; margin-right: 0;
+    font-size: 12px; color: #4a5368;
+
+    .el-radio__label { display: inline-flex; align-items: center; gap: 4px; }
   }
 }
 

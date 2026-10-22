@@ -1,6 +1,14 @@
 <template>
   <!-- FP-03 新建/编辑分类抽屉（截图03/06） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="480px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ mode === 'create' ? '新建题库分类' : '编辑题库分类' }}</span>
@@ -88,7 +96,7 @@
       @close="showUserPicker = false"
       @confirm="onPickUsers"
     />
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -211,15 +219,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 480px;
   height: 100%;

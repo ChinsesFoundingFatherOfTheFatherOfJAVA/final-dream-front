@@ -39,7 +39,16 @@
     </div>
 
     <!-- 试题查看（F13） -->
-    <div v-if="view" class="drawer-overlay" @click.self="view = null">
+        <el-drawer
+      v-if="view"
+      :model-value="true"
+      size="640px"
+      :with-header="false"
+      append-to-body
+      destroy-on-close
+      class="exam-drawer"
+      @close="view = null"
+    >
       <div class="drawer">
         <div class="drawer-header"><span>试题查看</span><span class="close-btn" @click="view = null">×</span></div>
         <div class="drawer-body">
@@ -59,10 +68,19 @@
           <p class="q-updated">更新人：{{ view.updatedBy || '--' }} · {{ view.updatedAt || '--' }}</p>
         </div>
       </div>
-    </div>
+        </el-drawer>
 
     <!-- 答题详情（F13） -->
-    <div v-if="answer" class="drawer-overlay" @click.self="answer = null">
+        <el-drawer
+      v-if="answer"
+      :model-value="true"
+      size="640px"
+      :with-header="false"
+      append-to-body
+      destroy-on-close
+      class="exam-drawer"
+      @close="answer = null"
+    >
       <div class="drawer">
         <div class="drawer-header"><span>答题详情</span><span class="close-btn" @click="answer = null">×</span></div>
         <div class="drawer-body">
@@ -80,7 +98,7 @@
           <p v-if="answer.explainText" class="q-label-row"><b>解析：</b><span v-html="answer.explainText"></span></p>
         </div>
       </div>
-    </div>
+        </el-drawer>
   </section>
 </template>
 
@@ -160,7 +178,6 @@ tr:hover td { background: #fafbfe; }
 .op-link { color: #1890ff; cursor: pointer; margin-right: 10px; &:hover { text-decoration: underline; } }
 .empty-cell { text-align: center; color: #999; padding: 44px 0; }
 .pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3200; }
 .drawer { width: 640px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; font-size: 13px; }

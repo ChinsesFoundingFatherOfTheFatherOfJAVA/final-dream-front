@@ -1,6 +1,14 @@
 <template>
   <!-- FP-13 从题库选题抽屉（截图20）：选题库 → 勾选试题 → 建关联（不复制题目） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="980px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>从题库选题</span>
@@ -87,7 +95,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -193,7 +201,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3250; }
 .drawer { width: 980px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

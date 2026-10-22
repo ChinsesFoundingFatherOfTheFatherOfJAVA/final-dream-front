@@ -1,7 +1,15 @@
 <template>
   <!-- 考核点编辑抽屉（对齐原平台）：列表可滚动，悬浮出现编辑/删除图标，
        点编辑行内变输入框，底部「+ 添加考核点」。每次改动即时落库（/point/batch 全量覆盖）。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="520px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer" @click.self="noop">
       <div class="drawer-header">
         <span>考核点编辑</span>
@@ -41,7 +49,7 @@
         <span class="tip">改动即时保存</span>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -133,15 +141,6 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3300;
-}
-
 .drawer {
   width: 520px;
   height: 100%;

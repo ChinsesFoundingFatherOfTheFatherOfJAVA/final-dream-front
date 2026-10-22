@@ -1,6 +1,14 @@
 <template>
   <!-- FP-05 快速选人抽屉（简化版，截图04：部门下拉+搜索+人员表格+右侧已选） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="900px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>快速选人</span>
@@ -81,7 +89,7 @@
         <el-button class="btn primary" :disabled="!selected.size" @click="confirmPick">确定</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -187,15 +195,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: v-bind('props.zIndex');
-}
-
 .drawer {
   width: 900px;
   height: 100%;

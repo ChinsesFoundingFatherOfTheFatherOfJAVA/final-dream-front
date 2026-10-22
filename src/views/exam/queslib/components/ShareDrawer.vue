@@ -1,6 +1,14 @@
 <template>
   <!-- FP-04/05 共享题库抽屉（截图33：只读字段+共享设置节） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="440px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>共享题库</span>
@@ -58,7 +66,7 @@
       @close="showDeptPicker = false"
       @confirm="onPickDepts"
     />
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -158,15 +166,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 440px;
   height: 100%;

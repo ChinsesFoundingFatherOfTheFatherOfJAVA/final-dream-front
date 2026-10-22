@@ -1,6 +1,14 @@
 <template>
   <!-- 快速设置抽题策略抽屉（截图16）：试题总数 + 三选一抽题方式 + 对应输入行 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="720px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>设置策略</span>
@@ -62,7 +70,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -177,11 +185,6 @@ const confirm = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, .45);
-  display: flex; justify-content: flex-end; z-index: 3200;
-}
-
 .drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

@@ -1,6 +1,14 @@
 <template>
   <!-- FP-03 移动分类抽屉（截图07：树单选+搜索；默认只展开第一层，可展开收起） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="420px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>移动分类</span>
@@ -38,7 +46,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -119,15 +127,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 420px;
   height: 100%;

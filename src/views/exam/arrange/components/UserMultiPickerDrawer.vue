@@ -1,7 +1,15 @@
 <template>
   <!-- 负责人 / 批阅人 多选抽屉：按姓名账号搜索，勾选后回填 id 与姓名。
        与「添加学员」抽屉不同，这里只选人，不写考生名单。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="620px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ title }}</span>
@@ -40,7 +48,7 @@
         <el-button class="btn primary" @click="confirm">确定</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -104,15 +112,6 @@ onMounted(() => search('%'))
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: flex-end;
-  background: rgba(0, 0, 0, .45);
-  z-index: 3300;
-}
-
 .drawer {
   display: flex;
   flex-direction: column;

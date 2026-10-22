@@ -1,7 +1,15 @@
 <template>
   <!-- FP-15 批量换库抽屉（截图27）：新建题库按钮 + 分类筛选 + 名称搜索 +
        题库单选列表 + 已选题库回显；确定后把勾选的试题整体迁移。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="560px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>批量换库</span>
@@ -50,7 +58,7 @@
       @close="showCreateLib = false"
       @saved="onLibCreated"
     />
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -145,7 +153,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3250; }
 .drawer { width: 560px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

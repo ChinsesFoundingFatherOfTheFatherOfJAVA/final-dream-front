@@ -1,7 +1,15 @@
 <template>
   <!-- 部门选择抽屉：题库共享的部门维度（后端 exam_lib_share.target_type=1）。
        复用员工名册同一棵 DeptTree（check 模式，勾父级自动带子级），保持全站部门选择形态一致。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="460px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>选择部门</span>
@@ -25,7 +33,7 @@
         <el-button class="btn primary" :disabled="!selectedIds.length" @click="confirmPick">确定</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -57,15 +65,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: v-bind('props.zIndex');
-}
-
 .drawer {
   width: 460px;
   height: 100%;

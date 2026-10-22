@@ -1,6 +1,14 @@
 <template>
   <!-- F16 选择试卷抽屉：分类下拉 + 名称搜索 + 列表单选 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="900px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>选择试卷</span>
@@ -52,7 +60,7 @@
         <el-button class="btn primary" :disabled="!picked" @click="confirm">确定</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -107,7 +115,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3200; }
 .drawer { width: 900px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; } }
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }

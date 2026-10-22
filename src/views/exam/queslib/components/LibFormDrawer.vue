@@ -1,6 +1,14 @@
 <template>
   <!-- FP-04 新建/编辑题库抽屉（截图32） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="440px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ mode === 'create' ? '新建题库' : '编辑题库基本信息' }}</span>
@@ -55,7 +63,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -150,15 +158,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 440px;
   height: 100%;

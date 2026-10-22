@@ -1,6 +1,14 @@
 <template>
   <!-- FP-04 修改分类抽屉（截图35：树+搜索+按钮；batch=批量修改分类） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="420px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>修改分类</span>
@@ -40,7 +48,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -139,15 +147,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 420px;
   height: 100%;

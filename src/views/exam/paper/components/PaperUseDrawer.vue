@@ -1,6 +1,14 @@
 <template>
   <!-- FP-11 引用次数抽屉（截图24）：表格列 + 类型筛选 + 导出 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="720px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>引用次数</span>
@@ -33,7 +41,7 @@
         <el-button class="btn primary" @click="emit('close')">关闭</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -81,7 +89,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3250; }
 .drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

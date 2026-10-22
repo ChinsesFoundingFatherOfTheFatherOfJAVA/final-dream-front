@@ -1,7 +1,15 @@
 <template>
   <!-- FP-09 设置抽题来源（截图07/08/10）：
        按题库 = 勾题库；按考核点 = 题库可展开选考核点，支持跨库多选，右侧按库分组的已选 tag -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="880px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>设置抽题来源</span>
@@ -98,7 +106,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -272,11 +280,6 @@ watch(sourceType, (next, prev) => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, .45);
-  display: flex; justify-content: flex-end; z-index: 3200;
-}
-
 .drawer { width: 880px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

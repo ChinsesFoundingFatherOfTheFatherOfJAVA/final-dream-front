@@ -1,6 +1,14 @@
 <template>
   <!-- FP-16 设置默认分值抽屉：题型×难度分值矩阵（多选含漏选得分） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="720px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>设置默认分值</span>
@@ -12,46 +20,44 @@
           这里的默认值会作为编辑页「设定分值」表的初始值；按题型×难度分别设置。
         </p>
 
-        <table class="score-matrix">
-          <thead>
-            <tr>
-              <th class="col-type">题型</th>
-              <th v-for="lv in LEVELS" :key="lv.value">{{ lv.label }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="t in TYPES" :key="t.value">
-              <td class="col-type">{{ t.label }}</td>
-              <td v-for="lv in LEVELS" :key="lv.value" class="cell">
+        <el-table :data="TYPES" row-key="value" class="score-matrix" border>
+          <el-table-column prop="label" label="题型" width="84" align="center" class-name="col-type" />
+          <el-table-column
+            v-for="lv in LEVELS"
+            :key="lv.value"
+            :label="lv.label"
+            align="center"
+            min-width="180"
+          >
+            <template #default="{ row: typeRow }">
                 <div class="cell-score">
-                  <el-input-number v-model="cellOf(t.value, lv.value).score" :min="0" :step="0.5" class="num"
-                         @input="clampCell(cellOf(t.value, lv.value))" :controls="false" />
+                  <el-input-number v-model="cellOf(typeRow.value, lv.value).score" :min="0" :step="0.5" class="num"
+                         @input="clampCell(cellOf(typeRow.value, lv.value))" :controls="false" />
                   <span class="unit">分</span>
                 </div>
 
                 <!-- 多选：额外给漏选得分 -->
-                <div v-if="t.value === 1" class="miss-block">
+                <div v-if="typeRow.value === 1" class="miss-block">
                   <div class="miss-row">
                     <span class="miss-label">漏选</span>
-                    <el-input-number v-model="cellOf(t.value, lv.value).missScore" :min="0" :max="cellOf(t.value, lv.value).score" :step="0.5" class="num small"
-                           @input="clampCell(cellOf(t.value, lv.value))" :controls="false" />
+                    <el-input-number v-model="cellOf(typeRow.value, lv.value).missScore" :min="0" :max="cellOf(typeRow.value, lv.value).score" :step="0.5" class="num small"
+                           @input="clampCell(cellOf(typeRow.value, lv.value))" :controls="false" />
                     <span class="unit">分</span>
                   </div>
                   <label class="miss-radio">
                     <el-radio :name="`miss-${lv.value}`" :value="0"
-                           v-model.number="cellOf(t.value, lv.value).missScoreType" />
+                           v-model.number="cellOf(typeRow.value, lv.value).missScoreType" />
                     <span>统一</span>
                   </label>
                   <label class="miss-radio">
                     <el-radio :name="`miss-${lv.value}`" :value="2"
-                           v-model.number="cellOf(t.value, lv.value).missScoreType" />
+                           v-model.number="cellOf(typeRow.value, lv.value).missScoreType" />
                     <span>按漏选数量均分</span>
                   </label>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <div class="drawer-footer">
@@ -61,7 +67,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -151,11 +157,6 @@ const handleSave = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, .45);
-  display: flex; justify-content: flex-end; z-index: 3200;
-}
-
 .drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {
@@ -170,13 +171,24 @@ const handleSave = async () => {
 .drawer-hint { margin: 0 0 12px; font-size: 12px; color: #8a92a5; }
 
 .score-matrix {
-  width: 100%; border-collapse: collapse; font-size: 12px;
-  border: 1px solid #e6eaf1;
+  width: 100%; font-size: 12px;
 
-  th, td { border: 1px solid #eef1f6; padding: 8px; text-align: center; vertical-align: top; }
-  th { background: #fafbfd; color: #667; font-weight: 500; }
+  :deep(.el-table__header th) {
+    background: #fafbfd;
+    color: #667;
+    font-weight: 500;
+  }
 
-  .col-type { width: 84px; color: #4a5368; font-weight: 500; vertical-align: middle; }
+  :deep(.el-table__cell) {
+    padding: 8px;
+    vertical-align: top;
+  }
+
+  :deep(.col-type) {
+    color: #4a5368;
+    font-weight: 500;
+    vertical-align: middle;
+  }
 }
 
 .cell-score {

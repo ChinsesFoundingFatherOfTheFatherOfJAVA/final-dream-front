@@ -1,7 +1,15 @@
 <template>
   <!-- FP-15 设置考核点抽屉（截图28）：考核点多选，**不能编辑/新增**；
        确定后覆盖勾选试题的考核点关联（原有考核点会被这个选择整体替换）。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="460px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>设置考核点</span>
@@ -30,7 +38,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -77,7 +85,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3250; }
 .drawer { width: 460px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

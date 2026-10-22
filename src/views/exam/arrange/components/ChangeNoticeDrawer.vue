@@ -1,6 +1,14 @@
 <template>
   <!-- F20 / API-41/42/43 变更通知：发送 + 历史 -->
-  <div class="drawer-overlay" @click.self="$emit('close')">
+    <el-drawer
+    :model-value="true"
+    size="560px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="$emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>变更通知</span>
@@ -64,7 +72,7 @@
         </section>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -168,7 +176,6 @@ onMounted(loadHistory)
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3200; }
 .drawer { width: 560px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;

@@ -1,6 +1,14 @@
 <template>
   <!-- FP-04 转移题库抽屉（截图34：只读信息+原创建者+新创建者选人；batch=批量统一转给一人） -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="440px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>转移题库</span>
@@ -44,7 +52,7 @@
       @close="showUserPicker = false"
       @confirm="onPickUser"
     />
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -109,15 +117,6 @@ const handleTransfer = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3100;
-}
-
 .drawer {
   width: 440px;
   height: 100%;

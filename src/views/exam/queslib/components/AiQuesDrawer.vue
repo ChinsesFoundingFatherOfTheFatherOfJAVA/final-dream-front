@@ -1,7 +1,15 @@
 <template>
   <!-- FP-11 AI建题（截图25）：左区素材 + 题型数量，右区生成卡片流。
        确定录入直接调 /exam/ques 落库（不经编辑页，保证 AI 这条链路闭环可用）。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="1040px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <!-- 原平台是同一页面上用左侧两个 tab 切换 AI建题 / 快速建题，这里对齐同一形态 -->
@@ -211,7 +219,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -497,15 +505,6 @@ const saveAll = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3250;
-}
-
 .drawer {
   width: 1040px;
   max-width: 96vw;

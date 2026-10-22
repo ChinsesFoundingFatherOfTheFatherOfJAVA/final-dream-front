@@ -1,6 +1,14 @@
 <template>
   <!-- F3 创建人筛选：右侧抽屉（对齐原平台「选择创建人」） -->
-  <div class="drawer-overlay" @click.self="$emit('close')">
+    <el-drawer
+    :model-value="true"
+    size="980px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="$emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>选择创建人</span>
@@ -76,7 +84,7 @@
         <el-button class="btn primary" @click="confirm">确定</el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -180,7 +188,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3300; }
 .drawer { width: 980px; max-width: 96vw; height: 100%; background: #fff; display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center; flex: none;

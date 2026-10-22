@@ -194,7 +194,16 @@
     </div>
 
     <!-- 考试链接（F19 第一版：链接文本 + 复制；二维码待引入 qrcode.vue） -->
-    <div v-if="linkRow" class="drawer-overlay" @click.self="linkRow = null">
+        <el-drawer
+      v-if="linkRow"
+      :model-value="true"
+      size="520px"
+      :with-header="false"
+      append-to-body
+      destroy-on-close
+      class="exam-drawer"
+      @close="linkRow = null"
+    >
       <div class="link-drawer">
         <div class="drawer-header">
           <span>考试链接</span>
@@ -209,7 +218,7 @@
           <p class="link-note">学员通过该链接加入考试；二维码命待引入 qrcode.vue 后补。</p>
         </div>
       </div>
-    </div>
+        </el-drawer>
 
 
     <CatalogFormDrawer
@@ -718,7 +727,6 @@ tr.checked td { background: #f5f9ff; }
     &.disabled { color: #c0c4cc; cursor: not-allowed; &:hover { background: transparent; color: #c0c4cc; } }
   }
 }
-.drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; justify-content: flex-end; z-index: 3200; }
 .link-drawer { width: 520px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;

@@ -1,6 +1,14 @@
 <template>
   <!-- FP-12 快速出卷抽屉（截图23）：①下载模板 ②选择题库 ③选分类+保密 ④上传解析 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="720px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>快速出卷</span>
@@ -125,7 +133,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -258,15 +266,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3250;
-}
-
 .drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {

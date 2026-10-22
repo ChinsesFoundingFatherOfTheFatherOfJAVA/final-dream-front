@@ -1,7 +1,15 @@
 <template>
   <!-- FP-12 导入试题抽屉（截图26）：步骤①下载模板 → 步骤②拖拽/点击上传 →
        系统校验数据正确性并提示错误数据（红色警示文案照截图）。 -->
-  <div class="drawer-overlay">
+    <el-drawer
+    :model-value="true"
+    size="560px"
+    :with-header="false"
+    append-to-body
+    destroy-on-close
+    class="exam-drawer"
+    @close="emit('close')"
+  >
     <div class="drawer">
       <div class="drawer-header">
         <span>导入试题（{{ format === 'word' ? 'Word' : 'Excel' }}）</span>
@@ -72,7 +80,7 @@
         </el-button>
       </div>
     </div>
-  </div>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -171,15 +179,6 @@ const doImport = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .45);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 3250;
-}
-
 .drawer {
   width: 560px;
   height: 100%;
