@@ -8,12 +8,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
  * 表现为每个操作都弹「接口不存在」——这是实际踩过的线上问题，所以用测试钉死。
  */
 
-const { calls, requestMock, axiosMock } = vi.hoisted(() => {
+const { calls, requestMock, downloadBlobMock } = vi.hoisted(() => {
   const calls: string[] = []
   const record = (url: string) => {
     calls.push(url)
     return Promise.resolve({})
   }
+  const downloadBlobMock = vi.fn((url: string) => {
+    calls.push(url)
+    return Promise.resolve(new Blob())
+  })
   return {
     calls,
     requestMock: {
@@ -22,16 +26,16 @@ const { calls, requestMock, axiosMock } = vi.hoisted(() => {
       put: vi.fn(record),
       delete: vi.fn(record)
     },
-    axiosMock: {
-      get: vi.fn(record),
-      post: vi.fn(record)
-    }
+    downloadBlobMock
   }
 })
 
-vi.mock('./request', () => ({ default: requestMock, API_BASE_URL: '/api' }))
-vi.mock('axios', () => ({ default: axiosMock }))
-vi.mock('@/utils/auth', () => ({ getStoredToken: () => 'test-token' }))
+vi.mock('./request', () => ({
+  default: requestMock,
+  API_BASE_URL: '/api',
+  downloadBlob: downloadBlobMock,
+  saveBlob: vi.fn()
+}))
 
 import * as paper from './paper'
 

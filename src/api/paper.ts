@@ -1,6 +1,4 @@
-import axios from 'axios'
-import request, { API_BASE_URL } from './request'
-import { getStoredToken } from '@/utils/auth'
+import request, { downloadBlob } from './request'
 
 /**
  * 测练中心·试卷管理 API（07 接口文档：经网关 /api/exam）。
@@ -448,13 +446,7 @@ export function updatePaperQuesMode(paperId: string, quesMode: number) {
 }
 /** 试卷列表导出 Excel（按当前筛选条件；二进制流不能用共享拦截器解包）。 */
 export async function exportPaperList(query: PaperListQuery): Promise<Blob> {
-  const token = getStoredToken()
-  const response = await axios.post(`${API_BASE_URL}/exam/paper/export`, query, {
-    responseType: 'blob',
-    timeout: 120_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  return response.data as Blob
+  return downloadBlob('/exam/paper/export', { method: 'POST', data: query })
 }
 
 // ---- 快速出卷导入（07 §6）----
@@ -469,13 +461,7 @@ export interface PaperImportResult {
 
 /** 6.1 下载导入模板（后端 classpath 静态资源，与解析器同源）。 */
 export async function downloadPaperTemplate(): Promise<Blob> {
-  const token = getStoredToken()
-  const response = await axios.get(`${API_BASE_URL}/exam/paper/import/template`, {
-    responseType: 'blob',
-    timeout: 120_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  return response.data as Blob
+  return downloadBlob('/exam/paper/import/template')
 }
 
 /** 6.2 快速出卷导入：一份 Excel 生成一整张固定卷。 */

@@ -1,6 +1,4 @@
-import axios from 'axios'
-import request, { API_BASE_URL } from './request'
-import { getStoredToken } from '@/utils/auth'
+import request, { downloadBlob } from './request'
 
 /**
  * 测练中心·题库管理 API（03 接口文档：经网关 /api/exam）。
@@ -458,14 +456,7 @@ export async function exportQuesFile(
   format: 'excel' | 'word',
   params: Record<string, string | number>
 ): Promise<Blob> {
-  const token = getStoredToken()
-  const response = await axios.get(`${API_BASE_URL}/exam/ques/export`, {
-    params: { format, ...params },
-    responseType: 'blob',
-    timeout: 120_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  return response.data as Blob
+  return downloadBlob('/exam/ques/export', { params: { format, ...params } })
 }
 // ---- 导入（03 §6.1/6.2）----
 
@@ -477,14 +468,7 @@ export interface ImportResult {
 
 /** 6.1 下载导入模板（与导出列结构一致，后端就地生成）。 */
 export async function downloadQuesTemplate(format: 'excel' | 'word'): Promise<Blob> {
-  const token = getStoredToken()
-  const response = await axios.get(`${API_BASE_URL}/exam/ques/import/template`, {
-    params: { format },
-    responseType: 'blob',
-    timeout: 120_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  return response.data as Blob
+  return downloadBlob('/exam/ques/import/template', { params: { format } })
 }
 
 /** 6.2 导入试题：逐行校验，错误行不影响其它行。 */

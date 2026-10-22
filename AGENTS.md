@@ -4,7 +4,7 @@
 
 全站唯一前端工程（Vue 3 SPA，hash 路由），覆盖管理端与学员端：
 组织架构/员工名册/角色权限（/enterprise）、在线课堂（/kng/**）、AI实战训练场与话术训练管理端（/sparring/**）、
-学员端训练与报告（/web/**）。所有 HTTP 经统一 `/api` 前缀走网关（8080）。
+学员端训练与报告（`/sparring/web/**`）。所有 HTTP 经统一 `/api` 前缀走网关（8080）。
 
 ## 2. 技术栈与结构
 
@@ -28,8 +28,9 @@
    后端 id 全部是 string，前端类型用 `ID = string`，不要把 id 当 number。
 4. **WebSocket**：AI 助手 WS 直连 8082（网关 WebMVC 版不支持 WS upgrade，见 vite.config.ts 代理注释与
    `复刻平台前端/AI助手WS接入说明.md`）；不要试图把 WS 收进网关路由。
-5. **路由权限**：`meta.requiresAuth / requiresAdmin / permission`（如 `kng:courseware`、`sparring:manage`），
-   守卫在 `src/router/index.ts`；新增页面必须声明 meta，超管豁免逻辑在 auth store 的 `hasPermission`。
+5. **路由权限**：`meta.requiresAuth / requiresAdmin / permission / permissionAny`（如 `kng:courseware`、
+   `act:speech`、`exam:manage`）；守卫在 `src/router/routeAccess.ts`，`src/router/index.ts` 只做接线。
+   新增页面必须声明 meta；`permissionAny` 用于横跨多个子模块的布局路由；超管豁免在 auth store 的 `hasPermission`。
 6. **后端契约口径**：统一 `ApiResponse{code,message,data}`、code=0 成功、业务失败 HTTP 200 + 非零 code；
    分页有两种历史形状——ST/ACT 的 `PageResult{records,total}` 与 SM 的 `PageVo{list,total,page,size}`，
    封装 API 时按后端实际返回建类型，不要想当然。

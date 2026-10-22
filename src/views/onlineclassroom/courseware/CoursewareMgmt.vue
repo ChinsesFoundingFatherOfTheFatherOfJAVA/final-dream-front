@@ -282,7 +282,7 @@ import {
   type CoursewareListItem,
   type CoursewareListQuery
 } from '@/api/courseware'
-import { getStoredToken } from '@/utils/auth'
+import { downloadBlob, saveBlob } from '@/api/request'
 import { toast } from '@/utils/toast'
 
 const router = useRouter()
@@ -562,19 +562,12 @@ async function batchDelete() {
 
 async function download(row: CoursewareListItem) {
   moreRow.value = null
-  const response = await fetch(`/api/kng/admin/courseware/${row.id}/download`, {
-    headers: { Authorization: `Bearer ${getStoredToken()}` }
-  })
-  if (!response.ok) {
+  try {
+    const blob = await downloadBlob(`/kng/admin/courseware/${row.id}/download`, { timeout: 180_000 })
+    saveBlob(blob, row.title)
+  } catch {
     toast.error('下载失败')
-    return
   }
-  const blob = await response.blob()
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = row.title
-  link.click()
-  URL.revokeObjectURL(link.href)
 }
 
 async function showReferences(row: CoursewareListItem) {

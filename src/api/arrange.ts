@@ -1,6 +1,4 @@
-import axios from 'axios'
-import request, { API_BASE_URL } from './request'
-import { getStoredToken } from '@/utils/auth'
+import request, { downloadBlob, saveBlob } from './request'
 
 /**
  * 测练中心·考试管理 API（04 接口文档：经网关 /api/exam）。
@@ -546,19 +544,7 @@ export function getArrangeCorrectRate(arrangeId: string, dimension: 'type' | 'le
 // ---- 导出（04 API-18/27/31/35）：二进制流不能用共享拦截器解包 ----
 
 const download = async (url: string, params: Record<string, unknown>, fallbackName: string) => {
-  const token = getStoredToken()
-  const res = await axios.get(`${API_BASE_URL}${url}`, {
-    params,
-    responseType: 'blob',
-    timeout: 180_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  const url2 = URL.createObjectURL(res.data as Blob)
-  const link = document.createElement('a')
-  link.href = url2
-  link.download = fallbackName
-  link.click()
-  URL.revokeObjectURL(url2)
+  saveBlob(await downloadBlob(url, { params, timeout: 180_000 }), fallbackName)
 }
 
 /** API-18 考试列表导出。 */
@@ -638,18 +624,7 @@ export function getArrangeResult(ueId: string) {
 
 /** API-40 导出答卷 PDF。 */
 export async function exportArrangeResultPdf(ueId: string, filename: string) {
-  const token = getStoredToken()
-  const res = await axios.get(`${API_BASE_URL}/exam/result/${ueId}/export-pdf`, {
-    responseType: 'blob',
-    timeout: 120_000,
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
-  })
-  const url = URL.createObjectURL(res.data as Blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.click()
-  URL.revokeObjectURL(url)
+  saveBlob(await downloadBlob(`/exam/result/${ueId}/export-pdf`), filename)
 }
 
 // ---- 列设置（04 §9 API-46/47）----

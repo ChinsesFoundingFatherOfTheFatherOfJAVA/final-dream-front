@@ -83,4 +83,52 @@ request.interceptors.response.use(
   }
 )
 
+export interface DownloadOptions {
+  method?: 'GET' | 'POST'
+  params?: Record<string, unknown>
+  data?: unknown
+  timeout?: number
+}
+
+/**
+ * 文件下载统一入口（二进制流不能被共享拦截器按 JSON 解包）。
+ *
+ * <p>保留 401/403 处理：裸 axios/fetch 会绕过 request.ts 的登录失效与 403 跳转，
+ * 所以下载也必须走这里，AGENTS 的"禁止裸 axios"规则对下载同样生效。
+ */
+export async function downloadBlob(url: string, options: DownloadOptions = {}): Promise<Blob> {
+  const token = getStoredToken()
+  const { method = 'GET', params, data, timeout = 120_000 } = options
+  try {
+    const res = await axios.request({
+      url: `${API_BASE_URL}${url}`,
+      method,
+      params,
+      data,
+      responseType: 'blob',
+      timeout,
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+    return res.data as Blob
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      clearStoredAuth()
+      redirectToLogin()
+    } else if (error?.response?.status === 403) {
+      redirectToForbidden()
+    }
+    throw error
+  }
+}
+
+/** 触发浏览器保存 Blob（下载链接只在这里创建，避免各 API 重复拼 DOM）。 */
+export function saveBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export default request
