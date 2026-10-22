@@ -1,55 +1,48 @@
 <template>
-  <teleport to="body">
-    <div v-if="visible" class="picker-overlay" @click.self="close">
-      <section class="picker-dialog">
-        <header class="picker-header">
-          <h3>{{ title }}</h3>
-          <button type="button" class="icon-btn" aria-label="关闭" @click="close">×</button>
-        </header>
-
-        <div class="picker-toolbar">
-          <label v-if="mode === 'position'">
-            <input
-              type="checkbox"
-              :checked="allChecked"
-              @change="toggleAll"
-            />
-            全选
-          </label>
-          <span>已选 {{ selected.length }} 项</span>
-        </div>
-
-        <div class="picker-body">
-          <DeptTree
-            v-if="mode === 'dept'"
-            v-model="selected"
-            :data="departments"
-            mode="check"
-            searchable
-            show-count
-            search-placeholder="搜索部门"
-          />
-          <template v-else>
-            <label v-for="item in options" :key="item.value" class="option-row">
-              <input
-                type="checkbox"
-                :checked="selected.includes(item.value)"
-                @change="toggle(item.value)"
-              />
-              <span class="option-label">{{ item.label }}</span>
-              <span v-if="item.count != null" class="option-count">{{ item.count }}人</span>
-            </label>
-            <p v-if="!options.length" class="empty-hint">暂无可选项</p>
-          </template>
-        </div>
-
-        <footer class="picker-footer">
-          <button type="button" class="plain-btn" @click="close">取消</button>
-          <button type="button" class="primary-btn" @click="confirm">确定</button>
-        </footer>
-      </section>
+  <el-dialog
+    :model-value="visible"
+    :title="title"
+    width="480px"
+    append-to-body
+    @update:model-value="handleVisibleChange"
+  >
+    <div class="picker-toolbar">
+      <el-checkbox v-if="mode === 'position'" :model-value="allChecked" @change="toggleAll">
+        全选
+      </el-checkbox>
+      <span>已选 {{ selected.length }} 项</span>
     </div>
-  </teleport>
+
+    <div class="picker-body">
+      <DeptTree
+        v-if="mode === 'dept'"
+        v-model="selected"
+        :data="departments"
+        mode="check"
+        searchable
+        show-count
+        search-placeholder="搜索部门"
+      />
+      <template v-else>
+        <el-checkbox
+          v-for="item in options"
+          :key="item.value"
+          class="option-row"
+          :model-value="selected.includes(item.value)"
+          @change="toggle(item.value)"
+        >
+          <span class="option-label">{{ item.label }}</span>
+          <span v-if="item.count != null" class="option-count">{{ item.count }}人</span>
+        </el-checkbox>
+        <el-empty v-if="!options.length" description="暂无可选项" :image-size="64" />
+      </template>
+    </div>
+
+    <template #footer>
+      <el-button @click="close">取消</el-button>
+      <el-button type="primary" @click="confirm">确定</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -111,6 +104,10 @@ const toggleAll = () => {
 
 const close = () => emit('close')
 
+const handleVisibleChange = (visible: boolean) => {
+  if (!visible) close()
+}
+
 const confirm = () => {
   emit('update:modelValue', selected.value)
   close()
@@ -118,72 +115,21 @@ const confirm = () => {
 </script>
 
 <style scoped lang="scss">
-.picker-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3200;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  box-sizing: border-box;
-  background: rgba(15, 23, 42, 0.42);
-}
-
-.picker-dialog {
-  width: 480px;
-  max-width: 100%;
-  max-height: min(680px, calc(100vh - 48px));
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 20px 56px rgba(15, 23, 42, 0.2);
-}
-
-.picker-header,
 .picker-toolbar,
-.picker-footer {
+.picker-body {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-}
-
-.picker-header {
-  border-bottom: 1px solid #eef0f5;
-
-  h3 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 16px;
-  }
-}
-
-.icon-btn {
-  border: none;
-  background: transparent;
-  color: #8a92a5;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .picker-toolbar {
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
   color: #7a8396;
   font-size: 13px;
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #374151;
-    cursor: pointer;
-  }
 }
 
 .picker-body {
-  flex: 1;
+  flex-direction: column;
   min-height: 160px;
   max-height: 460px;
   padding: 4px 12px 12px;
@@ -191,22 +137,25 @@ const confirm = () => {
 }
 
 .option-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  width: 100%;
   min-height: 40px;
+  margin-right: 0;
   padding: 0 8px;
   border-radius: 7px;
   color: #374151;
   font-size: 14px;
-  cursor: pointer;
 
   &:hover {
     background: #f5f8ff;
   }
 
-  input {
-    flex-shrink: 0;
+  :deep(.el-checkbox__label) {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #374151;
+    font-size: 14px;
   }
 }
 
@@ -220,38 +169,4 @@ const confirm = () => {
   font-size: 12px;
 }
 
-.empty-hint {
-  padding: 36px 0;
-  text-align: center;
-  color: #9aa3b2;
-  font-size: 13px;
-}
-
-.picker-footer {
-  justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #eef0f5;
-}
-
-.plain-btn,
-.primary-btn {
-  min-width: 80px;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.plain-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
-}
-
-.primary-btn {
-  border: none;
-  background: #2e7cf6;
-  color: #fff;
-}
 </style>

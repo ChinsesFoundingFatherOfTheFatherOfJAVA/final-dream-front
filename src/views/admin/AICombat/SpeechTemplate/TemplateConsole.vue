@@ -19,8 +19,8 @@
           </div>
         </div>
         <div class="project-actions">
-          <button class="btn btn-default">预览</button>
-          <button class="btn btn-danger" @click="handleDelete">删除</button>
+          <el-button class="btn btn-default">预览</el-button>
+          <el-button class="btn btn-danger" @click="handleDelete">删除</el-button>
         </div>
       </div>
     </div>

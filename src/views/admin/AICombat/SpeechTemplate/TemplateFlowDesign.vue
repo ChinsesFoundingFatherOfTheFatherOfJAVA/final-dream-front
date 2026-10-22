@@ -8,8 +8,8 @@
     <div class="flow-toolbar">
       <span class="update-time">最近更新时间: {{ updateTime }}</span>
       <div class="toolbar-right">
-        <button v-if="hasFlow" class="btn btn-text" @click="openAIDialog">✨ AI生成话术</button>
-        <button class="btn btn-text" @click="handleSave">💾 保存</button>
+        <el-button v-if="hasFlow" class="btn btn-text" @click="openAIDialog">✨ AI生成话术</el-button>
+        <el-button class="btn btn-text" @click="handleSave">💾 保存</el-button>
       </div>
     </div>
 
@@ -19,16 +19,16 @@
         <p class="empty-title">还没有设置模板流程</p>
         <p class="empty-desc">请选择一种方式开始创建模板流程</p>
         <div class="create-methods">
-          <button class="method-btn" @click="openAIDialog">
+          <el-button class="method-btn" @click="openAIDialog">
             <span class="method-icon">✨</span>
             <span class="method-label">AI生成话术</span>
             <span class="method-desc">输入对话场景，自动生成完整流程</span>
-          </button>
-          <button class="method-btn" @click="createManualFlow">
+          </el-button>
+          <el-button class="method-btn" @click="createManualFlow">
             <span class="method-icon">✏️</span>
             <span class="method-label">手动创建流程</span>
             <span class="method-desc">从空白画布开始，自由拖拽节点</span>
-          </button>
+          </el-button>
         </div>
       </div>
     </div>

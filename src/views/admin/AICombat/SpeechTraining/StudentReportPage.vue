@@ -1,7 +1,7 @@
 <template>
   <div class="student-report-page">
     <div class="page-header">
-      <button type="button" class="back-btn" @click="goBack">‹</button>
+      <el-button class="back-btn" @click="goBack">‹</el-button>
       <div>
         <h2>训练详情</h2>
         <p v-if="projectName">{{ projectName }}</p>
@@ -49,12 +49,10 @@
             <h3>训练分析</h3>
             <p>共 {{ tops?.reportCount ?? 0 }} 次已完成训练</p>
           </div>
-          <select v-model="analysisDimension" @change="loadAnalysis">
-            <option value="">总分</option>
-            <option v-for="dimension in dimensionNames" :key="dimension" :value="dimension">
-              {{ dimension }}
-            </option>
-          </select>
+          <el-select v-model="analysisDimension" placeholder="总分" @change="loadAnalysis">
+            <el-option label="总分" value="" />
+            <el-option v-for="dimension in dimensionNames" :key="dimension" :label="dimension" :value="dimension" />
+          </el-select>
         </header>
         <div class="chart-box">
           <div ref="analysisChartRef" class="analysis-chart"></div>
@@ -70,26 +68,25 @@
             <h3>各次训练</h3>
             <p>点击第 n 次查看该次维度雷达</p>
           </div>
-          <button
-            type="button"
+          <el-button
             class="detail-btn"
             :disabled="!selectedRecord"
             @click="openSelectedReport"
           >
             查看详情
-          </button>
+          </el-button>
         </header>
 
         <div v-if="allRecords.length" class="time-tabs">
-          <button
+          <el-button
             v-for="record in allRecords"
             :key="record.reportId"
-            type="button"
+           
             :class="{ active: selectedRecord?.reportId === record.reportId }"
             @click="selectRecord(record)"
           >
             第{{ record.times }}次
-          </button>
+          </el-button>
         </div>
 
         <div class="radar-section">
@@ -110,50 +107,46 @@
           </div>
         </header>
         <div class="table-wrap">
-          <table class="record-table">
-            <thead>
-              <tr>
-                <th>时间</th>
-                <th>次数</th>
-                <th>总分</th>
-                <th v-for="dimension in dimensionNames" :key="dimension">{{ dimension }}</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in pagedRecords" :key="row.reportId">
-                <td>{{ row.time || '--' }}</td>
-                <td>第 {{ row.times }} 次</td>
-                <td class="score-cell">{{ row.totalScore ?? '--' }}</td>
-                <td v-for="dimension in dimensionNames" :key="dimension">
-                  {{ row.dimScores?.[dimension] ?? '--' }}
-                </td>
-                <td>
-                  <button type="button" class="text-btn" @click="openReport(row)">查看详情</button>
-                </td>
-              </tr>
-              <tr v-if="!recordsLoading && !pagedRecords.length">
-                <td :colspan="4 + dimensionNames.length" class="empty-cell">暂无训练记录</td>
-              </tr>
-              <tr v-if="recordsLoading">
-                <td :colspan="4 + dimensionNames.length" class="empty-cell">加载中...</td>
-              </tr>
-            </tbody>
-          </table>
+          <el-table
+            v-loading="recordsLoading"
+            :data="pagedRecords"
+            row-key="reportId"
+            class="record-table"
+            empty-text="暂无训练记录"
+          >
+            <el-table-column label="时间" width="170">
+              <template #default="{ row }">{{ row.time || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="次数" width="90">
+              <template #default="{ row }">第 {{ row.times }} 次</template>
+            </el-table-column>
+            <el-table-column label="总分" width="90">
+              <template #default="{ row }"><span class="score-cell">{{ row.totalScore ?? '--' }}</span></template>
+            </el-table-column>
+            <el-table-column
+              v-for="dimension in dimensionNames"
+              :key="dimension"
+              :label="dimension"
+              width="110"
+            >
+              <template #default="{ row }">{{ row.dimScores?.[dimension] ?? '--' }}</template>
+            </el-table-column>
+            <el-table-column label="操作" width="110">
+              <template #default="{ row }">
+                <el-button link type="primary" @click="openReport(row)">查看详情</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
         <footer class="pagination">
           <span>共 {{ allRecords.length }} 条</span>
-          <div class="page-actions">
-            <button type="button" :disabled="recordPage <= 1" @click="recordPage -= 1">上一页</button>
-            <span>{{ recordPage }} / {{ recordTotalPages }}</span>
-            <button
-              type="button"
-              :disabled="recordPage >= recordTotalPages"
-              @click="recordPage += 1"
-            >
-              下一页
-            </button>
-          </div>
+          <el-pagination
+            v-model:current-page="recordPage"
+            :page-size="recordPageSize"
+            :total="allRecords.length"
+            layout="prev, pager, next"
+            background
+          />
         </footer>
       </section>
     </template>

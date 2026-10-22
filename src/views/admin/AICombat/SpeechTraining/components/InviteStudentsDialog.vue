@@ -1,100 +1,95 @@
 <template>
-  <teleport to="body">
-    <div v-if="visible" class="invite-overlay" @click.self="close">
-      <section class="invite-dialog">
-        <header class="dialog-header">
-          <h3>邀请学员</h3>
-          <button type="button" class="icon-btn" aria-label="关闭" @click="close">×</button>
-        </header>
+  <el-dialog
+    :model-value="visible"
+    title="邀请学员"
+    width="1040px"
+    append-to-body
+    @update:model-value="handleVisibleChange"
+  >
+    <div class="dialog-content">
+      <aside class="dept-panel">
+        <DeptTree
+          v-model="deptId"
+          :data="departments"
+          mode="single"
+          searchable
+          include-all
+          show-count
+          search-placeholder="搜索部门"
+          @change="selectDept(String($event))"
+        />
+      </aside>
 
-        <div class="dialog-content">
-          <aside class="dept-panel">
-            <DeptTree
-              v-model="deptId"
-              :data="departments"
-              mode="single"
-              searchable
-              include-all
-              show-count
-              search-placeholder="搜索部门"
-              @change="selectDept(String($event))"
-            />
-          </aside>
-
-          <main class="candidate-panel">
-            <div class="candidate-toolbar">
-              <input
-                v-model.trim="keyword"
-                type="search"
-                placeholder="搜索姓名、账号或工号"
-                @keyup.enter="searchCandidates"
-              />
-              <button type="button" class="search-btn" @click="searchCandidates">搜索</button>
-            </div>
-
-            <div class="table-wrap">
-              <table class="candidate-table">
-                <thead>
-                  <tr>
-                    <th class="check-col">
-                      <input
-                        type="checkbox"
-                        :checked="pageAllSelected"
-                        @change="toggleCurrentPage"
-                      />
-                    </th>
-                    <th>姓名</th>
-                    <th>账号</th>
-                    <th>工号</th>
-                    <th>部门</th>
-                    <th>岗位</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="row in candidates" :key="row.userId">
-                    <td class="check-col">
-                      <input
-                        type="checkbox"
-                        :checked="selectedIds.includes(row.userId)"
-                        @change="toggleCandidate(row.userId)"
-                      />
-                    </td>
-                    <td>{{ row.fullname || '--' }}</td>
-                    <td>{{ row.username || '--' }}</td>
-                    <td>{{ row.userNo || '--' }}</td>
-                    <td class="path-cell" :title="row.deptFullName">{{ row.deptFullName || '--' }}</td>
-                    <td>{{ row.positionName || '--' }}</td>
-                  </tr>
-                  <tr v-if="!loading && !candidates.length">
-                    <td colspan="6" class="empty-cell">暂无可邀请学员</td>
-                  </tr>
-                  <tr v-if="loading">
-                    <td colspan="6" class="empty-cell">加载中...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="pagination">
-              <span>已选 {{ selectedIds.length }} 人，共 {{ total }} 人</span>
-              <div class="page-actions">
-                <button type="button" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
-                <span>{{ page }} / {{ totalPages }}</span>
-                <button type="button" :disabled="page >= totalPages" @click="changePage(page + 1)">下一页</button>
-              </div>
-            </div>
-          </main>
+      <main class="candidate-panel">
+        <div class="candidate-toolbar">
+          <el-input
+            v-model.trim="keyword"
+            placeholder="搜索姓名、账号或工号"
+            clearable
+            @keyup.enter="searchCandidates"
+          />
+          <el-button type="primary" @click="searchCandidates">搜索</el-button>
         </div>
 
-        <footer class="dialog-footer">
-          <button type="button" class="plain-btn" @click="close">取消</button>
-          <button type="button" class="primary-btn" :disabled="!selectedIds.length || submitting" @click="confirm">
-            {{ submitting ? '邀请中...' : `确认邀请${selectedIds.length ? `（${selectedIds.length}）` : ''}` }}
-          </button>
-        </footer>
-      </section>
+        <div class="table-wrap">
+          <el-table
+            v-loading="loading"
+            :data="candidates"
+            row-key="userId"
+            class="candidate-table"
+            empty-text="暂无可邀请学员"
+          >
+            <el-table-column width="44" align="center">
+              <template #header>
+                <el-checkbox :model-value="pageAllSelected" @change="toggleCurrentPage" />
+              </template>
+              <template #default="{ row }">
+                <el-checkbox
+                  :model-value="selectedIds.includes(row.userId)"
+                  @change="toggleCandidate(row.userId)"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="姓名" min-width="110">
+              <template #default="{ row }">{{ row.fullname || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="账号" min-width="130">
+              <template #default="{ row }">{{ row.username || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="工号" width="120">
+              <template #default="{ row }">{{ row.userNo || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="部门" min-width="220" show-overflow-tooltip>
+              <template #default="{ row }">{{ row.deptFullName || '--' }}</template>
+            </el-table-column>
+            <el-table-column label="岗位" min-width="140">
+              <template #default="{ row }">{{ row.positionName || '--' }}</template>
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <div class="pagination">
+          <span>已选 {{ selectedIds.length }} 人，共 {{ total }} 人</span>
+          <el-pagination
+            v-model:current-page="page"
+            :page-size="pageSize"
+            :total="total"
+            :disabled="loading"
+            layout="prev, pager, next"
+            background
+            @current-change="loadCandidates"
+          />
+        </div>
+      </main>
     </div>
-  </teleport>
+
+    <template #footer>
+      <el-button @click="close">取消</el-button>
+      <el-button type="primary" :disabled="!selectedIds.length" :loading="submitting" @click="confirm">
+        确认邀请{{ selectedIds.length ? `（${selectedIds.length}）` : '' }}
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -125,7 +120,6 @@ const loading = ref(false)
 const submitting = ref(false)
 const selectedIds = ref<string[]>([])
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize)))
 const pageAllSelected = computed(
   () => candidates.value.length > 0 && candidates.value.every((row) => selectedIds.value.includes(row.userId))
 )
@@ -166,11 +160,6 @@ const searchCandidates = () => {
   void loadCandidates()
 }
 
-const changePage = (nextPage: number) => {
-  page.value = Math.min(Math.max(1, nextPage), totalPages.value)
-  void loadCandidates()
-}
-
 const toggleCandidate = (userId: string) => {
   selectedIds.value = selectedIds.value.includes(userId)
     ? selectedIds.value.filter((id) => id !== userId)
@@ -187,6 +176,10 @@ const toggleCurrentPage = () => {
 }
 
 const close = () => emit('close')
+
+const handleVisibleChange = (visible: boolean) => {
+  if (!visible) close()
+}
 
 const confirm = async () => {
   if (!selectedIds.value.length || submitting.value) return
@@ -216,58 +209,8 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.invite-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3200;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  box-sizing: border-box;
-  background: rgba(15, 23, 42, 0.42);
-}
-
-.invite-dialog {
-  width: min(1040px, 100%);
-  height: min(720px, calc(100vh - 48px));
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 20px 56px rgba(15, 23, 42, 0.22);
-}
-
-.dialog-header,
-.dialog-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-}
-
-.dialog-header {
-  border-bottom: 1px solid #eef0f5;
-
-  h3 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 16px;
-  }
-}
-
-.icon-btn {
-  border: none;
-  background: transparent;
-  color: #8a92a5;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
-
 .dialog-content {
-  flex: 1;
-  min-height: 0;
+  height: 560px;
   display: grid;
   grid-template-columns: 230px 1fr;
 }
@@ -292,32 +235,15 @@ watch(
   gap: 10px;
   padding: 14px 16px;
 
-  input {
+  :deep(.el-input) {
     flex: 1;
     min-width: 0;
-    height: 36px;
-    padding: 0 12px;
-    border: 1px solid #d9deea;
-    border-radius: 7px;
-    color: #374151;
-    font-size: 13px;
-    outline: none;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
   }
-}
 
-.search-btn {
-  height: 36px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 7px;
-  background: #2e7cf6;
-  color: #fff;
-  font-size: 13px;
-  cursor: pointer;
+  :deep(.el-input__wrapper) {
+    min-height: 36px;
+    border-radius: 7px;
+  }
 }
 
 .table-wrap {
@@ -331,48 +257,18 @@ watch(
 
 .candidate-table {
   width: 100%;
-  min-width: 760px;
-  border-collapse: collapse;
-  font-size: 13px;
 
-  th,
-  td {
-    padding: 11px 12px;
-    border-bottom: 1px solid #f0f2f6;
-    color: #4d5568;
-    text-align: left;
-  }
-
-  th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+  :deep(.el-table__header th) {
     background: #fafbfd;
-    color: #6b7280;
+    color: #4d5568;
+    font-size: 13px;
     font-weight: 600;
   }
 
-  tbody tr:hover {
-    background: #f8fbff;
+  :deep(.el-table__row td) {
+    color: #4d5568;
+    font-size: 13px;
   }
-}
-
-.check-col {
-  width: 44px;
-  text-align: center;
-}
-
-.path-cell {
-  max-width: 240px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.empty-cell {
-  padding: 46px 0 !important;
-  text-align: center !important;
-  color: #9aa3b2 !important;
 }
 
 .pagination {
@@ -384,72 +280,9 @@ watch(
   font-size: 12px;
 }
 
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  button {
-    height: 30px;
-    padding: 0 12px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    cursor: pointer;
-
-    &:disabled {
-      color: #b8bfcc;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.dialog-footer {
-  justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #eef0f5;
-}
-
-.plain-btn,
-.primary-btn {
-  min-width: 88px;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-}
-
-.plain-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
-}
-
-.primary-btn {
-  border: none;
-  background: #2e7cf6;
-  color: #fff;
-}
-
 @media (max-width: 760px) {
-  .invite-overlay {
-    padding: 0;
-  }
-
-  .invite-dialog {
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-  }
-
   .dialog-content {
+    height: auto;
     grid-template-columns: 1fr;
     grid-template-rows: 180px 1fr;
   }

@@ -33,14 +33,12 @@
 
           <div class="form-item">
             <label class="form-label required">名称</label>
-            <input type="text" class="form-input" v-model="form.name" placeholder="请输入" maxlength="200" />
-            <span class="char-count">{{ form.name.length }}/200</span>
+            <el-input v-model="form.name" placeholder="请输入" maxlength="200" show-word-limit />
           </div>
 
           <div class="form-item">
             <label class="form-label">编号</label>
-            <input type="text" class="form-input" v-model="form.code" placeholder="请输入" maxlength="50" />
-            <span class="char-count">{{ form.code.length }}/50</span>
+            <el-input v-model="form.code" placeholder="请输入" maxlength="50" show-word-limit />
           </div>
 
           <div class="form-item">
@@ -54,8 +52,14 @@
 
           <div class="form-item">
             <label class="form-label required">说明信息</label>
-            <textarea class="form-textarea" v-model="form.description" placeholder="请输入" maxlength="1000" rows="4"></textarea>
-            <span class="char-count">{{ form.description.length }}/1000</span>
+            <el-input
+              v-model="form.description"
+              type="textarea"
+              placeholder="请输入"
+              maxlength="1000"
+              show-word-limit
+              :rows="4"
+            />
           </div>
 
           <div class="form-item">
@@ -70,14 +74,14 @@
               />
               <div class="cover-preview" v-if="form.coverImage">
                 <img :src="form.coverImage" alt="cover" />
-                <button type="button" class="cover-remove" @click="removeCover">×</button>
+                <el-button class="cover-remove" @click="removeCover">×</el-button>
               </div>
               <div class="cover-placeholder" v-else @click="triggerCoverUpload">
                 <span class="placeholder-icon">+</span>
                 <span class="placeholder-text">点击上传封面<br/><span class="placeholder-hint">不上传则使用默认封面</span></span>
               </div>
               <div class="cover-actions" v-if="!form.coverImage">
-                <button type="button" class="btn-link" @click="triggerCoverUpload">📁 上传图片</button>
+                <el-button class="btn-link" @click="triggerCoverUpload">📁 上传图片</el-button>
               </div>
             </div>
           </div>
@@ -85,7 +89,7 @@
           <div class="form-item" v-if="isTrain">
             <label class="form-label required">完成标准</label>
             <div class="input-with-unit">
-              <input type="number" class="form-input" v-model="form.completionStandard" min="1" />
+              <el-input-number v-model="form.completionStandard" :min="1" :controls="false" />
               <span class="unit">次训练</span>
             </div>
           </div>
@@ -93,33 +97,26 @@
           <div class="form-item" v-else>
             <label class="form-label required">达标分数</label>
             <div class="input-with-unit">
-              <input type="number" class="form-input" v-model="form.passScore" min="0" max="100" />
+              <el-input-number v-model="form.passScore" :min="0" :max="100" :controls="false" />
               <span class="unit">分</span>
             </div>
           </div>
 
           <div class="form-item" v-if="!isTrain">
             <label class="form-label required">通关策略</label>
-            <div class="radio-group">
-              <label class="radio-item" v-for="option in passStrategies" :key="option.value">
-                <input type="radio" v-model="form.passStrategy" :value="option.value" />
-                <span class="radio-label">{{ option.label }}</span>
-              </label>
-            </div>
+            <el-radio-group v-model="form.passStrategy" class="radio-group">
+              <el-radio v-for="option in passStrategies" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </el-radio>
+            </el-radio-group>
           </div>
 
           <div class="form-item">
             <label class="form-label required">对话方式</label>
-            <div class="radio-group">
-              <label class="radio-item">
-                <input type="radio" v-model="form.dialogueMode" value="voice" />
-                <span class="radio-label">语音对话</span>
-              </label>
-              <label class="radio-item">
-                <input type="radio" v-model="form.dialogueMode" value="text" />
-                <span class="radio-label">文字对话</span>
-              </label>
-            </div>
+            <el-radio-group v-model="form.dialogueMode" class="radio-group">
+              <el-radio value="voice">语音对话</el-radio>
+              <el-radio value="text">文字对话</el-radio>
+            </el-radio-group>
           </div>
         </div>
 
@@ -137,37 +134,40 @@
             </div>
             <div class="table-row" v-for="dim in dimensions" :key="dim.id">
               <div class="col-checkbox">
-                <input type="checkbox" v-model="dim.enabled" />
+                <el-checkbox v-model="dim.enabled" />
               </div>
               <div class="col-name">
-                <input v-if="dim.isCustom" type="text" class="dim-edit" v-model="dim.name" placeholder="请输入维度名称" maxlength="20" />
+                <el-input
+                  v-if="dim.isCustom"
+                  v-model="dim.name"
+                  class="dim-edit"
+                  placeholder="请输入维度名称"
+                  maxlength="20"
+                />
                 <span v-else>{{ dim.name }}</span>
               </div>
               <div class="col-rule">
                 <!-- 话术一致性：规则内嵌为单选（对齐原平台；v1.2 拍板砍 mixed——无逐节点标记数据支撑） -->
                 <div v-if="dim.name === '话术一致性'" class="consistency-picker">
-                  <label class="consistency-option" :class="{ active: dim.ruleType === 'keypoints' }">
-                    <input type="radio" value="keypoints" v-model="dim.ruleType" :disabled="!dim.enabled" />
-                    <span>按照标准话术的要点表达即可</span>
-                  </label>
-                  <label class="consistency-option" :class="{ active: dim.ruleType === 'exact' }">
-                    <input type="radio" value="exact" v-model="dim.ruleType" :disabled="!dim.enabled" />
-                    <span>与标准话术精准逐字匹配</span>
-                  </label>
+                  <el-radio-group v-model="dim.ruleType">
+                    <el-radio value="keypoints" :disabled="!dim.enabled">按照标准话术的要点表达即可</el-radio>
+                    <el-radio value="exact" :disabled="!dim.enabled">与标准话术精准逐字匹配</el-radio>
+                  </el-radio-group>
                   <p class="consistency-tip">
                     {{ dim.ruleType === 'exact'
                       ? '学员回答须与各轮标准话术高度吻合，逐字一致性是本维度主要评分依据。'
                       : '学员回答覆盖标准话术要点即可，不要求逐字一致。' }}
                   </p>
                 </div>
-                <textarea
+                <el-input
                   v-else-if="dim.isCustom"
-                  class="rule-input"
                   v-model="dim.scoringRule"
+                  type="textarea"
+                  class="rule-input"
                   :placeholder="rulePlaceholder"
-                  rows="6"
+                  :rows="6"
                   maxlength="1000"
-                ></textarea>
+                />
                 <div v-else class="rule-lines">
                   <div v-for="(line, index) in splitRuleLines(dim.scoringRule)" :key="index" class="rule-line">
                     <strong v-if="line.level" class="rule-level">{{ line.level }}</strong>
@@ -177,52 +177,56 @@
               </div>
               <div class="col-evidence">
                 <div class="metric-picker">
-                  <select class="dim-select" v-model.number="dim.evidenceType" :disabled="!dim.enabled">
-                    <option :value="1">看文字</option>
-                    <option :value="2">看语音</option>
-                    <option :value="3">文字+语音</option>
-                  </select>
-                  <select class="dim-select" v-model="dim.metricKey" :disabled="!dim.enabled" @change="handleMetricKeyChange(dim)">
-                    <option value="">AI 评分</option>
-                    <option value="speech_speed">语速规则算分</option>
-                    <option value="forbidden_words">违禁词规则算分</option>
-                    <option value="tone">音频模型评语气</option>
-                  </select>
+                  <el-select v-model="dim.evidenceType" class="dim-select" :disabled="!dim.enabled">
+                    <el-option label="看文字" :value="1" />
+                    <el-option label="看语音" :value="2" />
+                    <el-option label="文字+语音" :value="3" />
+                  </el-select>
+                  <el-select
+                    v-model="dim.metricKey"
+                    class="dim-select"
+                    :disabled="!dim.enabled"
+                    @change="handleMetricKeyChange(dim)"
+                  >
+                    <el-option label="AI 评分" value="" />
+                    <el-option label="语速规则算分" value="speech_speed" />
+                    <el-option label="违禁词规则算分" value="forbidden_words" />
+                    <el-option label="音频模型评语气" value="tone" />
+                  </el-select>
                 </div>
                 <div v-if="dim.metricKey === 'speech_speed'" class="metric-params">
-                  <input
-                    type="number"
+                  <el-input-number
+                    v-model="dim.metricParams.bestMin"
                     class="metric-param-input"
-                    v-model.number="dim.metricParams.bestMin"
                     placeholder="150"
                     :disabled="!dim.enabled"
+                    :controls="false"
                   />
                   <span>~</span>
-                  <input
-                    type="number"
+                  <el-input-number
+                    v-model="dim.metricParams.bestMax"
                     class="metric-param-input"
-                    v-model.number="dim.metricParams.bestMax"
                     placeholder="250"
                     :disabled="!dim.enabled"
+                    :controls="false"
                   />
                   <span>字/分</span>
                 </div>
                 <div v-else-if="dim.metricKey === 'forbidden_words'" class="metric-params">
-                  <input
-                    type="number"
+                  <el-input-number
+                    v-model="dim.metricParams.deductPerHit"
                     class="metric-param-input"
-                    v-model.number="dim.metricParams.deductPerHit"
                     placeholder="20"
                     :disabled="!dim.enabled"
+                    :controls="false"
                   />
                   <span>分/次</span>
                 </div>
                 <div v-else-if="dim.metricKey === 'tone'" class="metric-params">
                   <span>评什么角度</span>
-                  <input
-                    type="text"
-                    class="metric-aspect-input"
+                  <el-input
                     v-model="dim.metricAspect"
+                    class="metric-aspect-input"
                     placeholder="热情"
                     maxlength="6"
                     :disabled="!dim.enabled"
@@ -230,7 +234,14 @@
                 </div>
               </div>
               <div class="col-weight">
-                <input type="number" class="weight-input" v-model.number="dim.weight" min="0" max="100" :disabled="!dim.enabled" />
+                <el-input-number
+                  v-model="dim.weight"
+                  class="weight-input"
+                  :min="0"
+                  :max="100"
+                  :disabled="!dim.enabled"
+                  :controls="false"
+                />
                 <span>%</span>
               </div>
             </div>
@@ -245,7 +256,7 @@
             权重 {{ totalWeight === 100 ? '✓' : '' }} {{ totalWeight }}%
           </div>
 
-          <button class="btn btn-link" @click="addCustomDimension">+ 添加自定义维度</button>
+          <el-button class="btn btn-link" @click="addCustomDimension">+ 添加自定义维度</el-button>
 
         </div>
 
@@ -255,49 +266,48 @@
 
           <div class="form-item">
             <label class="form-label">陪练者名称</label>
-            <input type="text" class="form-input" v-model="form.trainer.name" placeholder="请输入" maxlength="20" />
+            <el-input v-model="form.trainer.name" placeholder="请输入" maxlength="20" show-word-limit />
           </div>
 
           <div class="form-item">
             <label class="form-label">陪练者朗读语言及声音</label>
             <div class="trainer-voice">
-              <select class="form-select" v-model="form.trainer.language">
-                <option value="普通话">普通话</option>
-                <option value="粤语">粤语</option>
-              </select>
-              <select class="form-select" v-model="form.trainer.voiceId">
-                <option value="voice1">温柔女声</option>
-                <option value="voice2">成熟男声</option>
-                <option value="voice3">活力女声</option>
-              </select>
+              <el-select v-model="form.trainer.language" class="form-select">
+                <el-option label="普通话" value="普通话" />
+                <el-option label="粤语" value="粤语" />
+              </el-select>
+              <el-select v-model="form.trainer.voiceId" class="form-select">
+                <el-option label="温柔女声" value="voice1" />
+                <el-option label="成熟男声" value="voice2" />
+                <el-option label="活力女声" value="voice3" />
+              </el-select>
             </div>
           </div>
 
           <div class="form-item">
             <label class="form-label">学员录入语言</label>
-            <div class="checkbox-group">
-              <label class="checkbox-item">
-                <input type="checkbox" v-model="form.trainer.inputLanguage" value="普通话" />
-                <span class="checkbox-label">普通话</span>
-              </label>
-              <label class="checkbox-item">
-                <input type="checkbox" v-model="form.trainer.inputLanguage" value="粤语" />
-                <span class="checkbox-label">粤语</span>
-              </label>
-            </div>
+            <el-checkbox-group v-model="form.trainer.inputLanguage" class="checkbox-group">
+              <el-checkbox value="普通话">普通话</el-checkbox>
+              <el-checkbox value="粤语">粤语</el-checkbox>
+            </el-checkbox-group>
           </div>
 
           <div class="form-item">
             <label class="form-label">语速</label>
             <div class="slider-wrapper">
-              <input type="range" class="form-slider" v-model.number="form.trainer.speed" min="0" max="60" />
+              <el-slider v-model="form.trainer.speed" class="form-slider" :min="0" :max="60" />
               <span class="slider-value">{{ form.trainer.speed }}</span>
             </div>
           </div>
 
           <div class="form-item">
             <label class="form-label">违禁词</label>
-            <input type="text" class="form-input" v-model="form.trainer.forbiddenWords" placeholder="以逗号隔开，最多200字" maxlength="200" />
+            <el-input
+              v-model="form.trainer.forbiddenWords"
+              placeholder="以逗号隔开，最多200字"
+              maxlength="200"
+              show-word-limit
+            />
           </div>
 
           <!-- FP-26 陪练者形象（v1.1 新增） -->
@@ -313,8 +323,8 @@
 
         <!-- 底部按钮 -->
         <div class="form-actions">
-          <button class="btn btn-default" @click="goBack">取消</button>
-          <button class="btn btn-primary" @click="handleSubmit">创建并进入控制台</button>
+          <el-button class="btn btn-default" @click="goBack">取消</el-button>
+          <el-button class="btn btn-primary" @click="handleSubmit">创建并进入控制台</el-button>
         </div>
       </div>
 
@@ -820,6 +830,22 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped lang="scss">
+.input-with-unit :deep(.el-input-number) {
+  width: 160px;
+}
+
+.weight-input {
+  width: 68px;
+}
+
+.metric-param-input {
+  width: 72px;
+}
+
+:deep(.el-input-number .el-input__inner) {
+  text-align: center;
+}
+
 .edit-project {
   height: 100vh;
   display: flex;

@@ -1,46 +1,48 @@
 <template>
-  <teleport to="body">
-    <transition name="drawer-fade">
-      <div v-if="visible" class="drawer-overlay" @click.self="close">
-        <aside class="report-drawer">
-          <header class="drawer-header">
-            <div>
-              <h3>训练详情</h3>
-              <p v-if="report?.projectName">{{ report.projectName }}</p>
-            </div>
-            <button type="button" class="close-btn" aria-label="关闭" @click="close">×</button>
-          </header>
+  <el-drawer
+    :model-value="visible"
+    size="640px"
+    append-to-body
+    destroy-on-close
+    @update:model-value="handleVisibleChange"
+  >
+    <template #header>
+      <div class="drawer-header">
+        <h3>训练详情</h3>
+        <p v-if="report?.projectName">{{ report.projectName }}</p>
+      </div>
+    </template>
 
-          <div v-if="loading" class="drawer-state">报告加载中...</div>
-          <div v-else-if="error" class="drawer-state">{{ error }}</div>
-          <div v-else-if="report && report.reportStatus !== 2" class="drawer-state">
-            {{ report.reportStatus === 3 ? '报告生成失败' : '报告生成中，请稍后再查看' }}
-          </div>
-          <template v-else-if="report">
-            <div class="score-banner">
-              <div>
-                <span class="banner-label">本次总分</span>
-                <strong>{{ report.totalScore ?? '--' }}</strong>
-              </div>
-              <span v-if="scoreChangeRised > 0" class="change-tag">
-                较上次提升 {{ scoreChangeRised }} 分
-              </span>
-            </div>
+    <div v-if="loading" class="drawer-state">报告加载中...</div>
+    <div v-else-if="error" class="drawer-state">{{ error }}</div>
+    <div v-else-if="report && report.reportStatus !== 2" class="drawer-state">
+      {{ report.reportStatus === 3 ? '报告生成失败' : '报告生成中，请稍后再查看' }}
+    </div>
+    <template v-else-if="report">
+      <div class="score-banner">
+        <div>
+          <span class="banner-label">本次总分</span>
+          <strong>{{ report.totalScore ?? '--' }}</strong>
+        </div>
+        <span v-if="scoreChangeRised > 0" class="change-tag">
+          较上次提升 {{ scoreChangeRised }} 分
+        </span>
+      </div>
 
-            <div class="drawer-tabs">
-              <button type="button" :class="{ active: activeTab === 'score' }" @click="activeTab = 'score'">
-                AI分析报告
-              </button>
-              <button type="button" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">
-                对话记录
-              </button>
-              <button type="button" class="consistency-link" @click="consistencyVisible = true">
-                要点命中详情
-              </button>
-            </div>
+      <div class="drawer-tabs">
+        <el-button :class="{ active: activeTab === 'score' }" @click="activeTab = 'score'">
+          AI分析报告
+        </el-button>
+        <el-button :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">
+          对话记录
+        </el-button>
+        <el-button class="consistency-link" @click="consistencyVisible = true">
+          要点命中详情
+        </el-button>
+      </div>
 
-            <div class="drawer-body">
-              <template v-if="activeTab === 'score'">
+      <div class="drawer-body">
+        <template v-if="activeTab === 'score'">
                 <section class="report-section">
                   <h4>维度雷达</h4>
                   <RadarChart
@@ -52,28 +54,25 @@
                   <h4>评分明细</h4>
                   <ScoreDetail :dimensions="report.dimensions ?? []" />
                 </section>
-              </template>
-              <section v-else class="report-section chat-section">
+        </template>
+        <section v-else class="report-section chat-section">
                 <ChatRecord
                   :messages="chatMessages"
                   :round-suggestions="report.roundSuggestions ?? []"
                   :trainer-avatar="report.trainerAvatar"
                   :likes-disabled="Boolean(userId)"
                 />
-              </section>
-            </div>
-          </template>
-        </aside>
+        </section>
       </div>
-    </transition>
+    </template>
+  </el-drawer>
 
-    <ConsistencyDetail
-      :visible="consistencyVisible"
-      :report-id="report?.reportId || reportId || ''"
-      :user-id="userId"
-      @close="consistencyVisible = false"
-    />
-  </teleport>
+  <ConsistencyDetail
+    :visible="consistencyVisible"
+    :report-id="report?.reportId || reportId || ''"
+    :user-id="userId"
+    @close="consistencyVisible = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -108,6 +107,10 @@ const scoreChangeRised = computed(() => {
 })
 
 const close = () => emit('close')
+
+const handleVisibleChange = (visible: boolean) => {
+  if (!visible) close()
+}
 
 const load = async () => {
   if (!props.sessionId) {
@@ -146,34 +149,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2600;
-  background: rgba(15, 23, 42, 0.38);
-}
-
-.report-drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: min(640px, 92vw);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #f7f8fb;
-  box-shadow: -18px 0 48px rgba(15, 23, 42, 0.16);
-}
-
 .drawer-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 22px;
-  border-bottom: 1px solid #e9edf4;
-  background: #fff;
-
   h3 {
     margin: 0;
     color: #1f2937;
@@ -185,17 +161,6 @@ watch(
     color: #8a92a5;
     font-size: 12px;
   }
-}
-
-.close-btn {
-  width: 30px;
-  height: 30px;
-  border: none;
-  background: transparent;
-  color: #8a92a5;
-  font-size: 25px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .drawer-state {
@@ -297,27 +262,9 @@ watch(
   min-height: 200px;
 }
 
-.drawer-fade-enter-active,
-.drawer-fade-leave-active {
-  transition: opacity 0.18s ease;
-
-  .report-drawer {
-    transition: transform 0.22s ease;
-  }
-}
-
-.drawer-fade-enter-from,
-.drawer-fade-leave-to {
-  opacity: 0;
-
-  .report-drawer {
-    transform: translateX(24px);
-  }
-}
-
 @media (max-width: 760px) {
-  .report-drawer {
-    width: 100%;
+  :deep(.el-drawer) {
+    width: 100% !important;
   }
 }
 </style>

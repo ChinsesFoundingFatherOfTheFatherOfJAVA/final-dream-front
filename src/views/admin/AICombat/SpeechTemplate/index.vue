@@ -39,86 +39,92 @@
         <!-- 操作栏 -->
         <div class="action-bar">
           <div class="action-buttons">
-            <button class="btn btn-primary" @click="showCreateDialog = true">创建</button>
+            <el-button class="btn btn-primary" @click="showCreateDialog = true">创建</el-button>
           </div>
           <div class="filter-bar">
-            <select class="filter-select" v-model="filters.status" @change="fetchTemplates">
-              <option value="">全部状态</option>
-              <option value="0">未发布</option>
-              <option value="1">已发布</option>
-              <option value="2">已撤回</option>
-            </select>
-            <input type="text" class="filter-input" v-model="filters.keyword" placeholder="请输入名称搜索" @keyup.enter="fetchTemplates" />
+            <el-select v-model="filters.status" class="filter-select" placeholder="全部状态" @change="fetchTemplates">
+              <el-option label="全部状态" value="" />
+              <el-option label="未发布" value="0" />
+              <el-option label="已发布" value="1" />
+              <el-option label="已撤回" value="2" />
+            </el-select>
+            <el-input
+              v-model="filters.keyword"
+              class="filter-input"
+              placeholder="请输入名称搜索"
+              clearable
+              @keyup.enter="fetchTemplates"
+            />
           </div>
         </div>
 
         <!-- 模板表格 -->
-        <div class="template-table">
-          <div class="table-header">
-            <div class="col-name">模板名称</div>
-            <div class="col-time">创建时间</div>
-            <div class="col-creator">创建人</div>
-            <div class="col-permission">模板权限</div>
-            <div class="col-status">状态</div>
-            <div class="col-desc">说明信息</div>
-            <div class="col-action">操作</div>
-          </div>
-          <div class="table-row" v-for="template in templates" :key="template.id">
-            <div class="col-name">
-              <a class="template-link" @click="goToTemplate(template.id)">{{ template.name }}</a>
-            </div>
-            <div class="col-time">{{ template.createdAt }}</div>
-            <div class="col-creator">{{ template.createdBy }}</div>
-            <div class="col-permission">{{ template.permission === 'private' ? '仅自己' : '公开' }}</div>
-            <div class="col-status">
-              <span class="status-tag" :class="getStatusClass(template.status)">
-                {{ getStatusText(template.status) }}
-              </span>
-            </div>
-            <div class="col-desc">{{ template.description }}</div>
-            <div class="col-action">
-              <button class="btn btn-link" v-if="template.status === 'draft'" @click="goToTemplate(template.id)">流程设计</button>
-              <button class="btn btn-link">安排训练</button>
-              <button class="btn btn-link">导出数据</button>
-            </div>
-          </div>
-        </div>
+        <el-table :data="templates" row-key="id" class="template-table" empty-text="暂无模板">
+          <el-table-column label="模板名称" min-width="180">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="goToTemplate(row.id)">{{ row.name }}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createdAt" label="创建时间" width="170" />
+          <el-table-column prop="createdBy" label="创建人" width="110" />
+          <el-table-column label="模板权限" width="110">
+            <template #default="{ row }">{{ row.permission === 'private' ? '仅自己' : '公开' }}</template>
+          </el-table-column>
+          <el-table-column label="状态" width="100">
+            <template #default="{ row }">
+              <el-tag :type="row.status === 'published' ? 'success' : row.status === 'withdrawn' ? 'warning' : 'info'">
+                {{ getStatusText(row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="说明信息" min-width="220" show-overflow-tooltip />
+          <el-table-column label="操作" width="240">
+            <template #default="{ row }">
+              <el-button v-if="row.status === 'draft'" link type="primary" @click="goToTemplate(row.id)">
+                流程设计
+              </el-button>
+              <el-button link type="primary">安排训练</el-button>
+              <el-button link type="primary">导出数据</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
         <!-- 分页器 -->
         <div class="pagination">
           <span class="total">共 {{ total }} 条</span>
-          <div class="page-buttons">
-            <button class="page-btn" disabled>&lt;</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">&gt;</button>
-          </div>
+          <el-pagination
+            :current-page="1"
+            :page-size="50"
+            :total="total"
+            layout="prev, pager, next"
+            background
+          />
         </div>
       </main>
     </div>
 
     <!-- 创建模板弹窗 -->
-    <div class="dialog-overlay" v-if="showCreateDialog" @click="showCreateDialog = false">
-      <div class="dialog" @click.stop>
-        <div class="dialog-header">
-          <span class="dialog-title">创建模板</span>
-          <span class="close-btn" @click="showCreateDialog = false">×</span>
-        </div>
-        <div class="dialog-content">
-          <div class="form-item">
-            <label class="form-label required">模板名称</label>
-            <input type="text" class="form-input" v-model="newTemplate.name" placeholder="请输入模板名称" maxlength="200" />
-          </div>
-          <div class="form-item">
-            <label class="form-label required">模板说明</label>
-            <textarea class="form-textarea" v-model="newTemplate.description" placeholder="请输入模板说明" maxlength="1000" rows="4"></textarea>
-          </div>
-        </div>
-        <div class="dialog-footer">
-          <button class="btn btn-default" @click="showCreateDialog = false">取消</button>
-          <button class="btn btn-primary" @click="handleCreate">保存</button>
-        </div>
-      </div>
-    </div>
+    <el-dialog v-model="showCreateDialog" title="创建模板" width="500px" append-to-body>
+      <el-form label-position="top">
+        <el-form-item label="模板名称" required>
+          <el-input v-model="newTemplate.name" placeholder="请输入模板名称" maxlength="200" show-word-limit />
+        </el-form-item>
+        <el-form-item label="模板说明" required>
+          <el-input
+            v-model="newTemplate.description"
+            type="textarea"
+            placeholder="请输入模板说明"
+            maxlength="1000"
+            show-word-limit
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showCreateDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleCreate">保存</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

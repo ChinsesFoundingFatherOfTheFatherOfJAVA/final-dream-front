@@ -24,11 +24,11 @@
           </div>
         </div>
         <div class="project-actions">
-          <button v-if="isOwner" class="btn btn-default" @click="handlePublish">
+          <el-button v-if="isOwner" class="btn btn-default" @click="handlePublish">
             {{ project.status === 'published' ? '撤回' : '发布' }}
-          </button>
-          <button class="btn btn-default">预览</button>
-          <button v-if="isOwner" class="btn btn-danger" @click="handleDelete">删除</button>
+          </el-button>
+          <el-button class="btn btn-default">预览</el-button>
+          <el-button v-if="isOwner" class="btn btn-danger" @click="handleDelete">删除</el-button>
         </div>
       </div>
     </div>

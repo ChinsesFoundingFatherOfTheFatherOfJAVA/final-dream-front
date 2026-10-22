@@ -3,121 +3,124 @@
     <section class="page-panel">
       <header class="toolbar">
         <div class="toolbar-left">
-          <button v-if="isOwner" type="button" class="btn primary" @click="inviteVisible = true">
+          <el-button v-if="isOwner" class="btn primary" @click="inviteVisible = true">
             邀请学员
-          </button>
-          <button
+          </el-button>
+          <el-button
             v-if="isOwner"
-            type="button"
+           
             class="btn danger"
             :disabled="!selectedIds.length || removing"
             @click="handleRemove"
           >
             {{ removing ? '删除中...' : `批量删除${selectedIds.length ? `（${selectedIds.length}）` : ''}` }}
-          </button>
-          <button v-if="isOwner" type="button" class="btn" :disabled="exporting" @click="handleExport">
+          </el-button>
+          <el-button v-if="isOwner" class="btn" :disabled="exporting" @click="handleExport">
             {{ exporting ? '导出中...' : '导出数据' }}
-          </button>
+          </el-button>
         </div>
       </header>
 
       <div class="filter-bar">
-        <select v-model="filters.finishStatus" @change="search">
-          <option :value="null">全部完成状态</option>
-          <option :value="0">未开始</option>
-          <option :value="1">未完成</option>
-          <option :value="2">已完成</option>
-        </select>
-        <button type="button" class="filter-picker" @click="openFilterPicker('dept')">
+        <el-select v-model="filters.finishStatus" placeholder="全部完成状态" @change="search">
+          <el-option label="全部完成状态" :value="null" />
+          <el-option label="未开始" :value="0" />
+          <el-option label="未完成" :value="1" />
+          <el-option label="已完成" :value="2" />
+        </el-select>
+        <el-button class="filter-picker" @click="openFilterPicker('dept')">
           部门{{ selectedDeptIds.length ? `（${selectedDeptIds.length}）` : '' }}
-        </button>
-        <button type="button" class="filter-picker" @click="openFilterPicker('position')">
+        </el-button>
+        <el-button class="filter-picker" @click="openFilterPicker('position')">
           岗位{{ selectedPostIds.length ? `（${selectedPostIds.length}）` : '' }}
-        </button>
-        <select v-model="filters.accountStatus" @change="search">
-          <option :value="null">全部账号状态</option>
-          <option :value="1">正常</option>
-          <option :value="0">已禁用</option>
-        </select>
-        <input
+        </el-button>
+        <el-select v-model="filters.accountStatus" placeholder="全部账号状态" @change="search">
+          <el-option label="全部账号状态" :value="null" />
+          <el-option label="正常" :value="1" />
+          <el-option label="已禁用" :value="0" />
+        </el-select>
+        <el-input
           v-model.trim="filters.keyword"
-          type="search"
           placeholder="姓名 / 账号 / 工号"
+          clearable
           @keyup.enter="search"
         />
-        <button type="button" class="btn primary" @click="search">查询</button>
+        <el-button class="btn primary" @click="search">查询</el-button>
       </div>
 
       <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th class="check-col">
-                <input
-                  v-if="isOwner"
-                  type="checkbox"
-                  :checked="pageAllSelected"
-                  :disabled="!rows.length"
-                  @change="toggleCurrentPage"
-                />
-              </th>
-              <th>姓名</th>
-              <th>账号</th>
-              <th>工号</th>
-              <th>部门</th>
-              <th>岗位</th>
-              <th>学习次数</th>
-              <th>最高得分</th>
-              <th>完成状态</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in rows" :key="row.userId">
-              <td class="check-col">
-                <input
-                  v-if="isOwner"
-                  type="checkbox"
-                  :checked="selectedIds.includes(row.userId)"
-                  @change="toggleRow(row.userId)"
-                />
-              </td>
-              <td class="name-cell">
-                {{ row.fullname || '--' }}
-                <span v-if="row.userStatus === 0" class="disabled-tag">已禁用</span>
-              </td>
-              <td>{{ row.username || '--' }}</td>
-              <td>{{ row.userNo || '--' }}</td>
-              <td class="path-cell" :title="row.deptFullName">{{ row.deptFullName || '--' }}</td>
-              <td>{{ row.positionName || '--' }}</td>
-              <td>{{ row.learnTimes ?? 0 }}</td>
-              <td>{{ row.highestScore ?? '--' }}</td>
-              <td>
-                <span class="finish-tag" :class="finishClass(row.finishStatus)">
-                  {{ row.finishStatusText || '--' }}
-                </span>
-              </td>
-              <td>
-                <button type="button" class="link-btn" @click="viewDetail(row.userId)">查看详情</button>
-              </td>
-            </tr>
-            <tr v-if="!loading && !rows.length">
-              <td colspan="10" class="empty-cell">暂无学员数据</td>
-            </tr>
-            <tr v-if="loading">
-              <td colspan="10" class="empty-cell">加载中...</td>
-            </tr>
-          </tbody>
-        </table>
+        <el-table
+          v-loading="loading"
+          :data="rows"
+          row-key="userId"
+          class="data-table"
+          empty-text="暂无学员数据"
+        >
+          <el-table-column v-if="isOwner" width="44" align="center">
+            <template #header>
+              <el-checkbox
+                :model-value="pageAllSelected"
+                :disabled="!rows.length"
+                @change="toggleCurrentPage"
+              />
+            </template>
+            <template #default="{ row }">
+              <el-checkbox
+                :model-value="selectedIds.includes(row.userId)"
+                @change="toggleRow(row.userId)"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="姓名" min-width="120">
+            <template #default="{ row }">
+              <span class="name-cell">{{ row.fullname || '--' }}</span>
+              <el-tag v-if="row.userStatus === 0" size="small" type="warning">已禁用</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="账号" min-width="130">
+            <template #default="{ row }">{{ row.username || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="工号" width="120">
+            <template #default="{ row }">{{ row.userNo || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="部门" min-width="180" show-overflow-tooltip>
+            <template #default="{ row }">{{ row.deptFullName || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="岗位" min-width="130">
+            <template #default="{ row }">{{ row.positionName || '--' }}</template>
+          </el-table-column>
+          <el-table-column label="学习次数" width="100">
+            <template #default="{ row }">{{ row.learnTimes ?? 0 }}</template>
+          </el-table-column>
+          <el-table-column label="最高得分" width="100">
+            <template #default="{ row }">{{ row.highestScore ?? '--' }}</template>
+          </el-table-column>
+          <el-table-column label="完成状态" width="110">
+            <template #default="{ row }">
+              <el-tag :type="row.finishStatus === 2 ? 'success' : row.finishStatus === 1 ? 'primary' : 'info'">
+                {{ row.finishStatusText || '--' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="110">
+            <template #default="{ row }">
+              <el-button link type="primary" @click="viewDetail(row.userId)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
 
       <footer class="pagination">
         <span>共 {{ total }} 条</span>
-        <div class="page-actions">
-          <button type="button" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
-          <span>{{ page }} / {{ totalPages }}</span>
-          <button type="button" :disabled="page >= totalPages" @click="changePage(page + 1)">下一页</button>
-        </div>
+        <el-pagination
+          v-model:current-page="page"
+          :page-size="pageSize"
+          :total="total"
+          :disabled="loading"
+          layout="prev, pager, next"
+          background
+          @current-change="loadRows"
+        />
       </footer>
     </section>
 
@@ -195,7 +198,6 @@ const picker = reactive({
   values: [] as string[]
 })
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize)))
 const pageAllSelected = computed(
   () => rows.value.length > 0 && rows.value.every((row) => selectedIds.value.includes(row.userId))
 )
@@ -203,12 +205,6 @@ const isOwner = computed(() => {
   const currentIds = [auth.user?.userId, auth.user?.account].filter(Boolean)
   return Boolean(projectCreatedBy.value && currentIds.includes(projectCreatedBy.value))
 })
-
-const finishClass = (status: number) => {
-  if (status === 2) return 'done'
-  if (status === 1) return 'doing'
-  return 'pending'
-}
 
 const buildQuery = (targetPage = page.value, targetSize = pageSize): StudentQuery => ({
   keyword: filters.keyword || undefined,
@@ -246,12 +242,6 @@ const loadRows = async () => {
 
 const search = () => {
   page.value = 1
-  selectedIds.value = []
-  void loadRows()
-}
-
-const changePage = (nextPage: number) => {
-  page.value = Math.min(Math.max(1, nextPage), totalPages.value)
   selectedIds.value = []
   void loadRows()
 }
@@ -458,25 +448,22 @@ onMounted(async () => {
   gap: 10px;
   margin-bottom: 16px;
 
-  select,
-  input {
-    height: 34px;
-    box-sizing: border-box;
-    padding: 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    font-size: 13px;
-    outline: none;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
+  :deep(.el-select),
+  :deep(.el-input) {
+    flex: 0 0 180px;
+    width: 180px;
   }
 
-  input {
-    width: 210px;
+  :deep(.el-input) {
+    flex-basis: 220px;
+    width: 220px;
+  }
+
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 34px;
+    border-radius: 6px;
+    font-size: 13px;
   }
 
   .filter-picker {
@@ -492,104 +479,23 @@ onMounted(async () => {
 
 .data-table {
   width: 100%;
-  min-width: 980px;
-  border-collapse: collapse;
-  font-size: 13px;
 
-  th,
-  td {
-    padding: 11px 12px;
-    border-bottom: 1px solid #f1f3f7;
-    color: #4d5568;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  th {
+  :deep(.el-table__header th) {
     background: #fafbfd;
-    color: #6b7280;
+    color: #4d5568;
+    font-size: 13px;
     font-weight: 600;
   }
 
-  tbody tr:hover {
-    background: #f8fbff;
+  :deep(.el-table__row td) {
+    color: #4d5568;
+    font-size: 13px;
   }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-}
-
-.check-col {
-  width: 44px;
-  text-align: center !important;
 }
 
 .name-cell {
   color: #253047;
   font-weight: 500;
-}
-
-.disabled-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 20px;
-  margin-left: 6px;
-  padding: 0 7px;
-  border-radius: 10px;
-  background: #fff7e6;
-  color: #d46b08;
-  font-size: 11px;
-  font-weight: 400;
-}
-
-.path-cell {
-  max-width: 260px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.finish-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 11px;
-  font-size: 12px;
-
-  &.done {
-    background: #eafaf0;
-    color: #2f9e52;
-  }
-
-  &.doing {
-    background: #eef4ff;
-    color: #2e7cf6;
-  }
-
-  &.pending {
-    background: #f4f5f7;
-    color: #8a92a5;
-  }
-}
-
-.link-btn {
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #2e7cf6;
-  font-size: 13px;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.empty-cell {
-  height: 140px;
-  text-align: center !important;
-  color: #9aa3b2 !important;
 }
 
 .pagination {
@@ -601,33 +507,13 @@ onMounted(async () => {
   font-size: 12px;
 }
 
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  button {
-    height: 30px;
-    padding: 0 12px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
-    cursor: pointer;
-
-    &:disabled {
-      color: #b8bfcc;
-      cursor: not-allowed;
-    }
-  }
-}
-
 @media (max-width: 760px) {
   .page-panel {
     padding: 14px;
   }
 
-  .filter-bar input {
+  .filter-bar :deep(.el-input) {
+    flex-basis: 100%;
     width: 100%;
   }
 }

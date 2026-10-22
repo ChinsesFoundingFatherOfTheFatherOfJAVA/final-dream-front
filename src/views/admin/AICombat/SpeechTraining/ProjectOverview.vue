@@ -33,20 +33,18 @@
         <header class="panel-header">
           <h3>学习雷达</h3>
           <div class="tab-switch">
-            <button
-              type="button"
+            <el-button
               :class="{ active: radarTab === 'overall' }"
               @click="radarTab = 'overall'"
             >
               总均分
-            </button>
-            <button
-              type="button"
+            </el-button>
+            <el-button
               :class="{ active: radarTab === 'first' }"
               @click="radarTab = 'first'"
             >
               记录
-            </button>
+            </el-button>
           </div>
         </header>
         <RadarChart
@@ -71,132 +69,103 @@
     <section class="table-panel">
       <header class="panel-header table-header">
         <div class="tab-switch">
-          <button type="button" :class="{ active: tableMode === 'student' }" @click="switchTableMode('student')">
+          <el-button :class="{ active: tableMode === 'student' }" @click="switchTableMode('student')">
             学员模式
-          </button>
-          <button type="button" :class="{ active: tableMode === 'dept' }" @click="switchTableMode('dept')">
+          </el-button>
+          <el-button :class="{ active: tableMode === 'dept' }" @click="switchTableMode('dept')">
             部门模式
-          </button>
+          </el-button>
         </div>
       </header>
 
       <div v-if="tableMode === 'student'" class="filter-bar">
-        <select v-model="filters.finishStatus" @change="searchTable">
-          <option :value="null">全部完成状态</option>
-          <option :value="0">未开始</option>
-          <option :value="1">未完成</option>
-          <option :value="2">已完成</option>
-        </select>
-        <button type="button" class="filter-picker" @click="openFilterPicker('dept')">
+        <el-select v-model="filters.finishStatus" placeholder="全部完成状态" @change="searchTable">
+          <el-option label="全部完成状态" :value="null" />
+          <el-option label="未开始" :value="0" />
+          <el-option label="未完成" :value="1" />
+          <el-option label="已完成" :value="2" />
+        </el-select>
+        <el-button class="filter-picker" @click="openFilterPicker('dept')">
           部门{{ selectedDeptIds.length ? `（${selectedDeptIds.length}）` : '' }}
-        </button>
-        <button type="button" class="filter-picker" @click="openFilterPicker('position')">
+        </el-button>
+        <el-button class="filter-picker" @click="openFilterPicker('position')">
           岗位{{ selectedPostIds.length ? `（${selectedPostIds.length}）` : '' }}
-        </button>
-        <input
+        </el-button>
+        <el-input
           v-model.trim="filters.keyword"
-          type="search"
           placeholder="姓名 / 账号 / 工号"
+          clearable
           @keyup.enter="searchTable"
         />
-        <button type="button" class="primary-btn" @click="searchTable">查询</button>
+        <el-button class="primary-btn" @click="searchTable">查询</el-button>
       </div>
 
       <div v-else class="filter-bar">
-        <button type="button" class="filter-picker" @click="openFilterPicker('dept')">
+        <el-button class="filter-picker" @click="openFilterPicker('dept')">
           部门{{ selectedDeptIds.length ? `（${selectedDeptIds.length}）` : '' }}
-        </button>
-        <button type="button" class="primary-btn" @click="searchTable">查询</button>
+        </el-button>
+        <el-button class="primary-btn" @click="searchTable">查询</el-button>
       </div>
 
       <div class="table-wrap">
-        <table v-if="tableMode === 'student'" class="data-table">
-          <thead>
-            <tr>
-              <th>姓名</th>
-              <th>账号</th>
-              <th>工号</th>
-              <th>部门</th>
-              <th>岗位</th>
-              <th>最高得分</th>
-              <th>最高排名</th>
-              <th>学习次数</th>
-              <th>学习时长(min)</th>
-              <th>完成状态</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in studentRows" :key="row.userId">
-              <td class="name-cell">
+        <el-table
+          v-if="tableMode === 'student'"
+          v-loading="tableLoading"
+          :data="studentRows"
+          row-key="userId"
+          class="data-table"
+          empty-text="暂无学员数据"
+        >
+          <el-table-column label="姓名" min-width="120">
+            <template #default="{ row }">
+              <span class="name-cell">
                 {{ row.fullname || '--' }}
-                <span v-if="row.userStatus === 0" class="status-chip disabled">已禁用</span>
-              </td>
-              <td>{{ row.username || '--' }}</td>
-              <td>{{ row.userNo || '--' }}</td>
-              <td class="path-cell" :title="row.deptFullName">{{ row.deptFullName || '--' }}</td>
-              <td>{{ row.positionName || '--' }}</td>
-              <td>{{ valueOrDash(row.highestScore) }}</td>
-              <td>{{ valueOrDash(row.highestRank) }}</td>
-              <td>{{ row.learnTimes ?? 0 }}</td>
-              <td>{{ valueOrDash(row.learnDurationMin) }}</td>
-              <td>
-                <span class="finish-chip" :class="finishClass(row.finishStatus)">
-                  {{ row.finishStatusText || '--' }}
-                </span>
-              </td>
-            </tr>
-            <tr v-if="!tableLoading && !studentRows.length">
-              <td colspan="10" class="empty-cell">暂无学员数据</td>
-            </tr>
-            <tr v-if="tableLoading">
-              <td colspan="10" class="empty-cell">加载中...</td>
-            </tr>
-          </tbody>
-        </table>
+                <el-tag v-if="row.userStatus === 0" size="small" type="warning">已禁用</el-tag>
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="账号" min-width="130"><template #default="{ row }">{{ row.username || '--' }}</template></el-table-column>
+          <el-table-column label="工号" width="120"><template #default="{ row }">{{ row.userNo || '--' }}</template></el-table-column>
+          <el-table-column label="部门" min-width="180" show-overflow-tooltip><template #default="{ row }">{{ row.deptFullName || '--' }}</template></el-table-column>
+          <el-table-column label="岗位" min-width="130"><template #default="{ row }">{{ row.positionName || '--' }}</template></el-table-column>
+          <el-table-column label="最高得分" width="100"><template #default="{ row }">{{ valueOrDash(row.highestScore) }}</template></el-table-column>
+          <el-table-column label="最高排名" width="100"><template #default="{ row }">{{ valueOrDash(row.highestRank) }}</template></el-table-column>
+          <el-table-column label="学习次数" width="100"><template #default="{ row }">{{ row.learnTimes ?? 0 }}</template></el-table-column>
+          <el-table-column label="学习时长(min)" width="130"><template #default="{ row }">{{ valueOrDash(row.learnDurationMin) }}</template></el-table-column>
+          <el-table-column label="完成状态" width="110"><template #default="{ row }"><el-tag>{{ row.finishStatusText || '--' }}</el-tag></template></el-table-column>
+        </el-table>
 
-        <table v-else class="data-table">
-          <thead>
-            <tr>
-              <th>部门</th>
-              <th>学员人数</th>
-              <th>实际学习人数</th>
-              <th>参与率</th>
-              <th>总学习次数</th>
-              <th>人均学习次数</th>
-              <th>总均分</th>
-              <th>完成人数</th>
-              <th>完成率</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in deptRows" :key="row.deptFullName">
-              <td class="path-cell" :title="row.deptFullName">{{ row.deptFullName || '--' }}</td>
-              <td>{{ row.studentCount }}</td>
-              <td>{{ row.learnCount }}</td>
-              <td>{{ row.participationRate || '--' }}</td>
-              <td>{{ row.totalLearnTimes }}</td>
-              <td>{{ row.percapitaLearnTimes || '--' }}</td>
-              <td>{{ valueOrDash(row.averageScore) }}</td>
-              <td>{{ row.completedCount }}</td>
-              <td>{{ row.completionRate || '--' }}</td>
-            </tr>
-            <tr v-if="!tableLoading && !deptRows.length">
-              <td colspan="9" class="empty-cell">暂无部门数据</td>
-            </tr>
-            <tr v-if="tableLoading">
-              <td colspan="9" class="empty-cell">加载中...</td>
-            </tr>
-          </tbody>
-        </table>
+        <el-table
+          v-else
+          v-loading="tableLoading"
+          :data="deptRows"
+          row-key="deptFullName"
+          class="data-table"
+          empty-text="暂无部门数据"
+        >
+          <el-table-column label="部门" min-width="220" show-overflow-tooltip><template #default="{ row }">{{ row.deptFullName || '--' }}</template></el-table-column>
+          <el-table-column prop="studentCount" label="学员人数" width="110" />
+          <el-table-column prop="learnCount" label="实际学习人数" width="130" />
+          <el-table-column label="参与率" width="100"><template #default="{ row }">{{ row.participationRate || '--' }}</template></el-table-column>
+          <el-table-column prop="totalLearnTimes" label="总学习次数" width="120" />
+          <el-table-column label="人均学习次数" width="130"><template #default="{ row }">{{ row.percapitaLearnTimes || '--' }}</template></el-table-column>
+          <el-table-column label="总均分" width="100"><template #default="{ row }">{{ valueOrDash(row.averageScore) }}</template></el-table-column>
+          <el-table-column prop="completedCount" label="完成人数" width="110" />
+          <el-table-column label="完成率" width="100"><template #default="{ row }">{{ row.completionRate || '--' }}</template></el-table-column>
+        </el-table>
       </div>
 
       <footer class="pagination">
         <span>共 {{ tableTotal }} 条</span>
-        <div class="page-actions">
-          <button type="button" :disabled="page <= 1" @click="changePage(page - 1)">上一页</button>
-          <span>{{ page }} / {{ totalPages }}</span>
-          <button type="button" :disabled="page >= totalPages" @click="changePage(page + 1)">下一页</button>
-        </div>
+        <el-pagination
+          v-model:current-page="page"
+          :page-size="10"
+          :total="tableTotal"
+          :disabled="tableLoading"
+          layout="prev, pager, next"
+          background
+          @current-change="changePage"
+        />
       </footer>
     </section>
 
@@ -656,6 +625,16 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 14px;
+
+  :deep(.el-select) {
+    flex: 0 0 180px;
+    width: 180px;
+  }
+
+  :deep(.el-input) {
+    flex: 0 0 220px;
+    width: 220px;
+  }
 
   select,
   input,

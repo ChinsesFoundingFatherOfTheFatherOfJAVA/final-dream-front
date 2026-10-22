@@ -1,37 +1,42 @@
 <template>
-  <teleport to="body">
-    <transition name="drawer-fade">
-      <div v-if="visible" class="drawer-overlay" @click.self="close">
-        <aside class="rank-drawer">
-          <header class="drawer-header">
-            <div class="header-title">
-              <h3>个人排名</h3>
-              <p>取学员总分最高分记录进行排名</p>
-            </div>
-            <div class="header-actions">
-              <label class="dimension-select">
-                <span>维度</span>
-                <select :value="activeDimension" @change="onDimensionChange">
-                  <option v-for="dimension in rankTabs" :key="dimension || '__total__'" :value="dimension">
-                    {{ dimensionLabel(dimension) }}
-                  </option>
-                </select>
-              </label>
-              <button type="button" class="close-btn" aria-label="关闭" @click="close">×</button>
-            </div>
-          </header>
-
-          <div class="search-bar">
-            <input
-              v-model.trim="keyword"
-              type="search"
-              placeholder="搜索姓名"
-              @keyup.enter="searchRank"
+  <el-drawer
+    :model-value="visible"
+    size="560px"
+    append-to-body
+    destroy-on-close
+    @update:model-value="handleVisibleChange"
+  >
+    <template #header>
+      <div class="drawer-header">
+        <div class="header-title">
+          <h3>个人排名</h3>
+          <p>取学员总分最高分记录进行排名</p>
+        </div>
+        <div class="header-actions">
+          <span class="dimension-label">维度</span>
+          <el-select v-model="activeDimension" class="dimension-select" @change="loadRank">
+            <el-option
+              v-for="dimension in rankTabs"
+              :key="dimension || '__total__'"
+              :label="dimensionLabel(dimension)"
+              :value="dimension"
             />
-            <button type="button" :disabled="loading" @click="searchRank">搜索</button>
-          </div>
+          </el-select>
+        </div>
+      </div>
+    </template>
 
-          <div class="rank-content">
+    <div class="search-bar">
+      <el-input
+        v-model.trim="keyword"
+        placeholder="搜索姓名"
+        clearable
+        @keyup.enter="searchRank"
+      />
+      <el-button :disabled="loading" @click="searchRank">搜索</el-button>
+    </div>
+
+    <div class="rank-content">
             <div v-if="loading" class="drawer-state">排名加载中...</div>
             <div v-else-if="error" class="drawer-state">{{ error }}</div>
             <div v-else-if="!rankList.length" class="drawer-state">
@@ -53,11 +58,8 @@
                 <strong class="score">{{ formatScore(item.score) }}</strong>
               </li>
             </ol>
-          </div>
-        </aside>
-      </div>
-    </transition>
-  </teleport>
+    </div>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -98,6 +100,10 @@ const formatScore = (score: number | null | undefined) =>
 
 const close = () => emit('close')
 
+const handleVisibleChange = (visible: boolean) => {
+  if (!visible) close()
+}
+
 const loadRank = async () => {
   if (!props.projectId) {
     error.value = '缺少项目参数'
@@ -118,16 +124,6 @@ const loadRank = async () => {
   }
 }
 
-const selectDimension = (dimension: string) => {
-  if (activeDimension.value === dimension) return
-  activeDimension.value = dimension
-  void loadRank()
-}
-
-const onDimensionChange = (event: Event) => {
-  selectDimension((event.target as HTMLSelectElement).value)
-}
-
 const searchRank = () => {
   void loadRank()
 }
@@ -145,25 +141,6 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2700;
-  background: rgba(15, 23, 42, 0.38);
-}
-
-.rank-drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: min(560px, 94vw);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #f7f8fb;
-  box-shadow: -18px 0 48px rgba(15, 23, 42, 0.16);
-}
-
 .drawer-header {
   display: flex;
   align-items: center;
@@ -171,7 +148,6 @@ watch(
   gap: 16px;
   padding: 18px 22px 14px;
   border-bottom: 1px solid #e9edf4;
-  background: #fff;
 
   .header-title {
     min-width: 0;
@@ -199,39 +175,12 @@ watch(
 }
 
 .dimension-select {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #596274;
-  font-size: 13px;
-
-  select {
-    height: 40px;
-    min-width: 126px;
-    padding: 0 30px 0 10px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    background: #fff;
-    color: #253047;
-    font-size: 13px;
-    outline: none;
-    cursor: pointer;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
-  }
+  width: 130px;
 }
 
-.close-btn {
-  width: 30px;
-  height: 30px;
-  border: none;
-  background: transparent;
-  color: #8a92a5;
-  font-size: 25px;
-  line-height: 1;
-  cursor: pointer;
+.dimension-label {
+  color: #596274;
+  font-size: 13px;
 }
 
 .search-bar {
@@ -239,39 +188,14 @@ watch(
   gap: 10px;
   padding: 14px 18px;
   border-bottom: 1px solid #e9edf4;
-  background: #fff;
-
-  input {
+  :deep(.el-input) {
     flex: 1;
     min-width: 0;
-    height: 40px;
-    box-sizing: border-box;
-    padding: 0 11px;
-    border: 1px solid #d9deea;
-    border-radius: 6px;
-    color: #4d5568;
-    font-size: 13px;
-    outline: none;
-
-    &:focus {
-      border-color: #2e7cf6;
-    }
   }
 
-  button {
-    height: 40px;
-    padding: 0 18px;
-    border: 1px solid #2e7cf6;
+  :deep(.el-input__wrapper) {
+    min-height: 40px;
     border-radius: 6px;
-    background: #2e7cf6;
-    color: #fff;
-    font-size: 13px;
-    cursor: pointer;
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
   }
 }
 
@@ -392,29 +316,7 @@ watch(
   font-size: 28px;
 }
 
-.drawer-fade-enter-active,
-.drawer-fade-leave-active {
-  transition: opacity 0.18s ease;
-
-  .rank-drawer {
-    transition: transform 0.22s ease;
-  }
-}
-
-.drawer-fade-enter-from,
-.drawer-fade-leave-to {
-  opacity: 0;
-
-  .rank-drawer {
-    transform: translateX(24px);
-  }
-}
-
 @media (max-width: 760px) {
-  .rank-drawer {
-    width: 100%;
-  }
-
   .drawer-header {
     align-items: flex-start;
     flex-direction: column;

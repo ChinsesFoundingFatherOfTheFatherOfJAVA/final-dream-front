@@ -39,45 +39,41 @@
         <!-- 操作栏 -->
         <div class="action-bar">
           <div class="action-buttons">
-            <div class="create-dropdown" @mouseenter="showCreateMenu = true" @mouseleave="showCreateMenu = false">
-              <button class="btn btn-primary">
+            <el-dropdown trigger="click" @command="goToCreate">
+              <el-button class="btn btn-primary">
                 创建 <span class="arrow">▾</span>
-              </button>
-              <div v-if="showCreateMenu" class="dropdown-menu">
-                <div class="dropdown-item" @click="goToCreate('train')">
-                  <span class="item-icon">👤</span>
-                  <div class="item-content">
-                    <div class="item-title">日常训练</div>
-                    <div class="item-desc">一对一训练加强话术标准程度</div>
-                  </div>
-                </div>
-                <div class="dropdown-item" @click="goToCreate('examine')">
-                  <span class="item-icon">🎯</span>
-                  <div class="item-content">
-                    <div class="item-title">通关考核</div>
-                    <div class="item-desc">考察学员在话术标准程度上是否达标</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button class="btn btn-default">导出</button>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="train">日常训练：一对一训练加强话术标准程度</el-dropdown-item>
+                  <el-dropdown-item command="examine">通关考核：考察学员话术标准是否达标</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <el-button class="btn btn-default">导出</el-button>
           </div>
           <div class="filter-bar">
-            <select class="filter-select" v-model="filters.responsible">
-              <option value="">我负责的</option>
-              <option value="mine">我负责的</option>
-            </select>
-            <select class="filter-select" v-model="filters.status" @change="fetchProjects">
-              <option value="">全部状态</option>
-              <option value="0">未发布</option>
-              <option value="1">已发布</option>
-            </select>
-            <select class="filter-select" v-model="filters.projectType" @change="fetchProjects">
-              <option value="">全部类型</option>
-              <option value="0">日常训练</option>
-              <option value="1">通关考试</option>
-            </select>
-            <input type="text" class="filter-input" v-model="filters.keyword" placeholder="请输入名称搜索" @keyup.enter="fetchProjects" />
+            <el-select v-model="filters.responsible" class="filter-select">
+              <el-option label="我负责的" value="" />
+              <el-option label="我负责的" value="mine" />
+            </el-select>
+            <el-select v-model="filters.status" class="filter-select" placeholder="全部状态" @change="fetchProjects">
+              <el-option label="全部状态" value="" />
+              <el-option label="未发布" value="0" />
+              <el-option label="已发布" value="1" />
+            </el-select>
+            <el-select v-model="filters.projectType" class="filter-select" placeholder="全部类型" @change="fetchProjects">
+              <el-option label="全部类型" value="" />
+              <el-option label="日常训练" value="0" />
+              <el-option label="通关考试" value="1" />
+            </el-select>
+            <el-input
+              v-model="filters.keyword"
+              class="filter-input"
+              placeholder="请输入名称搜索"
+              clearable
+              @keyup.enter="fetchProjects"
+            />
           </div>
         </div>
 
@@ -108,11 +104,14 @@
         <!-- 分页器 -->
         <div class="pagination">
           <span class="total">共 {{ pagination.total }} 条</span>
-          <div class="page-buttons">
-            <button class="page-btn" disabled>&lt;</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">&gt;</button>
-          </div>
+          <el-pagination
+            v-model:current-page="pagination.page"
+            :page-size="pagination.pageSize"
+            :total="pagination.total"
+            layout="prev, pager, next"
+            background
+            @current-change="fetchProjects"
+          />
         </div>
       </main>
     </div>
@@ -127,7 +126,6 @@ import { toProjectCard } from '@/utils/convert'
 import type { ProjectCard } from '@/utils/convert'
 
 const router = useRouter()
-const showCreateMenu = ref(false)
 const openGroups = reactive({ speechNew: true })
 const loading = ref(false)
 const pagination = ref({ page: 1, pageSize: 20, total: 0 })
@@ -166,7 +164,6 @@ const toggleGroup = (key: string) => {
 }
 
 const goToCreate = (type: string) => {
-  showCreateMenu.value = false
   router.push({ path: '/sparring/newmanage/edit2', query: { type } })
 }
 
@@ -262,54 +259,22 @@ const goToConsole = (id: number) => {
   .arrow { font-size: 10px; margin-left: 4px; }
 }
 
-.create-dropdown {
-  position: relative;
-
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 4px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-    min-width: 280px;
-    padding: 8px 0;
-  }
-
-  .dropdown-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover { background: #f5f5f5; }
-
-    .item-icon { font-size: 24px; margin-top: 2px; }
-    .item-content { flex: 1; }
-    .item-title { font-size: 14px; font-weight: 500; color: #333; margin-bottom: 4px; }
-    .item-desc { font-size: 12px; color: #999; }
-  }
-}
-
 .filter-bar { display: flex; gap: 12px; align-items: center; }
 
 .filter-select, .filter-input {
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 14px;
   color: #333;
-  outline: none;
 
-  &:focus { border-color: #1890ff; }
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    min-height: 32px;
+  }
 }
 
 .filter-input { width: 200px; }
+
+.filter-select { width: 130px; }
 
 .card-grid {
   display: grid;
@@ -399,22 +364,6 @@ const goToConsole = (id: number) => {
   .total { font-size: 14px; color: #666; }
 }
 
-.page-buttons { display: flex; gap: 8px; }
-
-.page-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-
-  &:hover { color: #1890ff; border-color: #1890ff; }
-  &.active { background: #1890ff; color: #fff; border-color: #1890ff; }
-  &:disabled { color: #d9d9d9; cursor: not-allowed; }
-}
-
 @media (max-width: 760px) {
   .side-menu {
     display: none;
@@ -439,11 +388,6 @@ const goToConsole = (id: number) => {
 
   .filter-bar {
     flex-wrap: wrap;
-  }
-
-  .filter-select {
-    flex: 1 1 96px;
-    min-width: 0;
   }
 
   .filter-input {
