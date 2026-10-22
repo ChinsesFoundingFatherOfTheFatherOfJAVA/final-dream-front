@@ -12,7 +12,7 @@
               {{ index + 1 }}、{{ point }}
             </p>
           </div>
-          <button class="know-btn" @click="close">知道了</button>
+          <el-button class="know-btn" @click="close">知道了</el-button>
         </div>
       </div>
     </transition>

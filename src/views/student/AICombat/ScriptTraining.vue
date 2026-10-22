@@ -3,13 +3,13 @@
     <!-- FP-11 顶部栏 -->
     <header class="top-bar">
       <div class="bar-left">
-        <button class="exit-btn" @click="onExit">
+        <el-button class="exit-btn" @click="onExit">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M12 2a10 10 0 1 0 10 10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
             <path d="M12 12l7-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
           </svg>
           退出训练
-        </button>
+        </el-button>
       </div>
       <div class="bar-center">
         <span class="train-pill">训练</span>
@@ -18,13 +18,13 @@
       <div class="bar-right">
         <span class="progress-text">进度 {{ store.progressPercent }}%</span>
         <span class="lang-badge" title="语音识别与评分一律按普通话处理，不提供语种切换">普通话</span>
-        <button class="detail-toggle-btn" @click="toggleDetailPanel">
+        <el-button class="detail-toggle-btn" @click="toggleDetailPanel">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
             <line x1="15" y1="4" x2="15" y2="20" stroke="currentColor" stroke-width="1.8"/>
           </svg>
           训练详情
-        </button>
+        </el-button>
       </div>
     </header>
 
@@ -73,8 +73,8 @@
     <div v-else class="load-error">
       <p class="load-error-text">{{ loadingError }}</p>
       <div class="load-error-actions">
-        <button class="error-btn primary" @click="load">重新加载</button>
-        <button class="error-btn" @click="backToDetail">返回项目详情</button>
+        <el-button class="error-btn primary" @click="load">重新加载</el-button>
+        <el-button class="error-btn" @click="backToDetail">返回项目详情</el-button>
       </div>
     </div>
 

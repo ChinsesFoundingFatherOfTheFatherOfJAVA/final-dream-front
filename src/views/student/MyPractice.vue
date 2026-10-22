@@ -58,10 +58,10 @@
             <span class="task-count">学习任务 <strong>{{ tasks.length }}</strong></span>
           </div>
           <div class="header-right">
-            <select class="filter-select"><option>全部分类</option></select>
-            <select class="filter-select"><option>全部状态</option></select>
-            <select class="filter-select"><option>优先级从高到低</option></select>
-            <select class="filter-select"><option>全部时间</option></select>
+            <el-select model-value="all" class="filter-select"><el-option label="全部分类" value="all" /></el-select>
+            <el-select model-value="all" class="filter-select"><el-option label="全部状态" value="all" /></el-select>
+            <el-select model-value="priority" class="filter-select"><el-option label="优先级从高到低" value="priority" /></el-select>
+            <el-select model-value="all" class="filter-select"><el-option label="全部时间" value="all" /></el-select>
           </div>
         </div>
 

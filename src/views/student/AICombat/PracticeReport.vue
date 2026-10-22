@@ -31,15 +31,15 @@
     <div v-else-if="phase === 'failed'" class="waiting-card">
       <p class="waiting-title">报告生成失败</p>
       <p class="waiting-sub">{{ failedHint || '报告生成出现问题，请重试' }}</p>
-      <button class="retry-btn" :disabled="retrying" @click="onRegenerate">
+      <el-button class="retry-btn" :disabled="retrying" @click="onRegenerate">
         {{ retrying ? '重新生成中...' : '重新生成' }}
-      </button>
+      </el-button>
     </div>
 
     <!-- 加载失败/无会话 -->
     <div v-else-if="phase === 'error'" class="waiting-card">
       <p class="waiting-title">{{ errorMsg || '报告加载失败' }}</p>
-      <button class="retry-btn" @click="startPolling">刷新重试</button>
+      <el-button class="retry-btn" @click="startPolling">刷新重试</el-button>
     </div>
 
     <!-- 报告已生成 -->

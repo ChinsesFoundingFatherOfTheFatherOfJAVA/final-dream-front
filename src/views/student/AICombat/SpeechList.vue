@@ -49,18 +49,15 @@
       </div>
       <!-- 搜索框 -->
       <div class="search-box">
-        <input
+        <el-input
           v-model="searchKeyword"
-          type="text"
           placeholder="请输入名称搜索"
           @keyup.enter="doSearch"
-        />
-        <span class="search-icon" @click="doSearch">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="7" stroke="#999" stroke-width="2" />
-            <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#999" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </span>
+        >
+          <template #suffix>
+            <span class="search-icon" @click="doSearch">⌕</span>
+          </template>
+        </el-input>
       </div>
     </div>
 
@@ -109,8 +106,8 @@
     <!-- FP-04 分页 -->
     <div v-if="total > 0" class="pagination-bar">
       <span class="total-text">共 {{ total }} 条</span>
-      <button class="page-btn" :disabled="page <= 1" @click="changePage(page - 1)">‹</button>
-      <button
+      <el-button class="page-btn" :disabled="page <= 1" @click="changePage(page - 1)">‹</el-button>
+      <el-button
         v-for="p in totalPages"
         :key="p"
         class="page-btn"
@@ -118,8 +115,8 @@
         @click="changePage(p)"
       >
         {{ p }}
-      </button>
-      <button class="page-btn" :disabled="page >= totalPages" @click="changePage(page + 1)">›</button>
+      </el-button>
+      <el-button class="page-btn" :disabled="page >= totalPages" @click="changePage(page + 1)">›</el-button>
     </div>
   </div>
 </template>

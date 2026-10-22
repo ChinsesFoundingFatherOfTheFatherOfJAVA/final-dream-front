@@ -43,9 +43,9 @@
             已完成
           </div>
         </div>
-        <button class="start-btn" :disabled="starting" @click="onStart">
+        <el-button class="start-btn" :disabled="starting" @click="onStart">
           {{ starting ? '正在进入...' : '开始' }}
-        </button>
+        </el-button>
       </div>
     </div>
 
@@ -118,7 +118,7 @@
     <p v-if="loading">加载中...</p>
     <template v-else>
       <p>{{ errorMsg || '项目不存在或未发布' }}</p>
-      <button class="back-btn" @click="goList">返回列表</button>
+      <el-button class="back-btn" @click="goList">返回列表</el-button>
     </template>
   </div>
 

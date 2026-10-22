@@ -73,18 +73,18 @@
             <span v-for="i in 7" :key="i" class="wave-bar" :style="{ animationDelay: `${(i - 1) * 0.12}s` }"></span>
           </div>
           <span class="record-countdown" :class="{ urgent: remainSec <= 10 }">{{ remainSec }}s</span>
-          <button class="round-btn stop-btn" title="停止并发送" @click="stopAndUpload">
+          <el-button class="round-btn stop-btn" title="停止并发送" @click="stopAndUpload">
             <svg width="12" height="12" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="currentColor"/></svg>
-          </button>
+          </el-button>
         </template>
         <template v-else>
           <span class="voice-hint">{{ voiceHint }}</span>
           <!-- 上传失败的录音留在本地，不必重说一遍 -->
-          <button v-if="failedRecording && !store.sending" class="retry-btn" @click="retryUpload">
+          <el-button v-if="failedRecording && !store.sending" class="retry-btn" @click="retryUpload">
             重试上传
-          </button>
+          </el-button>
           <!-- 键盘输入：与录音输入互为切换，两种对话方式都可用 -->
-          <button class="round-btn ghost-btn" title="切换键盘输入" @click="switchInputMode('text')">
+          <el-button class="round-btn ghost-btn" title="切换键盘输入" @click="switchInputMode('text')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
               <rect x="2.5" y="6" width="19" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
               <line x1="7" y1="10" x2="7" y2="10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -92,9 +92,9 @@
               <line x1="17" y1="10" x2="17" y2="10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
-          </button>
+          </el-button>
           <!-- 麦克风按钮：判定中 loading 禁用 -->
-          <button
+          <el-button
             class="round-btn mic-btn"
             :class="{ loading: store.sending }"
             :disabled="store.sending"
@@ -107,7 +107,7 @@
               <path d="M5.5 11a6.5 6.5 0 0 0 13 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
               <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
-          </button>
+          </el-button>
         </template>
       </div>
 
@@ -123,7 +123,7 @@
           @keyup.enter="onSend"
         />
         <!-- 切换到录音输入：v1.2 起不再限对话方式 -->
-        <button
+        <el-button
           class="round-btn mic-inline-btn"
           title="切换语音输入"
           :disabled="store.sending"
@@ -134,15 +134,15 @@
             <path d="M5.5 11a6.5 6.5 0 0 0 13 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-        </button>
-        <button
+        </el-button>
+        <el-button
           class="send-btn"
           :class="{ disabled: !canSend }"
           :disabled="!canSend"
           @click="onSend"
         >
           {{ store.sending ? '判定中...' : '发送' }}
-        </button>
+        </el-button>
       </div>
     </div>
   </div>
