@@ -2,11 +2,11 @@
   <div class="scenario-unit-list">
     <div class="list-toolbar">
       <span class="unit-count">共 {{ units.length }} 个场景单元</span>
-      <a class="ai-add-link" @click="goAssistant">+ 通过 AI 助手添加</a>
+      <a class="ai-add-link" role="button" tabindex="0" @keydown.enter.prevent="goAssistant" @click="goAssistant">+ 通过 AI 助手添加</a>
     </div>
 
     <div v-if="units.length === 0" class="empty-state">
-      <div class="empty-icon">📭</div>
+      <div class="empty-icon" aria-hidden="true">📭</div>
       <p class="empty-text">暂无场景单元</p>
     </div>
 
@@ -17,13 +17,13 @@
       :class="{ expanded: expandedKeys.has(unit.id) }"
     >
       <!-- 收起态：序号 + 名称 + 适用人群 + 时长 + 展开 -->
-      <div class="unit-summary" @click="toggle(unit.id)">
+      <div class="unit-summary" role="button" tabindex="0" @keydown.enter.prevent="toggle(unit.id)" @click="toggle(unit.id)">
         <span class="seq-badge">{{ unit.sortOrder }}</span>
         <span class="unit-name">{{ unit.unitName }}</span>
         <span v-if="unit.audience" class="audience-tag">{{ unit.audience }}</span>
         <span v-if="unit.timeLimitMinutes" class="duration-tag">{{ unit.timeLimitMinutes }} 分钟</span>
         <span class="expand-toggle">
-          {{ expandedKeys.has(unit.id) ? '收起 ⌃' : '展开 ⌄' }}
+          {{ expandedKeys.has(unit.id) ? '收起' : '展开' }}<el-icon class="fold" v-if="expandedKeys.has(unit.id)"><CaretTop /></el-icon><el-icon class="fold" v-else><ArrowDown /></el-icon>
         </span>
       </div>
 
@@ -31,13 +31,13 @@
       <div v-if="expandedKeys.has(unit.id)" class="unit-detail">
         <!-- 1. 业务目标 -->
         <div class="block block-goal">
-          <div class="block-title">🎯 业务目标</div>
+          <div class="block-title"><span aria-hidden="true">🎯</span> 业务目标</div>
           <p class="block-text">{{ unit.businessGoal }}</p>
         </div>
 
         <!-- 2. 关联冰山模型要素 -->
         <div class="block block-iceberg">
-          <div class="block-title">🔗 关联冰山模型要素</div>
+          <div class="block-title"><span aria-hidden="true">🔗</span> 关联冰山模型要素</div>
           <div class="pill-cloud">
             <span
               v-for="(el, i) in unit.icebergElements"
@@ -51,31 +51,31 @@
         <!-- 3. 业务影响 / 失败代价 -->
         <div class="block-row">
           <div class="block block-impact">
-            <div class="block-title">✅ 业务影响</div>
+            <div class="block-title"><span aria-hidden="true">✅</span> 业务影响</div>
             <p class="block-text">{{ unit.businessImpact }}</p>
           </div>
           <div class="block block-cost">
-            <div class="block-title">⚠️ 失败代价</div>
+            <div class="block-title"><span aria-hidden="true">⚠️</span> 失败代价</div>
             <p class="block-text">{{ unit.failureCost }}</p>
           </div>
         </div>
 
         <!-- 4. 核心冲突 -->
         <div class="block block-conflict">
-          <div class="block-title">⚡ 核心冲突</div>
+          <div class="block-title"><span aria-hidden="true">⚡</span> 核心冲突</div>
           <p class="block-text">{{ unit.coreConflict }}</p>
         </div>
 
         <!-- 5. 常见失败模式 / 困难挑战 -->
         <div class="block-row">
           <div class="block block-failure">
-            <div class="block-title">🕐 常见失败模式</div>
+            <div class="block-title"><span aria-hidden="true">🕐</span> 常见失败模式</div>
             <ul class="block-list">
               <li v-for="m in unit.commonFailureModes" :key="m">{{ m }}</li>
             </ul>
           </div>
           <div class="block block-challenge">
-            <div class="block-title">🚩 困难挑战</div>
+            <div class="block-title"><span aria-hidden="true">🚩</span> 困难挑战</div>
             <ul class="block-list">
               <li v-for="d in unit.difficulties" :key="d">{{ d }}</li>
             </ul>
@@ -85,13 +85,13 @@
         <!-- 6. 禁止行为 / 时间限制 -->
         <div class="block-row">
           <div class="block block-forbidden">
-            <div class="block-title">⛔ 禁止行为</div>
+            <div class="block-title"><span aria-hidden="true">⛔</span> 禁止行为</div>
             <ul class="block-list forbidden">
               <li v-for="f in unit.forbiddenBehaviors" :key="f">× {{ f }}</li>
             </ul>
           </div>
           <div class="block block-time">
-            <div class="block-title">⏱️ 时间限制</div>
+            <div class="block-title"><span aria-hidden="true">⏱️</span> 时间限制</div>
             <p class="block-text time-value">{{ unit.timeLimitMinutes }} 分钟</p>
           </div>
         </div>
@@ -99,7 +99,7 @@
         <!-- 7. 评估标准 -->
         <div class="block block-standard">
           <div class="standard-head">
-            <div class="block-title">📋 评估标准</div>
+            <div class="block-title"><span aria-hidden="true">📋</span> 评估标准</div>
             <span class="pass-score">通过分 {{ unit.passScore }}</span>
           </div>
           <div
@@ -128,6 +128,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretTop } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ActEvaluationDimension, ActScenarioUnit } from '@/types/actTheme'
@@ -172,6 +173,7 @@ const sortedDimensions = (unit: ActScenarioUnit): ActEvaluationDimension[] => {
       cursor: pointer;
 
       &:hover { text-decoration: underline; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
     }
   }
 }
@@ -203,6 +205,7 @@ const sortedDimensions = (unit: ActScenarioUnit): ActEvaluationDimension[] => {
   transition: background 0.2s;
 
   &:hover { background: #fafbfc; }
+  &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: -2px; }
 
   .seq-badge {
     width: 28px;
@@ -405,4 +408,6 @@ const sortedDimensions = (unit: ActScenarioUnit): ActEvaluationDimension[] => {
     }
   }
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

@@ -54,9 +54,9 @@
           <label class="info-label">上传封面</label>
           <div class="info-value">
             <div class="cover-preview" v-if="project.coverImage">
-              <img :src="project.coverImage" alt="cover" />
+              <img :src="project.coverImage" alt="项目封面" />
             </div>
-            <div v-else class="cover-placeholder">📘 默认封面</div>
+            <div v-else class="cover-placeholder"><span aria-hidden="true">📘</span> 默认封面</div>
           </div>
         </div>
 
@@ -139,7 +139,7 @@
                 :src="project.trainer.avatarImage"
                 alt="陪练者形象"
               />
-              <span v-else class="preview-icon">👤</span>
+              <span v-else class="preview-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </div>

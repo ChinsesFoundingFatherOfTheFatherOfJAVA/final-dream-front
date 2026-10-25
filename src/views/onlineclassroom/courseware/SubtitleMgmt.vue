@@ -1,7 +1,7 @@
 <template>
   <div class="manage-page">
     <header>
-      <el-button class="back-btn" @click="router.push('/kng/courseware')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课件管理" @click="router.push('/kng/courseware')">‹</el-button>
       <h1>字幕管理</h1>
     </header>
     <nav class="tabs">
@@ -23,7 +23,7 @@
         clearable
         @keyup.enter="load(1)"
       >
-        <template #prefix>⌕</template>
+        <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
       </el-input>
     </div>
     <div class="table-wrap">
@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PaginationBar from './components/PaginationBar.vue'

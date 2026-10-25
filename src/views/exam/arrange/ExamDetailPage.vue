@@ -110,9 +110,9 @@
     <!-- F3/API-27 导出菜单：仅最高成绩 / 所有成绩 / 学员答卷 -->
     <div v-if="exportMenu.visible" class="dropdown-mask" @click="exportMenu.visible = false">
       <div class="float-menu" :style="{ left: exportMenu.x + 'px', top: exportMenu.y + 'px' }">
-        <div class="menu-item" @click="doExport('highest')">仅导出最高成绩</div>
-        <div class="menu-item" @click="doExport('all')">导出所有成绩</div>
-        <div class="menu-item" @click="doExport('answer')">导出学员答卷</div>
+        <div class="menu-item" role="button" tabindex="0" @click="doExport('highest')" @keydown.enter.prevent="doExport('highest')">仅导出最高成绩</div>
+        <div class="menu-item" role="button" tabindex="0" @click="doExport('all')" @keydown.enter.prevent="doExport('all')">导出所有成绩</div>
+        <div class="menu-item" role="button" tabindex="0" @click="doExport('answer')" @keydown.enter.prevent="doExport('answer')">导出学员答卷</div>
       </div>
     </div>
   </div>
@@ -408,8 +408,8 @@ onMounted(async () => {
 }
 .list-card { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 0 0 12px; }
 .toolbar-row { display: flex; flex-wrap: wrap; gap: 8px; .export-btn { margin-left: auto; } }
-.filter-row { display: flex; gap: 8px; align-items: center; input { flex: 1; min-width: 160px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; } }
-.filter-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; .el-input { flex: 1; min-width: 160px; font-size: 12px; } }
+.filter-select { font-size: 12px; }
 .table-wrap { flex: 1; min-height: 0; overflow: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f2f4f8; vertical-align: middle; }
@@ -433,6 +433,7 @@ tr.checked td { background: #f5f9ff; }
   .menu-item {
     padding: 8px 14px; font-size: 13px; color: #4a5368; cursor: pointer; white-space: nowrap;
     &:hover { background: #f2f6ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   }
 }
 .empty-cell { text-align: center; color: #999; padding: 48px 0; }

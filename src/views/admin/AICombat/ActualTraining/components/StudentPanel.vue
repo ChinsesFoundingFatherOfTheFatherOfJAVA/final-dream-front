@@ -14,7 +14,7 @@
             placeholder="搜索学员姓名 / 账号 / 工号..."
             @focus="comingSoon('学员功能建设中')"
           >
-            <template #prefix>🔍</template>
+            <template #prefix><span aria-hidden="true">🔍</span></template>
           </el-input>
         </div>
         <el-select class="toolbar-select" model-value="" @change="comingSoon('学员功能建设中')">
@@ -90,7 +90,7 @@ defineProps<{ participantCount: number }>()
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 0.2s, background 0.2s;
     border: 1px solid transparent;
 
     &.btn-primary { background: #1890ff; color: #fff; &:hover { opacity: 0.85; } }

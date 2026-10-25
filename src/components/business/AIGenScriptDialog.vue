@@ -13,10 +13,18 @@
               </span>
               <span class="step-label">{{ label }}</span>
             </div>
-            <span v-if="i < stepLabels.length - 1" class="step-arrow">›</span>
+            <span v-if="i < stepLabels.length - 1" class="step-arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </template>
         </div>
-        <span class="close-btn" :class="{ disabled: generating }" @click="handleClose">×</span>
+        <span
+          class="close-btn"
+          :class="{ disabled: generating }"
+          role="button"
+          tabindex="0"
+          aria-label="关闭向导"
+          @click="handleClose"
+          @keydown.enter.prevent="handleClose"
+        >×</span>
       </div>
 
       <div class="wizard-body">
@@ -41,13 +49,13 @@
               @next="gotoStep(2)"
             />
             <div v-else-if="sceneFailed" class="empty-state failed">
-              <div class="failed-icon">⚠</div>
+              <div class="failed-icon" aria-hidden="true">⚠</div>
               <p class="failed-title">生成失败</p>
               <p class="failed-sub">这里信息量太大，再给我点时间准备下嘛</p>
               <el-button class="btn-outline" @click="handleGenScene">再试一次</el-button>
             </div>
             <div v-else class="empty-state">
-              <div class="quill-icon">✒</div>
+              <div class="quill-icon" aria-hidden="true">✒</div>
               <p>请在左侧填写基本信息，AI可一键生成对话场景~</p>
             </div>
           </div>
@@ -84,7 +92,7 @@
 
       <!-- SG-06 生成中全屏遮罩：进度模拟（预估时长线性至90%，返回后跳100%） -->
       <div v-if="generating" class="gen-mask">
-        <div class="gen-icon">Ai</div>
+        <div class="gen-icon" aria-hidden="true">Ai</div>
         <p class="gen-text">AI正在生成中... {{ progress }}%</p>
         <p class="gen-warning">生成中请勿关闭页面，否则会中断！</p>
       </div>
@@ -93,6 +101,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretRight } from '@element-plus/icons-vue'
 import { onBeforeUnmount, ref } from 'vue'
 import Step1BasicInfo from './aiGen/Step1BasicInfo.vue'
 import SceneForm from './aiGen/SceneForm.vue'
@@ -309,6 +318,9 @@ const handleClose = () => {
 
     &:hover { color: #333; }
     &.disabled { opacity: 0.4; cursor: not-allowed; }
+
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible { outline: 2px solid #1e6fff; outline-offset: 2px; }
   }
 }
 

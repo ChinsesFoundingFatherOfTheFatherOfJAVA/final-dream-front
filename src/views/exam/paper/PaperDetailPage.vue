@@ -269,7 +269,8 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.paper-detail { padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+// 页面自管滚动（.exam-content 为 overflow:hidden，见 QuesFormPage 同款注释）
+.paper-detail { padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; }
 
 .tabs {
   display: flex; gap: 4px; border-bottom: 1px solid #e5e8ef;
@@ -345,13 +346,8 @@ onMounted(() => {
 .filter-row {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
 
-  .filter-select {
-    border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; max-width: 130px;
-  }
-  input {
-    flex: 1; min-width: 160px; border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 6px 10px; font-size: 12px; outline: none;
-  }
+  .filter-select { font-size: 12px; max-width: 130px; }
+  .el-input { flex: 1; min-width: 160px; font-size: 12px; }
 }
 
 .table-wrap { overflow: auto; }

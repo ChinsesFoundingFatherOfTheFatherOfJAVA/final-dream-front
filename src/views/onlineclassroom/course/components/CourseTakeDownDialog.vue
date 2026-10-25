@@ -11,7 +11,7 @@
       <span class="dialog-title">确定下架【{{ course?.title || '' }}】吗？</span>
     </template>
     <div class="dialog-body">
-      <div class="warning-icon">!</div>
+      <div class="warning-icon" aria-hidden="true">!</div>
       <p>下架后学员无法再学习该课程，请谨慎操作</p>
     </div>
     <template #footer>

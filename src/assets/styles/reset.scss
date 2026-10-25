@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+html {
+  // 站点固定浅色主题：显式声明防止 Windows 深色模式下原生控件（select/滚动条）被反转
+  color-scheme: light;
+  // 触屏上点击反馈由 :active 态提供，去掉默认高亮块避免观感不一致
+  -webkit-tap-highlight-color: transparent;
+}
+
 html, body {
   width: 100%;
   height: 100%;
@@ -23,6 +30,37 @@ a {
   text-decoration: none;
 }
 
+// 键盘导航时的可见焦点环；用 :focus-visible 避免鼠标点击也出现
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-primary, #1890ff);
+  outline-offset: 2px;
+}
+
+// 触屏设备消除双击缩放延迟，点击类元素立即响应
+a,
+button,
+[role='button'] {
+  touch-action: manipulation;
+}
+
+// 标题折行时避免孤行（单字悬挂）
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
 ul, ol {
   list-style: none;
+}
+
+// 用户系统开启"减少动态效果"时，停用装饰性过渡与循环动画（含 Element Plus 内部过渡）
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

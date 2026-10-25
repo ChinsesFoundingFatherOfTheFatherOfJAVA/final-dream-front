@@ -1,7 +1,7 @@
 <template>
   <div class="study-page">
     <header class="detail-header">
-      <el-button class="back-btn" @click="goBack">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课程详情" @click="goBack">‹</el-button>
       <h1>[课件] {{ coursewareTitle || '...' }}</h1>
     </header>
 
@@ -10,7 +10,7 @@
       <section class="study-filter">
         <el-button class="filter-button" @click="deptPickerVisible = true">
           {{ deptName || '所属部门' }}
-          <span>⌄</span>
+          <span aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </el-button>
         <el-select v-model="query.studyStatus" placeholder="学习状态" @change="reload(1)">
           <el-option label="学习状态" :value="null" />
@@ -29,7 +29,7 @@
           clearable
           @keyup.enter="reload(1)"
         >
-          <template #prefix>⌕</template>
+          <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
         </el-input>
       </section>
 
@@ -46,7 +46,7 @@
           <el-table-column label="学习状态" width="110">
             <template #default="{ row }">
               <span class="study-status" :class="`study-${row.studyStatus}`">
-                <i></i>{{ row.studyStatusDesc }}
+                <i aria-hidden="true"></i>{{ row.studyStatusDesc }}
               </span>
             </template>
           </el-table-column>
@@ -90,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DeptPickerDialog from '../courseware/components/DeptPickerDialog.vue'

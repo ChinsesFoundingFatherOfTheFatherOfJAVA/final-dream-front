@@ -295,6 +295,7 @@ watch(
   gap: 5px;
 
   strong {
+    min-width: 0;
     overflow: hidden;
     color: #253047;
     font-size: 14px;

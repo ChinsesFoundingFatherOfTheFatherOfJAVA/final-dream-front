@@ -16,7 +16,7 @@
            @dragover.prevent
            @drop="onDrop(index)">
         <!-- 手柄才 draggable：整行 draggable 会妨碍在 input 里选中文字 -->
-        <span class="drag-handle" draggable="true" title="拖拽调整顺序"
+        <span class="drag-handle" draggable="true" title="拖拽调整顺序" aria-hidden="true"
               @dragstart="dragIndex = index" @dragend="dragIndex = null">⠿</span>
         <span class="option-key">{{ String.fromCharCode(65 + index) }}</span>
         <RichTextEditor v-model="opt.itemContent" class="option-editor" compact placeholder="选项内容（可含富文本/图片）" />
@@ -27,10 +27,16 @@
                  @change="opt.answer = Boolean($event) ? 1 : 0" />
           正确答案
         </label>
-        <el-button class="icon-btn" :disabled="index === 0" @click="moveOption(index, -1)">↑</el-button>
-        <el-button class="icon-btn" :disabled="index === body.options.length - 1" @click="moveOption(index, 1)">↓</el-button>
-        <el-button class="icon-btn danger" :disabled="body.options.length <= 2"
-                @click="body.options.splice(index, 1)">×</el-button>
+        <el-button class="icon-btn" :disabled="index === 0" aria-label="上移选项" @click="moveOption(index, -1)">
+          <el-icon><Top /></el-icon>
+        </el-button>
+        <el-button class="icon-btn" :disabled="index === body.options.length - 1" aria-label="下移选项" @click="moveOption(index, 1)">
+          <el-icon><Bottom /></el-icon>
+        </el-button>
+        <el-button class="icon-btn danger" :disabled="body.options.length <= 2" aria-label="删除选项"
+                @click="body.options.splice(index, 1)">
+          <el-icon><Close /></el-icon>
+        </el-button>
       </div>
       <el-button class="btn" :disabled="body.options.length >= 12" @click="addOption">+ 新增选项</el-button>
     </div>
@@ -70,7 +76,9 @@
         <el-input v-model.trim="kw.keyword" placeholder="关键词" />
         <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" :controls="false" />
         <span class="percent">%</span>
-        <el-button class="icon-btn danger" @click="body.keywords.splice(index, 1)">×</el-button>
+        <el-button class="icon-btn danger" @click="body.keywords.splice(index, 1)">
+          <el-icon><Close /></el-icon>
+        </el-button>
       </div>
       <el-button class="btn" @click="body.keywords.push({ keyword: '', scoreRatio: 0 })">
         + 新增关键词
@@ -88,6 +96,7 @@
 import { computed, ref } from 'vue'
 import type { QuesBodyDraft } from '@/api/exam'
 import RichTextEditor from './RichTextEditor.vue'
+import { Top, Bottom, Close } from '@element-plus/icons-vue'
 
 const props = defineProps<{ type: number; body: QuesBodyDraft }>()
 
@@ -192,12 +201,19 @@ const moveOption = (index: number, delta: number) => {
   font-size: 12px; color: #4a5368; white-space: nowrap;
 }
 
+// 幽灵图标按钮：常态无边框融入行内，悬停才浮现底色，替代原"边框方块 + 文字箭头"的笨重样式
 .icon-btn {
-  width: 26px; height: 26px;
-  border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  cursor: pointer; color: #4a5368;
-  &:disabled { opacity: .4; cursor: not-allowed; }
-  &.danger { color: #f5222d; }
+  width: 26px; height: 26px; padding: 0;
+  border: none; border-radius: 4px; background: transparent;
+  cursor: pointer; color: #8a92a5;
+  .el-icon { font-size: 15px; }
+  &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; }
+  &:disabled { color: #d5dae3; cursor: not-allowed; }
+  &.danger {
+    color: #b0b7c3;
+    &:hover:not(:disabled) { color: #f5222d; background: #fff1f0; }
+  }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
 }
 
 .radio-row { display: flex; gap: 20px; font-size: 13px; color: #4a5368; }

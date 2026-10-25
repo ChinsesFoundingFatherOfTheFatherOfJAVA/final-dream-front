@@ -13,7 +13,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>选择部门</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -82,7 +82,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {

@@ -3,16 +3,16 @@
        支持加粗/斜体/下划线/列表 + 图片/视频/音频插入（媒体经 /api/exam/file/upload 落盘）。 -->
   <div class="rich-editor" :class="{ compact }">
     <div class="toolbar">
-      <el-button title="加粗" @mousedown.prevent @click="exec('bold')"><b>B</b></el-button>
-      <el-button title="斜体" @mousedown.prevent @click="exec('italic')"><i>I</i></el-button>
-      <el-button title="下划线" @mousedown.prevent @click="exec('underline')"><u>U</u></el-button>
-      <el-button title="无序列表" @mousedown.prevent @click="exec('insertUnorderedList')">•</el-button>
-      <el-button title="有序列表" @mousedown.prevent @click="exec('insertOrderedList')">1.</el-button>
-      <span class="sep"></span>
+      <el-button title="加粗" aria-label="加粗" @mousedown.prevent @click="exec('bold')"><b>B</b></el-button>
+      <el-button title="斜体" aria-label="斜体" @mousedown.prevent @click="exec('italic')"><i>I</i></el-button>
+      <el-button title="下划线" aria-label="下划线" @mousedown.prevent @click="exec('underline')"><u>U</u></el-button>
+      <el-button title="无序列表" aria-label="无序列表" @mousedown.prevent @click="exec('insertUnorderedList')">•</el-button>
+      <el-button title="有序列表" aria-label="有序列表" @mousedown.prevent @click="exec('insertOrderedList')">1.</el-button>
+      <span class="sep" aria-hidden="true"></span>
       <el-button title="插入图片" @mousedown.prevent @click="pick('image/*')">图片</el-button>
       <el-button title="插入视频" @mousedown.prevent @click="pick('video/*')">视频</el-button>
       <el-button title="插入音频" @mousedown.prevent @click="pick('audio/*')">音频</el-button>
-      <span class="sep"></span>
+      <span class="sep" aria-hidden="true"></span>
       <el-button title="清除格式" @mousedown.prevent @click="exec('removeFormat')">清格式</el-button>
       <span v-if="uploading" class="upload-tip">上传中 {{ percent }}%</span>
     </div>
@@ -21,6 +21,9 @@
       ref="editorRef"
       class="editor"
       contenteditable="true"
+      role="textbox"
+      aria-multiline="true"
+      :aria-label="placeholder"
       :data-placeholder="placeholder"
       @input="syncOut"
       @blur="syncOut"

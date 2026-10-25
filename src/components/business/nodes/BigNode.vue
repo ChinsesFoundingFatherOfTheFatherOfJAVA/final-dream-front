@@ -4,12 +4,16 @@
     <Handle type="target" :position="Position.Top" class="flow-handle handle-top" />
 
     <div class="big-node-title">
-      <span class="title-dot" :style="{ background: themeColor }"></span>
+      <span class="title-dot" :style="{ background: themeColor }" aria-hidden="true"></span>
       <span class="title-text">{{ title }}</span>
       <span
         class="node-delete-btn nodrag nopan"
         :data-deletable="data.deletable === false ? 'false' : 'true'"
         title="删除该节点"
+        role="button"
+        tabindex="0"
+        aria-label="删除该节点"
+        @keydown.enter.prevent="synthClick"
       >×</span>
     </div>
 
@@ -19,9 +23,12 @@
         class="sub-node trainer-sub"
         :class="{ active: activeSub === 'trainer' }"
         data-sub="trainer"
+        role="button"
+        tabindex="0"
+        @keydown.enter.prevent="synthClick"
       >
         <div class="sub-label">
-          <span class="label-bar" style="background: #fa8c16"></span>
+          <span class="label-bar" style="background: #fa8c16" aria-hidden="true"></span>
           陪练者说
         </div>
         <div class="sub-content">{{ data.trainerQuestion || '暂无内容' }}</div>
@@ -32,9 +39,12 @@
         class="sub-node student-sub"
         :class="{ active: activeSub === 'student' }"
         data-sub="student"
+        role="button"
+        tabindex="0"
+        @keydown.enter.prevent="synthClick"
       >
         <div class="sub-label">
-          <span class="label-bar" style="background: #1890ff"></span>
+          <span class="label-bar" style="background: #1890ff" aria-hidden="true"></span>
           学员说
         </div>
         <div class="sub-content">{{ data.standardScript || '暂无内容' }}</div>
@@ -59,6 +69,11 @@ const props = defineProps<{
 const title = computed(() => props.data.nodeTypeTitle || '陪练者问学员说')
 const themeColor = computed(() => (props.data.nodeType === 'student_ask' ? '#1890ff' : '#fa8c16'))
 const activeSub = computed(() => (props.data.activeSubType as string) || null)
+
+// 键盘 Enter 激活：节点的点击交互由 FlowDesign 以原生 click 事件委托实现，这里合成 click 复用既有链路
+const synthClick = (e: KeyboardEvent) => {
+  ;(e.currentTarget as HTMLElement | null)?.click()
+}
 </script>
 
 <style scoped lang="scss">
@@ -118,12 +133,19 @@ const activeSub = computed(() => (props.data.activeSubType as string) || null)
   color: #999;
   cursor: pointer;
   opacity: 0;
-  transition: all 0.15s;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
   background: transparent;
 
   &:hover {
     color: #fff;
     background: #f5222d;
+  }
+
+  // 节点删除按钮：补键盘焦点环
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid #f5222d;
+    outline-offset: 2px;
   }
 }
 
@@ -144,12 +166,18 @@ const activeSub = computed(() => (props.data.activeSubType as string) || null)
   border-radius: 6px;
   padding: 8px 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   background: #fff;
 
   &:hover {
     border-color: #91d5ff;
     background: #f0f9ff;
+  }
+
+  // 子节点点击走父级事件委托，此处补键盘焦点环
+  &:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: 2px;
   }
 
   &.active {

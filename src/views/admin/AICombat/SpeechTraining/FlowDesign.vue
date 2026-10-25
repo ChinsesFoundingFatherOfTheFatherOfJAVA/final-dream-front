@@ -2,7 +2,7 @@
   <div class="flow-design">
     <!-- 提示信息 -->
     <div class="alert-info">
-      <span class="alert-icon">⚠️</span>
+      <span class="alert-icon" aria-hidden="true">⚠️</span>
       <span>发布/提交前，请先检查下方「陪练者问学员答」和「学员问陪练者答」中学员说中的流转条件，此设置影响训练的难易程度</span>
     </div>
 
@@ -10,33 +10,39 @@
     <div class="flow-toolbar">
       <span class="update-time">最近更新时间: 2026-06-01 14:08</span>
       <div class="toolbar-right">
-        <el-button v-if="hasFlow" class="btn btn-text" @click="handleImportTemplate">📋 从话术模版中选择</el-button>
-        <el-button v-if="hasFlow" class="btn btn-text" @click="openAIDialog">✨ AI生成话术</el-button>
-        <el-button class="btn btn-text" @click="handleSave">💾 保存</el-button>
+        <el-button v-if="hasFlow" class="btn btn-text" @click="handleImportTemplate"><span aria-hidden="true">📋</span> 从话术模版中选择</el-button>
+        <el-button v-if="hasFlow" class="btn btn-text" @click="openAIDialog"><el-icon class="btn-caret"><MagicStick /></el-icon> AI生成话术</el-button>
+        <el-button class="btn btn-text" @click="handleSave"><span aria-hidden="true">💾</span> 保存</el-button>
       </div>
     </div>
 
     <!-- 无流程时的空状态 -->
     <div v-if="!hasFlow" class="flow-empty">
       <div class="empty-inner">
-        <div class="empty-illustration">🔀</div>
+        <div class="empty-illustration" aria-hidden="true">🔀</div>
         <p class="empty-title">还没有设置训练流程</p>
         <p class="empty-desc">请选择一种方式开始创建你的话术训练流程</p>
         <div class="create-methods">
           <el-button class="method-btn" @click="openAIDialog">
-            <span class="method-icon">✨</span>
-            <span class="method-label">AI生成话术</span>
-            <span class="method-desc">输入对话场景，自动生成完整流程</span>
+            <span class="method-inner">
+              <span class="method-icon" aria-hidden="true"><el-icon><MagicStick /></el-icon></span>
+              <span class="method-label">AI生成话术</span>
+              <span class="method-desc">输入对话场景，自动生成完整流程</span>
+            </span>
           </el-button>
           <el-button class="method-btn" @click="createManualFlow">
-            <span class="method-icon">✏️</span>
-            <span class="method-label">手动创建流程</span>
-            <span class="method-desc">从空白画布开始，自由拖拽节点</span>
+            <span class="method-inner">
+              <span class="method-icon" aria-hidden="true">✏️</span>
+              <span class="method-label">手动创建流程</span>
+              <span class="method-desc">从空白画布开始，自由拖拽节点</span>
+            </span>
           </el-button>
           <el-button class="method-btn" @click="handleImportTemplate">
-            <span class="method-icon">📋</span>
-            <span class="method-label">选择话术模板</span>
-            <span class="method-desc">复用已创建的话术模板流程</span>
+            <span class="method-inner">
+              <span class="method-icon" aria-hidden="true">📋</span>
+              <span class="method-label">选择话术模板</span>
+              <span class="method-desc">复用已创建的话术模板流程</span>
+            </span>
           </el-button>
         </div>
       </div>
@@ -150,6 +156,7 @@
 </template>
 
 <script setup lang="ts">
+import { MagicStick } from '@element-plus/icons-vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { toast } from '@/utils/toast'
 import { useRoute } from 'vue-router'
@@ -646,7 +653,7 @@ onMounted(() => {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s, border-color 0.2s, opacity 0.2s;
   border: 1px solid #d9d9d9;
 
   &.btn-text {
@@ -684,21 +691,27 @@ onMounted(() => {
 
   .method-btn {
     width: 220px;
+    // el-button 默认固定 32px 高，卡片式内容不放开高度会整体溢出、文字互相叠压
+    height: auto;
     padding: 24px 20px;
     background: #fff;
     border: 1px solid #e8e8e8;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.25s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 
     &:hover {
       border-color: #1890ff;
       box-shadow: 0 6px 18px rgba(24, 144, 255, 0.15);
       transform: translateY(-3px);
+    }
+
+    // 卡片式纵向布局作用在自己的 method-inner 层上（带 scoped 属性，不依赖 el-button 内部结构）
+    .method-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
     .method-icon { font-size: 30px; }
@@ -757,7 +770,7 @@ onMounted(() => {
   font-size: 13px;
   color: #333;
   user-select: none;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 
   &:hover {
     background: #e6f7ff;
@@ -811,4 +824,6 @@ onMounted(() => {
 .vue-flow__minimap {
   border-radius: 6px;
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

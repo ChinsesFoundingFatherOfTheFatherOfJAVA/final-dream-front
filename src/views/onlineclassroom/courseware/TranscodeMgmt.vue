@@ -1,7 +1,7 @@
 <template>
   <div class="manage-page">
     <header>
-      <el-button class="back-btn" @click="router.push('/kng/courseware')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课件管理" @click="router.push('/kng/courseware')">‹</el-button>
       <h1>转码管理</h1>
     </header>
     <nav class="tabs">
@@ -23,37 +23,27 @@
         clearable
         @keyup.enter="load(1)"
       >
-        <template #prefix>⌕</template>
+        <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
       </el-input>
       <div v-if="tab === 'processing'" class="toolbar-note">
-        有 <strong>{{ processingTotal }}</strong> 个课程处于转码中 <i>i</i>
+        有 <strong>{{ processingTotal }}</strong> 个课程处于转码中 <i aria-hidden="true">i</i>
       </div>
       <el-button v-else class="reason-link" @click="showReasons">
         查看常见出错原因
       </el-button>
     </div>
     <div class="table-wrap">
-      <el-table :data="displayRecords" row-key="id" class="media-table" empty-text="暂无数据">
+      <el-table :data="displayRecords" row-key="id" class="media-table" empty-text="暂无数据"
+  :default-sort="{ prop: 'createdAt', order: 'descending' }"
+  @sort-change="onSortChange"
         <el-table-column prop="coursewareTitle" label="名称" min-width="220" show-overflow-tooltip />
         <el-table-column label="分类" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">{{ row.catalogName || '--' }}</template>
         </el-table-column>
-        <el-table-column label="上传日期" width="170">
-          <template #header>
-            <el-button link @click="sortBy('createdAt')">
-              上传日期
-              <span>{{ orderBy === 'createdAt' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-            </el-button>
-          </template>
+        <el-table-column label="上传日期" width="170" prop="createdAt" sortable="custom" :sort-orders="['descending', 'ascending']">
           <template #default="{ row }">{{ row.createdAt || '--' }}</template>
         </el-table-column>
-        <el-table-column label="已转换时间" width="150">
-          <template #header>
-            <el-button link @click="sortBy('elapsed')">
-              已转换时间
-              <span>{{ orderBy === 'elapsed' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-            </el-button>
-          </template>
+        <el-table-column label="已转换时间" width="150" prop="elapsed" sortable="custom" :sort-orders="['descending', 'ascending']">
           <template #default="{ row }">{{ formatSeconds(liveElapsed(row)) }}</template>
         </el-table-column>
         <el-table-column label="分享者" width="130">
@@ -92,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search } from '@element-plus/icons-vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PaginationBar from './components/PaginationBar.vue'
@@ -171,12 +162,10 @@ function switchTab(value: MediaJobTab) {
   void load(1)
 }
 
-function sortBy(value: 'createdAt' | 'elapsed') {
-  if (orderBy.value === value) orderType.value = orderType.value === 'asc' ? 'desc' : 'asc'
-  else {
-    orderBy.value = value
-    orderType.value = 'desc'
-  }
+function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
+  if (!prop || !order) return
+  orderBy.value = prop as 'createdAt' | 'elapsed'
+  orderType.value = order === 'ascending' ? 'asc' : 'desc'
 }
 
 /** "查看常见出错原因"静态提示弹窗（原平台文案照原样推断，仅提示） */

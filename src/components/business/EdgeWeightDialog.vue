@@ -3,15 +3,23 @@
     <div class="dialog">
       <div class="dialog-header">
         <span class="dialog-title">连线设置</span>
-        <span class="close-btn" @click="$emit('close')">×</span>
+        <span
+          class="close-btn"
+          role="button"
+          tabindex="0"
+          aria-label="关闭"
+          @click="$emit('close')"
+          @keydown.enter.prevent="$emit('close')"
+        >×</span>
       </div>
       <div class="dialog-body">
         <p class="dialog-tip">
           从「{{ sourceLabel }}」流转到「{{ targetLabel }}」时，根据权重随机选择下游分支。权重越大，被选中的概率越高。
         </p>
         <div class="form-item">
-          <label class="form-label">权重</label>
+          <label class="form-label" for="edge-weight-input">权重</label>
           <input
+            id="edge-weight-input"
             type="number"
             class="form-input"
             v-model.number="weight"
@@ -90,7 +98,12 @@ const handleConfirm = () => {
   border-bottom: 1px solid #e8e8e8;
 
   .dialog-title { font-size: 16px; font-weight: 600; color: #333; }
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; line-height: 1; &:hover { color: #333; } }
+  .close-btn {
+    font-size: 22px; color: #999; cursor: pointer; line-height: 1;
+    &:hover { color: #333; }
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  }
 }
 
 .dialog-body {

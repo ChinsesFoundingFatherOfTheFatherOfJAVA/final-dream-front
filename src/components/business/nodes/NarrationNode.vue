@@ -4,12 +4,16 @@
     <Handle type="target" :position="Position.Top" class="flow-handle handle-top" />
 
     <div class="narration-title">
-      <span class="title-dot"></span>
+      <span class="title-dot" aria-hidden="true"></span>
       <span class="title-text">{{ title }}</span>
       <span
         class="node-delete-btn nodrag nopan"
         :data-deletable="data.deletable === false ? 'false' : 'true'"
         title="删除该节点"
+        role="button"
+        tabindex="0"
+        aria-label="删除该节点"
+        @keydown.enter.prevent="synthClick"
       >×</span>
     </div>
 
@@ -32,6 +36,11 @@ const props = defineProps<{
 }>()
 
 const title = computed(() => props.data.nodeTypeTitle || '旁白')
+
+// 键盘 Enter 激活：节点的点击交互由 FlowDesign 以原生 click 事件委托实现，这里合成 click 复用既有链路
+const synthClick = (e: KeyboardEvent) => {
+  ;(e.currentTarget as HTMLElement | null)?.click()
+}
 </script>
 
 <style scoped lang="scss">
@@ -85,6 +94,9 @@ const title = computed(() => props.data.nodeTypeTitle || '旁白')
     line-height: 1;
 
     &:hover { color: #ff4d4f; }
+
+    // 节点删除按钮：补键盘焦点环
+    &:focus-visible { outline: 2px solid #722ed1; outline-offset: 2px; }
   }
 }
 

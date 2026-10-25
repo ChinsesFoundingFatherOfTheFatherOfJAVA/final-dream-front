@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column label="类型" width="72">
           <template #default="{ row }">
-              <span class="type-icon" :style="{ background: typeColor(row.coursewareType) }">
+              <span class="type-icon" :style="{ background: typeColor(row.coursewareType) }" aria-hidden="true">
                 {{ typeGlyph(row.coursewareType) }}
               </span>
           </template>
@@ -66,7 +66,7 @@
         <el-table-column label="状态" width="104">
           <template #default="{ row }">
               <span class="status-text" :class="`status-${row.coursewareStatus}`">
-                <i></i>{{ statusText(row.coursewareStatus) }}
+                <i aria-hidden="true"></i>{{ statusText(row.coursewareStatus) }}
               </span>
           </template>
         </el-table-column>
@@ -78,7 +78,7 @@
                 </el-button>
                 <el-button link type="primary" @click="emit('edit', row)">编辑</el-button>
                 <el-dropdown trigger="click" @command="() => emit('remove', row)">
-                  <el-button link class="more-trigger">更多⌄</el-button>
+                  <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="remove">删除</el-dropdown-item>
@@ -94,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 import {
   TASK_TYPE_ITEMS,
@@ -334,4 +335,6 @@ function typeColor(type: number) {
   }
 }
 
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>

@@ -24,9 +24,12 @@
           :key="t.id"
           class="template-item"
           :class="{ active: selectedId === t.id }"
+          role="button"
+          tabindex="0"
           @click="selectedId = t.id"
+          @keydown.enter.prevent="selectedId = t.id"
         >
-          <span class="template-dot" />
+          <span class="template-dot" aria-hidden="true" />
           <div class="template-info">
             <div class="template-name">{{ t.name }}</div>
             <div class="template-desc">{{ t.description || '（无说明）' }}</div>
@@ -127,10 +130,15 @@ onMounted(fetchTemplates)
   border: 1px solid #f0f0f0;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 
   &:hover { border-color: #91d5ff; background: #f0f9ff; }
   &.active { border-color: #1890ff; background: #e6f7ff; }
+
+  &:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: 2px;
+  }
 
   .template-dot {
     width: 8px;

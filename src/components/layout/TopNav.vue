@@ -9,7 +9,7 @@
           首页
         </router-link>
         <div class="nav-item dropdown" @mouseenter="showApps = true" @mouseleave="showApps = false">
-          全部应用 <span class="arrow">▾</span>
+          全部应用 <span class="arrow"><el-icon><ArrowDown /></el-icon></span>
           <div v-if="showApps" class="dropdown-menu apps-menu">
             <div
               v-for="app in allApps"
@@ -33,14 +33,14 @@
       </nav>
     </div>
     <div class="nav-right">
-      <span class="nav-item">绚星云学习 <span class="arrow">▾</span></span>
+      <span class="nav-item">绚星云学习 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
       <span class="nav-icon">🎨</span>
       <span class="nav-icon">🔔</span>
       <div class="user-dropdown" @mouseenter="showUser = true" @mouseleave="showUser = false">
         <span class="user-info">
           <span class="user-avatar">{{ userInitial }}</span>
           <span>{{ userName }}</span>
-          <span class="arrow">▾</span>
+          <span class="arrow"><el-icon><ArrowDown /></el-icon></span>
         </span>
         <div v-if="showUser" class="dropdown-menu user-menu">
           <div class="dropdown-item" @click="goToStudent">前往学员端</div>
@@ -58,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { mockApps } from '@/mock/data'

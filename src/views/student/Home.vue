@@ -6,7 +6,7 @@
         <h1 class="welcome-title">欢迎回来，管理员</h1>
         <p class="welcome-desc">今天是学习的好日子，继续加油吧！</p>
       </div>
-      <div class="welcome-illustration">
+      <div class="welcome-illustration" aria-hidden="true">
         <span class="illustration-icon">📚</span>
       </div>
     </section>
@@ -15,28 +15,28 @@
     <section class="quick-access">
       <h2 class="section-title">快捷入口</h2>
       <div class="access-grid">
-        <div class="access-card" @click="goTo('/study/userhome')">
-          <span class="access-icon">📝</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/study/userhome')" @keydown.enter.prevent="goTo('/study/userhome')">
+          <span class="access-icon" aria-hidden="true">📝</span>
           <span class="access-name">我的陪练</span>
         </div>
-        <div class="access-card" @click="goTo('/sparring/web/speech/list')">
-          <span class="access-icon">🤖</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/sparring/web/speech/list')" @keydown.enter.prevent="goTo('/sparring/web/speech/list')">
+          <span class="access-icon" aria-hidden="true">🤖</span>
           <span class="access-name">AI对练</span>
         </div>
-        <div class="access-card" @click="goTo('/course')">
-          <span class="access-icon">📖</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/course')" @keydown.enter.prevent="goTo('/course')">
+          <span class="access-icon" aria-hidden="true">📖</span>
           <span class="access-name">课程中心</span>
         </div>
-        <div class="access-card" @click="goTo('/phrase')">
-          <span class="access-icon">📋</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/phrase')" @keydown.enter.prevent="goTo('/phrase')">
+          <span class="access-icon" aria-hidden="true">📋</span>
           <span class="access-name">话术目录</span>
         </div>
-        <div class="access-card" @click="goTo('/ai-combat')">
-          <span class="access-icon">⚔️</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/ai-combat')" @keydown.enter.prevent="goTo('/ai-combat')">
+          <span class="access-icon" aria-hidden="true">⚔️</span>
           <span class="access-name">AI实战训练场</span>
         </div>
-        <div class="access-card" @click="goTo('/leaderboard')">
-          <span class="access-icon">🏆</span>
+        <div class="access-card" role="button" tabindex="0" @click="goTo('/leaderboard')" @keydown.enter.prevent="goTo('/leaderboard')">
+          <span class="access-icon" aria-hidden="true">🏆</span>
           <span class="access-name">陪练看板</span>
         </div>
       </div>
@@ -141,12 +141,18 @@ const goTo = (path: string) => {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
 
   &:hover {
     border-color: #1890ff;
     box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
     transform: translateY(-2px);
+  }
+
+  // 自定义可点卡片：补键盘焦点环，不改布局尺寸
+  &:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: 2px;
   }
 
   .access-icon {

@@ -2,7 +2,7 @@
   <div class="script-detail" v-if="detail">
     <!-- FP-05 面包屑 -->
     <div class="breadcrumb">
-      <span class="crumb-link" @click="goList">AI对练</span>
+      <span class="crumb-link" role="button" tabindex="0" @click="goList" @keydown.enter.prevent="goList">AI对练</span>
       <span class="crumb-sep">›</span>
       <span class="crumb-current">话术训练详情</span>
     </div>
@@ -11,9 +11,9 @@
     <div class="hero-card">
       <div class="hero-left">
         <div class="hero-cover">
-          <img v-if="detail.coverImage" :src="detail.coverImage" alt="" />
+          <img v-if="detail.coverImage" :src="detail.coverImage" alt="项目封面" />
           <div v-else class="cover-default">
-            <svg width="56" height="46" viewBox="0 0 88 72" fill="none">
+            <svg width="56" height="46" viewBox="0 0 88 72" fill="none" aria-hidden="true">
               <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="#ffffff" fill-opacity="0.9"/>
               <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="#8FC7FF" fill-opacity="0.85"/>
             </svg>
@@ -36,7 +36,7 @@
             已练 <span class="num">{{ detail.practicedCount }}</span> / {{ completionStandardText }} 次
           </div>
           <div v-if="detail.completed" class="completed-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="12" cy="12" r="10" fill="#38b25c"/>
               <path d="M7.5 12.5l3 3 6-6.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -53,7 +53,7 @@
     <div class="info-card">
       <div class="card-header">
         <span class="card-icon doc">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 2h9l5 5v15H6V2Z" stroke="#7a6cf0" stroke-width="1.6" fill="#efeaff"/>
             <path d="M15 2v5h5" stroke="#7a6cf0" stroke-width="1.6" fill="none"/>
             <line x1="9" y1="12" x2="16" y2="12" stroke="#7a6cf0" stroke-width="1.6" stroke-linecap="round"/>
@@ -69,7 +69,7 @@
     <div class="info-card">
       <div class="card-header">
         <span class="card-icon rule">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="10" fill="#efeaff"/>
             <path d="M8 12.5l2.5 2.5L16 9.5" stroke="#7a6cf0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -93,7 +93,7 @@
     <div class="info-card">
       <div class="card-header">
         <span class="card-icon record">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="10" fill="#efeaff"/>
             <path d="M12 7v5l3.5 2" stroke="#7a6cf0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -101,11 +101,23 @@
         <span class="card-title">我的记录</span>
       </div>
       <div class="record-panels">
-        <div class="record-panel" @click="goRecords">
+        <div
+          class="record-panel"
+          role="button"
+          tabindex="0"
+          @click="goRecords"
+          @keydown.enter.prevent="goRecords"
+        >
           <div class="record-num">{{ detail.recordCount }}</div>
           <div class="record-label">练习记录 ›</div>
         </div>
-        <div class="record-panel" @click="rankVisible = true">
+        <div
+          class="record-panel"
+          role="button"
+          tabindex="0"
+          @click="rankVisible = true"
+          @keydown.enter.prevent="rankVisible = true"
+        >
           <div class="record-num">{{ detail.rankNo ?? '--' }}</div>
           <div class="record-label">个人排名 ›</div>
         </div>
@@ -211,6 +223,11 @@ onMounted(async () => {
 
     &:hover {
       text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
     }
   }
 
@@ -441,6 +458,12 @@ onMounted(async () => {
 
   &:hover {
     background: #f0f4ff;
+  }
+
+  // 可点面板已补按钮语义，补键盘焦点环
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: 2px;
   }
 
   .record-num {

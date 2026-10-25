@@ -2,7 +2,7 @@
   <!-- 占位页：未建设菜单项（01 §2：组卷/考试管理/练习管理/题目反馈/字段设置） -->
   <div class="placeholder-page">
     <div class="placeholder-card">
-      <div class="placeholder-icon">🏗</div>
+      <div class="placeholder-icon" aria-hidden="true">🏗</div>
       <h2>功能建设中</h2>
       <p>该模块暂未开放，敬请期待</p>
       <el-button class="back-btn" @click="router.push('/exam/queslib')">返回题库管理</el-button>

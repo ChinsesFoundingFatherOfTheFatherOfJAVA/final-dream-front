@@ -12,9 +12,15 @@
       <div class="filter-left">
         <!-- 状态下拉 -->
         <div class="custom-select" :class="{ open: statusOpen }">
-          <div class="select-trigger" @click.stop="toggleSelect('status')">
+          <div
+            class="select-trigger"
+            role="button"
+            tabindex="0"
+            @click.stop="toggleSelect('status')"
+            @keydown.enter.prevent="toggleSelect('status')"
+          >
             <span :class="{ placeholder: !filter.status }">{{ statusLabel }}</span>
-            <span class="chevron">▾</span>
+            <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
           </div>
           <div v-if="statusOpen" class="select-dropdown" @click.stop>
             <div
@@ -22,7 +28,10 @@
               :key="opt.value"
               class="select-option"
               :class="{ selected: filter.status === opt.value }"
+              role="button"
+              tabindex="0"
               @click="chooseStatus(opt.value)"
+              @keydown.enter.prevent="chooseStatus(opt.value)"
             >
               {{ opt.label }}
             </div>
@@ -30,9 +39,15 @@
         </div>
         <!-- 类型下拉 -->
         <div class="custom-select" :class="{ open: typeOpen }">
-          <div class="select-trigger" @click.stop="toggleSelect('type')">
+          <div
+            class="select-trigger"
+            role="button"
+            tabindex="0"
+            @click.stop="toggleSelect('type')"
+            @keydown.enter.prevent="toggleSelect('type')"
+          >
             <span :class="{ placeholder: filter.projectType === undefined }">{{ typeLabel }}</span>
-            <span class="chevron">▾</span>
+            <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
           </div>
           <div v-if="typeOpen" class="select-dropdown" @click.stop>
             <div
@@ -40,7 +55,10 @@
               :key="opt.value"
               class="select-option"
               :class="{ selected: filter.projectType === opt.value }"
+              role="button"
+              tabindex="0"
               @click="chooseType(opt.value)"
+              @keydown.enter.prevent="chooseType(opt.value)"
             >
               {{ opt.label }}
             </div>
@@ -55,7 +73,14 @@
           @keyup.enter="doSearch"
         >
           <template #suffix>
-            <span class="search-icon" @click="doSearch">⌕</span>
+            <span
+              class="search-icon"
+              role="button"
+              tabindex="0"
+              aria-label="搜索"
+              @click="doSearch"
+              @keydown.enter.prevent="doSearch"
+            ><el-icon><Search /></el-icon></span>
           </template>
         </el-input>
       </div>
@@ -63,12 +88,20 @@
 
     <!-- FP-03 项目卡片网格 -->
     <div v-if="list.length" class="card-grid">
-      <div v-for="item in list" :key="item.projectId" class="project-card" @click="goDetail(item)">
+      <div
+        v-for="item in list"
+        :key="item.projectId"
+        class="project-card"
+        role="button"
+        tabindex="0"
+        @click="goDetail(item)"
+        @keydown.enter.prevent="goDetail(item)"
+      >
         <div class="card-cover">
-          <img v-if="item.coverImage" :src="item.coverImage" alt="" class="cover-img" />
+          <img v-if="item.coverImage" :src="item.coverImage" alt="项目封面" loading="lazy" class="cover-img" />
           <!-- 默认封面：蓝色渐变 + 双对话气泡 -->
           <div v-else class="cover-default">
-            <svg width="88" height="72" viewBox="0 0 88 72" fill="none">
+            <svg width="88" height="72" viewBox="0 0 88 72" fill="none" aria-hidden="true">
               <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="#ffffff" fill-opacity="0.9"/>
               <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="#8FC7FF" fill-opacity="0.85"/>
               <circle cx="24" cy="28" r="3" fill="#4A7DFF"/>
@@ -95,7 +128,7 @@
 
     <!-- 空状态 -->
     <div v-else-if="!loading" class="empty-state">
-      <svg width="120" height="120" viewBox="0 0 120 120">
+      <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
         <rect x="30" y="40" width="60" height="50" rx="4" fill="#e8e8e8" stroke="#d9d9d9" stroke-width="2"/>
         <rect x="40" y="30" width="40" height="20" rx="4" fill="#f5f5f5" stroke="#d9d9d9" stroke-width="2"/>
         <circle cx="60" cy="65" r="10" fill="#d9d9d9"/>
@@ -106,7 +139,7 @@
     <!-- FP-04 分页 -->
     <div v-if="total > 0" class="pagination-bar">
       <span class="total-text">共 {{ total }} 条</span>
-      <el-button class="page-btn" :disabled="page <= 1" @click="changePage(page - 1)">‹</el-button>
+      <el-button class="page-btn" :disabled="page <= 1" aria-label="上一页" @click="changePage(page - 1)">‹</el-button>
       <el-button
         v-for="p in totalPages"
         :key="p"
@@ -116,12 +149,13 @@
       >
         {{ p }}
       </el-button>
-      <el-button class="page-btn" :disabled="page >= totalPages" @click="changePage(page + 1)">›</el-button>
+      <el-button class="page-btn" :disabled="page >= totalPages" aria-label="下一页" @click="changePage(page + 1)">›</el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, Search } from '@element-plus/icons-vue'
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getStudentProjects } from '@/api/student'
@@ -297,7 +331,6 @@ $primary: #2e7cf6;
     padding: 12px 0;
     font-size: 16px;
     color: #333;
-    cursor: pointer;
     position: relative;
 
     &.active {
@@ -358,6 +391,12 @@ $primary: #2e7cf6;
     cursor: pointer;
     background: #fff;
 
+    // 自定义下拉触发器：补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 1px;
+    }
+
     .placeholder {
       color: #999;
     }
@@ -397,6 +436,11 @@ $primary: #2e7cf6;
         background: #f5f7fa;
       }
 
+      &:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: -2px;
+      }
+
       &.selected {
         color: $primary;
         font-weight: 500;
@@ -432,6 +476,11 @@ $primary: #2e7cf6;
     align-items: center;
     cursor: pointer;
     padding: 2px;
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 1px;
+    }
   }
 }
 
@@ -456,6 +505,12 @@ $primary: #2e7cf6;
   &:hover {
     box-shadow: 0 6px 16px rgba(46, 124, 246, 0.15);
     transform: translateY(-2px);
+  }
+
+  // 项目卡片已补按钮语义，补键盘焦点环
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
   }
 }
 

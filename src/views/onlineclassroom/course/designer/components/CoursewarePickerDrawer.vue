@@ -29,7 +29,7 @@
           clearable
           @keyup.enter="reload(1)"
         >
-          <template #prefix>⌕</template>
+          <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
         </el-input>
         <el-button class="search-btn" @click="reload(1)">搜索</el-button>
       </div>
@@ -62,14 +62,14 @@
           <el-table-column label="名称" min-width="280">
             <template #default="{ row }">
               <div class="title-cell">
-                <span class="type-icon" :style="{ background: typeColor(row.type) }">{{ typeGlyph(row.type) }}</span>
+                <span class="type-icon" :style="{ background: typeColor(row.type) }" aria-hidden="true">{{ typeGlyph(row.type) }}</span>
                 <span class="title-text" :title="row.title">{{ row.title }}</span>
               </div>
             </template>
           </el-table-column>
           <el-table-column label="状态" width="100">
             <template #default="{ row }">
-                <span class="status-text" :class="`status-${row.status}`"><i></i>{{ row.statusDesc }}</span>
+                <span class="status-text" :class="`status-${row.status}`"><i aria-hidden="true"></i>{{ row.statusDesc }}</span>
             </template>
           </el-table-column>
           <el-table-column label="学分" width="90">
@@ -104,6 +104,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search } from '@element-plus/icons-vue'
 import { computed, reactive, ref, watch } from 'vue'
 import KngDrawer from '../../../components/KngDrawer.vue'
 import PaginationBar from '../../../courseware/components/PaginationBar.vue'

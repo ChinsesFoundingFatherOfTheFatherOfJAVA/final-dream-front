@@ -77,7 +77,7 @@
         <div v-if="!selectedItems.length" class="empty-tip">尚未选择</div>
         <div v-for="item in selectedItems" :key="item.key" class="selected-row">
           <span>{{ item.item.subjectName }}</span>
-          <el-button @click="removeSelection(item.key)">×</el-button>
+          <el-button :aria-label="`移除${item.item.subjectName}`" @click="removeSelection(item.key)">×</el-button>
         </div>
       </aside>
     </div>

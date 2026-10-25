@@ -5,7 +5,7 @@
     </p>
 
     <div v-if="scenarios.length === 0" class="empty-state">
-      <div class="empty-icon">🎯</div>
+      <div class="empty-icon" aria-hidden="true">🎯</div>
       <p class="empty-text">场景单元待生成，可在左侧对话中让助手开始生成</p>
     </div>
 
@@ -16,19 +16,19 @@
       :class="{ expanded: expanded.has(unit.id) }"
     >
       <!-- 收起态：序号 + 名称 + 适用人群 + 限时 + 案例数 + 展开 -->
-      <div class="unit-summary" @click="toggle(unit.id)">
+      <div class="unit-summary" role="button" tabindex="0" @keydown.enter.prevent="toggle(unit.id)" @click="toggle(unit.id)">
         <span class="seq-badge">{{ i + 1 }}</span>
         <span class="unit-name">{{ unit.name }}</span>
         <span v-if="maxTime(unit)" class="duration-tag">{{ maxTime(unit) }} 分钟</span>
         <span v-if="unit.cases.length" class="case-tag">{{ unit.cases.length }} 个案例</span>
-        <span class="expand-toggle">{{ expanded.has(unit.id) ? '收起 ⌃' : '展开 ⌄' }}</span>
+        <span class="expand-toggle">{{ expanded.has(unit.id) ? '收起' : '展开' }}<el-icon class="fold" v-if="expanded.has(unit.id)"><CaretTop /></el-icon><el-icon class="fold" v-else><ArrowDown /></el-icon></span>
       </div>
 
       <!-- 展开态：13 项内容 + 案例卡 -->
       <div v-if="expanded.has(unit.id)" class="unit-detail">
         <!-- 1. 业务目标 -->
         <div class="block block-goal">
-          <div class="block-title">🎯 业务目标</div>
+          <div class="block-title"><span aria-hidden="true">🎯</span> 业务目标</div>
           <p class="block-text">{{ unit.businessGoal || '—' }}</p>
           <div v-if="unit.behaviorGoals?.length" class="sub-list">
             <span class="sub-label">行为目标</span>
@@ -40,7 +40,7 @@
 
         <!-- 2. 关联冰山模型要素 -->
         <div class="block block-iceberg">
-          <div class="block-title">🔗 关联冰山模型要素</div>
+          <div class="block-title"><span aria-hidden="true">🔗</span> 关联冰山模型要素</div>
           <div v-if="icebergPills(unit).length" class="pill-cloud">
             <span
               v-for="(el, pi) in icebergPills(unit)"
@@ -55,32 +55,32 @@
         <!-- 3. 业务影响 / 失败代价 -->
         <div class="block-row">
           <div class="block block-impact">
-            <div class="block-title">✅ 业务影响</div>
+            <div class="block-title"><span aria-hidden="true">✅</span> 业务影响</div>
             <p class="block-text">{{ unit.businessImpact || '—' }}</p>
           </div>
           <div class="block block-cost">
-            <div class="block-title">⚠️ 失败代价</div>
+            <div class="block-title"><span aria-hidden="true">⚠️</span> 失败代价</div>
             <p class="block-text">{{ unit.failureCost || '—' }}</p>
           </div>
         </div>
 
         <!-- 4. 核心冲突 -->
         <div class="block block-conflict">
-          <div class="block-title">⚡ 核心冲突</div>
+          <div class="block-title"><span aria-hidden="true">⚡</span> 核心冲突</div>
           <p class="block-text">{{ unit.coreConflict || '—' }}</p>
         </div>
 
         <!-- 5. 常见失败模式 / 困难挑战 -->
         <div class="block-row">
           <div class="block block-failure">
-            <div class="block-title">🕐 常见失败模式</div>
+            <div class="block-title"><span aria-hidden="true">🕐</span> 常见失败模式</div>
             <ul v-if="unit.failureReasons?.length" class="block-list">
               <li v-for="m in unit.failureReasons" :key="m">{{ m }}</li>
             </ul>
             <p v-else class="block-text">—</p>
           </div>
           <div class="block block-challenge">
-            <div class="block-title">🚩 困难挑战</div>
+            <div class="block-title"><span aria-hidden="true">🚩</span> 困难挑战</div>
             <ul v-if="unit.difficulties?.length" class="block-list">
               <li v-for="d in unit.difficulties" :key="d">{{ d }}</li>
             </ul>
@@ -91,14 +91,14 @@
         <!-- 6. 禁止行为 / 时间限制 -->
         <div class="block-row">
           <div class="block block-forbidden">
-            <div class="block-title">⛔ 禁止行为</div>
+            <div class="block-title"><span aria-hidden="true">⛔</span> 禁止行为</div>
             <ul v-if="unit.constraints?.forbidBehaviors?.length" class="block-list">
               <li v-for="f in unit.constraints.forbidBehaviors" :key="f">× {{ f }}</li>
             </ul>
             <p v-else class="block-text">—</p>
           </div>
           <div class="block block-time">
-            <div class="block-title">⏱️ 时间限制</div>
+            <div class="block-title"><span aria-hidden="true">⏱️</span> 时间限制</div>
             <p class="block-text time-value">{{ maxTime(unit) || '--' }} 分钟</p>
           </div>
         </div>
@@ -106,7 +106,7 @@
         <!-- 7. 评估标准：按本场景 dimensionWeights 引用全局维度渲染（权重为该场景权重） -->
         <div class="block block-standard">
           <div class="standard-head">
-            <div class="block-title">📋 评估标准</div>
+            <div class="block-title"><span aria-hidden="true">📋</span> 评估标准</div>
             <span class="pass-score">通过分 {{ passScore }}</span>
           </div>
           <div v-if="scenarioDimensions(unit).length === 0" class="block-text">该场景未配置评估维度</div>
@@ -168,6 +168,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretTop } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { ACT_DIFFICULTY_TEXT } from '@/types/actTheme'
 import { normalizeCriteria, useAssistantStore } from '../../composables/useAssistantStore'
@@ -259,6 +260,7 @@ function difficultyText(difficulty: number): string {
   transition: background 0.2s;
 
   &:hover { background: #fafbfc; }
+  &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: -2px; }
 
   .seq-badge {
     width: 26px;
@@ -514,4 +516,6 @@ function difficultyText(difficulty: number): string {
     }
   }
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

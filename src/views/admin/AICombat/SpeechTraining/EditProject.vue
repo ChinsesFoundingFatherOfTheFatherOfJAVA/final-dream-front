@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <div class="header">
       <div class="header-left">
-        <span class="back-btn" @click="goBack">← 返回</span>
+        <span class="back-btn" role="button" tabindex="0" @keydown.enter.prevent="goBack" @click="goBack">← 返回</span>
         <h1 class="page-title">{{ isTrain ? '创建日常训练' : '创建通关考试' }}</h1>
       </div>
     </div>
@@ -11,16 +11,16 @@
     <div class="content-wrapper">
       <!-- 左侧步骤 -->
       <div class="steps-sidebar">
-        <div class="step" :class="{ active: currentStep === 1, completed: currentStep > 1 }" @click="currentStep = 1">
-          <span class="step-dot"></span>
+        <div class="step" :class="{ active: currentStep === 1, completed: currentStep > 1 }" role="button" tabindex="0" @keydown.enter.prevent="currentStep = 1" @click="currentStep = 1">
+          <span class="step-dot" aria-hidden="true"></span>
           <span class="step-text">基本信息</span>
         </div>
-        <div class="step" :class="{ active: currentStep === 2, completed: currentStep > 2 }" @click="currentStep = 2">
-          <span class="step-dot"></span>
+        <div class="step" :class="{ active: currentStep === 2, completed: currentStep > 2 }" role="button" tabindex="0" @keydown.enter.prevent="currentStep = 2" @click="currentStep = 2">
+          <span class="step-dot" aria-hidden="true"></span>
           <span class="step-text">评分维度</span>
         </div>
-        <div class="step" :class="{ active: currentStep === 3 }" @click="currentStep = 3">
-          <span class="step-dot"></span>
+        <div class="step" :class="{ active: currentStep === 3 }" role="button" tabindex="0" @keydown.enter.prevent="currentStep = 3" @click="currentStep = 3">
+          <span class="step-dot" aria-hidden="true"></span>
           <span class="step-text">虚拟陪练者设置</span>
         </div>
       </div>
@@ -73,15 +73,15 @@
                 @change="handleCoverUpload"
               />
               <div class="cover-preview" v-if="form.coverImage">
-                <img :src="form.coverImage" alt="cover" />
-                <el-button class="cover-remove" @click="removeCover">×</el-button>
+                <img :src="form.coverImage" alt="封面预览" width="200" height="130" />
+                <el-button class="cover-remove" aria-label="移除封面" @click="removeCover">×</el-button>
               </div>
-              <div class="cover-placeholder" v-else @click="triggerCoverUpload">
-                <span class="placeholder-icon">+</span>
+              <div class="cover-placeholder" v-else role="button" tabindex="0" @keydown.enter.prevent="triggerCoverUpload" @click="triggerCoverUpload">
+                <span class="placeholder-icon" aria-hidden="true">+</span>
                 <span class="placeholder-text">点击上传封面<br/><span class="placeholder-hint">不上传则使用默认封面</span></span>
               </div>
               <div class="cover-actions" v-if="!form.coverImage">
-                <el-button class="btn-link" @click="triggerCoverUpload">📁 上传图片</el-button>
+                <el-button class="btn-link" @click="triggerCoverUpload"><span aria-hidden="true">📁</span> 上传图片</el-button>
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@
           </p>
 
           <div class="weight-total" :class="{ valid: totalWeight === 100 }">
-            权重 {{ totalWeight === 100 ? '✓' : '' }} {{ totalWeight }}%
+            权重 <span v-if="totalWeight === 100" aria-hidden="true">✓</span> {{ totalWeight }}%
           </div>
 
           <el-button class="btn btn-link" @click="addCustomDimension">+ 添加自定义维度</el-button>
@@ -332,7 +332,7 @@
       <div class="preview-area">
         <div class="preview-card">
           <div class="preview-cover">
-            <span class="preview-icon">📚</span>
+            <span class="preview-icon" aria-hidden="true">📚</span>
           </div>
           <div class="preview-content">
             <h3 class="preview-title">{{ form.name || '项目名称' }}</h3>
@@ -872,6 +872,7 @@ const handleSubmit = async () => {
     cursor: pointer;
 
     &:hover { text-decoration: underline; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
   }
 
   .page-title {
@@ -901,6 +902,8 @@ const handleSubmit = async () => {
     padding: 12px 0;
     cursor: pointer;
     color: #999;
+
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
     &.active {
       color: #1890ff;
@@ -963,11 +966,8 @@ const handleSubmit = async () => {
 
 .form-input, .form-textarea, .form-select {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 14px;
-  outline: none;
 
   &:focus { border-color: #1890ff; }
 }
@@ -1051,6 +1051,7 @@ const handleSubmit = async () => {
   transition: border-color 0.2s;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 
   .placeholder-icon {
     font-size: 24px;
@@ -1187,14 +1188,11 @@ const handleSubmit = async () => {
 .rule-input {
   width: 100%;
   min-height: 120px;
-  padding: 6px 8px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-family: inherit;
   font-size: 13px;
   line-height: 1.5;
   color: #333;
-  outline: none;
   resize: vertical;
 
   &:focus { border-color: #1890ff; }
@@ -1202,12 +1200,9 @@ const handleSubmit = async () => {
 
 .dim-select {
   width: 110px;
-  padding: 4px 6px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 13px;
   background: #fff;
-  outline: none;
   &:focus { border-color: #1890ff; }
   &:disabled { background: #f5f5f5; color: #bfbfbf; }
 }
@@ -1238,11 +1233,8 @@ const handleSubmit = async () => {
 
 .metric-aspect-input {
   width: 88px;
-  padding: 4px 6px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 13px;
-  outline: none;
 
   &:focus { border-color: #1890ff; }
   &:disabled { background: #f5f5f5; color: #bfbfbf; }
@@ -1285,7 +1277,7 @@ const handleSubmit = async () => {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity 0.2s;
   border: 1px solid #d9d9d9;
 
   &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }

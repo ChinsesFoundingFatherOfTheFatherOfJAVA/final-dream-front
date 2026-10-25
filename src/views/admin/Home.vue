@@ -4,21 +4,33 @@
     <section class="section common-apps">
       <div class="section-header">
         <h2 class="section-title">常用应用</h2>
-        <span class="edit-icon">✏️</span>
+        <span class="edit-icon" aria-hidden="true" title="敬请期待">✏️</span>
       </div>
       <div class="apps-content">
-        <div class="app-card" @click="goToAIPractice">
+        <div
+          class="app-card"
+          role="button"
+          tabindex="0"
+          @click="goToAIPractice"
+          @keydown.enter.prevent="goToAIPractice"
+        >
           <div class="app-icon">
-            <span class="icon-text">🤖</span>
+            <span class="icon-text" aria-hidden="true">🤖</span>
           </div>
           <div class="app-info">
             <h3 class="app-title">AI对练</h3>
             <p class="app-desc">轻松提升沟通技巧</p>
           </div>
         </div>
-        <div class="app-card" @click="goToActualTraining">
+        <div
+          class="app-card"
+          role="button"
+          tabindex="0"
+          @click="goToActualTraining"
+          @keydown.enter.prevent="goToActualTraining"
+        >
           <div class="app-icon actual-icon">
-            <span class="icon-text">🎯</span>
+            <span class="icon-text" aria-hidden="true">🎯</span>
             <span class="ai-badge">AI</span>
           </div>
           <div class="app-info">
@@ -26,18 +38,31 @@
             <p class="app-desc">围绕真实业务场景展开动态实战训练</p>
           </div>
         </div>
-        <div class="app-card" @click="router.push('/exam/queslib')">
+        <div
+          class="app-card"
+          role="button"
+          tabindex="0"
+          @click="router.push('/exam/queslib')"
+          @keydown.enter.prevent="router.push('/exam/queslib')"
+        >
           <div class="app-icon exam-icon">
-            <span class="icon-text">📝</span>
+            <span class="icon-text" aria-hidden="true">📝</span>
           </div>
           <div class="app-info">
             <h3 class="app-title">测练中心</h3>
             <p class="app-desc">题库与考试管理</p>
           </div>
         </div>
-        <div v-if="hasKngAccess" class="app-card" @click="goToOnlineClassroom">
+        <div
+          v-if="hasKngAccess"
+          class="app-card"
+          role="button"
+          tabindex="0"
+          @click="goToOnlineClassroom"
+          @keydown.enter.prevent="goToOnlineClassroom"
+        >
           <div class="app-icon kng-icon">
-            <span class="icon-text">K</span>
+            <span class="icon-text" aria-hidden="true">K</span>
           </div>
           <div class="app-info">
             <h3 class="app-title">在线课堂</h3>
@@ -59,23 +84,23 @@
     <section class="section common-functions">
       <div class="section-header">
         <h2 class="section-title">常用功能</h2>
-        <span class="edit-icon">✏️</span>
+        <span class="edit-icon" aria-hidden="true" title="敬请期待">✏️</span>
       </div>
       <div class="functions-grid">
-        <div class="function-card">
-          <span class="function-icon">👤</span>
+        <div class="function-card" title="敬请期待">
+          <span class="function-icon" aria-hidden="true">👤</span>
           <span class="function-name">员工名册</span>
         </div>
-        <div class="function-card">
-          <span class="function-icon">📋</span>
+        <div class="function-card" title="敬请期待">
+          <span class="function-icon" aria-hidden="true">📋</span>
           <span class="function-name">标签列表</span>
         </div>
-        <div class="function-card">
-          <span class="function-icon">📢</span>
+        <div class="function-card" title="敬请期待">
+          <span class="function-icon" aria-hidden="true">📢</span>
           <span class="function-name">公告消息</span>
         </div>
-        <div class="function-card">
-          <span class="function-icon">⚙️</span>
+        <div class="function-card" title="敬请期待">
+          <span class="function-icon" aria-hidden="true">⚙️</span>
           <span class="function-name">个性化装修</span>
         </div>
       </div>
@@ -85,7 +110,7 @@
     <section class="section platform-overview">
       <div class="section-header">
         <h2 class="section-title">平台总览</h2>
-        <span class="info-icon">ℹ️</span>
+        <span class="info-icon" aria-hidden="true" title="敬请期待">ℹ️</span>
       </div>
 
       <!-- 时间筛选标签 -->
@@ -102,53 +127,53 @@
       <!-- 数据统计卡片 -->
       <div class="stats-cards">
         <div class="stat-card">
-          <div class="stat-label">活跃人数 <span class="tip">ℹ</span></div>
+          <div class="stat-label">活跃人数 <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">94</div>
           <div class="stat-trend">
-            <svg width="100" height="40" viewBox="0 0 100 40">
+            <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path d="M0,30 Q25,10 50,25 T100,20" fill="none" stroke="#1890ff" stroke-width="2"/>
             </svg>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">学习人数 <span class="tip">ℹ</span></div>
+          <div class="stat-label">学习人数 <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">37</div>
           <div class="stat-trend">
-            <svg width="100" height="40" viewBox="0 0 100 40">
+            <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path d="M0,35 Q25,15 50,30 T100,25" fill="none" stroke="#52c41a" stroke-width="2"/>
             </svg>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">启用人数 <span class="tip">ℹ</span></div>
+          <div class="stat-label">启用人数 <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">974</div>
           <div class="stat-bar">
             <div class="bar-fill" style="width: 70%"></div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">活跃时长 (h) <span class="tip">ℹ</span></div>
+          <div class="stat-label">活跃时长 (h) <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">157.31</div>
           <div class="stat-trend">
-            <svg width="100" height="40" viewBox="0 0 100 40">
+            <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path d="M0,20 Q25,35 50,15 T100,25" fill="none" stroke="#1890ff" stroke-width="2"/>
             </svg>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">学习时长 (h) <span class="tip">ℹ</span></div>
+          <div class="stat-label">学习时长 (h) <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">55.54</div>
           <div class="stat-trend">
-            <svg width="100" height="40" viewBox="0 0 100 40">
+            <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path d="M0,25 Q25,10 50,30 T100,20" fill="none" stroke="#52c41a" stroke-width="2"/>
             </svg>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">总学分 <span class="tip">ℹ</span></div>
+          <div class="stat-label">总学分 <span class="tip" aria-hidden="true">ℹ</span></div>
           <div class="stat-value">198.3</div>
           <div class="stat-trend">
-            <svg width="100" height="40" viewBox="0 0 100 40">
+            <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path d="M0,30 Q25,20 50,35 T100,15" fill="none" stroke="#1890ff" stroke-width="2"/>
             </svg>
           </div>
@@ -160,7 +185,7 @@
         <div class="chart-card">
           <h3 class="chart-title">活跃人数/学习人数</h3>
           <div class="chart-placeholder">
-            <svg width="100%" height="200" viewBox="0 0 400 200">
+            <svg aria-hidden="true" width="100%" height="200" viewBox="0 0 400 200">
               <path d="M50,150 Q100,50 150,120 T250,80 T350,100" fill="none" stroke="#1890ff" stroke-width="2"/>
               <path d="M50,180 Q100,100 150,150 T250,120 T350,140" fill="none" stroke="#52c41a" stroke-width="2"/>
               <text x="50" y="195" font-size="12" fill="#999">08.26</text>
@@ -183,7 +208,7 @@
         <div class="chart-card">
           <h3 class="chart-title">活跃时长/学习时长 (h)</h3>
           <div class="chart-placeholder">
-            <svg width="100%" height="200" viewBox="0 0 400 200">
+            <svg aria-hidden="true" width="100%" height="200" viewBox="0 0 400 200">
               <path d="M50,100 Q100,180 150,80 T250,120 T350,60" fill="none" stroke="#1890ff" stroke-width="2"/>
               <path d="M50,150 Q100,120 150,160 T250,100 T350,130" fill="none" stroke="#52c41a" stroke-width="2"/>
               <text x="50" y="195" font-size="12" fill="#999">08.26</text>
@@ -209,7 +234,7 @@
       <div class="detail-cards">
         <div class="detail-card">
           <div class="card-header">
-            <h3 class="card-title">课程情况 <span class="tip">ℹ</span></h3>
+            <h3 class="card-title">课程情况 <span class="tip" aria-hidden="true">ℹ</span></h3>
             <el-radio-group v-model="courseScope" size="small" class="card-tabs">
               <el-radio-button value="全部">全部</el-radio-button>
               <el-radio-button value="内部">内部</el-radio-button>
@@ -225,7 +250,7 @@
             <div class="stat-row"><span class="stat-label">评论数</span><span class="stat-value">0</span></div>
           </div>
           <div class="card-chart">
-            <svg width="120" height="120" viewBox="0 0 120 120">
+            <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke="#e8e8e8" stroke-width="20"/>
               <circle cx="60" cy="60" r="50" fill="none" stroke="#1890ff" stroke-width="20" stroke-dasharray="314" stroke-dashoffset="78.5" transform="rotate(-90 60 60)"/>
             </svg>
@@ -238,7 +263,7 @@
 
         <div class="detail-card">
           <div class="card-header">
-            <h3 class="card-title">项目情况 <span class="tip">ℹ</span></h3>
+            <h3 class="card-title">项目情况 <span class="tip" aria-hidden="true">ℹ</span></h3>
           </div>
           <div class="card-content">
             <div class="stat-row"><span class="stat-label">项目总量</span><span class="stat-value">38</span></div>
@@ -248,7 +273,7 @@
             <div class="stat-row"><span class="stat-label">完成人次</span><span class="stat-value">0</span></div>
           </div>
           <div class="card-chart">
-            <svg width="120" height="120" viewBox="0 0 120 120">
+            <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <polygon points="20,20 100,20 80,60 40,60" fill="#1890ff" opacity="0.8"/>
               <polygon points="40,60 80,60 70,100 50,100" fill="#52c41a" opacity="0.8"/>
               <text x="60" y="45" text-anchor="middle" fill="#fff" font-size="12">0%</text>
@@ -263,7 +288,7 @@
 
         <div class="detail-card">
           <div class="card-header">
-            <h3 class="card-title">考试情况 <span class="tip">ℹ</span></h3>
+            <h3 class="card-title">考试情况 <span class="tip" aria-hidden="true">ℹ</span></h3>
           </div>
           <div class="card-content">
             <div class="stat-row"><span class="stat-label">考试总量</span><span class="stat-value">1,981</span></div>
@@ -273,7 +298,7 @@
             <div class="stat-row"><span class="stat-label">通过人次</span><span class="stat-value">0</span></div>
           </div>
           <div class="card-chart">
-            <svg width="120" height="120" viewBox="0 0 120 120">
+            <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke="#e8e8e8" stroke-width="15"/>
               <circle cx="60" cy="60" r="50" fill="none" stroke="#1890ff" stroke-width="15" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
               <text x="60" y="65" text-anchor="middle" fill="#333" font-size="14">0%</text>
@@ -348,7 +373,6 @@ const goToOnlineClassroom = () => {
 
 .edit-icon, .info-icon {
   color: #999;
-  cursor: pointer;
   font-size: 14px;
 }
 
@@ -372,11 +396,19 @@ const goToOnlineClassroom = () => {
   padding: 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s;
+  // 悬停只变化背景与阴影，过渡按实际属性收敛
+  transition: background-color 0.3s, box-shadow 0.3s;
 
   &:hover {
     background: #f5f5f5;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* role="button" 的 div 拿不到全局 a/button 焦点环，
+     键盘可达性需自行补 outline 焦点环（outline 不占布局） */
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #1890ff);
+    outline-offset: 2px;
   }
 
   .app-icon {
@@ -450,10 +482,8 @@ const goToOnlineClassroom = () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover { border-color: #1890ff; box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15); }
+  /* 占位卡片暂无点击功能：去掉 pointer/hover 伪交互，避免误导为可点击；
+     随之也没有任何过渡属性，transition 一并移除 */
 
   .function-icon { font-size: 24px; }
   .function-name { font-size: 14px; color: #333; }

@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>移动分类</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -26,12 +26,18 @@
             :class="{ selected: node.id === targetId, [`level-${node.level}`]: true }"
             :style="{ paddingLeft: 12 + node.level * 18 + 'px' }"
             @click="node.id !== catalogId && (targetId = node.id)"
+            role="button" tabindex="0"
+            :aria-disabled="node.id === catalogId"
+            @keydown.enter.prevent="node.id !== catalogId && (targetId = node.id)"
           >
             <span
               v-if="node.children && node.children.length"
               class="expand-arrow"
               :class="{ expanded: expandedKeys.has(node.id) }"
+              role="button" tabindex="0"
+              :aria-label="expandedKeys.has(node.id) ? '收起子分类' : '展开子分类'"
               @click.stop="toggleExpand(node.id)"
+              @keydown.enter.prevent="toggleExpand(node.id)"
             >›</span>
             <span v-else class="expand-placeholder"></span>
             <span class="node-name">{{ node.name }}</span>
@@ -144,7 +150,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -189,13 +195,16 @@ onMounted(async () => {
     text-align: center;
     color: #a0a7b8;
     transition: transform 0.15s;
+    cursor: pointer;
 
     &.expanded { transform: rotate(90deg); }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
   }
 
   .expand-placeholder { width: 16px; }
 
   &:hover { background: #f7faff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   &.selected {
     background: #e8f1ff;

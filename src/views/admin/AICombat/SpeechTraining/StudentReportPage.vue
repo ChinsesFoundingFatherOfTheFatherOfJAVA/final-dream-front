@@ -1,7 +1,7 @@
 <template>
   <div class="student-report-page">
     <div class="page-header">
-      <el-button class="back-btn" @click="goBack">‹</el-button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <div>
         <h2>训练详情</h2>
         <p v-if="projectName">{{ projectName }}</p>
@@ -548,6 +548,7 @@ onBeforeUnmount(() => {
   line-height: 1.8;
 
   span {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

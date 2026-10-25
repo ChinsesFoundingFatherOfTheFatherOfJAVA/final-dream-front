@@ -4,8 +4,11 @@
   <ol class="wizard-steps">
     <li v-for="s in STEPS" :key="s.no" class="wizard-step"
         :class="{ active: current === s.no, done: current > s.no, clickable: !!canJump?.(s.no) }"
-        @click="onJump(s.no)">
-      <span class="step-no">{{ s.no }}</span>
+        :role="canJump?.(s.no) ? 'button' : undefined"
+        :tabindex="canJump?.(s.no) ? 0 : undefined"
+        @click="onJump(s.no)"
+        @keydown.enter.prevent="onJump(s.no)">
+      <span class="step-no" aria-hidden="true">{{ s.no }}</span>
       <span class="step-label">{{ s.label }}</span>
     </li>
   </ol>
@@ -82,6 +85,11 @@ const onJump = (no: number) => {
   &.clickable {
     cursor: pointer;
     &:hover { color: #1890ff; }
+    &:focus-visible {
+      outline: 2px solid #1890ff;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
   }
 }
 </style>

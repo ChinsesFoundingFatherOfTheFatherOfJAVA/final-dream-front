@@ -8,6 +8,9 @@
         :key="unit.id"
         class="menu-item"
         :class="{ active: unit.id === selectedUnitId }"
+        role="button"
+        tabindex="0"
+        @keydown.enter.prevent="selectUnit(unit.id)"
         @click="selectUnit(unit.id)"
       >
         <span class="unit-idx">{{ String(unit.sortOrder).padStart(2, '0') }}</span>
@@ -19,28 +22,28 @@
     <div class="analysis-content">
       <!-- 总体概览 -->
       <div class="panel">
-        <div class="panel-title">总体概览 <span class="info-icon">ⓘ</span></div>
+        <div class="panel-title">总体概览 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <p class="panel-note">统计范围包含全部历史版本数据，每日次日更新</p>
         <div class="overview-cards">
           <div class="overview-card">
             <div class="ov-value">{{ data.overview.practiced }} / {{ data.overview.totalUser }}</div>
-            <div class="ov-label">已练习学员 <span class="info-icon">ⓘ</span></div>
+            <div class="ov-label">已练习学员 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
           </div>
           <div class="overview-card">
             <div class="ov-value">{{ data.overview.totalCount }} 次</div>
-            <div class="ov-label">练习总次数 <span class="info-icon">ⓘ</span></div>
+            <div class="ov-label">练习总次数 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
           </div>
           <div class="overview-card">
             <div class="ov-value">{{ data.overview.passRate }}%</div>
             <div class="ov-sub">通过 {{ data.overview.passCount }} / 参与 {{ data.overview.participantCount }}</div>
-            <div class="ov-label">场景通过率 <span class="info-icon">ⓘ</span></div>
+            <div class="ov-label">场景通过率 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
           </div>
         </div>
       </div>
 
       <!-- 统计范围 -->
       <div class="scope-row">
-        <span class="scope-label">统计范围 <span class="info-icon">ⓘ</span></span>
+        <span class="scope-label">统计范围 <span class="info-icon" aria-hidden="true">ⓘ</span></span>
         <div class="segmented">
           <el-button
             v-for="opt in scopeOptions"
@@ -55,8 +58,8 @@
       <!-- 总分分布 -->
       <div class="panel">
         <div class="panel-title-row">
-          <div class="panel-title">总分分布 <span class="info-icon">ⓘ</span></div>
-          <div class="avg-tag">均分 <span class="info-icon">ⓘ</span> {{ dist.avg }} 分</div>
+          <div class="panel-title">总分分布 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
+          <div class="avg-tag">均分 <span class="info-icon" aria-hidden="true">ⓘ</span> {{ dist.avg }} 分</div>
         </div>
         <div class="dist-rows">
           <div v-for="row in distRows" :key="row.range" class="dist-row">
@@ -81,7 +84,7 @@
       <!-- 维度掌握情况 -->
       <div class="panel">
         <div class="panel-title-row">
-          <div class="panel-title">维度掌握情况 <span class="info-icon">ⓘ</span></div>
+          <div class="panel-title">维度掌握情况 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
           <div class="avg-tag">共 {{ scope === 'all' ? data.overview.totalCount + ' 次记录' : data.overview.practiced + ' 人' }}</div>
         </div>
         <div class="mastery-legend">
@@ -113,7 +116,7 @@
 
       <!-- 维度掌握变化 -->
       <div class="panel">
-        <div class="panel-title">维度掌握变化 <span class="info-icon">ⓘ</span></div>
+        <div class="panel-title">维度掌握变化 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <el-table :data="currentDimensions" row-key="id" class="change-table">
           <el-table-column prop="dimensionName" label="维度" min-width="140" />
           <el-table-column label="首次 → 最近" min-width="160">
@@ -277,7 +280,7 @@ const selectUnit = (id: string) => {
     font-size: 14px;
     color: #4e5969;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
     line-height: 1.5;
 
     .unit-idx {
@@ -287,6 +290,7 @@ const selectUnit = (id: string) => {
 
     &:hover { background: #f5f7fa; }
     &.active { background: #e6f7ff; color: #1890ff; .unit-idx { color: #1890ff; } }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   }
 }
 
@@ -310,7 +314,7 @@ const selectUnit = (id: string) => {
   font-weight: 600;
   color: #1f2329;
 
-  .info-icon { font-size: 13px; color: #c9cdd4; cursor: help; font-weight: 400; }
+  .info-icon { font-size: 13px; color: #c9cdd4; font-weight: 400; }
 }
 
 .panel-title-row {
@@ -332,7 +336,7 @@ const selectUnit = (id: string) => {
   font-size: 14px;
   color: #4e5969;
 
-  .info-icon { font-size: 13px; color: #c9cdd4; cursor: help; }
+  .info-icon { font-size: 13px; color: #c9cdd4; }
 }
 
 .overview-cards {
@@ -348,7 +352,7 @@ const selectUnit = (id: string) => {
 
   .ov-value { font-size: 24px; font-weight: 600; color: #1f2329; }
   .ov-sub { font-size: 13px; color: #8a8f98; margin-top: 2px; }
-  .ov-label { font-size: 13px; color: #8a8f98; margin-top: 6px; .info-icon { color: #c9cdd4; cursor: help; } }
+  .ov-label { font-size: 13px; color: #8a8f98; margin-top: 6px; .info-icon { color: #c9cdd4; } }
 }
 
 .scope-row {
@@ -359,7 +363,7 @@ const selectUnit = (id: string) => {
   .scope-label {
     font-size: 14px;
     color: #4e5969;
-    .info-icon { color: #c9cdd4; cursor: help; }
+    .info-icon { color: #c9cdd4; }
   }
 }
 
@@ -377,7 +381,7 @@ const selectUnit = (id: string) => {
     font-size: 14px;
     color: #4e5969;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 
     &.active { background: #fff; color: #1890ff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); }
   }

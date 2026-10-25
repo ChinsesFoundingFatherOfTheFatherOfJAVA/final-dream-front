@@ -13,7 +13,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>批量换库</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -29,7 +29,9 @@
 
         <div class="lib-list">
           <div v-for="lib in libs" :key="lib.id" class="lib-row"
-               :class="{ active: pickedId === lib.id }" @click="pick(lib.id)">
+               :class="{ active: pickedId === lib.id }"
+               role="button" tabindex="0"
+               @click="pick(lib.id)" @keydown.enter.prevent="pick(lib.id)">
             <el-radio :model-value="pickedId === lib.id" />
             <span class="lib-name">{{ lib.name }}</span>
             <span class="lib-cat">{{ lib.catalogName }}</span>
@@ -158,7 +160,7 @@ onMounted(() => {
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 16px 20px; }
@@ -166,12 +168,8 @@ onMounted(() => {
 .toolbar {
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 
-  .filter-select {
-    border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; max-width: 150px;
-  }
-  input {
-    flex: 1; min-width: 140px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none;
-  }
+  .filter-select { font-size: 12px; max-width: 150px; }
+  .el-input { flex: 1; min-width: 140px; font-size: 12px; }
 }
 
 .lib-list {
@@ -185,6 +183,7 @@ onMounted(() => {
   border-bottom: 1px solid #f2f4f8; cursor: pointer;
 
   &:hover { background: #f7f9fd; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   &.active { background: #eaf2ff; color: #1890ff; }
   .lib-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .lib-cat { font-size: 12px; color: #a0a7b8; }

@@ -11,7 +11,7 @@
       <span class="hide-dialog-title">确定隐藏此{{ targetType }}吗？</span>
     </template>
     <div class="dialog-body">
-      <div class="warning-icon">!</div>
+      <div class="warning-icon" aria-hidden="true">!</div>
       <div>
         <!-- 截图18 语义：⚠ 标题 + "已选择 xxx：名称" + "隐藏后对所有学员不可见" -->
         <p>已选择{{ targetType }}：{{ name || '--' }}</p>

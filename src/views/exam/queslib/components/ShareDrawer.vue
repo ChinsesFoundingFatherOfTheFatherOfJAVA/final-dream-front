@@ -2,7 +2,7 @@
   <!-- FP-04/05 共享题库抽屉（截图33：只读字段+共享设置节） -->
     <el-drawer
     :model-value="true"
-    size="440px"
+    size="560px"
     :with-header="false"
     append-to-body
     destroy-on-close
@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>共享题库</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body" @click="showSourceMenu = false">
@@ -24,21 +24,25 @@
         <div class="section">
           <div class="section-title">共享设置</div>
           <label class="form-label">共享范围</label>
-          <div class="share-picker" @click.stop="showSourceMenu = !showSourceMenu">
+          <div class="share-picker" role="button" tabindex="0" aria-label="设置共享范围"
+               :aria-expanded="showSourceMenu"
+               @click.stop="showSourceMenu = !showSourceMenu"
+               @keydown.enter.prevent="showSourceMenu = !showSourceMenu">
             <template v-if="shares.length">
               <span v-for="(s, i) in shares" :key="`${s.targetType}-${s.targetId}`"
                     class="share-tag" :class="{ 'dept-tag': s.targetType === 1 }">
                 {{ s.targetType === 1 ? '部门' : '人员' }}·{{ s.targetName || s.targetId }}
-                <i class="tag-close" @click.stop="removeShare(i)">×</i>
+                <i class="tag-close" role="button" tabindex="0" :aria-label="`移除共享 ${s.targetName || s.targetId}`"
+                   @click.stop="removeShare(i)" @keydown.enter.prevent.stop="removeShare(i)">×</i>
               </span>
             </template>
             <span v-else class="share-placeholder">请选择</span>
-            <span class="picker-btn">···</span>
+            <span class="picker-btn" aria-hidden="true">···</span>
 
             <!-- 共享两个维度：人（targetType=2）/ 部门（targetType=1），均由后端 exam_lib_share 落地 -->
             <div v-if="showSourceMenu" class="source-menu">
-              <div class="source-item" @click="openUserPicker">选择人员</div>
-              <div class="source-item" @click="openDeptPicker">选择部门</div>
+              <div class="source-item" role="button" tabindex="0" @click="openUserPicker" @keydown.enter.prevent="openUserPicker">选择人员</div>
+              <div class="source-item" role="button" tabindex="0" @click="openDeptPicker" @keydown.enter.prevent="openDeptPicker">选择部门</div>
             </div>
           </div>
           <p class="share-note">被共享者（人员本人或部门内成员）可管理题库内试题，但不可删除题库</p>
@@ -167,7 +171,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .drawer {
-  width: 440px;
+  width: 560px;
   height: 100%;
   background: #fff;
   display: flex;
@@ -183,7 +187,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -240,6 +244,7 @@ onMounted(async () => {
   cursor: pointer;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .share-tag {
     display: inline-flex;
@@ -252,7 +257,8 @@ onMounted(async () => {
     font-size: 12px;
     color: #2f54eb;
 
-    .tag-close { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; } }
+    .tag-close { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
 
   .share-placeholder { color: #b0b7c3; font-size: 12px; }
@@ -286,10 +292,11 @@ onMounted(async () => {
     cursor: pointer;
 
     &:hover { background: #f2f6ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   }
 }
 
-.share-note { margin: 8px 0 0; font-size: 11px; color: #a0a7b8; }
+.share-note { margin: 8px 0 0; font-size: 12px; color: #a0a7b8; }
 
 .drawer-footer {
   display: flex;

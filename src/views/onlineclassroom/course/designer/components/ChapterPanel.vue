@@ -12,7 +12,10 @@
         :key="chapter.id || `chapter-${index}`"
         class="chapter-item"
         :class="{ active: index === selectedIndex }"
+        role="button"
+        tabindex="0"
         @click="emit('select', index)"
+        @keydown.enter.prevent="emit('select', index)"
       >
         <div class="item-main">
           <span class="chapter-name" :title="chapter.name">{{ chapter.name }}</span>
@@ -20,6 +23,7 @@
         </div>
         <el-button
           class="more-btn"
+          aria-label="更多操作"
           @click.stop="toggleMenu(index)"
         >
           ⋯
@@ -116,6 +120,12 @@ function toggleMenu(index: number) {
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
+
+  /* 自定义可点章节行：键盘可达，补可见焦点环（不占布局空间） */
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: 1px;
+  }
 
   /* 附录D：章节项=白卡+选中浅蓝底 */
   &.active {

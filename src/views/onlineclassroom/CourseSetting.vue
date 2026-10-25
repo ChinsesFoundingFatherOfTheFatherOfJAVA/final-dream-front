@@ -450,7 +450,7 @@ onMounted(load)
 }
 
 .score-rule {
-  padding: 10px 0 12px;
+  padding: 14px 0 18px;
   border-bottom: 1px solid #eef1f6;
 }
 
@@ -514,7 +514,7 @@ onMounted(load)
 }
 
 .reward-settings {
-  padding: 12px 0 8px;
+  padding: 16px 0 12px;
   border-bottom: 1px solid #eef1f6;
 }
 
@@ -528,6 +528,8 @@ onMounted(load)
 .reward-options {
   display: flex;
   flex-direction: column;
+  // EP 的 .el-radio-group 自带 align-items:center，会让宽度不同的选项水平居中错位，这里强制左对齐
+  align-items: flex-start;
   gap: 7px;
   margin-left: 62px;
   color: #4d5568;
@@ -537,10 +539,6 @@ onMounted(load)
     height: 24px;
     margin-right: 0;
   }
-}
-
-.reward-secondary {
-  margin-left: 38px !important;
 }
 
 .score-notes {

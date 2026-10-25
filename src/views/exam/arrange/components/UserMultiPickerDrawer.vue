@@ -13,7 +13,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ title }}</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -38,7 +38,8 @@
         <div class="picked-line">
           <span>已选 {{ picked.size }} / {{ max }} 人</span>
           <span v-for="(name, id) in pickedNames" :key="id" class="picked-tag">
-            {{ name }}<i @click="toggle(String(id), name)">×</i>
+            {{ name }}<i role="button" tabindex="0" :aria-label="`移除 ${name}`"
+                         @click="toggle(String(id), name)" @keydown.enter.prevent="toggle(String(id), name)">×</i>
           </span>
         </div>
       </div>
@@ -129,7 +130,7 @@ onMounted(() => search('%'))
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -188,7 +189,9 @@ onMounted(() => search('%'))
   background: #f0f5ff;
   color: #2f54eb;
 
-  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  }
 }
 
 .drawer-footer {

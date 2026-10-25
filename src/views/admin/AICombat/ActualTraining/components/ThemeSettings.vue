@@ -10,6 +10,9 @@
           :key="sec.id"
           class="nav-item"
           :class="{ active: activeSection === sec.id }"
+          role="button"
+          tabindex="0"
+          @keydown.enter.prevent="scrollToSection(sec.id)"
           @click="scrollToSection(sec.id)"
         >{{ sec.label }}</a>
       </div>
@@ -70,18 +73,18 @@
         </div>
 
         <div class="fold-panel">
-          <div class="fold-head" @click="fold.planTime = !fold.planTime">
+          <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.planTime = !fold.planTime" @click="fold.planTime = !fold.planTime">
             <span>计划时间说明</span>
-            <span class="fold-arrow" :class="{ open: fold.planTime }">⌄</span>
+            <span class="fold-arrow" :class="{ open: fold.planTime }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
           </div>
           <div v-if="fold.planTime" class="fold-body">
             计划时间仅用于展示训练计划周期，不限制学员实际练习时间；不填写则表示不设置计划周期。
           </div>
         </div>
         <div class="fold-panel">
-          <div class="fold-head" @click="fold.ownerPerm = !fold.ownerPerm">
+          <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.ownerPerm = !fold.ownerPerm" @click="fold.ownerPerm = !fold.ownerPerm">
             <span>负责人权限说明</span>
-            <span class="fold-arrow" :class="{ open: fold.ownerPerm }">⌄</span>
+            <span class="fold-arrow" :class="{ open: fold.ownerPerm }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
           </div>
           <div v-if="fold.ownerPerm" class="fold-body">
             主题负责人可以查看主题数据、修改主题设置、管理场景单元与学员；负责人变更请前往人员管理功能（建设中）。
@@ -105,7 +108,7 @@
               <el-input-number v-model="form.access.totalDrillCount" :min="1" :controls="false" />
               <span class="unit">次</span>
             </div>
-            <p class="field-hint">ℹ 学员在本主题内可练习的总演练次数</p>
+            <p class="field-hint"><span aria-hidden="true">ℹ</span> 学员在本主题内可练习的总演练次数</p>
           </div>
           <div class="form-item">
             <label class="form-label"><span class="required">*</span>单个学员每个场景演练机会</label>
@@ -124,9 +127,9 @@
             </div>
           </div>
           <div class="fold-panel">
-            <div class="fold-head" @click="fold.accessRule = !fold.accessRule">
+            <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.accessRule = !fold.accessRule" @click="fold.accessRule = !fold.accessRule">
               <span class="link-text">查看规则详情</span>
-              <span class="fold-arrow" :class="{ open: fold.accessRule }">⌃</span>
+              <span class="fold-arrow" :class="{ open: fold.accessRule }" aria-hidden="true"><el-icon><CaretTop /></el-icon></span>
             </div>
             <div v-if="fold.accessRule" class="fold-body">
               <p>• 限制仅针对单个学员在每个独立场景的次数。</p>
@@ -140,15 +143,15 @@
           <div class="sub-title">学员加入方式</div>
           <p class="sub-desc">管理员指派始终可用，可开启完全公开允许其他学员加入</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.access.joinMode === 1 }" @click="form.access.joinMode = 1">
-              <span class="card-check">{{ form.access.joinMode === 1 ? '☑' : '☐' }}</span>
+            <div class="select-card" :class="{ selected: form.access.joinMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 1" @click="form.access.joinMode = 1">
+              <span class="card-check" aria-hidden="true">{{ form.access.joinMode === 1 ? '☑' : '☐' }}</span>
               <div>
                 <div class="select-card-title">管理员指派</div>
                 <div class="select-card-desc">管理员手动将学员添加到此主题，学员在自己的界面直接可见</div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.access.joinMode === 2 }" @click="form.access.joinMode = 2">
-              <span class="card-check">{{ form.access.joinMode === 2 ? '☑' : '☐' }}</span>
+            <div class="select-card" :class="{ selected: form.access.joinMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 2" @click="form.access.joinMode = 2">
+              <span class="card-check" aria-hidden="true">{{ form.access.joinMode === 2 ? '☑' : '☐' }}</span>
               <div>
                 <div class="select-card-title">完全公开</div>
                 <div class="select-card-desc">所有学员无需申请即可直接参加此主题的练习</div>
@@ -165,7 +168,7 @@
             </div>
             <el-switch v-model="form.access.guestAccessEnabled" />
           </div>
-          <a class="blue-link" @click="comingSoon('功能建设中')">配置游客信息收集 →</a>
+          <a class="blue-link" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">配置游客信息收集 →</a>
         </div>
       </section>
 
@@ -177,14 +180,14 @@
           <div class="sub-title">AI 响应模式</div>
           <p class="sub-desc">控制 AI 角色的思考深度与回复速度，调整后仅对新发起的练习生效，进行中的练习不受影响。</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 1 }" @click="form.strategy.aiResponseMode = 1">
+            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 1" @click="form.strategy.aiResponseMode = 1">
               <span class="radio-dot" :class="{ on: form.strategy.aiResponseMode === 1 }"></span>
               <div class="flex-1">
                 <div class="select-card-title">专家模式 <span v-if="form.strategy.aiResponseMode === 1" class="default-tag">默认</span></div>
                 <div class="select-card-desc">深度思考，侧重对话质量与评估专业度</div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 2 }" @click="form.strategy.aiResponseMode = 2">
+            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 2" @click="form.strategy.aiResponseMode = 2">
               <span class="radio-dot" :class="{ on: form.strategy.aiResponseMode === 2 }"></span>
               <div class="flex-1">
                 <div class="select-card-title">快速模式</div>
@@ -207,7 +210,7 @@
           <div class="mode-card" :class="{ on: form.strategy.trainingModeEnabled }">
             <div class="mode-head">
               <div>
-                <div class="mode-title purple">● 训练模式</div>
+                <div class="mode-title purple"><span aria-hidden="true">●</span> 训练模式</div>
                 <p class="mode-desc">AI 专注角色扮演，每轮对话结束后根据开启的辅助能力给予反馈，帮助学员在真实场景中持续提升</p>
               </div>
               <el-switch v-model="form.strategy.trainingModeEnabled" />
@@ -226,6 +229,9 @@
                 <div
                   class="ability-card"
                   :class="{ selected: form.strategy.suggestionEnabled }"
+                  role="button"
+                  tabindex="0"
+                  @keydown.enter.prevent="form.strategy.suggestionEnabled = !form.strategy.suggestionEnabled"
                   @click="form.strategy.suggestionEnabled = !form.strategy.suggestionEnabled"
                 >
                   <label class="check-line" @click.stop>
@@ -262,7 +268,7 @@
           <div class="mode-card" :class="{ on: form.strategy.assessmentModeEnabled }">
             <div class="mode-head">
               <div>
-                <div class="mode-title gray">● 考核模式</div>
+                <div class="mode-title gray"><span aria-hidden="true">●</span> 考核模式</div>
                 <p class="mode-desc">全程无 AI 辅助，还原真实客户，用于正式评估</p>
               </div>
               <el-switch v-model="form.strategy.assessmentModeEnabled" />
@@ -304,9 +310,9 @@
           </div>
 
           <div class="fold-panel">
-            <div class="fold-head" @click="fold.drillRule = !fold.drillRule">
+            <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.drillRule = !fold.drillRule" @click="fold.drillRule = !fold.drillRule">
               <span class="link-text">查看演练模式配置说明</span>
-              <span class="fold-arrow" :class="{ open: fold.drillRule }">⌃</span>
+              <span class="fold-arrow" :class="{ open: fold.drillRule }" aria-hidden="true"><el-icon><CaretTop /></el-icon></span>
             </div>
             <div v-if="fold.drillRule" class="fold-body">
               <p>• 成绩计算：考核模式的练习结果用于计算场景及主题的通过结果；训练模式仅作练习反馈。</p>
@@ -325,9 +331,12 @@
               :key="pm.value"
               class="select-card"
               :class="{ selected: form.strategy.practiceMethods.includes(pm.value) }"
+              role="button"
+              tabindex="0"
+              @keydown.enter.prevent="togglePracticeMethod(pm.value)"
               @click="togglePracticeMethod(pm.value)"
             >
-              <span class="card-check">{{ form.strategy.practiceMethods.includes(pm.value) ? '☑' : '☐' }}</span>
+              <span class="card-check" aria-hidden="true">{{ form.strategy.practiceMethods.includes(pm.value) ? '☑' : '☐' }}</span>
               <div>
                 <div class="select-card-title">{{ pm.label }}</div>
                 <div class="select-card-desc">{{ pm.desc }}</div>
@@ -346,7 +355,7 @@
               class="difficulty-btn"
               :class="{ selected: form.strategy.difficulty === d }"
               @click="form.strategy.difficulty = d"
-            >{{ difficultyStars(d) }} {{ ACT_DIFFICULTY_TEXT[d] }}</el-button>
+              ><span aria-hidden="true">{{ difficultyStars(d) }}</span> {{ ACT_DIFFICULTY_TEXT[d] }}</el-button>
           </div>
         </div>
 
@@ -370,7 +379,7 @@
           <div class="sub-title">场景通过标准</div>
           <p class="sub-desc">学员达标达到设定次数，即视为通过该场景。达标次数可设 1 ~ N 次。</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 1 }" @click="form.passStandard.scenePassType = 1">
+            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 1" @click="form.passStandard.scenePassType = 1">
               <span class="radio-dot" :class="{ on: form.passStandard.scenePassType === 1 }"></span>
               <div class="flex-1">
                 <div class="select-card-title">累计达标</div>
@@ -386,7 +395,7 @@
                 </div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 2 }" @click="form.passStandard.scenePassType = 2">
+            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 2" @click="form.passStandard.scenePassType = 2">
               <span class="radio-dot" :class="{ on: form.passStandard.scenePassType === 2 }"></span>
               <div class="flex-1">
                 <div class="select-card-title">连续达标</div>
@@ -426,7 +435,7 @@
               <div class="overview-value">{{ contentOverview.evaluationDimensionCount }} <span class="overview-unit">个</span></div>
             </div>
           </div>
-          <el-button class="ai-design-btn" @click="goAssistant">⚡ 进入 AI 设计助手 调整内容</el-button>
+          <el-button class="ai-design-btn" @click="goAssistant"><span aria-hidden="true">⚡</span> 进入 AI 设计助手 调整内容</el-button>
           <p class="ai-design-hint">在 AI 助手中可以调整场景设计、客户画像、冰山模型、评估标准和练习限制</p>
         </div>
       </section>
@@ -442,6 +451,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretTop } from '@element-plus/icons-vue'
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getThemeSettings, saveThemeSettings } from '@/api/actTheme'
@@ -703,10 +713,11 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     font-size: 14px;
     color: #4e5969;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
 
     &:hover { background: #f5f7fa; }
     &.active { background: #e6f7ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   }
 }
 
@@ -868,6 +879,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     background: #fafbfc;
     cursor: pointer;
 
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+
     .link-text { color: #1890ff; }
     .fold-arrow { color: #bbb; transition: transform 0.2s; &.open { transform: rotate(180deg); } }
   }
@@ -952,10 +965,11 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border: 1px solid #dcdfe6;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 
   &:hover { border-color: #a5d8ff; }
   &.selected { border-color: #1890ff; background: #f0f8ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 
   .card-check { font-size: 18px; color: #bbb; line-height: 1.4; }
   &.selected .card-check { color: #1890ff; }
@@ -1018,6 +1032,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   cursor: pointer;
 
   &:hover { text-decoration: underline; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 }
 
 .enabled-pill {
@@ -1077,9 +1092,10 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 10px;
-  transition: all 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 
   &.selected { border-color: #1890ff; background: #f7fbff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 
   .check-line {
     display: flex;
@@ -1202,7 +1218,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   font-size: 14px;
   color: #4e5969;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
 
   &:hover { border-color: #1890ff; color: #1890ff; }
   &.selected { border-color: #1890ff; color: #1890ff; background: #f0f8ff; font-weight: 600; }
@@ -1327,7 +1343,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     border-radius: 6px;
     font-size: 15px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s, border-color 0.2s, opacity 0.2s;
   }
 
   .btn-cancel {

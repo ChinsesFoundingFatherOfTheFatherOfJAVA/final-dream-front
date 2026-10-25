@@ -5,7 +5,7 @@
     <header class="edit-header">
       <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ paper?.name || '固定出卷' }}</h1>
-      <span class="save-hint"><i class="hint-dot"></i>{{ saveHint }}</span>
+      <span class="save-hint"><i class="hint-dot" aria-hidden="true"></i>{{ saveHint }}</span>
       <!-- 创建考试流程的第②步：三步条 + 右上角上一步/下一步（截图25） -->
       <ExamWizardSteps v-if="arrangeId" class="paper-steps" :current="2" :can-jump="canJumpStep" @jump="jumpStep" />
       <div class="header-actions">
@@ -67,6 +67,7 @@
                 <h3 class="section-title">{{ chineseNo(si) }}、{{ typeLabel(section.sectionIndex) }}</h3>
                 <p class="section-sub">（本题共{{ sectionQty(section) }}小题，共{{ sectionScore(section) }}分）</p>
               </div>
+              <!-- 占位工具按钮：本期无功能，去掉 pointer 伪交互 -->
               <div class="section-tools">
                 <span class="tool" title="引用情况">🔗</span>
                 <span class="tool" title="更多">⋮</span>
@@ -570,7 +571,7 @@ onMounted(async () => {
 
   .section-title { margin: 0; font-size: 15px; font-weight: 600; color: #303133; }
   .section-sub { margin: 4px 0 0; font-size: 12px; color: #8a92a5; }
-  .section-tools { display: flex; gap: 14px; .tool { color: #b0b7c3; cursor: pointer; } }
+  .section-tools { display: flex; gap: 14px; .tool { color: #b0b7c3; } }
 }
 
 // ---- 右侧统计 ----

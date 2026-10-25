@@ -2,7 +2,7 @@
   <!-- 测练中心布局（截图02：题库分组菜单 + 五个未建设项 → PlaceholderPage） -->
   <div class="exam-layout">
     <header class="exam-header">
-      <el-button class="back-btn" @click="router.push('/homepage')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回首页" @click="router.push('/homepage')">‹</el-button>
       <div>
         <h1>测练中心</h1>
         <p>题库与考试管理</p>
@@ -13,7 +13,7 @@
         <div class="menu-group">
           <p class="group-title">题库</p>
           <router-link to="/exam/queslib" class="menu-item" :class="{ active: route.path.startsWith('/exam/queslib') }">
-            <span class="menu-icon">▦</span>
+            <span class="menu-icon" aria-hidden="true">▦</span>
             <span>题库管理</span>
           </router-link>
         </div>
@@ -23,9 +23,9 @@
           class="menu-item pending"
           :class="{ active: route.path.startsWith('/exam/paper') }"
         >
-          <span class="menu-icon">▥</span>
+          <span class="menu-icon" aria-hidden="true">▥</span>
           <span>组卷</span>
-          <span class="pending-arrow">›</span>
+          <span class="pending-arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
         </router-link>
         <!-- 考试管理（原平台为「考试管理 > 考试管理 / 考试批阅」两级菜单） -->
         <div class="menu-group">
@@ -35,7 +35,7 @@
             class="menu-item"
             :class="{ active: route.path.startsWith('/exam/exam-mgmt') }"
           >
-            <span class="menu-icon">▦</span>
+            <span class="menu-icon" aria-hidden="true">▦</span>
             <span>考试管理</span>
           </router-link>
           <router-link
@@ -43,9 +43,9 @@
             class="menu-item pending"
             :class="{ active: route.path === '/exam/exam-review' }"
           >
-            <span class="menu-icon">✎</span>
+            <span class="menu-icon" aria-hidden="true">✎</span>
             <span>考试批阅</span>
-            <span class="pending-arrow">›</span>
+            <span class="pending-arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </router-link>
         </div>
         <router-link
@@ -55,9 +55,9 @@
           class="menu-item pending"
           :class="{ active: route.path === item.path }"
         >
-          <span class="menu-icon">{{ item.icon }}</span>
+          <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
           <span>{{ item.label }}</span>
-          <span class="pending-arrow">›</span>
+          <span class="pending-arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
         </router-link>
       </aside>
       <main class="exam-content">
@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretRight } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()

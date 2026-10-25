@@ -13,7 +13,14 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>课程库中的</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span
+          class="close-btn"
+          role="button"
+          tabindex="0"
+          aria-label="关闭"
+          @click="emit('close')"
+          @keydown.enter.prevent="emit('close')"
+        >×</span>
       </div>
       <div class="drawer-body">
         <div class="filter-row">
@@ -24,7 +31,7 @@
             clearable
             @keyup.enter="reload(1)"
           >
-            <template #prefix><span>⌕</span></template>
+            <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
           </el-input>
           <el-button type="primary" class="search-btn" @click="reload(1)">搜索</el-button>
         </div>
@@ -91,6 +98,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { listKngMaterials, type KngMaterialItem } from '@/api/aiGen'
 
@@ -175,7 +183,11 @@ onMounted(() => reload(1))
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn {
+    font-size: 22px; color: #999; cursor: pointer;
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  }
 }
 
 .drawer-body {

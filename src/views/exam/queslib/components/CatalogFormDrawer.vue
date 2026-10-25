@@ -2,7 +2,7 @@
   <!-- FP-03 新建/编辑分类抽屉（截图03/06） -->
     <el-drawer
     :model-value="true"
-    size="480px"
+    size="560px"
     :with-header="false"
     append-to-body
     destroy-on-close
@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ mode === 'create' ? '新建题库分类' : '编辑题库分类' }}</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -57,15 +57,17 @@
           <div class="section-title">权限设置</div>
           <div class="form-item">
             <label class="form-label">添加管理员</label>
-            <div class="admin-picker" @click="showUserPicker = true">
+            <div class="admin-picker" role="button" tabindex="0" aria-label="添加管理员"
+                 @click="showUserPicker = true" @keydown.enter.prevent="showUserPicker = true">
               <template v-if="adminUsers.length">
                 <span v-for="u in adminUsers" :key="u.userId" class="admin-tag">
                   {{ u.fullname || u.userId }}
-                  <i class="tag-close" @click.stop="removeAdmin(u.userId)">×</i>
+                  <i class="tag-close" role="button" tabindex="0" :aria-label="`移除管理员 ${u.fullname || u.userId}`"
+                     @click.stop="removeAdmin(u.userId)" @keydown.enter.prevent.stop="removeAdmin(u.userId)">×</i>
                 </span>
               </template>
               <span v-else class="admin-placeholder">请选择</span>
-              <span class="picker-btn">···</span>
+              <span class="picker-btn" aria-hidden="true">···</span>
             </div>
           </div>
           <label class="checkbox-item">
@@ -220,7 +222,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .drawer {
-  width: 480px;
+  width: 560px;
   height: 100%;
   background: #fff;
   display: flex;
@@ -236,7 +238,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -319,11 +321,8 @@ textarea {
 
 .name-input {
   width: 100%;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  padding: 8px 10px;
   font-size: 13px;
-  outline: none;
 
   &:focus { border-color: #1890ff; }
 }
@@ -332,7 +331,7 @@ textarea {
   background: #fafbfd;
   border-radius: 4px;
   padding: 10px 12px;
-  font-size: 11px;
+  font-size: 12px;
   color: #8a92a5;
   line-height: 1.8;
 
@@ -351,6 +350,7 @@ textarea {
   cursor: pointer;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .admin-tag {
     display: inline-flex;
@@ -363,7 +363,8 @@ textarea {
     font-size: 12px;
     color: #2f54eb;
 
-    .tag-close { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; } }
+    .tag-close { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
 
   .admin-placeholder { color: #b0b7c3; font-size: 12px; }
@@ -385,7 +386,7 @@ textarea {
 
 .checkbox-note {
   margin: 4px 0 0 24px;
-  font-size: 11px;
+  font-size: 12px;
   color: #a0a7b8;
 }
 

@@ -3,7 +3,7 @@
     <div class="project-header">
       <div class="project-info">
         <div class="project-cover">
-          <span class="cover-icon">📚</span>
+          <span class="cover-icon" aria-hidden="true">📚</span>
         </div>
         <div class="project-details">
           <h1 class="project-name">{{ template.name || '话术模板' }}</h1>

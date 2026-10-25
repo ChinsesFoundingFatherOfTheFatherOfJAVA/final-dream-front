@@ -9,7 +9,7 @@
       <!-- 陪练者：左头像 + 浅紫气泡（形象与训练页左栏同源，来自报告接口的 trainerAvatar） -->
       <div v-if="msg.role === 3" class="narration-tip">{{ msg.content }}</div>
       <template v-else-if="msg.role === 1">
-        <img class="avatar trainer-avatar" :src="trainerFace(trainerAvatar)" alt="" />
+        <img class="avatar trainer-avatar" :src="trainerFace(trainerAvatar)" alt="陪练者头像" loading="lazy" />
         <div class="bubble trainer-bubble">{{ msg.content }}</div>
       </template>
 
@@ -23,16 +23,22 @@
               v-if="suggestionOf(msg)"
               class="action-item"
               :class="{ expanded: expanded[msg.messageId] }"
+              role="button"
+              tabindex="0"
               @click="toggleExpand(msg.messageId)"
+              @keydown.enter.prevent="toggleExpand(msg.messageId)"
             >
-              ✨ <span class="action-text">改进建议</span>
+              <el-icon class="btn-caret"><MagicStick /></el-icon> <span class="action-text">改进建议</span>
             </span>
-            <span v-else class="action-item">✨ <span class="action-text action-disabled">改进建议</span></span>
+            <span v-else class="action-item"><el-icon class="btn-caret"><MagicStick /></el-icon> <span class="action-text action-disabled">改进建议</span></span>
             <!-- 点赞 -->
             <span
               class="action-item like"
               :class="{ liked: likedIds.has(msg.messageId), disabled: likesDisabled }"
+              role="button"
+              tabindex="0"
               @click="onLike(msg)"
+              @keydown.enter.prevent="onLike(msg)"
             >
               👍 <span class="action-text">{{ msg.likeCount }}</span>
             </span>
@@ -51,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { MagicStick } from '@element-plus/icons-vue'
 import { computed, reactive, ref } from 'vue'
 import { likeMessage } from '@/api/student'
 import { trainerFace } from './trainerFace'
@@ -192,6 +199,12 @@ const onLike = async (msg: SessionMessage) => {
     color: #888;
     user-select: none;
 
+    // 可点操作项已转为按钮语义，补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
+    }
+
     .action-text {
       color: #2e7cf6;
 
@@ -254,4 +267,6 @@ const onLike = async (msg: SessionMessage) => {
   padding: 2px 12px;
   line-height: 1.6;
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

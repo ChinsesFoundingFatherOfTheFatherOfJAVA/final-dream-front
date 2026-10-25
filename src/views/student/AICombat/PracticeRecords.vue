@@ -2,7 +2,14 @@
   <div class="practice-records">
     <!-- 页头：返回 + 项目名标题 -->
     <div class="page-header">
-      <span class="back-btn" @click="goBack">‹</span>
+      <span
+        class="back-btn"
+        role="button"
+        tabindex="0"
+        aria-label="返回"
+        @click="goBack"
+        @keydown.enter.prevent="goBack"
+      >‹</span>
       <span class="page-title">{{ projectName || '练习记录' }}</span>
     </div>
 
@@ -32,7 +39,10 @@
             <span
               v-if="item.status === 1"
               class="view-report-link"
+              role="button"
+              tabindex="0"
               @click="viewReport(item.sessionId)"
+              @keydown.enter.prevent="viewReport(item.sessionId)"
             >查看报告</span>
             <span v-else class="no-action">—</span>
           </div>
@@ -111,11 +121,17 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s, border-color 0.2s;
 
     &:hover {
       color: #2e7cf6;
       border-color: #2e7cf6;
+    }
+
+    // 图标返回按钮：补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
     }
   }
 
@@ -186,6 +202,11 @@ onMounted(async () => {
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: 2px;
   }
 }
 

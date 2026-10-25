@@ -3,30 +3,35 @@
        点击输入框 → 弹出可滚动列表（已选项打勾）+ 底部「编辑」；
        「编辑」打开 PointEditorDrawer，里面可增/改/删该题库下的全部考核点。 -->
   <div class="point-picker">
-    <div class="picker-field" @click.stop="toggleOpen">
+    <div class="picker-field" role="button" tabindex="0" :aria-expanded="open"
+         aria-label="选择考核点"
+         @click.stop="toggleOpen" @keydown.enter.prevent="toggleOpen">
       <template v-if="selected.length">
         <span v-for="point in selected" :key="point.id" class="point-tag">
           {{ point.name }}
-          <i @click.stop="removePoint(point.id)">×</i>
+          <i role="button" tabindex="0" :aria-label="`移除考核点 ${point.name}`"
+             @click.stop="removePoint(point.id)" @keydown.enter.prevent.stop="removePoint(point.id)">×</i>
         </span>
       </template>
       <span v-else class="placeholder">请选择考核点</span>
-      <span class="caret" :class="{ open }">⌄</span>
+      <span class="caret" :class="{ open }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
     </div>
 
     <div v-if="open" class="picker-dropdown" @click.stop>
       <div class="point-list">
         <div v-for="point in allPoints" :key="point.id"
              class="point-option" :class="{ active: isSelected(point.id) }"
-             @click="togglePoint(point.id)">
+             role="button" tabindex="0"
+             @click="togglePoint(point.id)"
+             @keydown.enter.prevent="togglePoint(point.id)">
           <span class="name">{{ point.name }}</span>
-          <span v-if="isSelected(point.id)" class="check">✓</span>
+          <span v-if="isSelected(point.id)" class="check" aria-hidden="true">✓</span>
         </div>
         <p v-if="!allPoints.length" class="empty">该题库下暂无考核点</p>
       </div>
 
       <el-button class="edit-btn" @click="openEditor">
-        <span class="pencil">✎</span> 编辑
+        <span class="pencil" aria-hidden="true">✎</span> 编辑
       </el-button>
     </div>
 
@@ -40,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { getPointList, type PointItem } from '@/api/exam'
 import PointEditorDrawer from './PointEditorDrawer.vue'
@@ -114,6 +120,7 @@ defineExpose({ loadPoints })
   cursor: pointer;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .placeholder { color: #b0b7c3; }
 
@@ -139,7 +146,9 @@ defineExpose({ loadPoints })
   color: #2f54eb;
   font-size: 12px;
 
-  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  }
 }
 
 .picker-dropdown {
@@ -175,6 +184,7 @@ defineExpose({ loadPoints })
 
   &:hover { background: #f3f7ff; }
   &.active { color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .check { color: #1890ff; }
 }

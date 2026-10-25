@@ -5,7 +5,14 @@
         <span class="title-bar" :style="{ background: titleColor }"></span>
         {{ titleText }}
       </div>
-      <span class="close-btn" @click="$emit('close')">×</span>
+      <span
+        class="close-btn"
+        role="button"
+        tabindex="0"
+        aria-label="关闭"
+        @click="$emit('close')"
+        @keydown.enter.prevent="$emit('close')"
+      >×</span>
     </div>
 
     <div class="panel-body">
@@ -45,7 +52,7 @@
             <div class="keypoint-item" v-for="(point, index) in localData.keyPoints" :key="point.id">
               <span class="point-index">{{ index + 1 }}</span>
               <input type="text" class="form-input" v-model="point.content" placeholder="请输入要点内容" />
-              <button class="btn-icon" @click="removeKeypoint(index)" title="删除">×</button>
+              <button class="btn-icon" @click="removeKeypoint(index)" title="删除" aria-label="删除该要点">×</button>
             </div>
             <button v-if="localData.keyPoints.length < 10" class="btn-add" @click="addKeypoint">
               + 添加要点
@@ -225,6 +232,9 @@ const handleSave = () => {
     line-height: 1;
 
     &:hover { color: #333; }
+
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
   }
 }
 
@@ -380,6 +390,7 @@ const handleSave = () => {
       cursor: pointer;
 
       span {
+        min-width: 0; // flex 子项ellipsis截断必需，否则长要点名撑破勾选行
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

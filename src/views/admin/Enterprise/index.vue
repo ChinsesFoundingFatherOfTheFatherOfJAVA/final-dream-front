@@ -569,6 +569,7 @@ onMounted(async () => {
   font-size: 12px;
 
   span {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

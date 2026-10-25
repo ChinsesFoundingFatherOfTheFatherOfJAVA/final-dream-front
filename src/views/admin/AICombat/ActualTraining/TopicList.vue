@@ -42,14 +42,14 @@
           clearable
           @keyup.enter="fetchList"
       >
-        <template #prefix>🔍</template>
+        <template #prefix><span aria-hidden="true">🔍</span></template>
       </el-input>
     </div>
 
     <!-- FP-05 主题卡片列表 -->
     <div v-if="loading" class="list-tip">加载中…</div>
     <div v-else-if="themes.length === 0" class="empty-state">
-      <div class="empty-icon">📭</div>
+      <div class="empty-icon" aria-hidden="true">📭</div>
       <p class="empty-text">暂无训练主题</p>
     </div>
     <div v-else class="card-grid">
@@ -57,6 +57,9 @@
         v-for="theme in themes"
         :key="theme.id"
         class="theme-card"
+        role="button"
+        tabindex="0"
+        @keydown.enter.prevent="goToDetail(theme.id)"
         @click="goToDetail(theme.id)"
       >
         <span class="status-badge" :class="`status-${theme.status}`">{{ ACT_STATUS_TEXT[theme.status] }}</span>
@@ -180,7 +183,7 @@ function formatUpdatedAt(time: string | null): string {
   border-radius: 6px;
   font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity 0.2s;
 
   &:hover { opacity: 0.85; }
 }
@@ -194,7 +197,9 @@ function formatUpdatedAt(time: string | null): string {
 }
 
 .filter-select {
-  min-width: 110px;
+  // el-select 根元素是块级 div，不限宽时每个筛选项独占一行、纵向堆叠；
+  // 对齐原平台：四个下拉等宽、与搜索框同排（窄屏由 flex-wrap 自然折行）
+  width: 190px;
   border-radius: 6px;
   font-size: 14px;
   color: #333;
@@ -205,11 +210,11 @@ function formatUpdatedAt(time: string | null): string {
 }
 
 .search-input {
-  width: 200px;
+  // 原平台搜索框比下拉更宽
+  width: 260px;
 
   :deep(.el-input__wrapper) {
     min-height: 34px;
-    border: 1px solid #dcdfe6;
     border-radius: 6px;
     font-size: 14px;
   }
@@ -243,13 +248,15 @@ function formatUpdatedAt(time: string | null): string {
   border-radius: 8px;
   padding: 18px 16px 14px;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
     border-color: #c9d4f5;
   }
+
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 
   .status-badge {
     position: absolute;

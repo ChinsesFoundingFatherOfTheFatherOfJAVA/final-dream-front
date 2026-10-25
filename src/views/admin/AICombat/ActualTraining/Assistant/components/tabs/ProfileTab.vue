@@ -3,7 +3,7 @@
     <p class="tab-desc">AI 角色类型即训练中的客户画像，决定演练对手的性格、关注点与沟通风格。</p>
 
     <div v-if="profiles.length === 0" class="empty-state">
-      <div class="empty-icon">🧑‍💼</div>
+      <div class="empty-icon" aria-hidden="true">🧑‍💼</div>
       <p class="empty-text">暂无客户画像，可在左侧对话中让助手生成</p>
     </div>
 

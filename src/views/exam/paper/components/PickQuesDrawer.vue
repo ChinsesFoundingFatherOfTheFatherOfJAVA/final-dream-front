@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>从题库选题</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -68,7 +68,8 @@
             <div class="picked-list">
               <span v-for="item in pickedList" :key="item.id" class="picked-tag">
                 {{ item.summary }}
-                <i @click="unpick(item.id)">×</i>
+                <i role="button" tabindex="0" aria-label="移除该题"
+                   @click="unpick(item.id)" @keydown.enter.prevent="unpick(item.id)">×</i>
               </span>
               <span v-if="!picked.size" class="empty-tip">请在左侧勾选试题</span>
             </div>
@@ -206,7 +207,7 @@ onMounted(async () => {
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 14px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 14px 20px; }
@@ -214,8 +215,8 @@ onMounted(async () => {
 .filter-row {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
 
-  .filter-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; max-width: 160px; }
-  input { flex: 1; min-width: 150px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; }
+  .filter-select { font-size: 12px; max-width: 160px; }
+  .el-input { flex: 1; min-width: 150px; font-size: 12px; }
 }
 
 .main-area { flex: 1; min-height: 0; display: flex; gap: 12px; }
@@ -249,7 +250,8 @@ tr.checked td { background: #f0f7ff; }
     padding: 3px 8px; font-size: 12px; color: #2f54eb;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 
-    i { margin-left: auto; font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; } }
+    i { margin-left: auto; font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
   .empty-tip { font-size: 12px; color: #b0b7c3; }
 }

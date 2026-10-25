@@ -1,7 +1,7 @@
 <template>
   <div v-if="detail" class="detail-page">
     <header class="detail-header">
-      <el-button class="back-btn" @click="router.push('/kng/course')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课程列表" @click="router.push('/kng/course')">‹</el-button>
       <h1>课程详情</h1>
     </header>
 
@@ -24,7 +24,7 @@
         <div class="basic-layout">
           <div class="basic-main">
             <section ref="mainInfoSection" class="info-section" data-anchor="main">
-              <h2><i></i>主要信息</h2>
+              <h2><i aria-hidden="true"></i>主要信息</h2>
               <dl>
                 <template v-for="row in mainRows" :key="row.label">
                   <dt>{{ row.label }}</dt>
@@ -34,7 +34,7 @@
             </section>
 
             <section ref="relatedInfoSection" class="info-section" data-anchor="related">
-              <h2><i></i>相关方信息</h2>
+              <h2><i aria-hidden="true"></i>相关方信息</h2>
               <dl>
                 <dt>贡献者</dt>
                 <dd>{{ contributorText }}</dd>
@@ -42,7 +42,7 @@
             </section>
 
             <section ref="permissionInfoSection" class="info-section" data-anchor="permission">
-              <h2><i></i>权限设置</h2>
+              <h2><i aria-hidden="true"></i>权限设置</h2>
               <dl>
                 <dt>浏览权限</dt>
                 <dd>{{ detail.viewPermission === 2 ? '单独设置允许浏览' : '跟随分类浏览权限' }}</dd>
@@ -50,7 +50,7 @@
             </section>
 
             <section ref="functionInfoSection" class="info-section" data-anchor="function">
-              <h2><i></i>功能设置</h2>
+              <h2><i aria-hidden="true"></i>功能设置</h2>
               <dl>
                 <dt>倍速播放</dt>
                 <dd>{{ effectiveSpeed ? '开启' : '关闭' }}</dd>
@@ -62,7 +62,7 @@
 
           <aside class="basic-aside">
             <div class="cover-box">
-              <img v-if="detail.coverUrl" :src="resolveAssetUrl(detail.coverUrl)" alt="" />
+              <img v-if="detail.coverUrl" :src="resolveAssetUrl(detail.coverUrl)" :alt="`${detail.title}封面`" loading="lazy" />
               <div v-else class="cover-placeholder">暂无封面</div>
             </div>
             <nav class="anchor-nav">
@@ -102,21 +102,21 @@
                   class="chapter-toggle"
                   @click="toggleChapter(row.chapterId)"
                 >
-                  <span class="arrow">{{ expandedChapters.has(row.chapterId) ? '▾' : '▸' }}</span>
+                  <span class="arrow" aria-hidden="true"><el-icon class="fold" v-if="expandedChapters.has(row.chapterId)"><CaretBottom /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon></span>
                   {{ row.chapterName }}
                 </el-button>
                 <template v-else>
-                  <span class="type-icon" :class="`type-${row.task.coursewareType}`">{{ typeBadge(row.task.coursewareType) }}</span>
+                  <span class="type-icon" :class="`type-${row.task.coursewareType}`" aria-hidden="true">{{ typeBadge(row.task.coursewareType) }}</span>
                   {{ row.task.taskName }}
                 </template>
               </template>
             </el-table-column>
             <el-table-column label="近7天学习人数" width="150">
-              <template #header>近7天学习人数 <i class="info-dot" title="近7天学习该课件的人数">i</i></template>
+              <template #header>近7天学习人数 <i class="info-dot" aria-hidden="true" title="近7天学习该课件的人数">i</i></template>
               <template #default="{ row }">{{ row.kind === 'task' ? row.task.numOfPastweek : '' }}</template>
             </el-table-column>
             <el-table-column label="总学习人数" width="140">
-              <template #header>总学习人数 <i class="info-dot" title="累计学习该课件的人数">i</i></template>
+              <template #header>总学习人数 <i class="info-dot" aria-hidden="true" title="累计学习该课件的人数">i</i></template>
               <template #default="{ row }">{{ row.kind === 'task' ? row.task.numOfTotal : '' }}</template>
             </el-table-column>
             <el-table-column label="操作" width="110">
@@ -138,37 +138,37 @@
       <!-- CS-06 学习数据：组件级复用课件详情实现，接口前缀换 course -->
       <template v-else>
         <section class="data-heading">
-          <h2><i></i>学习数据概览</h2>
+          <h2><i aria-hidden="true"></i>学习数据概览</h2>
           <span>（数据统计自课程发布之日起至今）</span>
         </section>
         <div class="stat-grid">
           <article>
-            <span>近7天学习人数（人） <i>i</i></span>
+            <span>近7天学习人数（人） <i aria-hidden="true">i</i></span>
             <strong>{{ overview.numOf7days }}</strong>
           </article>
           <article>
-            <span>总学习人数（人） <i>i</i></span>
+            <span>总学习人数（人） <i aria-hidden="true">i</i></span>
             <strong>{{ overview.numOftotal }}</strong>
           </article>
           <article>
-            <span>总完课人数（人） <i>i</i></span>
+            <span>总完课人数（人） <i aria-hidden="true">i</i></span>
             <strong>{{ overview.numOfFinish }}</strong>
           </article>
         </div>
 
         <section class="data-heading second">
-          <h2><i></i>学习数据分析</h2>
+          <h2><i aria-hidden="true"></i>学习数据分析</h2>
           <span>（数据统计自课程发布之日起至今）</span>
         </section>
 
         <div class="chart-grid">
           <article class="chart-card">
-            <h3>学员完课用时概览 <i>i</i></h3>
+            <h3>学员完课用时概览 <i aria-hidden="true">i</i></h3>
             <div class="horizontal-chart">
               <div v-for="item in finishBars" :key="item.label">
                 <span>{{ item.label }}</span>
                 <div class="bar-track">
-                  <i :style="{ width: `${item.percent}%` }"></i>
+                  <i aria-hidden="true" :style="{ width: `${item.percent}%` }"></i>
                 </div>
                 <strong>{{ item.value }}</strong>
               </div>
@@ -184,14 +184,14 @@
               </el-select>
             </header>
             <div class="legend">
-              <span><i class="study"></i>学习人数</span>
-              <span><i class="finish"></i>完课人数</span>
+              <span><i class="study" aria-hidden="true"></i>学习人数</span>
+              <span><i class="finish" aria-hidden="true"></i>完课人数</span>
             </div>
             <div class="dept-chart" :style="{ gridTemplateColumns: `repeat(${Math.max(1, deptData.length)}, minmax(110px, 1fr))` }">
               <div v-for="item in deptData" :key="item.deptId" class="dept-column">
                 <div class="bars">
-                  <i class="study" :style="{ height: `${barHeight(item.numOfStudyPeo)}%` }"></i>
-                  <i class="finish" :style="{ height: `${barHeight(item.numOfFinishPeo)}%` }"></i>
+                  <i class="study" aria-hidden="true" :style="{ height: `${barHeight(item.numOfStudyPeo)}%` }"></i>
+                  <i class="finish" aria-hidden="true" :style="{ height: `${barHeight(item.numOfFinishPeo)}%` }"></i>
                 </div>
                 <span>{{ item.deptName }}</span>
               </div>
@@ -205,6 +205,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretBottom, CaretRight } from '@element-plus/icons-vue'
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -945,4 +946,6 @@ onMounted(async () => {
   color: #98a1b2;
   font-size: 13px;
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

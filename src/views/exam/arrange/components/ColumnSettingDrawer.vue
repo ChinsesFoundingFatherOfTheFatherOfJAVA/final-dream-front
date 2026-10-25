@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>列设置</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -25,15 +25,19 @@
               @dragover.prevent="onDragOver(i)"
               @drop.prevent="onDrop(i)"
               @dragend="onDragEnd">
-            <span class="drag-handle" title="拖拽调整顺序">⠿</span>
+            <span class="drag-handle" title="拖拽调整顺序" aria-hidden="true">⠿</span>
             <label class="col-check">
               <el-checkbox :disabled="isLocked(c.key)" :model-value="c.visible"
                      @change="toggle(i, Boolean($event))" />
               <span :class="{ locked: isLocked(c.key) }">{{ labelOf(c.key) }}</span>
             </label>
             <span class="col-actions">
-              <el-button class="mini" :disabled="i === 0" @click="move(i, -1)">↑</el-button>
-              <el-button class="mini" :disabled="i === columns.length - 1" @click="move(i, 1)">↓</el-button>
+              <el-button class="mini" :disabled="i === 0" aria-label="上移" @click="move(i, -1)">
+                <el-icon><Top /></el-icon>
+              </el-button>
+              <el-button class="mini" :disabled="i === columns.length - 1" aria-label="下移" @click="move(i, 1)">
+                <el-icon><Bottom /></el-icon>
+              </el-button>
             </span>
           </li>
         </ul>
@@ -53,6 +57,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { Top, Bottom } from '@element-plus/icons-vue'
 import { toast } from '@/utils/toast'
 import {
   getStudentColumns, saveStudentColumns, LOCKED_STUDENT_COLUMNS, STUDENT_COLUMN_LABELS,
@@ -148,7 +153,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .drawer { width: 420px; height: 100%; background: #fff; display: flex; flex-direction: column; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; } }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .tip { margin: 0 0 12px; font-size: 12px; color: #a0a7b8; }
 .col-list { margin: 0; padding: 0; list-style: none; }
@@ -160,7 +165,8 @@ onMounted(async () => {
 .drag-handle { flex: none; color: #b0b7c3; font-size: 14px; cursor: grab; user-select: none; &:active { cursor: grabbing; } }
 .col-check { flex: 1; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #4a5368; cursor: pointer; input { accent-color: #1890ff; } .locked { color: #b0b7c3; } }
 .col-actions { display: flex; gap: 6px; }
-.mini { width: 26px; height: 24px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; color: #4a5368; &:disabled { opacity: .45; cursor: not-allowed; } }
+// 幽灵图标按钮（与 QuesBodyForm 口径一致）
+.mini { width: 26px; height: 24px; padding: 0; border: none; border-radius: 4px; background: transparent; cursor: pointer; color: #8a92a5; .el-icon { font-size: 14px; } &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; } &:disabled { color: #d5dae3; cursor: not-allowed; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; } }
 .drawer-footer { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; .spacer { flex: 1; } }
 .btn { padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } &:disabled { opacity: .6; } }
 </style>

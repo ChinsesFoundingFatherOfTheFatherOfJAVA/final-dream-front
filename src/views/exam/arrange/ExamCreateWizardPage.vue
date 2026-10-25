@@ -22,7 +22,7 @@
           <div class="way-tabs readonly-tabs" role="tablist">
             <el-button v-for="w in WAYS" :key="w.key" class="way-tab"
                     :class="{ active: w.key === 'new' }" disabled>
-              <span class="way-icon" :class="w.key">{{ w.icon }}</span>
+              <span class="way-icon" :class="w.key" aria-hidden="true">{{ w.icon }}</span>
               <span>{{ w.label }}</span>
             </el-button>
           </div>
@@ -70,7 +70,7 @@
             <el-button v-for="w in WAYS" :key="w.key" class="way-tab" role="tab"
                     :class="{ active: way === w.key }" :aria-selected="way === w.key"
                     @click="way = w.key">
-              <span class="way-icon" :class="w.key">{{ w.icon }}</span>
+              <span class="way-icon" :class="w.key" aria-hidden="true">{{ w.icon }}</span>
               <span>{{ w.label }}</span>
             </el-button>
           </div>
@@ -580,10 +580,11 @@ onMounted(async () => {
   &.warn { color: #cf1322; background: #fff1f0; border-color: #ffa39e; }
 }
 .ro-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
-.ro-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; min-width: 96px; }
+.ro-select { font-size: 12px; min-width: 96px; }
 .ro-search {
   flex: 1; min-width: 180px; max-width: 360px;
-  border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none;
+  // EP wrapper 自带边框，根元素不再画边框/加内边距（避免双层嵌套）
+  font-size: 12px;
 }
 .ro-table-wrap { border: 1px solid #eef1f6; border-radius: 4px; overflow: auto; }
 .ro-table {

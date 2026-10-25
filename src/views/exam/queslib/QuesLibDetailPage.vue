@@ -186,11 +186,15 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
+// 页面自管滚动（.exam-content 为 overflow:hidden，见 QuesFormPage 同款注释）
 .lib-detail {
   padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .detail-header {

@@ -16,12 +16,12 @@
     </template>
     <div class="cards">
       <el-button class="card" @click="emit('choose', 0)">
-        <span class="card-icon flat">▤</span>
+        <span class="card-icon flat" aria-hidden="true">▤</span>
         <strong>无章节</strong>
         <span class="desc">任务平铺展示，适合内容较少、无需分章的课程</span>
       </el-button>
       <el-button class="card" @click="emit('choose', 1)">
-        <span class="card-icon chaptered">☰</span>
+        <span class="card-icon chaptered" aria-hidden="true">☰</span>
         <strong>有章节</strong>
         <span class="desc">按章节组织任务，自动创建"章节1"，适合体系化课程</span>
       </el-button>

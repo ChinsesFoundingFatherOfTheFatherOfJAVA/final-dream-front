@@ -12,9 +12,33 @@
         <el-input class="name-input" v-model="item.name" maxlength="20" placeholder="环节名（必填）" />
         <span class="name-count">{{ item.name.length }}/20</span>
         <span class="ops">
-          <span class="op" title="上移" @click="move(i, -1)">↑</span>
-          <span class="op" title="下移" @click="move(i, 1)">↓</span>
-          <span class="op" title="删除" @click="remove(i)">🗑</span>
+          <span
+            class="op"
+            role="button"
+            tabindex="0"
+            title="上移"
+            aria-label="上移该环节"
+            @click="move(i, -1)"
+            @keydown.enter.prevent="move(i, -1)"
+          >↑</span>
+          <span
+            class="op"
+            role="button"
+            tabindex="0"
+            title="下移"
+            aria-label="下移该环节"
+            @click="move(i, 1)"
+            @keydown.enter.prevent="move(i, 1)"
+          >↓</span>
+          <span
+            class="op"
+            role="button"
+            tabindex="0"
+            title="删除"
+            aria-label="删除该环节"
+            @click="remove(i)"
+            @keydown.enter.prevent="remove(i)"
+          >🗑</span>
         </span>
       </div>
       <div class="card-field">
@@ -37,10 +61,22 @@
           class="btn-gradient"
           :disabled="generating || !valid"
           @click="openMenu = !openMenu"
-        >✨ 确认无误，生成{{ language === 'en' ? '英语' : '普通话' }}话术 ▾</el-button>
+        ><el-icon class="btn-caret"><MagicStick /></el-icon> 确认无误，生成{{ language === 'en' ? '英语' : '普通话' }}话术<el-icon class="btn-caret"><ArrowDown /></el-icon></el-button>
         <div v-if="openMenu" class="lang-menu" @click.self="openMenu = false">
-          <div :class="{ active: language === 'zh' }" @click="choose('zh')">普通话</div>
-          <div :class="{ active: language === 'en' }" @click="choose('en')">英语</div>
+          <div
+            :class="{ active: language === 'zh' }"
+            role="button"
+            tabindex="0"
+            @click="choose('zh')"
+            @keydown.enter.prevent="choose('zh')"
+          >普通话</div>
+          <div
+            :class="{ active: language === 'en' }"
+            role="button"
+            tabindex="0"
+            @click="choose('en')"
+            @keydown.enter.prevent="choose('en')"
+          >英语</div>
         </div>
       </div>
     </div>
@@ -48,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, MagicStick } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import type { OutlineItem } from '@/api/aiGen'
 
@@ -159,7 +196,12 @@ const choose = (lang: 'zh' | 'en') => {
       gap: 8px;
       color: #999;
 
-      .op { cursor: pointer; &:hover { color: #333; } }
+      .op {
+        cursor: pointer;
+        &:hover { color: #333; }
+        // 环节图标操作已补按钮语义，补键盘焦点环
+        &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: 2px; }
+      }
     }
   }
 
@@ -241,7 +283,10 @@ const choose = (lang: 'zh' | 'en') => {
     cursor: pointer;
 
     &:hover { background: #f6f4ff; }
+    &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: -2px; }
     &.active { color: #6b5ce7; font-weight: 500; }
   }
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

@@ -43,7 +43,7 @@
       </template>
     </div>
 
-    <el-button v-if="showScrollBtn" class="scroll-bottom-btn" @click="scrollToBottom(true)">↓</el-button>
+    <el-button v-if="showScrollBtn" class="scroll-bottom-btn" aria-label="滚动到底部" @click="scrollToBottom(true)">↓</el-button>
 
     <!-- 输入区 -->
     <div class="chat-input-area">
@@ -55,6 +55,7 @@
         :class="{ disabled: store.inputDisabled }"
         :disabled="store.inputDisabled"
         :placeholder="inputPlaceholder"
+        aria-label="对话输入"
         rows="3"
         @keydown.enter.exact.prevent="send"
       ></textarea>
@@ -69,7 +70,7 @@
             @change="onFileChange"
           />
           <el-button class="tool-btn" :disabled="store.inputDisabled || uploading" @click="pickFile">
-            {{ uploading ? '上传中…' : '📎 上传资料' }}
+            <span v-if="uploading">上传中…</span><template v-else><span aria-hidden="true">📎</span> 上传资料</template>
           </el-button>
           <el-button
             class="tool-btn"
@@ -376,7 +377,7 @@ onBeforeUnmount(() => {
       color: #4e5969;
       cursor: pointer;
       text-align: left;
-      transition: all 0.2s;
+      transition: border-color 0.2s, color 0.2s;
 
       &:hover:not(:disabled) { border-color: #1890ff; color: #1890ff; }
       &:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -483,7 +484,7 @@ onBeforeUnmount(() => {
       color: #4e5969;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
 
       &:hover:not(:disabled) { color: #1890ff; border-color: #1890ff; }
       &:disabled { color: #c0c4cc; border-color: #ebeef5; cursor: not-allowed; }
@@ -493,6 +494,7 @@ onBeforeUnmount(() => {
     .tool-hint {
       font-size: 12px;
       color: #a5a9b0;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -508,7 +510,7 @@ onBeforeUnmount(() => {
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
 
     &:hover:not(:disabled) { opacity: 0.85; }
     &:disabled { background: #c8d6e8; border-color: #c8d6e8; cursor: not-allowed; }

@@ -1,19 +1,24 @@
 <template>
   <div class="simple-node" :class="[data.nodeType, { 'is-selected': selected }]">
     <Handle v-if="data.nodeType !== 'start'" type="target" :position="Position.Top" class="flow-handle" />
-    <div class="node-icon">{{ data.nodeType === 'start' ? '▶' : '■' }}</div>
+    <div class="node-icon" aria-hidden="true"><el-icon v-if="data.nodeType === 'start'"><VideoPlay /></el-icon><el-icon v-else><VideoPause /></el-icon></div>
     <div class="node-label">{{ data.label }}</div>
     <span
       v-if="data.deletable !== false"
       class="node-delete-btn nodrag nopan"
       data-deletable="true"
       title="删除该节点"
+      role="button"
+      tabindex="0"
+      aria-label="删除该节点"
+      @keydown.enter.prevent="synthClick"
     >×</span>
     <Handle v-if="data.nodeType !== 'end'" type="source" :position="Position.Bottom" class="flow-handle" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { VideoPause, VideoPlay } from '@element-plus/icons-vue'
 import { Handle, Position } from '@vue-flow/core'
 
 defineProps<{
@@ -21,6 +26,11 @@ defineProps<{
   data: any
   selected?: boolean
 }>()
+
+// 键盘 Enter 激活：节点的点击交互由 FlowDesign 以原生 click 事件委托实现，这里合成 click 复用既有链路
+const synthClick = (e: KeyboardEvent) => {
+  ;(e.currentTarget as HTMLElement | null)?.click()
+}
 </script>
 
 <style scoped lang="scss">
@@ -69,9 +79,16 @@ defineProps<{
     border: 1px solid #e8e8e8;
     cursor: pointer;
     opacity: 0;
-    transition: all 0.15s;
+    transition: opacity 0.15s, color 0.15s, background 0.15s, border-color 0.15s;
 
     &:hover { color: #fff; background: #f5222d; border-color: #f5222d; }
+
+    // 节点删除按钮：补键盘焦点环
+    &:focus-visible {
+      opacity: 1;
+      outline: 2px solid #f5222d;
+      outline-offset: 2px;
+    }
   }
 
   &:hover .node-delete-btn { opacity: 1; }

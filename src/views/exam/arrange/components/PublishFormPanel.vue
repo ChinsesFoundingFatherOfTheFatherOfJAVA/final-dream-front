@@ -46,10 +46,13 @@
 
         <div class="field">
           <span class="label required">使用试卷</span>
-          <div class="user-box" :class="{ locked: published }" @click="!published && openPaperPick()">
+          <div class="user-box" :class="{ locked: published }" role="button"
+               :tabindex="published ? -1 : 0" aria-label="选择试卷"
+               @click="!published && openPaperPick()" @keydown.enter.prevent="!published && openPaperPick()">
             <span v-if="form.paperName" class="user-tag">{{ form.paperName }}</span>
             <span v-else class="placeholder">请选择试卷</span>
-            <span v-if="!published" class="more-dots" @click.stop="openPaperPick">…</span>
+            <span v-if="!published" class="more-dots" role="button" tabindex="0" aria-label="选择试卷"
+                  @click.stop="openPaperPick" @keydown.enter.prevent.stop="openPaperPick">…</span>
           </div>
           <p class="hint">
             {{ published
@@ -147,14 +150,20 @@
             </div>
 
             <div v-if="form.participantScope === 'assigned'" class="user-box"
-                 :class="{ readonly: published }" @click="!published && openPicker('participant')">
+                 :class="{ readonly: published }" role="button"
+                 :tabindex="published ? -1 : 0" aria-label="选择参与员工"
+                 @click="!published && openPicker('participant')"
+                 @keydown.enter.prevent="!published && openPicker('participant')">
               <template v-if="form.participantNames.length">
                 <span v-for="(n, i) in form.participantNames" :key="`${n}-${i}`" class="user-tag">
-                  {{ n }}<i v-if="!published" @click.stop="removeUser('participant', i)">×</i>
+                  {{ n }}<i v-if="!published" role="button" tabindex="0" :aria-label="`移除 ${n}`"
+                            @click.stop="removeUser('participant', i)"
+                            @keydown.enter.prevent.stop="removeUser('participant', i)">×</i>
                 </span>
               </template>
               <span v-else class="placeholder">请选择参与员工</span>
-              <span v-if="!published" class="more-dots" @click.stop="openPicker('participant')">…</span>
+              <span v-if="!published" class="more-dots" role="button" tabindex="0" aria-label="选择参与员工"
+                    @click.stop="openPicker('participant')" @keydown.enter.prevent.stop="openPicker('participant')">…</span>
             </div>
 
             <div class="switch-line">
@@ -192,27 +201,37 @@
 
         <div class="field">
           <span class="label">负责人</span>
-          <div class="user-box" :class="{ readonly: published }" @click="!published && openPicker('owner')">
+          <div class="user-box" :class="{ readonly: published }" role="button"
+               :tabindex="published ? -1 : 0" aria-label="选择负责人"
+               @click="!published && openPicker('owner')" @keydown.enter.prevent="!published && openPicker('owner')">
             <template v-if="form.ownerNames.length">
               <span v-for="(n, i) in form.ownerNames" :key="`${n}-${i}`" class="user-tag">
-                {{ n }}<i v-if="!published" @click.stop="removeUser('owner', i)">×</i>
+                {{ n }}<i v-if="!published" role="button" tabindex="0" :aria-label="`移除 ${n}`"
+                          @click.stop="removeUser('owner', i)"
+                          @keydown.enter.prevent.stop="removeUser('owner', i)">×</i>
               </span>
             </template>
             <span v-else class="placeholder">最多选择50个负责人</span>
-            <span v-if="!published" class="more-dots" @click.stop="openPicker('owner')">…</span>
+            <span v-if="!published" class="more-dots" role="button" tabindex="0" aria-label="选择负责人"
+                  @click.stop="openPicker('owner')" @keydown.enter.prevent.stop="openPicker('owner')">…</span>
           </div>
         </div>
 
         <div class="field">
           <span class="label">批阅人</span>
-          <div class="user-box" :class="{ readonly: published }" @click="!published && openPicker('grader')">
+          <div class="user-box" :class="{ readonly: published }" role="button"
+               :tabindex="published ? -1 : 0" aria-label="选择批阅人"
+               @click="!published && openPicker('grader')" @keydown.enter.prevent="!published && openPicker('grader')">
             <template v-if="form.graderNames.length">
               <span v-for="(n, i) in form.graderNames" :key="`${n}-${i}`" class="user-tag">
-                {{ n }}<i v-if="!published" @click.stop="removeUser('grader', i)">×</i>
+                {{ n }}<i v-if="!published" role="button" tabindex="0" :aria-label="`移除 ${n}`"
+                          @click.stop="removeUser('grader', i)"
+                          @keydown.enter.prevent.stop="removeUser('grader', i)">×</i>
               </span>
             </template>
             <span v-else class="placeholder">最多选择50个批阅人</span>
-            <span v-if="!published" class="more-dots" @click.stop="openPicker('grader')">…</span>
+            <span v-if="!published" class="more-dots" role="button" tabindex="0" aria-label="选择批阅人"
+                  @click.stop="openPicker('grader')" @keydown.enter.prevent.stop="openPicker('grader')">…</span>
           </div>
         </div>
 
@@ -246,7 +265,7 @@
     <section class="more-card">
       <el-button class="more-toggle" @click="moreOpen = !moreOpen">
         {{ moreOpen ? '收起更多设置' : '展开更多设置' }}
-        <span class="chev" :class="{ open: moreOpen }">⌃</span>
+        <span class="chev" :class="{ open: moreOpen }" aria-hidden="true"><el-icon><CaretTop /></el-icon></span>
       </el-button>
 
       <div v-show="moreOpen" class="more-grid">
@@ -548,6 +567,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretTop } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import {
@@ -1269,6 +1289,7 @@ onMounted(async () => {
 
   &:hover { border-color: #1890ff; }
   &.readonly { background: #f5f7fa; cursor: default; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .placeholder { font-size: 13px; color: #b0b7c3; }
 
@@ -1280,6 +1301,8 @@ onMounted(async () => {
     color: #8a92a5;
     letter-spacing: 1px;
     cursor: pointer;
+
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
   }
 }
 
@@ -1294,7 +1317,9 @@ onMounted(async () => {
   color: #2f54eb;
   font-size: 12px;
 
-  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  }
 }
 
 .notify-card { min-height: 320px; }
@@ -1303,11 +1328,8 @@ onMounted(async () => {
   width: calc(100% - 44px);
   box-sizing: border-box;
   margin-left: 44px;
-  border: 1px solid #dcdfe6;
   border-radius: 4px;
-  padding: 8px 10px;
   font-size: 13px;
-  outline: none;
 }
 
 /* ---- 更多设置 ---- */

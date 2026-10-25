@@ -27,7 +27,7 @@
               value-format="YYYY-MM-DD"
               placeholder="开始日期"
             />
-            <i>~</i>
+            <i aria-hidden="true">~</i>
             <el-date-picker
               v-model="form.uploadTimeEnd"
               type="date"
@@ -45,7 +45,7 @@
               value-format="YYYY-MM-DD"
               placeholder="开始日期"
             />
-            <i>~</i>
+            <i aria-hidden="true">~</i>
             <el-date-picker
               v-model="form.updateTimeEnd"
               type="date"

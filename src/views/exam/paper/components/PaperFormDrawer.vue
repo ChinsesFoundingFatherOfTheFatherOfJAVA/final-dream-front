@@ -12,15 +12,17 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ mode === 'create' ? '新建试卷' : '编辑试卷' }}</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
         <div class="form-item">
           <label class="form-label required">试卷分类</label>
-          <div class="catalog-select" @click="showCatalogPicker = !showCatalogPicker">
+          <div class="catalog-select" role="button" tabindex="0" aria-label="选择试卷分类"
+               @click="showCatalogPicker = !showCatalogPicker"
+               @keydown.enter.prevent="showCatalogPicker = !showCatalogPicker">
             <span :class="{ placeholder: !catalogName }">{{ catalogName || '请选择' }}</span>
-            <span class="select-arrow">▾</span>
+            <span class="select-arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
 
             <div v-if="showCatalogPicker" class="catalog-dropdown" @click.stop>
               <div
@@ -28,7 +30,9 @@
                 :key="node.id"
                 class="dropdown-node"
                 :style="{ paddingLeft: 10 + node.level * 16 + 'px' }"
+                role="button" tabindex="0"
                 @click="pickCatalog(node)"
+                @keydown.enter.prevent="pickCatalog(node)"
               >{{ node.name }}</div>
             </div>
           </div>
@@ -81,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import {
@@ -193,7 +198,7 @@ onMounted(async () => {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 20px; }
@@ -212,6 +217,7 @@ onMounted(async () => {
   font-size: 13px; cursor: pointer;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   .placeholder { color: #b0b7c3; }
   .select-arrow { color: #8a92a5; font-size: 11px; }
 
@@ -224,6 +230,7 @@ onMounted(async () => {
     .dropdown-node {
       padding: 7px 12px; font-size: 12px; color: #4a5368; cursor: pointer;
       &:hover { background: #f2f6ff; color: #1890ff; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     }
   }
 }

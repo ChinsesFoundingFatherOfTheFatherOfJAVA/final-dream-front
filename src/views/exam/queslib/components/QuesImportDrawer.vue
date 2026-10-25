@@ -13,13 +13,13 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>导入试题（{{ format === 'word' ? 'Word' : 'Excel' }}）</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
         <ol class="steps">
           <li class="step">
-            <span class="step-no">1</span>
+            <span class="step-no" aria-hidden="true">1</span>
             <div class="step-main">
               <p class="step-title">下载模板</p>
               <p class="step-hint">先下载标准模板，按模板填写后再上传；模板列结构与「导出试题」一致。</p>
@@ -30,11 +30,13 @@
           </li>
 
           <li class="step">
-            <span class="step-no">2</span>
+            <span class="step-no" aria-hidden="true">2</span>
             <div class="step-main">
               <p class="step-title">上传文件</p>
               <div class="drop-zone" :class="{ over: dragOver }"
+                   role="button" tabindex="0" aria-label="上传文件"
                    @click="pickFile"
+                   @keydown.enter.prevent="pickFile"
                    @dragover.prevent="dragOver = true"
                    @dragleave.prevent="dragOver = false"
                    @drop.prevent="onDrop">
@@ -44,7 +46,8 @@
                 </p>
                 <p v-else class="drop-file">
                   {{ file.name }}（{{ Math.round(file.size / 1024) }} KB）
-                  <i @click.stop="file = null">×</i>
+                  <i role="button" tabindex="0" aria-label="移除文件" @click.stop="file = null"
+                     @keydown.enter.prevent.stop="file = null">×</i>
                 </p>
                 <input ref="fileInput" type="file" class="hidden-file" :accept="accept" @change="onPicked" />
               </div>
@@ -196,7 +199,7 @@ const doImport = async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
@@ -233,12 +236,14 @@ const doImport = async () => {
   cursor: pointer;
 
   &:hover, &.over { border-color: #1890ff; background: #f5f9ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .drop-tip { margin: 0; font-size: 13px; color: #8a92a5; line-height: 1.9; em { color: #1890ff; font-style: normal; } }
   .hint { font-size: 11px; color: #b0b7c3; }
   .drop-file {
     margin: 0; font-size: 13px; color: #1f2937;
-    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer; }
+    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer;
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
 }
 

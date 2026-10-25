@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>快速选人</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body" @click="showDeptPicker = false">
@@ -21,7 +21,7 @@
             <!-- 必须 .stop：否则冒泡到 .drawer-body 的关闭处理，刚打开就被关掉，表现为"点了没反应" -->
             <el-button class="dept-trigger" @click.stop="showDeptPicker = !showDeptPicker">
               <span :class="{ placeholder: !deptId }">{{ selectedDeptName }}</span>
-              <span class="select-arrow">▾</span>
+              <span class="select-arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </el-button>
             <!-- 部门是多层级数据，必须树状展示（平铺下拉在 8000+ 人员的组织里不可用） -->
             <div v-if="showDeptPicker" class="dept-dropdown" @click.stop>
@@ -71,7 +71,8 @@
             <div class="selected-list">
               <span v-for="u in selected.values()" :key="u.userId" class="selected-tag">
                 {{ u.name }}
-                <i @click="selected.delete(u.userId)">×</i>
+                <i role="button" tabindex="0" :aria-label="`移除 ${u.name}`"
+                   @click="selected.delete(u.userId)" @keydown.enter.prevent="selected.delete(u.userId)">×</i>
               </span>
               <span v-if="!selected.size" class="empty-tip">请选择...</span>
             </div>
@@ -93,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { getDepartmentTree, getEnterpriseUsers, type EnterpriseDepartment, type EnterpriseUser } from '@/api/sm'
 import DeptTree from '@/components/common/DeptTree.vue'
@@ -212,7 +214,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -228,23 +230,9 @@ onMounted(async () => {
   display: flex;
   gap: 10px;
 
-  .filter-select {
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 12px;
-    outline: none;
-    max-width: 180px;
-  }
+  .filter-select { font-size: 12px; max-width: 180px; }
 
-  input {
-    flex: 1;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 12px;
-    outline: none;
-  }
+  .el-input { flex: 1; min-width: 160px; font-size: 12px; }
 
   .search-btn {
     padding: 6px 16px;
@@ -354,7 +342,8 @@ tr.checked td { background: #f0f7ff; }
     font-size: 12px;
     color: #2f54eb;
 
-    i { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; } }
+    i { font-style: normal; cursor: pointer; color: #8a92a5; &:hover { color: #f5222d; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
 
   .empty-tip { font-size: 12px; color: #b0b7c3; }

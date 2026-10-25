@@ -1,7 +1,7 @@
 <template>
   <div class="course-form-page">
     <header class="form-header">
-      <el-button class="back-btn" @click="goBack">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课程列表" @click="goBack">‹</el-button>
       <h1>{{ mode === 'edit' ? '编辑课程' : '创建课程' }}</h1>
     </header>
 
@@ -23,7 +23,7 @@
       <main ref="formScroll" class="form-scroll">
         <!-- CS-07：表单=课件编辑表单精简（去掉"上传文件"段），字段/校验/减法清单与课件模块一致 -->
         <section ref="basicSection" class="form-section" data-anchor="basic">
-          <h2><i></i>基本信息</h2>
+          <h2><i aria-hidden="true"></i>基本信息</h2>
           <div class="form-grid">
             <label class="field span-2">
               <span>名称<em>*</em></span>
@@ -163,19 +163,19 @@
         </section>
 
         <section ref="contributorSection" class="form-section" data-anchor="contributor">
-          <h2><i></i>相关方信息</h2>
+          <h2><i aria-hidden="true"></i>相关方信息</h2>
           <div class="field span-2">
             <span>贡献者<em>*</em></span>
             <div class="contributor-tag">
               <span>{{ contributorText }}</span>
               <el-button aria-label="移除贡献者" @click="contributorRemoved = true">×</el-button>
-              <i>...</i>
+              <i aria-hidden="true">...</i>
             </div>
           </div>
         </section>
 
         <section ref="permissionSection" class="form-section" data-anchor="permission">
-          <h2><i></i>权限设置</h2>
+          <h2><i aria-hidden="true"></i>权限设置</h2>
           <div class="permission-form">
             <div class="permission-line">
               <span>浏览权限</span>
@@ -188,7 +188,7 @@
         </section>
 
         <section ref="functionSection" class="form-section" data-anchor="function">
-          <h2><i></i>功能设置</h2>
+          <h2><i aria-hidden="true"></i>功能设置</h2>
           <div class="switch-stack">
             <div class="switch-line" :class="{ disabled: speedLocked }">
               <el-switch v-model="form.speedEnabled" :disabled="speedLocked" />

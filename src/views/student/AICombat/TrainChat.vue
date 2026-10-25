@@ -13,7 +13,7 @@
 
         <!-- 陪练者消息：左侧头像 + 气泡（形象与训练页左栏同源） -->
         <template v-else-if="msg.role === 1">
-          <img class="avatar trainer-avatar" :src="trainerFace(store.trainerAvatar)" alt="" />
+          <img class="avatar trainer-avatar" :src="trainerFace(store.trainerAvatar)" alt="陪练者头像" loading="lazy" />
           <div class="bubble trainer-bubble">
             <span class="bubble-text">{{ msg.content }}</span>
             <!-- FP-24 语音模式：陪练者气泡 🔊 重播（TTS） -->
@@ -22,9 +22,13 @@
               class="audio-icon"
               :class="{ active: !!msg.audioUrl && player.playingUrl.value === audioSrc(msg.audioUrl), loading: ttsLoadingId === msg.messageId }"
               :title="msg.audioUrl ? '点击重播' : '点击播放'"
+              :aria-label="msg.audioUrl ? '重播陪练者语音' : '播放陪练者语音'"
+              role="button"
+              tabindex="0"
               @click.stop="onTrainerAudioClick(msg)"
+              @keydown.enter.prevent="onTrainerAudioClick(msg)"
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/>
                 <path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 <path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -42,9 +46,13 @@
               class="audio-icon"
               :class="{ active: player.playingUrl.value === audioSrc(msg.audioUrl) }"
               title="点击回放录音"
+              aria-label="回放我的录音"
+              role="button"
+              tabindex="0"
               @click.stop="player.toggle(audioSrc(msg.audioUrl))"
+              @keydown.enter.prevent="player.toggle(audioSrc(msg.audioUrl))"
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/>
                 <path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 <path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -69,12 +77,19 @@
       <div v-if="inputMode === 'voice'" class="voice-row">
         <template v-if="recorder.recording.value">
           <!-- 录音中波形动画 + 剩余秒数 + 停止（发送）按钮 -->
-          <div class="wave-box" @click="stopAndUpload">
-            <span v-for="i in 7" :key="i" class="wave-bar" :style="{ animationDelay: `${(i - 1) * 0.12}s` }"></span>
+          <div
+            class="wave-box"
+            role="button"
+            tabindex="0"
+            aria-label="停止并发送录音"
+            @click="stopAndUpload"
+            @keydown.enter.prevent="stopAndUpload"
+          >
+            <span v-for="i in 7" :key="i" class="wave-bar" :style="{ animationDelay: `${(i - 1) * 0.12}s` }" aria-hidden="true"></span>
           </div>
           <span class="record-countdown" :class="{ urgent: remainSec <= 10 }">{{ remainSec }}s</span>
-          <el-button class="round-btn stop-btn" title="停止并发送" @click="stopAndUpload">
-            <svg width="12" height="12" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="currentColor"/></svg>
+          <el-button class="round-btn stop-btn" title="停止并发送" aria-label="停止并发送" @click="stopAndUpload">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="3" fill="currentColor"/></svg>
           </el-button>
         </template>
         <template v-else>
@@ -84,8 +99,8 @@
             重试上传
           </el-button>
           <!-- 键盘输入：与录音输入互为切换，两种对话方式都可用 -->
-          <el-button class="round-btn ghost-btn" title="切换键盘输入" @click="switchInputMode('text')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <el-button class="round-btn ghost-btn" title="切换键盘输入" aria-label="切换键盘输入" @click="switchInputMode('text')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="2.5" y="6" width="19" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
               <line x1="7" y1="10" x2="7" y2="10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <line x1="12" y1="10" x2="12" y2="10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -99,10 +114,11 @@
             :class="{ loading: store.sending }"
             :disabled="store.sending"
             title="开始录音"
+            aria-label="开始录音"
             @click="startRecord"
           >
             <span v-if="store.sending" class="spin-ring"></span>
-            <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
               <path d="M5.5 11a6.5 6.5 0 0 0 13 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
               <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -119,6 +135,8 @@
           class="chat-input"
           placeholder="请输入"
           maxlength="2000"
+          autocomplete="off"
+          aria-label="训练发言输入"
           :disabled="store.sending"
           @keyup.enter="onSend"
         />
@@ -126,10 +144,11 @@
         <el-button
           class="round-btn mic-inline-btn"
           title="切换语音输入"
+          aria-label="切换语音输入"
           :disabled="store.sending"
           @click="switchInputMode('voice')"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
             <path d="M5.5 11a6.5 6.5 0 0 0 13 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <line x1="12" y1="17.5" x2="12" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -566,11 +585,16 @@ const onSend = async () => {
   color: rgba(232, 236, 247, 0.75);
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: color 0.2s, background 0.2s;
 
   &:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #6ea8ff;
+    outline-offset: 2px;
   }
 
   &.active {
@@ -626,6 +650,11 @@ const onSend = async () => {
     }
   }
 
+  // 聊天输入框本体去掉了 outline，改由容器边框提示焦点（不产生布局位移）
+  &:focus-within {
+    border-color: rgba(110, 168, 255, 0.55);
+  }
+
   .send-btn {
     height: 36px;
     padding: 0 22px;
@@ -636,7 +665,7 @@ const onSend = async () => {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: box-shadow 0.2s;
     flex-shrink: 0;
 
     &:hover:not(.disabled) {
@@ -720,6 +749,12 @@ const onSend = async () => {
   &:hover .wave-bar {
     background: #9cc2ff;
   }
+
+  // 录音波形点击即停止发送，补键盘焦点环
+  &:focus-visible {
+    outline: 2px solid #6ea8ff;
+    outline-offset: 2px;
+  }
 }
 
 @keyframes wave-jump {
@@ -742,7 +777,7 @@ const onSend = async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
 
   &:disabled {

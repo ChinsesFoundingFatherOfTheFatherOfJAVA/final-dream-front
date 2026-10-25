@@ -59,6 +59,8 @@
           row-key="id"
           class="paper-table"
           empty-text="暂无试卷"
+          :default-sort="{ prop: 'updateTime', order: 'descending' }"
+          @sort-change="onSortChange"
         >
           <el-table-column width="44" align="center">
             <template #header>
@@ -82,10 +84,10 @@
           <el-table-column label="出卷方式" width="110">
             <template #default="{ row }">{{ row.buildType === 1 ? '随机出卷' : '固定出卷' }}</template>
           </el-table-column>
-          <el-table-column label="引用次数" width="110">
-            <template #header><el-button link @click="sortBy('usedQty')">引用次数 {{ orderIcon('usedQty') }}</el-button></template>
+          <el-table-column label="引用次数" width="110" prop="usedQty" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">
-                <span v-if="row.usedQty > 0" class="used-link" @click="openUseDrawer(row)">{{ row.usedQty }}</span>
+                <span v-if="row.usedQty > 0" class="used-link" role="button" tabindex="0"
+                      @click="openUseDrawer(row)" @keydown.enter.prevent="openUseDrawer(row)">{{ row.usedQty }}</span>
                 <span v-else>{{ row.usedQty }}</span>
             </template>
           </el-table-column>
@@ -94,15 +96,14 @@
                 {{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span>
             </template>
           </el-table-column>
-          <el-table-column label="更新日期" width="170">
-            <template #header><el-button link @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</el-button></template>
+          <el-table-column label="更新日期" width="170" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.updateTime }}</template>
           </el-table-column>
           <el-table-column label="试卷状态" width="110">
             <template #default="{ row }">
                 <!-- 仅两态：0=已保存灰点 / 4=已发布绿点 -->
                 <span class="status-cell">
-                  <i class="status-dot" :class="{ published: row.status === 4 }"></i>
+                  <i class="status-dot" :class="{ published: row.status === 4 }" aria-hidden="true"></i>
                   <span>{{ row.status === 4 ? '已发布' : '已保存' }}</span>
                 </span>
             </template>
@@ -110,8 +111,9 @@
           <el-table-column label="启用" width="100">
             <template #default="{ row }">
                 <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'"
-                      @click="toggleDisabled(row)">
-                  <i class="enable-dot" :class="{ off: row.disabled === 1 }"></i>
+                      role="button" tabindex="0"
+                      @click="toggleDisabled(row)" @keydown.enter.prevent="toggleDisabled(row)">
+                  <i class="enable-dot" :class="{ off: row.disabled === 1 }" aria-hidden="true"></i>
                   <span>{{ row.disabled === 0 ? '启用' : '禁用' }}</span>
                 </span>
             </template>
@@ -121,7 +123,7 @@
               <el-button link type="primary" @click="row.status !== 4 ? releaseRow(row) : goManageRow(row)">
                 {{ row.status !== 4 ? '发布' : '管理' }}
               </el-button>
-              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多▾</el-button>
+              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -145,26 +147,26 @@
     <!-- 齿轮菜单（分类操作）：外层透明遮罩，点空白处即关闭（同题库页 dropdown-mask 做法） -->
     <div v-if="gearMenu.visible" class="dropdown-mask" @click="gearMenu.visible = false">
       <div class="float-menu" :style="{ left: gearMenu.x + 'px', top: gearMenu.y + 'px' }">
-        <div class="menu-item" @click="openCreateCatalog(gearMenu.node!.id)">新建子分类</div>
-        <div class="menu-item" @click="openEditCatalog()">编辑</div>
-        <div class="menu-item" @click="openMoveCatalog()">移动</div>
-        <div class="menu-item" @click="toggleCatalogDisabled()">
+        <div class="menu-item" role="button" tabindex="0" @click="openCreateCatalog(gearMenu.node!.id)" @keydown.enter.prevent="openCreateCatalog(gearMenu.node!.id)">新建子分类</div>
+        <div class="menu-item" role="button" tabindex="0" @click="openEditCatalog()" @keydown.enter.prevent="openEditCatalog()">编辑</div>
+        <div class="menu-item" role="button" tabindex="0" @click="openMoveCatalog()" @keydown.enter.prevent="openMoveCatalog()">移动</div>
+        <div class="menu-item" role="button" tabindex="0" @click="toggleCatalogDisabled()" @keydown.enter.prevent="toggleCatalogDisabled()">
           {{ gearMenu.node!.disabled === 1 ? '启用' : '禁用' }}
         </div>
-        <div class="menu-item danger" @click="removeCatalog()">删除</div>
+        <div class="menu-item danger" role="button" tabindex="0" @click="removeCatalog()" @keydown.enter.prevent="removeCatalog()">删除</div>
       </div>
     </div>
 
     <!-- 行"更多"菜单（同样带遮罩，点空白处关闭） -->
     <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
       <div class="float-menu" :style="{ left: moreMenu.x + 'px', top: moreMenu.y + 'px' }">
-        <div v-if="moreMenu.row?.status !== 4" class="menu-item" @click="goManage">管理</div>
-        <div class="menu-item" @click="openEditPaper()">编辑</div>
-        <div v-if="moreMenu.row?.status === 4" class="menu-item" @click="openShare()">共享</div>
-        <div class="menu-item" @click="openTransfer()">转移</div>
-        <div class="menu-item" @click="openChangeCatalog()">修改分类</div>
+        <div v-if="moreMenu.row?.status !== 4" class="menu-item" role="button" tabindex="0" @click="goManage" @keydown.enter.prevent="goManage">管理</div>
+        <div class="menu-item" role="button" tabindex="0" @click="openEditPaper()" @keydown.enter.prevent="openEditPaper()">编辑</div>
+        <div v-if="moreMenu.row?.status === 4" class="menu-item" role="button" tabindex="0" @click="openShare()" @keydown.enter.prevent="openShare()">共享</div>
+        <div class="menu-item" role="button" tabindex="0" @click="openTransfer()" @keydown.enter.prevent="openTransfer()">转移</div>
+        <div class="menu-item" role="button" tabindex="0" @click="openChangeCatalog()" @keydown.enter.prevent="openChangeCatalog()">修改分类</div>
         <div class="menu-item danger" :class="{ disabled: !moreMenu.row?.permissions.canDelete }"
-             @click="removePaper()">删除</div>
+             role="button" tabindex="0" @click="removePaper()" @keydown.enter.prevent="removePaper()">删除</div>
       </div>
     </div>
 
@@ -258,6 +260,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
@@ -339,7 +342,7 @@ const moreMenu = reactive<{ visible: boolean; x: number; y: number; row: PaperIt
 
 const router = useRouter()
 
-const orderIcon = (field: string) => (orderby.value === field ? (asc.value ? '↑' : '↓') : '⇅')
+
 
 /** 管理 → 试卷管理页（FP-07）。 */
 const goManageRow = (row: PaperItem) => {
@@ -351,9 +354,10 @@ const goManage = () => {
   if (moreMenu.row) goManageRow(moreMenu.row)
 }
 
-const sortBy = (field: 'updateTime' | 'usedQty') => {
-  if (orderby.value === field) asc.value = !asc.value
-  else { orderby.value = field; asc.value = false }
+const onSortChange = ({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) => {
+  if (!prop || !order) return
+  orderby.value = prop as 'updateTime' | 'usedQty'
+  asc.value = order === 'ascending'
   reload(1)
 }
 
@@ -700,16 +704,9 @@ onMounted(() => {
   gap: 8px;
   margin-bottom: 10px;
 
-  .filter-select {
-    border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 6px 8px; font-size: 12px; outline: none; max-width: 130px;
-  }
+  .filter-select { font-size: 12px; max-width: 130px; }
 
-  .keyword-input {
-    flex: 1; min-width: 160px;
-    border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 6px 10px; font-size: 12px; outline: none;
-  }
+  .keyword-input { flex: 1; min-width: 160px; font-size: 12px; }
 
   .search-btn {
     border: none; border-radius: 4px; background: #1890ff; color: #fff;
@@ -745,11 +742,13 @@ tr.checked td { background: #f5f9ff; }
   background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; font-size: 11px;
 }
 
-.used-link { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } }
+.used-link { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
 
 .status-cell, .enable-cell {
   display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
 }
+
+.enable-cell:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; }
 
 .status-dot, .enable-dot {
   width: 7px; height: 7px; border-radius: 50%; background: #52c41a; display: inline-block;
@@ -791,6 +790,7 @@ tr.checked td { background: #f5f9ff; }
     padding: 8px 14px; font-size: 13px; color: #4a5368; cursor: pointer;
 
     &:hover { background: #f2f6ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     &.danger { color: #f5222d; }
     &.disabled { color: #c0c4cc; cursor: not-allowed; &:hover { background: transparent; color: #c0c4cc; } }
   }
@@ -802,4 +802,6 @@ tr.checked td { background: #f5f9ff; }
   inset: 0;
   z-index: 2999;
 }
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>

@@ -19,7 +19,7 @@
           <el-button class="mode-tab" :class="{ active: mode === 'quick' }"
                   @click="switchMode('quick')">快速建题</el-button>
         </div>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -118,7 +118,10 @@
 
           <div class="card-list">
             <article v-for="(card, index) in drafts" :key="index" class="card" :class="{ expanded: card.expanded }">
-              <div class="card-top" @click="card.expanded = !card.expanded">
+              <div class="card-top" role="button" tabindex="0"
+                   :aria-expanded="card.expanded"
+                   @click="card.expanded = !card.expanded"
+                   @keydown.enter.prevent="card.expanded = !card.expanded">
                 <span class="tag">{{ typeLabel(card.data.type) }}</span>
                 <span class="level">{{ levelLabel(card.data.levelType) }}</span>
                 <span class="expand-hint">{{ card.expanded ? '收起' : '点击展开编辑' }}</span>
@@ -523,7 +526,7 @@ const saveAll = async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 /* 双 tab：对齐原平台"左侧两个图标切换 AI建题 / 快速建题"的形态 */
@@ -775,7 +778,9 @@ const saveAll = async () => {
   padding: 10px 12px;
   font-size: 12px;
 
-  .card-top { display: flex; align-items: center; gap: 8px; }
+  .card-top { display: flex; align-items: center; gap: 8px; cursor: pointer;
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; }
+  }
   .tag { background: #f0f5ff; border: 1px solid #adc6ff; color: #2f54eb; border-radius: 3px; padding: 0 6px; }
   .level { color: #8a92a5; }
   .card-top .link { margin-left: auto; }
@@ -826,11 +831,8 @@ const saveAll = async () => {
 }
 
 .edit-select {
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  padding: 4px 8px;
   font-size: 12px;
-  outline: none;
 }
 
 .edit-option {

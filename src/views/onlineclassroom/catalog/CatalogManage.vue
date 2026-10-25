@@ -37,9 +37,13 @@
                 <span
                   v-if="row.node.children?.length"
                   class="expand-icon"
+                  role="button"
+                  tabindex="0"
+                  :aria-label="expanded.has(row.node.id) || keyword ? '收起子分类' : '展开子分类'"
                   @click.stop="toggleExpand(row.node.id)"
+                  @keydown.enter.prevent="toggleExpand(row.node.id)"
                 >
-                  {{ expanded.has(row.node.id) || keyword ? '⌄' : '›' }}
+                  <el-icon class="fold" v-if="expanded.has(row.node.id) || keyword"><ArrowDown /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon>
                 </span>
                 <span class="name-text" :style="{ paddingLeft: `${(row.node.level - 1) * 24}px` }">
                   {{ row.node.name }}
@@ -62,8 +66,8 @@
                 <span class="action-list">
                   <el-button link type="primary" @click="openView(row.node.id)">查看</el-button>
                   <el-button link type="primary" @click="openEdit(row.node.id)">编辑</el-button>
-                  <el-dropdown trigger="click" @command="(command: string) => handleMoreCommand(command, row.node)">
-                    <el-button link type="primary">更多⌄</el-button>
+                  <el-dropdown trigger="click" popper-class="more-popper" @command="(command: string) => handleMoreCommand(command, row.node)">
+                    <el-button link type="primary" class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item command="delete">删除</el-dropdown-item>
@@ -115,6 +119,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretRight } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import CatalogViewDrawer from './CatalogViewDrawer.vue'
@@ -424,6 +429,12 @@ onMounted(reload)
   width: 18px;
   color: #7a8396;
   cursor: pointer;
+
+  /* 自定义可点展开图标：键盘可达，补可见焦点环（不占布局空间） */
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: 1px;
+  }
 }
 
 .name-text {
@@ -457,4 +468,26 @@ onMounted(reload)
     flex-wrap: wrap;
   }
 }
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
+</style>
+
+<style lang="scss">
+/* 更多菜单弹层（teleport 到 body，需非 scoped）：圆角/阴影/条目悬浮态精修 */
+.more-popper {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  padding: 6px;
+
+  .el-dropdown-menu { padding: 0; }
+  .el-dropdown-menu__item {
+    border-radius: 5px;
+    padding: 7px 12px;
+    line-height: 1.4;
+
+    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+  }
+}
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

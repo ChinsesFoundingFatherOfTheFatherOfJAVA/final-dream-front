@@ -50,7 +50,7 @@
       @close="view = null"
     >
       <div class="drawer">
-        <div class="drawer-header"><span>试题查看</span><span class="close-btn" @click="view = null">×</span></div>
+        <div class="drawer-header"><span>试题查看</span><span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="view = null" @keydown.enter.prevent="view = null">×</span></div>
         <div class="drawer-body">
           <p class="q-meta">{{ TYPE_LABELS[view.type] }} · {{ LEVEL_LABELS[view.levelType] }} · 考核点：{{ (view.points || []).join('；') || '--' }}</p>
           <p class="q-label">题干</p>
@@ -82,7 +82,7 @@
       @close="answer = null"
     >
       <div class="drawer">
-        <div class="drawer-header"><span>答题详情</span><span class="close-btn" @click="answer = null">×</span></div>
+        <div class="drawer-header"><span>答题详情</span><span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="answer = null" @keydown.enter.prevent="answer = null">×</span></div>
         <div class="drawer-body">
           <p class="q-meta">{{ TYPE_LABELS[answer.type] }} · {{ LEVEL_LABELS[answer.levelType] }} · 正确率 {{ formatRate(answer.correctRate) }}（{{ answer.correctQty }}/{{ answer.submitQty }}）</p>
           <p class="q-label">题干</p>
@@ -165,7 +165,7 @@ const doExport = async () => {
 <style scoped lang="scss">
 .list-card { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 0 0 12px; }
 .filter-row { display: flex; gap: 8px; align-items: center; input { flex: 1; min-width: 150px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; } .export-btn { margin-left: auto; } }
-.filter-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; }
+.filter-select { font-size: 12px; }
 .table-wrap { flex: 1; min-height: 0; overflow: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f2f4f8; }
@@ -179,7 +179,7 @@ tr:hover td { background: #fafbfe; }
 .empty-cell { text-align: center; color: #999; padding: 44px 0; }
 .pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
 .drawer { width: 640px; height: 100%; background: #fff; display: flex; flex-direction: column; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; } }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; font-size: 13px; }
 .q-meta { margin: 0 0 14px; color: #8a92a5; font-size: 12px; }
 .q-label { margin: 14px 0 6px; color: #4a5368; font-weight: 500; }

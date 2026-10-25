@@ -23,7 +23,7 @@
     <!-- 主体：纯聊天态单栏居中；topic-changed 后左右两栏（左 45% / 右 55%） -->
     <div class="page-body">
       <div v-if="initError" class="init-error">
-        <div class="err-icon">⚠️</div>
+        <div class="err-icon" aria-hidden="true">⚠️</div>
         <p class="err-text">{{ initError }}</p>
         <el-button class="err-retry" @click="bootstrap">重试</el-button>
       </div>

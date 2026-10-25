@@ -2,15 +2,28 @@
   <div class="practice-report">
     <!-- 顶部返回栏 -->
     <div class="report-topbar">
-      <span class="back-arrow" @click="goBack">‹</span>
-      <span class="topbar-label" @click="goBack">话术训练</span>
+      <span
+        class="back-arrow"
+        role="button"
+        tabindex="0"
+        aria-label="返回"
+        @click="goBack"
+        @keydown.enter.prevent="goBack"
+      >‹</span>
+      <span
+        class="topbar-label"
+        role="button"
+        tabindex="0"
+        @click="goBack"
+        @keydown.enter.prevent="goBack"
+      >话术训练</span>
       <span class="topbar-title">{{ report?.projectName || '训练报告' }}</span>
     </div>
 
     <!-- 报告生成中：等待态 -->
     <div v-if="phase === 'waiting'" class="waiting-card">
-      <div class="waiting-icon">
-        <svg width="72" height="72" viewBox="0 0 24 24" fill="none">
+      <div class="waiting-icon" aria-hidden="true">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="docGrad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#7a6cf0"/>
@@ -59,14 +72,14 @@
               {{ report.studentName || '学员' }}
             </span>
             <span class="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.8"/>
                 <path d="M12 7v5l3.5 2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
               练习时长：{{ formatDuration(report.durationSeconds) }}
             </span>
             <span class="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 5h16v11H9l-4 4v-4H4V5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>
               </svg>
               对话轮次：{{ report.roundCount }}轮
@@ -106,13 +119,34 @@
       <!-- FP-16/17 评分明细 / 对话记录 Tab -->
       <div class="white-card">
         <div class="tabs">
-          <span class="tab" :class="{ active: activeTab === 'score' }" @click="activeTab = 'score'">评分明细</span>
-          <span class="tab" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">对话记录</span>
+          <span
+            class="tab"
+            :class="{ active: activeTab === 'score' }"
+            role="button"
+            tabindex="0"
+            @click="activeTab = 'score'"
+            @keydown.enter.prevent="activeTab = 'score'"
+          >评分明细</span>
+          <span
+            class="tab"
+            :class="{ active: activeTab === 'chat' }"
+            role="button"
+            tabindex="0"
+            @click="activeTab = 'chat'"
+            @keydown.enter.prevent="activeTab = 'chat'"
+          >对话记录</span>
           <!--
             要点命中详情是"逐轮"数据（接口 4.2 按会话轮次返回），与某个维度叫什么名字无关，
             因此入口挂在 Tab 行而非某个维度块下：维度改名或新建自定义维度都不会让入口消失。
           -->
-          <span v-if="reportId" class="consistency-entry" @click="consistencyVisible = true">
+          <span
+            v-if="reportId"
+            class="consistency-entry"
+            role="button"
+            tabindex="0"
+            @click="consistencyVisible = true"
+            @keydown.enter.prevent="consistencyVisible = true"
+          >
             查看逐轮要点命中详情 ›
           </span>
         </div>
@@ -339,12 +373,23 @@ export default { name: 'PracticeReport' }
     &:hover {
       color: #2e7cf6;
     }
+
+    // 图标返回按钮：补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
+    }
   }
 
   .topbar-label {
     color: #2e7cf6;
     font-size: 15px;
     cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
+    }
   }
 
   .topbar-title {
@@ -626,6 +671,11 @@ export default { name: 'PracticeReport' }
     &:hover {
       text-decoration: underline;
     }
+
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: 2px;
+    }
   }
 
   .tab {
@@ -634,6 +684,11 @@ export default { name: 'PracticeReport' }
     color: #666;
     cursor: pointer;
     position: relative;
+
+    &:focus-visible {
+      outline: 2px solid #2e7cf6;
+      outline-offset: -2px;
+    }
 
     &.active {
       color: #2e7cf6;

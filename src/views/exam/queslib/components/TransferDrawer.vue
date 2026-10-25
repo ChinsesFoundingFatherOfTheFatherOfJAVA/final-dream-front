@@ -2,7 +2,7 @@
   <!-- FP-04 转移题库抽屉（截图34：只读信息+原创建者+新创建者选人；batch=批量统一转给一人） -->
     <el-drawer
     :model-value="true"
-    size="440px"
+    size="560px"
     :with-header="false"
     append-to-body
     destroy-on-close
@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>转移题库</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -27,12 +27,13 @@
         <div class="section">
           <div class="section-title">转移设置</div>
           <label class="form-label required">创建人</label>
-          <div class="user-picker" @click="showUserPicker = true">
+          <div class="user-picker" role="button" tabindex="0" aria-label="选择新创建者"
+               @click="showUserPicker = true" @keydown.enter.prevent="showUserPicker = true">
             <span v-if="picked" class="picked-user">
               {{ picked.fullname }}<span v-if="picked.userName">({{ picked.userName }})</span>
             </span>
             <span v-else class="picker-placeholder">请选择</span>
-            <span class="picker-btn">···</span>
+            <span class="picker-btn" aria-hidden="true">···</span>
           </div>
           <p class="transfer-note">转移后题库所有权归属新创建者，原创建者失去管理权</p>
         </div>
@@ -118,7 +119,7 @@ const handleTransfer = async () => {
 
 <style scoped lang="scss">
 .drawer {
-  width: 440px;
+  width: 560px;
   height: 100%;
   background: #fff;
   display: flex;
@@ -134,7 +135,7 @@ const handleTransfer = async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -207,13 +208,14 @@ const handleTransfer = async () => {
   cursor: pointer;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .picked-user { font-size: 13px; color: #4a5368; }
   .picker-placeholder { color: #b0b7c3; font-size: 12px; }
   .picker-btn { margin-left: auto; color: #8a92a5; letter-spacing: 1px; }
 }
 
-.transfer-note { margin: 8px 0 0; font-size: 11px; color: #a0a7b8; }
+.transfer-note { margin: 8px 0 0; font-size: 12px; color: #a0a7b8; }
 
 .drawer-footer {
   display: flex;

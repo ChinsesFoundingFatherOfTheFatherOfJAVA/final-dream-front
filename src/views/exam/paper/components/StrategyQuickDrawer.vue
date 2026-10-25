@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>设置策略</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -191,7 +191,7 @@ const confirm = async () => {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 500;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; }
@@ -207,6 +207,9 @@ const confirm = async () => {
   display: flex; align-items: center; gap: 6px; padding: 6px 0;
   font-size: 13px; color: #4a5368; cursor: pointer;
   input { margin: 0; accent-color: #1890ff; }
+  // EP 空 label 占位与默认 margin-right 会撑大圆点与文字的距离，同全站口径清除
+  :deep(.el-radio) { margin-right: 0; }
+  :deep(.el-radio__label) { display: none; }
 }
 
 .band {

@@ -1,6 +1,6 @@
 <template>
   <div class="message-row" :class="message.role === 'user' ? 'row-user' : 'row-agent'">
-    <div v-if="message.role === 'agent'" class="avatar">🤖</div>
+    <div v-if="message.role === 'agent'" class="avatar" aria-hidden="true">🤖</div>
 
     <div class="bubble-wrap">
       <!-- 助手：段落按 markdown 渲染（含表格）；用户：纯文本气泡 -->
@@ -14,12 +14,12 @@
           <template v-else>
             <span class="user-text">{{ block.text }}</span>
           </template>
-          <span v-if="message.streaming && isLastBlock(i)" class="typing-caret">▍</span>
+          <span v-if="message.streaming && isLastBlock(i)" class="typing-caret" aria-hidden="true">▍</span>
         </div>
 
         <!-- 文件消息卡（用户上传） -->
         <div v-else-if="block.kind === 'file'" class="file-card">
-          <span class="file-icon">{{ fileIcon(block.fileType) }}</span>
+          <span class="file-icon" aria-hidden="true">{{ fileIcon(block.fileType) }}</span>
           <div class="file-meta">
             <div class="file-name">{{ block.name }}</div>
             <div class="file-sub">{{ block.fileType.toUpperCase() }} · {{ formatSize(block.fileSize) }}</div>
@@ -37,7 +37,7 @@
           </template>
           <template v-else-if="block.parseError">
             <div class="event-head">
-              <span class="event-icon">⚠️</span>
+              <span class="event-icon" aria-hidden="true">⚠️</span>
               <span class="event-title">事件解析失败</span>
             </div>
             <pre class="event-raw">{{ block.raw }}</pre>
@@ -46,13 +46,13 @@
           <!-- biz-common-parse-file：解析中 → 解析完成 两态 -->
           <template v-else-if="block.bizType === 'biz-common-parse-file'">
             <div class="event-head">
-              <span v-if="parseDone(block)" class="event-icon ok">✓</span>
+              <span v-if="parseDone(block)" class="event-icon ok" aria-hidden="true">✓</span>
               <span v-else class="spinner"></span>
               <span class="event-title">{{ parseDone(block) ? '文件解析完成' : '正在解析文件…' }}</span>
             </div>
             <ul class="event-files">
               <li v-for="f in parseFiles(block)" :key="f.id">
-                <span class="file-icon sm">📄</span>
+                <span class="file-icon sm" aria-hidden="true">📄</span>
                 <span class="file-item-name">{{ f.name }}</span>
                 <span class="file-item-status" :class="{ ok: Number(f.status) === 1 }">
                   {{ Number(f.status) === 1 ? '解析完成' : '解析中…' }}
@@ -87,7 +87,7 @@
           <!-- biz-side-manage-topic-changed：草稿主题已创建 -->
           <template v-else-if="block.bizType === 'biz-side-manage-topic-changed'">
             <div class="event-head">
-              <span class="event-icon">📌</span>
+              <span class="event-icon" aria-hidden="true">📌</span>
               <span class="event-title">已创建草稿主题</span>
             </div>
             <div class="event-topic-name">{{ str(block.params.topic) }}</div>
@@ -98,7 +98,7 @@
           <!-- biz-side-manage-artifact-updated：内容已更新 -->
           <template v-else-if="block.bizType === 'biz-side-manage-artifact-updated'">
             <div class="event-head">
-              <span class="event-icon">✏️</span>
+              <span class="event-icon" aria-hidden="true">✏️</span>
               <span class="event-title">主题内容已更新</span>
               <span class="event-version">v{{ str(block.params.version) }}</span>
             </div>
@@ -114,8 +114,8 @@
           <template v-else-if="block.bizType === 'biz-side-manage-artifact-generated'">
             <div class="event-head">
               <span v-if="generatedStatus(block) === 'in_progress'" class="spinner"></span>
-              <span v-else-if="generatedStatus(block) === 'completed'" class="event-icon ok">✓</span>
-              <span v-else class="event-icon">⚠️</span>
+              <span v-else-if="generatedStatus(block) === 'completed'" class="event-icon ok" aria-hidden="true">✓</span>
+              <span v-else class="event-icon" aria-hidden="true">⚠️</span>
               <span class="event-title">
                 {{ generatedStatus(block) === 'in_progress' ? '正在生成主题内容…' : generatedStatus(block) === 'completed' ? '主题内容生成完成' : '主题内容生成失败' }}
               </span>
@@ -136,7 +136,7 @@
           <!-- biz-side-manage-case-generated：单案例完成 -->
           <template v-else-if="block.bizType === 'biz-side-manage-case-generated'">
             <div class="event-head">
-              <span class="event-icon">🎬</span>
+              <span class="event-icon" aria-hidden="true">🎬</span>
               <span class="event-title">实战案例已生成</span>
             </div>
             <div class="event-case-name">{{ str(block.params.scriptName) }}</div>
@@ -149,7 +149,7 @@
           <!-- biz-side-manage-save-success：确认落库成功 -->
           <template v-else-if="block.bizType === 'biz-side-manage-save-success'">
             <div class="event-head">
-              <span class="event-icon ok">✓</span>
+              <span class="event-icon ok" aria-hidden="true">✓</span>
               <span class="event-title">内容已保存到主题</span>
               <span class="event-version">v{{ str(block.params.version) }}</span>
             </div>
@@ -160,7 +160,7 @@
           <!-- 其它 bizType / 未知 action：兜底展示 -->
           <template v-else>
             <div class="event-head">
-              <span class="event-icon">ℹ️</span>
+              <span class="event-icon" aria-hidden="true">ℹ️</span>
               <span class="event-title">{{ block.bizType || block.actionName || '事件' }}</span>
             </div>
           </template>

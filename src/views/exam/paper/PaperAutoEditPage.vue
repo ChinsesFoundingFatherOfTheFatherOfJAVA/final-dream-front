@@ -6,7 +6,7 @@
     <header class="edit-header">
       <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ paper?.name || '随机出卷' }}</h1>
-      <span class="save-hint"><i class="hint-dot"></i>{{ saveHint }}</span>
+      <span class="save-hint"><el-icon><InfoFilled /></el-icon>{{ saveHint }}</span>
       <!-- 创建考试流程的第②步：三步条 + 右上角上一步/下一步（截图25） -->
       <ExamWizardSteps v-if="arrangeId" class="paper-steps" :current="2" :can-jump="canJumpStep" @jump="jumpStep" />
       <div class="header-actions">
@@ -26,11 +26,11 @@
     <div class="edit-body">
       <nav class="tab-rail">
         <el-button class="rail-tab" :class="{ active: tab === 'type' }" @click="tab = 'type'">
-          <span class="rail-icon">▦</span>
+          <span class="rail-icon" aria-hidden="true"><el-icon><Grid /></el-icon></span>
           <span class="rail-text">题型</span>
         </el-button>
         <el-button class="rail-tab" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
-          <span class="rail-icon">◔</span>
+          <span class="rail-icon" aria-hidden="true"><el-icon><PieChart /></el-icon></span>
           <span class="rail-text">概览</span>
         </el-button>
       </nav>
@@ -43,7 +43,9 @@
             <div class="mode-line">
               <span class="mode-label required">抽题方式</span>
               <label v-for="m in MODES" :key="m.value" class="mode-radio">
-                <el-radio :value="m.value" :model-value="quesMode === m.value"
+                <!-- model-value 必须绑 quesMode 本身：绑"quesMode === m.value"的布尔结果时，
+                     EP 的选中判定 modelValue===value 永远为假，圆点永远无法点亮 -->
+                <el-radio :value="m.value" :model-value="quesMode"
                        :disabled="published" @change="changeMode(m.value)" />
                 <span>{{ m.label }}</span>
               </label>
@@ -51,7 +53,7 @@
 
             <div class="config-actions">
               <el-button class="btn primary" :disabled="published" @click="openSource">
-                选择抽题来源 ▾
+                选择抽题来源 <el-icon class="btn-caret"><ArrowDown /></el-icon>
               </el-button>
               <el-button class="btn" :disabled="published || !strategies.length"
                       @click="showQuickStrategy = true">快速设置抽题策略</el-button>
@@ -78,7 +80,7 @@
             :span-method="pickSpanMethod"
             :row-class-name="matrixRowClass"
           >
-            <el-table-column :label="`${isPointSource ? '考核点名称' : '题库名称'} ▾`" min-width="300" class-name="lib-cell">
+            <el-table-column :label="`${isPointSource ? '考核点名称' : '题库名称'}`" min-width="300" class-name="lib-cell">
               <template #default="{ row }">
                 <span v-if="row.sumRow">合计（题数）</span>
                 <SourceMeta
@@ -156,7 +158,9 @@
                 <span
                   v-if="!row.sumRow && row.item && (quesMode !== 0 || row.levelIndex === 0)"
                   class="link"
+                  role="button" tabindex="0"
                   @click="removeSource(row.item)"
+                  @keydown.enter.prevent="removeSource(row.item)"
                 >移除</span>
               </template>
             </el-table-column>
@@ -287,6 +291,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, Grid, PieChart, InfoFilled } from '@element-plus/icons-vue'
 import { computed, defineComponent, h, onMounted, ref } from 'vue'
 import { ElInputNumber, ElRadio, ElRadioGroup } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
@@ -587,6 +592,8 @@ const setSingleScore = (value: number) =>
 
 // ---------------- 其它 ----------------
 const changeMode = async (mode: number) => {
+  // 乐观更新：圆点与表格立即切换，避免等 PUT+loadAll 的 1.5s 窗口里闪回旧选项
+  quesMode.value = mode
   try {
     await updatePaperQuesMode(paperId, mode)
     toast.success('抽题方式已切换')
@@ -792,9 +799,13 @@ const ScoreCell = defineComponent({
 
   .back-btn { width: 26px; height: 26px; border: none; background: none; font-size: 20px; color: #4a5368; cursor: pointer; }
   h1 { margin: 0; font-size: 15px; font-weight: 500; color: #303133; }
+  // 提示类文本：信息图标 + 浅底胶囊，弱化但可辨识，不用装饰圆点
   .save-hint {
-    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #8a92a5;
-    .hint-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #c7d0de; display: inline-block; }
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 24px; padding: 0 10px;
+    background: #eef3fb; border-radius: 12px;
+    font-size: 12px; color: #5b6682;
+    .el-icon { font-size: 13px; color: #7d90b8; }
   }
   .header-actions { margin-left: auto; display: flex; gap: 10px; }
   .paper-steps { margin: 0 auto; }
@@ -809,9 +820,20 @@ const ScoreCell = defineComponent({
 
   .rail-tab {
     position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 10px 0; border: none; background: none; cursor: pointer; color: #8a92a5; font-size: 12px;
+    // EP 按钮默认锁 32px 高，而内容（图标+竖排文字）约 50px，不放开会把上下两个 tab 的内容挤得互相重叠
+    width: 100%; height: auto; margin-left: 0; padding: 10px 0; border: none; background: none; cursor: pointer; color: #8a92a5; font-size: 12px;
 
-    .rail-icon { font-size: 18px; line-height: 1; }
+    // el-button 的内容包裹 span 不接管 flex 的话，图标与竖排文字都不会真正居中
+    :deep(> span) {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+
+    // 图标占位固定宽度并居中：两个 tab 的字形宽度不同（▦/◔），
+    // 不定宽会让竖排文字的中心线随图标偏移、不在同一垂直线上
+    .rail-icon {
+      width: 22px; display: inline-flex; justify-content: center;
+      font-size: 18px; line-height: 1;
+    }
     .rail-text { writing-mode: vertical-rl; letter-spacing: 2px; }
     &.active { color: #1890ff; }
     &.active::before {
@@ -834,6 +856,10 @@ const ScoreCell = defineComponent({
   .mode-radio {
     display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #4a5368; cursor: pointer;
     input { margin: 0; accent-color: #1890ff; }
+    // EP 渲染的空 label 占位（自带 padding）会撑开圆点与文字的距离，隐藏它；
+    // .el-radio 默认 margin-right 30px 同样会拉开距离，一并清除
+    :deep(.el-radio) { margin-right: 0; }
+    :deep(.el-radio__label) { display: none; }
   }
 }
 
@@ -933,7 +959,7 @@ const ScoreCell = defineComponent({
   }
 }
 
-.link { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } }
+.link { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
 
 .btn {
   padding: 6px 16px; border: 1px solid #d9d9d9; border-radius: 4px;
@@ -942,4 +968,6 @@ const ScoreCell = defineComponent({
   &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

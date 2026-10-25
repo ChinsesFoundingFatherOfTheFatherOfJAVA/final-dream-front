@@ -13,8 +13,8 @@
     <section class="courseware-content">
       <el-button
         v-if="treeCollapsed"
-       
         class="tree-expand"
+        aria-label="展开分类树"
         title="展开分类树"
         @click="treeCollapsed = false"
       >
@@ -25,7 +25,7 @@
         <div class="left-actions">
           <el-dropdown trigger="click" @command="handlePublishCommand">
             <el-button class="primary-btn">
-              发布课件 <span class="caret">⌄</span>
+              发布课件 <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -46,7 +46,7 @@
               class="ghost-btn"
               :disabled="selectedIds.size === 0"
             >
-              批量操作 <span class="caret">⌄</span>
+              批量操作 <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -67,9 +67,9 @@
 
       <div class="filter-row">
         <el-button class="filter-more" @click="filterVisible = true">
-          <span class="filter-icon">▽</span>
+          <span class="filter-icon" aria-hidden="true"><el-icon><Filter /></el-icon></span>
           更多筛选
-          <span class="caret">⌄</span>
+          <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </el-button>
         <el-select v-model="typeFilter" class="filter-select" placeholder="全部类型" @change="reload(1)">
           <el-option label="全部类型" :value="''" />
@@ -86,7 +86,7 @@
             clearable
             @keyup.enter="reload(1)"
         >
-          <template #prefix>⌕</template>
+          <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
         </el-input>
       </div>
 
@@ -102,6 +102,8 @@
           :data="page.records"
           row-key="id"
           class="courseware-table"
+          :default-sort="{ prop: 'updateTime', order: 'descending' }"
+          @sort-change="onSortChange"
           :empty-text="'暂无数据'"
           :row-class-name="coursewareRowClass"
         >
@@ -123,9 +125,9 @@
           <el-table-column label="名称" min-width="320">
             <template #default="{ row }">
               <div class="title-cell">
-                <span class="type-icon" :class="`type-${row.type}`">{{ typeBadge(row.type) }}</span>
+                <span class="type-icon" :class="`type-${row.type}`" aria-hidden="true">{{ typeBadge(row.type) }}</span>
                 <el-button link class="title-link" @click="openDetail(row.id)">{{ row.title }}</el-button>
-                <span v-if="row.type === 8" class="external-icon" title="外链课">↗</span>
+                <span v-if="row.type === 8" class="external-icon" aria-hidden="true" title="外链课">↗</span>
                 <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
               </div>
             </template>
@@ -133,28 +135,16 @@
           <el-table-column label="类型" width="92">
             <template #default="{ row }">{{ row.typeDesc }}</template>
           </el-table-column>
-          <el-table-column label="更新日期" width="150">
-            <template #header>
-              <el-button link @click="sortBy('updateTime')">
-                更新日期
-                <span class="sort-icon">{{ orderBy === 'updateTime' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </el-button>
-            </template>
+          <el-table-column label="更新日期" width="150" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.updateTime || '--' }}</template>
           </el-table-column>
-          <el-table-column label="学习人数" width="110">
-            <template #header>
-              <el-button link @click="sortBy('studyCount')">
-                学习人数
-                <span class="sort-icon">{{ orderBy === 'studyCount' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </el-button>
-            </template>
+          <el-table-column label="学习人数" width="110" prop="studyCount" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.studyCount }}</template>
           </el-table-column>
           <el-table-column label="状态" width="108">
             <template #default="{ row }">
                 <span class="status-text" :class="`status-${row.status}`">
-                  <i></i>{{ row.statusDesc }}
+                  <i aria-hidden="true"></i>{{ row.statusDesc }}
                 </span>
             </template>
           </el-table-column>
@@ -164,7 +154,7 @@
                   <el-button link type="primary" @click="openDetail(row.id)">查看详情</el-button>
                   <el-button link type="primary" @click="edit(row.id)">编辑</el-button>
                   <el-dropdown trigger="click" @command="(command: string) => handleMoreCommand(command, row)">
-                    <el-button link class="more-trigger">更多⌄</el-button>
+                    <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item command="hide">{{ row.hidden ? '取消隐藏' : '隐藏' }}</el-dropdown-item>
@@ -235,6 +225,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, Filter, Search } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
@@ -366,12 +357,10 @@ async function reload(nextPage?: number) {
   }
 }
 
-function sortBy(field: 'updateTime' | 'studyCount') {
-  if (orderBy.value === field) orderType.value = orderType.value === 'asc' ? 'desc' : 'asc'
-  else {
-    orderBy.value = field
-    orderType.value = 'desc'
-  }
+function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
+  if (!prop || !order) return
+  orderBy.value = prop as 'updateTime' | 'studyCount'
+  orderType.value = order === 'ascending' ? 'asc' : 'desc'
   void reload(1)
 }
 
@@ -727,11 +716,6 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   }
 }
 
-.sort-icon {
-  margin-left: 4px;
-  color: #a2a9b7;
-  font-size: 11px;
-}
 
 /* 增补A：隐藏课件行置灰（独立于下架，可取消隐藏恢复） */
 .courseware-table :deep(.row-hidden) {
@@ -911,4 +895,6 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
     overflow-x: auto;
   }
 }
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>

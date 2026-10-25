@@ -36,7 +36,7 @@
     <!-- Tab 内容 -->
     <div class="panel-body">
       <div v-if="!artifactContent" class="panel-empty">
-        <div class="empty-icon">⏳</div>
+        <div class="empty-icon" aria-hidden="true">⏳</div>
         <p class="empty-text">产物待生成，继续告诉助手你的目标吧</p>
       </div>
       <template v-else>
@@ -226,7 +226,7 @@ const goDetail = () => {
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
 
     &:hover:not(:disabled) { opacity: 0.88; }
 

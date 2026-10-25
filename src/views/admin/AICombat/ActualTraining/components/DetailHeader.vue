@@ -2,7 +2,7 @@
   <div class="detail-header">
     <!-- FP-07 面包屑 + 标题 + 徽章 + 描述 + 时间 -->
     <div class="breadcrumb">
-      <span class="crumb-link" @click="goBack">训练主题</span>
+      <span class="crumb-link" role="button" tabindex="0" @keydown.enter.prevent="goBack" @click="goBack">训练主题</span>
       <span class="crumb-sep">/</span>
       <span class="crumb-current">主题详情</span>
     </div>
@@ -27,7 +27,7 @@
       <div class="header-actions">
         <!-- 草稿：发布主题 + AI 设计助手 -->
         <template v-if="detail.status === 0">
-          <el-button class="btn btn-primary" @click="openPublish">🚀 发布主题</el-button>
+          <el-button class="btn btn-primary" @click="openPublish"><span aria-hidden="true">🚀</span> 发布主题</el-button>
           <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
         </template>
 
@@ -59,8 +59,8 @@
     <div v-if="showInitBanner" class="init-banner" :class="initBannerClass">
       <div class="banner-main">
         <span v-if="progressStatus === 1" class="banner-spinner"></span>
-        <span v-else-if="progressFailed" class="banner-icon">⚠️</span>
-        <span v-else class="banner-icon">✓</span>
+        <span v-else-if="progressFailed" class="banner-icon" aria-hidden="true">⚠️</span>
+        <span v-else class="banner-icon" aria-hidden="true">✓</span>
         <span class="banner-text">{{ initBannerText }}</span>
       </div>
       <div class="banner-right">
@@ -85,7 +85,7 @@
     <!-- FP-08 四个统计板块（只展示） -->
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-label">主题通过率 <span class="info-icon">ⓘ</span></div>
+        <div class="stat-label">主题通过率 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <div class="stat-value value-purple">{{ detail.stats.passRate }}<span class="unit">%</span></div>
         <div class="stat-progress">
           <div class="progress-fill" :style="{ width: Math.min(100, detail.stats.passRate) + '%' }"></div>
@@ -93,15 +93,15 @@
         <div class="stat-foot">通过 {{ detail.stats.passUserCount }} 人 / 参与 {{ detail.stats.participantCount }} 人</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">场景单元 <span class="info-icon">ⓘ</span></div>
+        <div class="stat-label">场景单元 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <div class="stat-value value-blue">{{ detail.scenarioUnitCount }}<span class="unit">个</span></div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">平均得分 <span class="info-icon">ⓘ</span></div>
+        <div class="stat-label">平均得分 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <div class="stat-value value-orange">{{ detail.stats.avgScore }}<span class="unit">分</span></div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">训练总次数 <span class="info-icon">ⓘ</span></div>
+        <div class="stat-label">训练总次数 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
         <div class="stat-value value-blue">{{ detail.stats.totalTrainingCount }}<span class="unit">次</span></div>
       </div>
     </div>
@@ -431,6 +431,7 @@ const doAction = async () => {
     cursor: pointer;
 
     &:hover { text-decoration: underline; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
   }
 
   .crumb-sep { color: #c0c4cc; }
@@ -504,7 +505,7 @@ const doAction = async () => {
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s, border-color 0.2s, background 0.2s, opacity 0.2s;
     white-space: nowrap;
 
     &.btn-outline {
@@ -684,7 +685,7 @@ const doAction = async () => {
     color: #8a8f98;
     margin-bottom: 8px;
 
-    .info-icon { color: #c9cdd4; cursor: help; }
+    .info-icon { color: #c9cdd4; }
   }
 
   .stat-value {

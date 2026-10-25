@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>变更通知</span>
-        <span class="close-btn" @click="$emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="$emit('close')" @keydown.enter.prevent="$emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -59,7 +59,7 @@
               <div class="history-head">
                 <span class="history-title">{{ n.title }}</span>
                 <span class="status-tag" :class="'s' + n.status">{{ NOTICE_STATUS_TEXT[n.status] || '--' }}</span>
-                <span v-if="n.status !== 3" class="revoke-link" @click="doCancel(n)">撤销</span>
+                <span v-if="n.status !== 3" class="revoke-link" role="button" tabindex="0" @click="doCancel(n)" @keydown.enter.prevent="doCancel(n)">撤销</span>
               </div>
               <p class="history-content">{{ n.content }}</p>
               <p class="history-meta">
@@ -180,7 +180,7 @@ onMounted(loadHistory)
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .block { margin-bottom: 22px; }
@@ -213,7 +213,7 @@ onMounted(loadHistory)
 .status-tag.s1 { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
 .status-tag.s2 { background: #fff1f0; border: 1px solid #ffa39e; color: #cf1322; }
 .status-tag.s3 { background: #fafafa; border: 1px solid #e5e8ef; color: #8c8c8c; }
-.revoke-link { margin-left: auto; font-size: 12px; color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } }
+.revoke-link { margin-left: auto; font-size: 12px; color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
 .history-content { margin: 6px 0; font-size: 12px; color: #4a5368; line-height: 1.7; }
 .history-meta { margin: 0; display: flex; gap: 14px; font-size: 12px; color: #a0a7b8; }
 </style>

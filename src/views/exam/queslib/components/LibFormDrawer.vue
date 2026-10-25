@@ -2,7 +2,7 @@
   <!-- FP-04 新建/编辑题库抽屉（截图32） -->
     <el-drawer
     :model-value="true"
-    size="440px"
+    size="560px"
     :with-header="false"
     append-to-body
     destroy-on-close
@@ -12,15 +12,17 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>{{ mode === 'create' ? '新建题库' : '编辑题库基本信息' }}</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
         <div class="form-item">
           <label class="form-label required">题库分类</label>
-          <div class="catalog-select" @click="showCatalogPicker = !showCatalogPicker">
+          <div class="catalog-select" role="button" tabindex="0" aria-label="选择题库分类"
+               @click="showCatalogPicker = !showCatalogPicker"
+               @keydown.enter.prevent="showCatalogPicker = !showCatalogPicker">
             <span :class="{ placeholder: !catalogName }">{{ catalogName || '请选择' }}</span>
-            <span class="select-arrow">▾</span>
+            <span class="select-arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
 
             <div v-if="showCatalogPicker" class="catalog-dropdown" @click.stop>
               <div
@@ -28,7 +30,9 @@
                 :key="node.id"
                 class="dropdown-node"
                 :style="{ paddingLeft: 10 + node.level * 16 + 'px' }"
+                role="button" tabindex="0"
                 @click="pickCatalog(node)"
+                @keydown.enter.prevent="pickCatalog(node)"
               >{{ node.name }}</div>
             </div>
           </div>
@@ -67,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { createLib, updateLib, getCatalogTree, type CatalogTreeNode, type LibItem } from '@/api/exam'
@@ -159,7 +164,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .drawer {
-  width: 440px;
+  width: 560px;
   height: 100%;
   background: #fff;
   display: flex;
@@ -175,7 +180,7 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -210,7 +215,8 @@ onMounted(async () => {
   &:hover { border-color: #1890ff; }
 
   .placeholder { color: #b0b7c3; }
-  .select-arrow { color: #8a92a5; font-size: 11px; }
+  .select-arrow { color: #8a92a5; font-size: 12px; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .catalog-dropdown {
     position: absolute;
@@ -233,6 +239,7 @@ onMounted(async () => {
       cursor: pointer;
 
       &:hover { background: #f2f6ff; color: #1890ff; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     }
   }
 }
@@ -248,14 +255,13 @@ input[type="text"], input:not([type]) {
   &:focus { border-color: #1890ff; }
 }
 
-.char-count { text-align: right; font-size: 11px; color: #b0b7c3; margin-top: 3px; }
+.char-count { text-align: right; font-size: 12px; color: #b0b7c3; margin-top: 3px; }
 
 .radio-row { display: flex; gap: 10px; }
 
 .radio-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding: 7px 18px;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
@@ -265,10 +271,19 @@ input[type="text"], input:not([type]) {
 
   input { margin: 0; }
 
+  // 选中态由方框高亮（.active）唯一承载：隐藏 EP 原生圆点与其空 label 占位，
+  // 避免"方框 + 圆点"双重指示；EP 的 .el-radio 默认 margin-right: 32px 也是圆点远离文字的原因。
+  // 只隐藏圆点视觉（__inner），input 本体保留可聚焦，键盘操作时以方框描边提示焦点
+  :deep(.el-radio) { margin-right: 0; height: auto; }
+  :deep(.el-radio__inner),
+  :deep(.el-radio__label) { display: none; }
+
+  &:focus-within { outline: 2px solid #1890ff; outline-offset: -2px; }
+
   &.active { border-color: #1890ff; background: #f0f8ff; color: #1890ff; }
 }
 
-.secrecy-note { margin: 6px 0 0; font-size: 11px; color: #a0a7b8; }
+.secrecy-note { margin: 6px 0 0; font-size: 12px; color: #a0a7b8; }
 
 .drawer-footer {
   display: flex;

@@ -13,7 +13,7 @@
     <div class="drawer" @click.self="noop">
       <div class="drawer-header">
         <span>考核点编辑</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -21,15 +21,15 @@
              @mouseenter="hoverId = point.id" @mouseleave="hoverId = ''">
           <template v-if="editingId !== '' && editingId === point.id">
             <el-input v-model.trim="editingName" placeholder="考核点名称" @keyup.enter="confirmEdit(point)" />
-            <el-button class="icon-btn" @click="confirmEdit(point)">✓</el-button>
-            <el-button class="icon-btn" @click="editingId = ''">×</el-button>
+            <el-button class="icon-btn" aria-label="确认修改" @click="confirmEdit(point)">✓</el-button>
+            <el-button class="icon-btn" aria-label="取消编辑" @click="editingId = ''">×</el-button>
           </template>
           <template v-else>
             <span class="point-name">{{ point.name }}</span>
             <span v-if="point.defaultPoint === 1" class="default-tag">默认</span>
             <span v-show="hoverId === point.id" class="row-actions">
-              <el-button class="icon-btn" title="编辑" @click="startEdit(point)">✎</el-button>
-              <el-button class="icon-btn danger" title="删除"
+              <el-button class="icon-btn" title="编辑" aria-label="编辑" @click="startEdit(point)">✎</el-button>
+              <el-button class="icon-btn danger" title="删除" aria-label="删除"
                       :disabled="point.defaultPoint === 1" @click="remove(point)">🗑</el-button>
             </span>
           </template>
@@ -37,8 +37,8 @@
 
         <div v-if="adding" class="point-row">
           <el-input v-model.trim="newName" placeholder="考核点名称" @keyup.enter="confirmAdd" />
-          <el-button class="icon-btn" @click="confirmAdd">✓</el-button>
-          <el-button class="icon-btn" @click="adding = false; newName = ''">×</el-button>
+          <el-button class="icon-btn" aria-label="确认添加" @click="confirmAdd">✓</el-button>
+          <el-button class="icon-btn" aria-label="取消添加" @click="adding = false; newName = ''">×</el-button>
         </div>
 
         <p v-if="!loading && !list.length" class="empty">该题库下暂无考核点</p>
@@ -158,7 +158,7 @@ onMounted(load)
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 12px; }
@@ -174,6 +174,8 @@ onMounted(load)
   color: #4a5368;
 
   &:hover { background: #f7f9fd; }
+  // 键盘聚焦行内输入框时也显示操作按钮（原本仅 hover 显示）
+  &:focus-within .row-actions { display: inline-flex; }
 
   input {
     flex: 1;
@@ -182,6 +184,8 @@ onMounted(load)
     padding: 6px 8px;
     font-size: 13px;
     outline: none;
+
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   }
 
   .point-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

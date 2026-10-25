@@ -60,7 +60,9 @@
             <el-select v-model="sub.type" class="sub-type">
               <el-option v-for="(label, value) in SUB_TYPE_LABELS" :key="value" :value="Number(value)" :label="label" />
             </el-select>
-            <el-button class="icon-btn danger" @click="subQuestions.splice(index, 1)">×</el-button>
+            <el-button class="icon-btn danger" aria-label="移除子题" @click="subQuestions.splice(index, 1)">
+              <el-icon><Close /></el-icon>
+            </el-button>
           </div>
           <QuesBodyForm :type="sub.type" :body="sub.body" />
         </div>
@@ -83,6 +85,7 @@ import {
 } from '@/api/exam'
 import QuesBodyForm from './components/QuesBodyForm.vue'
 import PointPicker from './components/PointPicker.vue'
+import { Close } from '@element-plus/icons-vue'
 
 /** FP-08 试题编辑/新建页。新建态可选题型，编辑态题型只读（与截图10 一致）。 */
 const route = useRoute()
@@ -315,7 +318,9 @@ onMounted(() => { load() })
 </script>
 
 <style scoped lang="scss">
-.ques-form { padding: 16px 20px 32px; display: flex; flex-direction: column; gap: 14px; }
+// 考试域布局的 .exam-content 是 overflow:hidden（页面自管滚动，与 table-wrap 模式一致），
+// 本页是长表单，必须自己充当滚动容器，否则超出部分被裁掉、页面无法滚动
+.ques-form { padding: 16px 20px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; }
 
 .form-header {
   display: flex;
@@ -414,11 +419,19 @@ onMounted(() => { load() })
   font-size: 12px; color: #8a92a5; line-height: 1.8;
 }
 
+// 幽灵图标按钮：常态无边框融入行内，悬停才浮现底色（与 QuesBodyForm 口径一致）
 .icon-btn {
-  width: 26px; height: 26px;
-  border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  cursor: pointer; color: #4a5368;
-  &.danger { color: #f5222d; }
+  width: 26px; height: 26px; padding: 0;
+  border: none; border-radius: 4px; background: transparent;
+  cursor: pointer; color: #8a92a5;
+  .el-icon { font-size: 15px; }
+  &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; }
+  &:disabled { color: #d5dae3; cursor: not-allowed; }
+  &.danger {
+    color: #b0b7c3;
+    &:hover:not(:disabled) { color: #f5222d; background: #fff1f0; }
+  }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
 }
 
 .btn {

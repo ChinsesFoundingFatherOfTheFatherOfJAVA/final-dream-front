@@ -22,7 +22,7 @@
         <span class="label">选择课件</span>
         <div class="courseware-row">
           <span class="courseware-name" :title="coursewareTitle">{{ coursewareTitle || '--' }}</span>
-          <el-button class="mini-btn" @click="pickerVisible = true">...</el-button>
+          <el-button class="mini-btn" aria-label="换选课件" @click="pickerVisible = true">...</el-button>
         </div>
       </div>
 

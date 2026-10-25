@@ -39,7 +39,7 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .setting-section {
   border: 1px solid #e6eaf1;
-  border-radius: 4px;
+  border-radius: 8px;
   background: #fff;
 }
 
@@ -48,14 +48,22 @@ const emit = defineEmits<{
   min-height: 44px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
-  padding: 0 12px;
+  padding: 0 16px;
   border: none;
   background: transparent;
   color: #253047;
   text-align: left;
   cursor: pointer;
+
+  // el-button 会把内容包进一层自带 span，flex 布局必须作用在它上面，
+  // 否则"展开/收起"会紧贴标题（外层的 space-between 够不到孙级）
+  :deep(> span) {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: space-between;
+  }
 }
 
 .section-title {
@@ -73,31 +81,33 @@ const emit = defineEmits<{
 }
 
 .toggle-link {
+  margin-left: auto;
   color: #2e7cf6;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .section-body {
-  padding: 0 12px 12px;
+  padding: 4px 20px 20px;
   border-top: 1px solid #eef1f6;
 }
 
 .section-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .apply-btn {
-  height: 26px;
-  padding: 0 14px;
+  height: 32px;
+  padding: 0 20px;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   background: #2e7cf6;
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 
+  &:hover:not(:disabled) { background: #1a66d9; }
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;

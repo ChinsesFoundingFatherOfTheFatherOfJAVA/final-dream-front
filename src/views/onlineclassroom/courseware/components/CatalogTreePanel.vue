@@ -7,9 +7,9 @@
         placeholder="搜索分类名称"
         clearable
       >
-        <template #prefix>⌕</template>
+        <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
       </el-input>
-      <el-button class="collapse-btn" title="收起分类树" @click="emit('collapse')">≡</el-button>
+      <el-button class="collapse-btn" aria-label="收起分类树" title="收起分类树" @click="emit('collapse')">≡</el-button>
     </div>
 
     <div class="tree-body">
@@ -17,10 +17,13 @@
         v-if="!keyword"
         class="tree-row root-row"
         :class="{ selected: modelValue === '' }"
+        role="button"
+        tabindex="0"
         @click="select('')"
+        @keydown.enter.prevent="select('')"
       >
-        <el-button class="tree-arrow expanded" @click.stop="toggleRoot">
-          <span />
+        <el-button class="tree-arrow expanded" :aria-label="rootExpanded ? '收起子分类' : '展开子分类'" @click.stop="toggleRoot">
+          <span aria-hidden="true" />
         </el-button>
         <span class="tree-label">主课堂</span>
       </div>
@@ -32,16 +35,19 @@
           class="tree-row"
           :class="{ selected: modelValue === row.node.id }"
           :style="{ paddingLeft: `${12 + row.depth * 18}px` }"
+          role="button"
+          tabindex="0"
           @click="select(row.node.id)"
+          @keydown.enter.prevent="select(row.node.id)"
         >
           <el-button
             v-if="row.hasChildren"
-           
             class="tree-arrow"
             :class="{ expanded: row.expanded }"
+            :aria-label="row.expanded ? '收起子分类' : '展开子分类'"
             @click.stop="toggle(row.node.id)"
           >
-            <span />
+            <span aria-hidden="true" />
           </el-button>
           <span v-else class="tree-arrow placeholder"></span>
           <span class="tree-label">{{ row.node.name }}</span>
@@ -63,6 +69,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 import type { KngTreeNode } from '@/api/kng'
 
@@ -207,18 +214,20 @@ watch(() => props.tree, tree => {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 0 9px;
-  border: 1px solid #d9deea;
   border-radius: 6px;
   color: #9aa3b2;
 
   input {
     min-width: 0;
     flex: 1;
-    border: none;
-    outline: none;
     color: #394253;
     font-size: 13px;
+  }
+
+  /* 原生 input 的 outline 已去掉：焦点时在包裹层补可见焦点环（无尺寸位移） */
+  &:focus-within {
+    border-color: #2e7cf6;
+    box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.18);
   }
 }
 
@@ -248,6 +257,12 @@ watch(() => props.tree, tree => {
   color: #4d5568;
   font-size: 13px;
   cursor: pointer;
+
+  /* 自定义可点分类行：键盘可达，补可见焦点环（不占布局空间） */
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: -2px;
+  }
 
   &:hover {
     background: #f4f7fb;

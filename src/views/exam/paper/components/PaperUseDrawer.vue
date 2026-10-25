@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>引用次数</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -94,7 +94,7 @@ onMounted(async () => {
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 14px 20px; }
@@ -102,7 +102,7 @@ onMounted(async () => {
 .filter-row {
   display: flex; align-items: center; gap: 10px;
 
-  .filter-select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; }
+  .filter-select { font-size: 12px; }
   .count { font-size: 12px; color: #8a92a5; }
   .btn { margin-left: auto; }
 }

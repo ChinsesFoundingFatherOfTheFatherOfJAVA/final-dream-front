@@ -436,10 +436,7 @@ watch(
   flex: 1;
   min-width: 0;
   height: 30px;
-  padding: 0 8px;
-  border: 1px solid #2e7cf6;
   border-radius: 4px;
-  outline: none;
   color: #394253;
   font-size: 13px;
 }

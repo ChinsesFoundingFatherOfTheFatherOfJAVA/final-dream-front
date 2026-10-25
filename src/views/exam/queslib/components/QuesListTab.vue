@@ -28,9 +28,10 @@
 
       <!-- 试题查重：五题型（无组合题），查完自动切到"仅看重复题" -->
       <div class="dup-wrap">
-        <el-button class="btn" @click="showDupMenu = !showDupMenu">试题查重 ▾</el-button>
+        <el-button class="btn" @click="showDupMenu = !showDupMenu">试题查重 <el-icon class="btn-caret"><ArrowDown /></el-icon></el-button>
         <div v-if="showDupMenu" class="dup-menu">
-          <div v-for="item in DUP_TYPES" :key="item.type" class="dup-item" @click="runDuplicate(item.type)">
+          <div v-for="item in DUP_TYPES" :key="item.type" class="dup-item" role="button" tabindex="0"
+               @click="runDuplicate(item.type)" @keydown.enter.prevent="runDuplicate(item.type)">
             <span>{{ item.label }}</span>
             <span v-if="dupChecked(item.type)" class="done">已查</span>
           </div>
@@ -38,24 +39,28 @@
       </div>
       <!-- 导入：下载模板 → 上传 → 逐行错误明细（FP-12） -->
       <div class="dup-wrap">
-        <el-button class="btn" @click="showImportMenu = !showImportMenu">导入试题 ▾</el-button>
+        <el-button class="btn" @click="showImportMenu = !showImportMenu">导入试题 <el-icon class="btn-caret"><ArrowDown /></el-icon></el-button>
         <div v-if="showImportMenu" class="dup-menu">
-          <div class="dup-item" @click="emit('import', 'excel'); showImportMenu = false">Excel 导入</div>
-          <div class="dup-item" @click="emit('import', 'word'); showImportMenu = false">Word 导入</div>
+          <div class="dup-item" role="button" tabindex="0"
+               @click="emit('import', 'excel'); showImportMenu = false"
+               @keydown.enter.prevent="emit('import', 'excel'); showImportMenu = false">Excel 导入</div>
+          <div class="dup-item" role="button" tabindex="0"
+               @click="emit('import', 'word'); showImportMenu = false"
+               @keydown.enter.prevent="emit('import', 'word'); showImportMenu = false">Word 导入</div>
         </div>
       </div>
 
       <!-- 导出：按当前筛选条件导出 Excel（5 Sheet 分题型）/ Word（按题型分节） -->
       <div class="dup-wrap">
-        <el-button class="btn" @click="showExportMenu = !showExportMenu">导出试题 ▾</el-button>
+        <el-button class="btn" @click="showExportMenu = !showExportMenu">导出试题 <el-icon class="btn-caret"><ArrowDown /></el-icon></el-button>
         <div v-if="showExportMenu" class="dup-menu">
-          <div class="dup-item" @click="exportFile('excel')">Excel 导出</div>
-          <div class="dup-item" @click="exportFile('word')">Word 导出</div>
+          <div class="dup-item" role="button" tabindex="0" @click="exportFile('excel')" @keydown.enter.prevent="exportFile('excel')">Excel 导出</div>
+          <div class="dup-item" role="button" tabindex="0" @click="exportFile('word')" @keydown.enter.prevent="exportFile('word')">Word 导出</div>
         </div>
       </div>
       <span v-if="isDuplicateOnly" class="dup-chip">
         仅看重复题
-        <i @click="clearDuplicateFilter">×</i>
+        <i role="button" tabindex="0" aria-label="清除重复题筛选" @click="clearDuplicateFilter" @keydown.enter.prevent="clearDuplicateFilter">×</i>
       </span>
     </div>
 
@@ -167,7 +172,7 @@
       <div class="view-drawer">
         <div class="view-header">
           <span>试题详情</span>
-          <span class="close-btn" @click="viewDetail = null">×</span>
+          <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="viewDetail = null" @keydown.enter.prevent="viewDetail = null">×</span>
         </div>
         <div class="view-body">
           <div class="view-row"><label>题型</label><span>{{ typeLabel(viewDetail.type) }}</span></div>
@@ -217,6 +222,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { toast } from '@/utils/toast'
 import { confirmDialog } from '@/utils/confirmDialog'
@@ -461,23 +467,10 @@ defineExpose({ reload })
   align-items: center;
   gap: 8px;
 
+  // el-select 的 EP wrapper 自带边框，根元素上不再画边框/加内边距，避免双层嵌套
   .filter-select {
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 8px;
     font-size: 12px;
-    outline: none;
     max-width: 150px;
-  }
-
-  input {
-    flex: 1;
-    min-width: 180px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 12px;
-    outline: none;
   }
 }
 
@@ -619,6 +612,7 @@ tr.checked td { background: #f0f7ff; }
     cursor: pointer;
 
     &:hover { background: #f3f7ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     .done { margin-left: auto; font-size: 11px; color: #52c41a; }
   }
 }
@@ -634,7 +628,8 @@ tr.checked td { background: #f0f7ff; }
   color: #d46b08;
   font-size: 12px;
 
-  i { font-style: normal; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
 }
 .btn-primary { border: 1px solid #1890ff; background: #1890ff; color: #fff; }
 
@@ -655,7 +650,7 @@ tr.checked td { background: #f0f7ff; }
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .view-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
@@ -684,4 +679,6 @@ tr.checked td { background: #f0f7ff; }
 .option-list { display: flex; flex-direction: column; gap: 6px; }
 .option-item { display: flex; gap: 6px; align-items: flex-start; }
 .answer-mark { color: #52c41a; font-style: normal; font-size: 11px; }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

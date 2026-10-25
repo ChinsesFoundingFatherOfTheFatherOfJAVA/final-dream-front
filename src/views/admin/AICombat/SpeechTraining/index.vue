@@ -6,30 +6,31 @@
         <h3 class="menu-title">AI对练</h3>
         <div class="menu-list">
           <div class="menu-group expanded">
-            <div class="menu-group-title" @click="toggleGroup('speechNew')">
-              <span class="group-icon">🔄</span>
+            <div class="menu-group-title" role="button" tabindex="0" @keydown.enter.prevent="toggleGroup('speechNew')" @click="toggleGroup('speechNew')">
+              <span class="group-icon" aria-hidden="true">🔄</span>
               <span>话术训练(新)</span>
-              <span class="arrow" :class="{ open: openGroups.speechNew }">▾</span>
+              <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
             <div v-if="openGroups.speechNew" class="menu-group-items">
               <router-link to="/sparring/newmanage" class="menu-item active">话术训练中心</router-link>
               <router-link to="/sparring/newtemplate" class="menu-item">话术模版</router-link>
             </div>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">🔄</span>
+          <!-- 占位菜单：暂无功能，去掉可点暗示 -->
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">🔄</span>
             <span>话术训练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">👥</span>
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">👥</span>
             <span>演讲训练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">⚔️</span>
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">⚔️</span>
             <span>实战演练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
         </div>
       </aside>
@@ -41,7 +42,7 @@
           <div class="action-buttons">
             <el-dropdown trigger="click" @command="goToCreate">
               <el-button class="btn btn-primary">
-                创建 <span class="arrow">▾</span>
+                创建 <span class="arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -79,9 +80,9 @@
 
         <!-- 项目卡片网格 -->
         <div class="card-grid">
-          <div v-for="project in projects" :key="project.id" class="project-card" @click="goToConsole(project.id)">
+          <div v-for="project in projects" :key="project.id" class="project-card" role="button" tabindex="0" @keydown.enter.prevent="goToConsole(project.id)" @click="goToConsole(project.id)">
             <div class="card-cover">
-              <img v-if="project.coverImage" :src="project.coverImage" alt="cover" class="cover-img" />
+              <img v-if="project.coverImage" :src="project.coverImage" :alt="project.name" loading="lazy" class="cover-img" />
               <span class="cover-tag" :class="project.assignType === 'project' ? 'tag-project' : 'tag-single'">
                 {{ project.assignType === 'project' ? '项目安排' : '单独安排' }}
               </span>
@@ -119,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretRight } from '@element-plus/icons-vue'
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getProjectList } from '@/api/project'
@@ -208,6 +210,7 @@ const goToConsole = (id: number) => {
     cursor: pointer;
 
     &:hover { background: #f5f5f5; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     .arrow { font-size: 10px; margin-left: auto; }
   }
 }
@@ -220,12 +223,18 @@ const goToConsole = (id: number) => {
   font-size: 14px;
   color: #666;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   text-decoration: none;
 
   &:hover { background: #f5f5f5; color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   &.active { background: #e6f7ff; color: #1890ff; border-right: 3px solid #1890ff; }
-  &.collapsed { padding-left: 20px; }
+  &.collapsed {
+    padding-left: 20px;
+    /* 占位入口：暂无功能，不做可点暗示 */
+    cursor: default;
+    &:hover { background: none; color: inherit; }
+  }
   .arrow { font-size: 10px; margin-left: auto; }
   .group-icon { font-size: 16px; }
 }
@@ -250,7 +259,7 @@ const goToConsole = (id: number) => {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity 0.2s;
   border: 1px solid #d9d9d9;
 
   &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
@@ -288,9 +297,10 @@ const goToConsole = (id: number) => {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: box-shadow 0.3s, transform 0.3s;
 
   &:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); transform: translateY(-2px); }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
 
   .card-cover {
     height: 160px;

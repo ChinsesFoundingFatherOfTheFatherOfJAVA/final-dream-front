@@ -35,7 +35,7 @@
               :aria-expanded="row.expanded"
               @click.stop="toggleExpand(row.id)"
             >
-              {{ row.expanded ? '▾' : '▸' }}
+              <el-icon class="fold" v-if="row.expanded"><CaretBottom /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon>
             </el-button>
             <span v-else class="expand-placeholder"></span>
             <el-radio :value="row.id">{{ row.name }}</el-radio>
@@ -55,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretBottom, CaretRight } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 import KngDrawer from '../components/KngDrawer.vue'
 import { getKngCatalogTree, moveKngCatalog, type KngTreeNode } from '@/api/kng'
@@ -241,6 +242,7 @@ watch(() => props.visible, async visible => {
 }
 
 .tree-row :deep(.el-radio__label) {
+  min-width: 0;
   overflow: hidden;
   color: #394253;
   font-size: 13px;
@@ -273,4 +275,6 @@ watch(() => props.visible, async visible => {
     color: #fff;
   }
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

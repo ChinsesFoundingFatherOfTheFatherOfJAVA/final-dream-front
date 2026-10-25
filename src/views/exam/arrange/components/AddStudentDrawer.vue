@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>添加学员</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -132,13 +132,15 @@ onMounted(async () => {
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer;
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; }
+  }
 }
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
 .filter-row {
   display: flex; gap: 10px;
-  .filter-select { width: 220px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; }
-  input { flex: 1; border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none; }
+  .filter-select { width: 220px; font-size: 13px; }
+  .el-input { flex: 1; min-width: 160px; font-size: 13px; }
 }
 .table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 6px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }

@@ -196,7 +196,7 @@ load()
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
 
     &:hover { background: #f0f8ff; }
   }

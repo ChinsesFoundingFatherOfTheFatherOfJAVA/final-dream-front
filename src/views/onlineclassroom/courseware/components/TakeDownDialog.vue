@@ -11,7 +11,7 @@
       <span class="dialog-title">确定下架【{{ courseware?.title || '' }}】吗？</span>
     </template>
     <div class="dialog-body">
-      <div class="warning-icon">!</div>
+      <div class="warning-icon" aria-hidden="true">!</div>
       <div>
         <p>检测到课件被课程、培训等业务使用，下架后学员无法再学习，请谨慎操作</p>
         <el-button link type="primary" class="detail-link" @click="emit('detail')">查看详情</el-button>

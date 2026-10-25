@@ -38,14 +38,14 @@
         <div class="user-credits">
           <span class="credits-label">我的学分</span>
           <span class="credits-value">0</span>
-          <span class="credits-icon">💎</span>
+          <span class="credits-icon" aria-hidden="true">💎</span>
         </div>
         <div class="pk-ranking">
-          <div class="ranking-header">
-            <span class="ranking-title">PK榜 ▾</span>
+          <div class="ranking-header" title="敬请期待">
+            <span class="ranking-title">PK榜 <el-icon class="btn-caret"><ArrowDown /></el-icon></span>
           </div>
           <div class="ranking-content">
-            <span class="view-all">查看全部 ></span>
+            <span class="view-all" title="敬请期待">查看全部 ></span>
           </div>
         </div>
       </aside>
@@ -67,7 +67,7 @@
 
         <div class="task-list">
           <div v-if="!tasks.length && !loading" class="task-empty">暂无学习任务</div>
-          <div v-for="task in tasks" :key="task.id" class="task-card">
+          <div v-for="task in tasks" :key="task.id" class="task-card" title="敬请期待">
             <div class="task-tags">
               <span v-for="tag in task.tags" :key="tag" class="tag" :class="getTagClass(tag)">{{ tag }}</span>
             </div>
@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { getStudentProjects } from '@/api/student'
 import { useAuthStore } from '@/stores/auth'
@@ -181,8 +182,8 @@ const getTagClass = (tag: string) => {
 
   .pk-ranking {
     border-top: 1px solid #e8e8e8; padding-top: 16px;
-    .ranking-header { cursor: pointer; .ranking-title { font-size: 14px; font-weight: 500; color: #333; } }
-    .ranking-content { margin-top: 12px; .view-all { font-size: 12px; color: #1890ff; cursor: pointer; } }
+    .ranking-header { .ranking-title { font-size: 14px; font-weight: 500; color: #333; } }
+    .ranking-content { margin-top: 12px; .view-all { font-size: 12px; color: #1890ff; } }
   }
 }
 
@@ -199,18 +200,12 @@ const getTagClass = (tag: string) => {
   .header-right { display: flex; gap: 12px; }
 }
 
-.filter-select {
-  height: 32px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 4px;
-  font-size: 14px; color: #333; outline: none;
-  &:focus { border-color: #1890ff; }
-}
+.filter-select { height: 32px; font-size: 14px; color: #333; }
 
 .task-list { display: flex; flex-direction: column; gap: 16px; }
 
 .task-card {
   border: 1px solid #e8e8e8; border-radius: 8px; padding: 20px;
-  cursor: pointer; transition: all 0.3s;
-  &:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); border-color: #1890ff; }
   .task-tags { display: flex; gap: 8px; margin-bottom: 12px; }
   .task-title { font-size: 14px; font-weight: 500; color: #333; margin: 0 0 8px 0; }
   .task-time { font-size: 12px; color: #999; margin: 0; }
@@ -222,4 +217,6 @@ const getTagClass = (tag: string) => {
   &.tag-danger { background: #fff1f0; color: #f5222d; }
 }
 
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

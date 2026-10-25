@@ -14,8 +14,8 @@
     <section class="course-content">
       <el-button
         v-if="treeCollapsed"
-       
         class="tree-expand"
+        aria-label="展开分类树"
         title="展开分类树"
         @click="treeCollapsed = false"
       >
@@ -33,7 +33,7 @@
               class="ghost-btn"
               :disabled="selectedIds.size === 0"
             >
-              批量操作 <span class="caret">⌄</span>
+              批量操作 <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -49,9 +49,9 @@
 
       <div class="filter-row">
         <el-button class="filter-more" @click="filterVisible = true">
-          <span class="filter-icon">▽</span>
+          <span class="filter-icon" aria-hidden="true"><el-icon><Filter /></el-icon></span>
           更多筛选
-          <span class="caret">⌄</span>
+          <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </el-button>
         <el-select v-model="statusFilter" class="filter-select" placeholder="课程状态" @change="reload(1)">
           <el-option label="课程状态" :value="''" />
@@ -64,7 +64,7 @@
             clearable
             @keyup.enter="reload(1)"
         >
-          <template #prefix>⌕</template>
+          <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
         </el-input>
       </div>
 
@@ -76,6 +76,8 @@
           :data="page.records"
           row-key="id"
           class="course-table"
+          :default-sort="{ prop: 'updateTime', order: 'descending' }"
+          @sort-change="onSortChange"
           :empty-text="'暂无数据'"
           :row-class-name="courseRowClass"
         >
@@ -98,36 +100,24 @@
             <template #default="{ row }">
               <div class="title-cell">
                 <span class="cover-thumb">
-                  <img v-if="row.coverUrl" :src="resolveAssetUrl(row.coverUrl)" alt="" />
-                  <i v-else>▣</i>
+                  <img v-if="row.coverUrl" :src="resolveAssetUrl(row.coverUrl)" :alt="`${row.title}封面`" loading="lazy" />
+                  <i v-else aria-hidden="true">▣</i>
                 </span>
                 <el-button class="title-link" @click="openDetail(row.id)">{{ row.title }}</el-button>
                 <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="更新日期" width="160">
-            <template #header>
-              <el-button link @click="sortBy('updateTime')">
-                更新日期
-                <span class="sort-icon">{{ orderBy === 'updateTime' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </el-button>
-            </template>
+          <el-table-column label="更新日期" width="160" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.updateTime || '--' }}</template>
           </el-table-column>
-          <el-table-column label="学习人数" width="120">
-            <template #header>
-              <el-button link @click="sortBy('studyCount')">
-                学习人数
-                <span class="sort-icon">{{ orderBy === 'studyCount' ? (orderType === 'asc' ? '↑' : '↓') : '⇅' }}</span>
-              </el-button>
-            </template>
+          <el-table-column label="学习人数" width="120" prop="studyCount" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.studyCount }}</template>
           </el-table-column>
           <el-table-column label="状态" width="118">
             <template #default="{ row }">
                 <span class="status-text" :class="`status-${row.status}`">
-                  <i></i>{{ row.statusDesc }}
+                  <i aria-hidden="true"></i>{{ row.statusDesc }}
                 </span>
             </template>
           </el-table-column>
@@ -136,7 +126,7 @@
                 <div class="action-list">
                   <el-button link type="primary" @click="edit(row.id)">编辑</el-button>
                   <el-dropdown trigger="click" @command="(command: string) => handleMoreCommand(command, row)">
-                    <el-button link class="more-trigger">更多⌄</el-button>
+                    <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item command="hide">{{ row.hidden ? '取消隐藏' : '隐藏' }}</el-dropdown-item>
@@ -199,6 +189,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, Filter, Search } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
@@ -310,12 +301,10 @@ async function reload(nextPage?: number) {
   }
 }
 
-function sortBy(field: 'updateTime' | 'studyCount') {
-  if (orderBy.value === field) orderType.value = orderType.value === 'asc' ? 'desc' : 'asc'
-  else {
-    orderBy.value = field
-    orderType.value = 'desc'
-  }
+function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
+  if (!prop || !order) return
+  orderBy.value = prop as 'updateTime' | 'studyCount'
+  orderType.value = order === 'ascending' ? 'asc' : 'desc'
   void reload(1)
 }
 
@@ -642,11 +631,6 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   }
 }
 
-.sort-icon {
-  margin-left: 4px;
-  color: #a2a9b7;
-  font-size: 11px;
-}
 
 /* 增补A 同款语义：隐藏行置灰 */
 .course-table :deep(.row-hidden) {
@@ -799,4 +783,6 @@ function handleMoreCommand(command: string, row: CourseListItem) {
     overflow-x: auto;
   }
 }
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>

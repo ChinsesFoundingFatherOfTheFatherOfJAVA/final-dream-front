@@ -237,6 +237,13 @@ function toggleChecked(row: FlatRow, checked: boolean) {
     background: #f3f7ff;
   }
 
+  /* outline: none 后仅靠背景变焦不可靠（选中行背景与焦点态相同），
+     补描边焦点环；负 offset 收在行内，避免被 overflow 裁切 */
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #1890ff);
+    outline-offset: -2px;
+  }
+
   &.selected {
     color: #1f6fe8;
     background: #eaf2ff;

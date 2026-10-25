@@ -13,19 +13,28 @@
         class="tree-node"
         :class="{ active: node.id === selectedId, disabled: node.disabled === 1 }"
         :style="{ paddingLeft: 12 + node.level * 18 + 'px' }"
+        role="button"
+        tabindex="0"
         @click="emit('select', node)"
+        @keydown.enter.prevent="emit('select', node)"
       >
         <span
           v-if="node.children && node.children.length"
           class="expand-arrow"
           :class="{ expanded: expandedKeys.has(node.id) }"
+          role="button"
+          tabindex="0"
+          :aria-label="expandedKeys.has(node.id) ? '收起子分类' : '展开子分类'"
           @click.stop="toggleExpand(node.id)"
+          @keydown.enter.prevent="toggleExpand(node.id)"
         >›</span>
         <span v-else class="expand-placeholder"></span>
         <span class="node-name" :title="node.name">{{ node.name }}</span>
         <!-- 齿轮菜单：悬浮子分类才显示（截图05） -->
-        <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作"
-              @click.stop="emit('gear', { node, event: $event })">⚙</span>
+        <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作" aria-label="分类操作"
+              role="button" tabindex="0"
+              @click.stop="emit('gear', { node, event: $event })"
+              @keydown.enter.prevent="emit('gear', { node, event: $event as unknown as MouseEvent })">⚙</span>
       </div>
     </div>
   </aside>
@@ -154,20 +163,37 @@ const toggleExpand = (id: string) => {
   &.active { background: #eaf2ff; color: #1890ff; font-weight: 600; }
   &.disabled { opacity: .55; }
 
+  // 键盘焦点环（节点/内部按钮均可聚焦）
+  &:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: -2px;
+  }
+
+  // 键盘 Tab 聚焦时同步显示齿轮按钮（原本仅 hover 显示）
+  &:focus-within .gear-btn { display: inline; }
+
   .expand-arrow {
     width: 16px;
     text-align: center;
     color: #a0a7b8;
     transition: transform .15s;
     flex-shrink: 0;
+    cursor: pointer;
 
     &.expanded { transform: rotate(90deg); }
+
+    &:focus-visible {
+      outline: 2px solid #1890ff;
+      outline-offset: -2px;
+      border-radius: 2px;
+    }
   }
 
   .expand-placeholder { width: 16px; flex-shrink: 0; }
 
   .node-name {
     flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -181,6 +207,12 @@ const toggleExpand = (id: string) => {
     cursor: pointer;
 
     &:hover { color: #1890ff; }
+
+    &:focus-visible {
+      outline: 2px solid #1890ff;
+      outline-offset: -2px;
+      border-radius: 2px;
+    }
   }
 
   &:hover .gear-btn { display: inline; }

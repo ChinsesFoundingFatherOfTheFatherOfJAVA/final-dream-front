@@ -38,6 +38,12 @@
 
 ## 4. 已知事项与约定
 
+- **样式规范基线（2026-10-24）**：全局层已提供 a/button 的 `:focus-visible` 焦点环、`touch-action: manipulation`、
+  `prefers-reduced-motion` 降级、表格/分页等宽数字（`src/assets/styles/reset.scss`、`element-theme.scss`），
+  组件层不要重复实现。自定义可点元素（div/span 带 @click）统一口径：
+  `role="button" + tabindex="0" + @keydown.enter.prevent` + `:focus-visible` 焦点环；
+  过渡只列具体属性、禁 `transition: all`；纯图标按钮补 `aria-label`、装饰图标补 `aria-hidden`。
+  依据《Web Interface Guidelines》（Vercel）全量规则走查，全站约 130 个文件已按此基线修复。
 - **mock 数据边界**：`src/mock/data.ts` 仅剩静态导航注册表用途（TopNav/AdminTopNav 的 `mockApps`）；
   学员端"我的练习"页（MyPractice.vue）已于 2026-10-02 接入 `getStudentProjects` 真实接口，
   侧边栏勋章/经验值/积分仍是静态展示，待产品确认口径。

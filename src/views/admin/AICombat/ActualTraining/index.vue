@@ -5,27 +5,28 @@
       <h3 class="menu-title">AI实战训练场</h3>
       <nav class="menu-list">
         <router-link to="/sparring/freesimulate/topic" class="menu-item active-item">
-          <span class="menu-icon">🎯</span>
+          <span class="menu-icon" aria-hidden="true">🎯</span>
           <span class="menu-text">训练主题</span>
         </router-link>
-        <div class="menu-item" @click="comingSoon('功能建设中')">
-          <span class="menu-icon">📊</span>
+        <!-- 占位菜单：仍可聚焦触发提示，保证键盘可达 -->
+        <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
+          <span class="menu-icon" aria-hidden="true">📊</span>
           <span class="menu-text">数据分析</span>
-          <span class="chevron">▾</span>
+          <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
-        <div class="menu-item" @click="comingSoon('功能建设中')">
-          <span class="menu-icon">🗂️</span>
+        <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
+          <span class="menu-icon" aria-hidden="true">🗂️</span>
           <span class="menu-text">素材库</span>
-          <span class="chevron">▾</span>
+          <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
-        <div class="menu-item" @click="comingSoon('功能建设中')">
-          <span class="menu-icon">⚙️</span>
+        <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
+          <span class="menu-icon" aria-hidden="true">⚙️</span>
           <span class="menu-text">设置</span>
-          <span class="chevron">▾</span>
+          <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
       </nav>
       <div class="menu-footer">
-        <el-button class="collapse-btn" title="收起菜单" @click="comingSoon('功能建设中')">⇤</el-button>
+        <el-button class="collapse-btn" aria-label="收起菜单" title="收起菜单" @click="comingSoon('功能建设中')">⇤</el-button>
       </div>
     </aside>
 
@@ -37,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { comingSoon } from './components/ui'
 </script>
 
@@ -98,12 +100,14 @@ import { comingSoon } from './components/ui'
   color: #666;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
 
   .menu-icon { font-size: 18px; }
   .chevron { font-size: 11px; margin-left: auto; color: #bbb; }
 
   &:hover { background: #f5f5f5; color: #1890ff; }
+
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   &.active-item,
   &.router-link-active {

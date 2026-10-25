@@ -10,7 +10,7 @@
       :title="item.enabled ? '' : '功能建设中'"
       @click="item.enabled && emit('pick', item.type)"
     >
-      <span class="type-icon" :style="{ background: item.color }">{{ item.glyph }}</span>
+      <span class="type-icon" :style="{ background: item.color }" aria-hidden="true">{{ item.glyph }}</span>
       <span class="type-label">{{ item.label }}</span>
     </el-button>
   </div>

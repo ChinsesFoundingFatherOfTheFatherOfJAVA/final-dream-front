@@ -9,10 +9,18 @@
           首页
         </router-link>
         <el-dropdown trigger="hover">
-          <span class="nav-item">全部应用 <span class="arrow">▾</span></span>
+          <span class="nav-item">全部应用 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
           <template #dropdown>
             <div class="apps-menu">
-            <div v-for="app in allApps" :key="app.id" class="app-grid-item" @click="handleAppClick(app)">
+            <div
+              v-for="app in allApps"
+              :key="app.id"
+              class="app-grid-item"
+              role="button"
+              tabindex="0"
+              @click="handleAppClick(app)"
+              @keydown.enter.prevent="handleAppClick(app)"
+            >
               <div class="app-icon" :style="{ background: app.color }">
                 <span class="app-icon-text">{{ app.title.charAt(0) }}</span>
               </div>
@@ -37,14 +45,14 @@
       </nav>
     </div>
     <div class="nav-right">
-      <span class="nav-item">绚星云学习 <span class="arrow">▾</span></span>
-      <span class="nav-icon">🎨</span>
-      <span class="nav-icon">🔔</span>
+      <span class="nav-item">绚星云学习 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待">🎨</span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待">🔔</span>
       <el-dropdown trigger="hover" @command="handleUserCommand">
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
           <span class="user-name">{{ auth.displayName }}</span>
-          <span class="arrow">▾</span>
+          <span class="arrow"><el-icon><ArrowDown /></el-icon></span>
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-menu">
@@ -100,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { mockApps } from '@/mock/data'
@@ -220,14 +229,24 @@ const submitPassword = async () => {
 
 .nav-menu {
   display: flex;
+  align-items: center;
   gap: 24px;
 }
 
 .nav-item {
+  // 统一 inline-flex 盒模型：文字位置只由盒模型决定，不被 el-dropdown 容器的
+  // line-height 差异顶偏（实测 dropdown 项文字偏高 3.2px）
+  display: inline-flex;
+  align-items: center;
   color: #333;
   text-decoration: none;
   font-size: 14px;
+  // 显式行高：el-dropdown 会向触发项注入 line-height:1，导致与普通项行盒差 0.2px
+  line-height: 20px;
   padding: 8px 0;
+  // 下划线用透明边框常驻占位：激活只换颜色不改盒子高度，否则激活项多出的
+  // 2px 会经 flex 拉伸让整排文字基线跳动（实测 1.2px）
+  border-bottom: 2px solid transparent;
   transition: color 0.3s;
   cursor: pointer;
   position: relative;
@@ -244,8 +263,14 @@ const submitPassword = async () => {
   }
 
   &.active {
-    border-bottom: 2px solid #1890ff;
+    border-bottom-color: #1890ff;
   }
+}
+
+// el-dropdown 包裹的菜单项（全部应用）：与相邻项统一盒模型，文字保持同一水平线
+.nav-menu > .el-dropdown {
+  display: flex;
+  align-items: center;
 }
 
 .arrow {
@@ -253,15 +278,12 @@ const submitPassword = async () => {
   margin-left: 2px;
 }
 
+// 占位图标无实际功能，不呈现可点击态，避免误导用户
 .nav-icon {
   font-size: 18px;
   color: #666;
-  cursor: pointer;
+  cursor: default;
   padding: 8px;
-
-  &:hover {
-    color: #1890ff;
-  }
 }
 
 .nav-right {
@@ -340,7 +362,14 @@ const submitPassword = async () => {
   padding: 10px 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  // 仅背景色参与过渡，避免 transition: all 带来的意外属性动画
+  transition: background 0.2s;
+
+  // role=button 的键盘可达性：焦点环仅键盘导航时出现
+  &:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: 1px;
+  }
 
   &:hover {
     background: #f5f5f5;

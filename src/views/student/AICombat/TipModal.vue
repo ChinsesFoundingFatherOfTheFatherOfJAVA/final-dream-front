@@ -10,7 +10,14 @@
   >
     <!-- FP-12 要点提示弹窗（照抄原平台） -->
     <div class="tip-modal">
-      <span class="close-icon" @click="close">×</span>
+      <span
+        class="close-icon"
+        role="button"
+        tabindex="0"
+        aria-label="关闭"
+        @click="close"
+        @keydown.enter.prevent="close"
+      >×</span>
       <p class="tip-text">这个说法貌似不太管用，推荐你按照如下要点沟通，试试看可能会更有效哦～</p>
       <!-- 无要点时不渲染粉底盒子：否则弹窗只剩一句"推荐你按照如下要点沟通"+ 一块空白 -->
       <div v-if="keyPoints.length" class="points-box">
@@ -57,6 +64,12 @@ const close = () => emit('close')
 
     &:hover {
       color: #666;
+    }
+
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid #7a6cf0;
+      outline-offset: 2px;
     }
   }
 

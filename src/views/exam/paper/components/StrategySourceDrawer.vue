@@ -13,7 +13,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>设置抽题来源</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -44,12 +44,17 @@
               <div class="lib-row" :class="{ picked: isLibPicked(lib.id) }">
                 <span v-if="sourceType === 1"
                       class="expand-arrow" :class="{ expanded: expanded.has(lib.id) }"
-                      @click.stop="toggleExpand(lib.id)">›</span>
+                      role="button" tabindex="0"
+                      :aria-label="expanded.has(lib.id) ? '收起考核点' : '展开考核点'"
+                      @click.stop="toggleExpand(lib.id)"
+                      @keydown.enter.prevent="toggleExpand(lib.id)">›</span>
                 <span v-else class="expand-placeholder"></span>
 
                 <el-checkbox :model-value="isLibPicked(lib.id)"
                        @change="toggleLib(lib.id, Boolean($event))" />
-                <span class="lib-name" @click="toggleLib(lib.id, !isLibPicked(lib.id))">{{ lib.name }}</span>
+                <span class="lib-name" role="button" tabindex="0"
+                      @click="toggleLib(lib.id, !isLibPicked(lib.id))"
+                      @keydown.enter.prevent="toggleLib(lib.id, !isLibPicked(lib.id))">{{ lib.name }}</span>
                 <span class="lib-cat">{{ lib.catalogName }}</span>
               </div>
 
@@ -72,13 +77,14 @@
           <aside class="picked-panel">
             <div class="picked-head">
               <span>已选</span>
-              <span class="clear-btn" @click="clearAll">清空</span>
+              <span class="clear-btn" role="button" tabindex="0" @click="clearAll" @keydown.enter.prevent="clearAll">清空</span>
             </div>
 
             <!-- 按题库 -->
             <div v-if="sourceType === 0" class="picked-body">
               <span v-for="id in Array.from(pickedLibs)" :key="id" class="picked-tag">
-                {{ nameOf(id) }}<i @click="toggleLib(id, false)">×</i>
+                {{ nameOf(id) }}<i role="button" tabindex="0" :aria-label="`移除 ${nameOf(id)}`"
+                                   @click="toggleLib(id, false)" @keydown.enter.prevent="toggleLib(id, false)">×</i>
               </span>
               <span v-if="!pickedLibs.size" class="empty-tip">请在左侧勾选题库</span>
             </div>
@@ -89,7 +95,9 @@
                 <p class="group-name">{{ group.libName }}</p>
                 <div class="group-tags">
                   <span v-for="p in group.points" :key="p.id" class="picked-tag">
-                    {{ p.name }}<i @click="togglePoint(group.libId, p.id, false)">×</i>
+                    {{ p.name }}<i role="button" tabindex="0" :aria-label="`移除 ${p.name}`"
+                                   @click="togglePoint(group.libId, p.id, false)"
+                                   @keydown.enter.prevent="togglePoint(group.libId, p.id, false)">×</i>
                   </span>
                 </div>
               </div>
@@ -286,7 +294,7 @@ watch(sourceType, (next, prev) => {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 500;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
@@ -305,14 +313,11 @@ watch(sourceType, (next, prev) => {
   display: flex; gap: 12px;
 
   .catalog-filter {
-    width: 200px; border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 7px 10px; font-size: 13px; outline: none;
+    width: 200px;
   }
-  input {
-    flex: 1; border: 1px solid #d9d9d9; border-radius: 4px;
-    padding: 7px 10px; font-size: 13px; outline: none;
-
-    &:focus { border-color: #1890ff; }
+  // 原写给原生 input 的规则在 scoped 下匹配不到 EP 内部元素，改为对 el-input 根生效
+  .el-input {
+    flex: 1; min-width: 160px; font-size: 13px;
   }
 }
 
@@ -331,9 +336,12 @@ watch(sourceType, (next, prev) => {
   .expand-arrow {
     width: 14px; text-align: center; color: #a0a7b8; cursor: pointer; transition: transform .15s;
     &.expanded { transform: rotate(90deg); }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
   }
   .expand-placeholder { width: 14px; }
-  .lib-name { flex: 1; min-width: 0; cursor: pointer; }
+  .lib-name { flex: 1; min-width: 0; cursor: pointer;
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; }
+  }
   .lib-cat { color: #8a92a5; font-size: 12px; }
   input[type="checkbox"] { accent-color: #1890ff; }
 }
@@ -356,7 +364,7 @@ watch(sourceType, (next, prev) => {
     display: flex; justify-content: space-between; align-items: center;
     font-size: 13px; color: #303133; margin-bottom: 10px;
   }
-  .clear-btn { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } }
+  .clear-btn { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
 }
 
 .picked-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
@@ -370,7 +378,9 @@ watch(sourceType, (next, prev) => {
   padding: 4px 8px; border: 1px solid #d9e1ec; border-radius: 4px;
   background: #fafbfd; font-size: 12px; color: #4a5368;
 
-  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  }
 }
 
 .empty, .empty-tip { font-size: 12px; color: #b0b7c3; }

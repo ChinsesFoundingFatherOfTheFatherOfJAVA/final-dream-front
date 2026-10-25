@@ -1,7 +1,7 @@
 <template>
   <div class="courseware-form-page">
     <header class="form-header">
-      <el-button class="back-btn" @click="goBack">‹</el-button>
+      <el-button class="back-btn" aria-label="返回" @click="goBack">‹</el-button>
       <h1>{{ pageTitle }}</h1>
     </header>
 
@@ -20,7 +20,7 @@
           :multiple="variant === 'file'"
           @change="onFilesSelected"
         />
-        <span class="upload-cloud">⇧</span>
+        <span class="upload-cloud" aria-hidden="true">⇧</span>
         <strong>拖拽或点击此处选择文件</strong>
         <small>{{ uploadHint }}</small>
       </label>
@@ -28,11 +28,11 @@
       <div v-if="uploadRows.length" class="upload-list">
         <div v-for="row in uploadRows" :key="row.key" class="upload-row">
           <div class="upload-file">
-            <span>{{ fileGlyph(row.fileName) }}</span>
+            <span aria-hidden="true">{{ fileGlyph(row.fileName) }}</span>
             <strong>{{ row.fileName }}</strong>
           </div>
           <div class="progress-track">
-            <i :style="{ width: `${row.progress}%` }"></i>
+            <i aria-hidden="true" :style="{ width: `${row.progress}%` }"></i>
           </div>
           <em>{{ row.progress }}%</em>
           <el-button v-if="row.error" @click="retryRow(row)">重试</el-button>
@@ -75,7 +75,7 @@
 
       <main ref="formScroll" class="form-scroll">
         <section ref="fileSection" class="form-section" data-anchor="file">
-          <h2><i></i>{{ variant === 'link' ? '课件链接' : '上传文件' }}</h2>
+          <h2><i aria-hidden="true"></i>{{ variant === 'link' ? '课件链接' : '上传文件' }}</h2>
           <template v-if="variant === 'link'">
             <div class="table-shell link-table">
               <div class="table-head">
@@ -84,7 +84,7 @@
                 <span>操作</span>
               </div>
               <div v-for="(link, index) in form.links" :key="index" class="table-row">
-                <span class="drag-handle">⋮⋮</span>
+                <span class="drag-handle" aria-hidden="true">⋮⋮</span>
                 <el-input
                   v-model.trim="link.storagePath"
                   maxlength="500"
@@ -116,7 +116,7 @@
                 <span>操作</span>
               </div>
               <div v-for="(file, index) in form.files" :key="file.storagePath" class="table-row">
-                <span class="file-name"><i>☷</i>{{ file.fileName }}</span>
+                <span class="file-name"><i aria-hidden="true">☷</i>{{ file.fileName }}</span>
                 <span>--</span>
                 <span>{{ languageLabel(file.language) }}</span>
                 <div class="row-actions">
@@ -130,7 +130,7 @@
         </section>
 
         <section ref="basicSection" class="form-section" data-anchor="basic">
-          <h2><i></i>基本信息</h2>
+          <h2><i aria-hidden="true"></i>基本信息</h2>
           <div class="form-grid">
             <label class="field span-2">
               <span>名称<em>*</em></span>
@@ -181,7 +181,7 @@
                 <el-radio-group v-model="durationMode" class="radio-stack">
                   <el-radio value="" disabled>
                     跟随学分策略（课程设置-学分策略设置）
-                    <i title="文档解析功能建设中，请单独设置">!</i>
+                    <i aria-hidden="true" title="文档解析功能建设中，请单独设置">!</i>
                   </el-radio>
                   <el-radio value="custom">单独设置时长</el-radio>
                 </el-radio-group>
@@ -274,19 +274,19 @@
         </section>
 
         <section ref="contributorSection" class="form-section" data-anchor="contributor">
-          <h2><i></i>相关方信息</h2>
+          <h2><i aria-hidden="true"></i>相关方信息</h2>
           <div class="field span-2">
             <span>贡献者<em>*</em></span>
             <div class="contributor-tag">
               <span>{{ contributorText }}</span>
               <el-button aria-label="移除贡献者" @click="removeContributor">×</el-button>
-              <i>...</i>
+              <i aria-hidden="true">...</i>
             </div>
           </div>
         </section>
 
         <section ref="permissionSection" class="form-section" data-anchor="permission">
-          <h2><i></i>权限设置</h2>
+          <h2><i aria-hidden="true"></i>权限设置</h2>
           <div class="permission-form">
             <div class="permission-line">
               <span>浏览权限</span>
@@ -330,7 +330,7 @@
         </section>
 
         <section ref="functionSection" class="form-section" data-anchor="function">
-          <h2><i></i>功能设置</h2>
+          <h2><i aria-hidden="true"></i>功能设置</h2>
           <div class="switch-stack">
             <div class="switch-line" :class="{ disabled: speedLocked }">
               <el-switch v-model="form.speedEnabled" :disabled="speedLocked" />

@@ -5,12 +5,12 @@
     </p>
 
     <div v-if="materials.length === 0" class="empty-state">
-      <div class="empty-icon">📎</div>
+      <div class="empty-icon" aria-hidden="true">📎</div>
       <p class="empty-text">暂无培训材料，可在左侧对话中上传</p>
     </div>
 
     <div v-for="m in materials" :key="m.id" class="material-card">
-      <span class="file-icon">{{ fileIcon(m.fileType) }}</span>
+      <span class="file-icon" aria-hidden="true">{{ fileIcon(m.fileType) }}</span>
       <div class="material-meta">
         <div class="material-name">{{ m.name }}</div>
         <div class="material-sub">{{ (m.fileType || '').toUpperCase() }} · {{ sizeText(m) }}</div>
@@ -162,6 +162,11 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   }
 
   input:disabled + .switch-track { opacity: 0.5; }
+
+  /* 视觉隐藏的原生 checkbox：键盘聚焦时在轨道上显示焦点环 */
+  input:focus-visible + .switch-track {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.45);
+  }
 
   .switch-text {
     font-size: 13px;

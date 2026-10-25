@@ -14,7 +14,7 @@
       <div class="bar-right">
         <el-button class="mode-btn" @click="unlockVisible = true">
           {{ unlockMode === UNLOCK_MODE_ORDER ? '按顺序学习' : '自由学习模式' }}
-          <span class="caret">▼</span>
+          <span class="caret" aria-hidden="true">▼</span>
         </el-button>
         <el-button class="btn ghost" :disabled="saving || loading" @click="submitDesigner(false)">
           暂存关闭

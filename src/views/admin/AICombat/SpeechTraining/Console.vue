@@ -4,8 +4,8 @@
     <div class="project-header">
       <div class="project-info">
         <div class="project-cover">
-          <img v-if="project.coverImage" :src="project.coverImage" alt="cover" class="cover-img" />
-          <span v-else class="cover-icon">📚</span>
+          <img v-if="project.coverImage" :src="project.coverImage" :alt="project.name" width="60" height="60" class="cover-img" />
+          <span v-else class="cover-icon" aria-hidden="true">📚</span>
         </div>
         <div class="project-details">
           <h1 class="project-name">{{ project.name }}</h1>
@@ -237,7 +237,7 @@ onMounted(loadProject)
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity 0.2s;
   border: 1px solid #d9d9d9;
 
   &.btn-default { background: #fff; color: #333; }
@@ -263,7 +263,7 @@ onMounted(loadProject)
     font-size: 14px;
     color: #666;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
 
     &:hover { background: #f5f5f5; color: #1890ff; }
     &.active { color: #1890ff; border-right: 3px solid #1890ff; background: #e6f7ff; }

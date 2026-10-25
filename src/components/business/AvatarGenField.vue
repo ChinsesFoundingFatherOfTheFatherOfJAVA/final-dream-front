@@ -20,11 +20,32 @@
       <div class="preview-card">
         <img :src="modelValue" alt="陪练者形象预览" class="preview-img" />
         <div class="preview-mask">
-          <span class="mask-btn" title="重新生成" @click="onGenerate">重新生成</span>
-          <span class="mask-btn" title="上传本地图片" @click="triggerUpload">本地上传</span>
+          <span
+            class="mask-btn"
+            role="button"
+            tabindex="0"
+            title="重新生成"
+            @click="onGenerate"
+            @keydown.enter.prevent="onGenerate"
+          >重新生成</span>
+          <span
+            class="mask-btn"
+            role="button"
+            tabindex="0"
+            title="上传本地图片"
+            @click="triggerUpload"
+            @keydown.enter.prevent="triggerUpload"
+          >本地上传</span>
         </div>
       </div>
-      <span class="remove-link" title="清除形象" @click="onRemove">移除</span>
+      <span
+        class="remove-link"
+        role="button"
+        tabindex="0"
+        title="清除形象"
+        @click="onRemove"
+        @keydown.enter.prevent="onRemove"
+      >移除</span>
     </div>
     <!-- 无形象时的本地上传入口 -->
     <el-button v-else class="upload-link" :disabled="generating" @click="triggerUpload">
@@ -140,12 +161,9 @@ $primary: #1890ff;
   .prompt-input {
     flex: 1;
     height: 36px;
-    padding: 0 12px;
-    border: 1px solid #dcdfe6;
     border-radius: 6px;
     font-size: 14px;
     color: #333;
-    outline: none;
 
     &::placeholder {
       color: #999;
@@ -228,6 +246,11 @@ $primary: #1890ff;
     opacity: 1;
   }
 
+  // 遮罩按钮键盘可达时也显示，否则 Tab 聚焦的是透明按钮
+  &:focus-within .preview-mask {
+    opacity: 1;
+  }
+
   .mask-btn {
     flex: 1;
     padding: 8px 0;
@@ -243,6 +266,11 @@ $primary: #1890ff;
     &:hover {
       background: rgba(255, 255, 255, 0.12);
     }
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: -2px;
+    }
   }
 }
 
@@ -253,6 +281,11 @@ $primary: #1890ff;
 
   &:hover {
     color: #e54545;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #e54545;
+    outline-offset: 2px;
   }
 }
 
@@ -265,7 +298,7 @@ $primary: #1890ff;
   font-size: 13px;
   color: #666;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s, border-color 0.2s;
 
   &:hover:not(:disabled) {
     color: $primary;

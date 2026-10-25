@@ -8,14 +8,14 @@
   >
     <div class="copy-body">
       <div class="notice">
-        <span>i</span>
+        <span aria-hidden="true">i</span>
         复制出一个新课程，源课程与复制课程各自独立，章节任务结构完整复制，编辑时不会同步更新
       </div>
       <h4>请选择目录</h4>
       <div class="tree-wrap">
         <div class="tree-head">
-          <el-button v-if="rootExpanded" @click="rootExpanded = false">▾</el-button>
-          <el-button v-else @click="rootExpanded = true">▸</el-button>
+          <el-button v-if="rootExpanded" aria-label="收起子分类" @click="rootExpanded = false"><el-icon><CaretBottom /></el-icon></el-button>
+          <el-button v-else aria-label="展开子分类" @click="rootExpanded = true"><el-icon><CaretRight /></el-icon></el-button>
           <strong>主课堂</strong>
         </div>
         <template v-if="rootExpanded">
@@ -27,11 +27,11 @@
           >
             <el-button
               v-if="row.hasChildren"
-             
               class="expand-btn"
+              :aria-label="row.expanded ? '收起子分类' : '展开子分类'"
               @click.stop="toggle(row.node.id)"
             >
-              {{ row.expanded ? '▾' : '▸' }}
+              <el-icon class="fold" v-if="row.expanded"><CaretBottom /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon>
             </el-button>
             <span v-else class="expand-placeholder"></span>
             <el-checkbox
@@ -53,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretBottom, CaretRight } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import KngDrawer from '../../components/KngDrawer.vue'
 import { getKngCatalogTree, type KngTreeNode } from '@/api/kng'
@@ -210,4 +211,6 @@ h4 {
     }
   }
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

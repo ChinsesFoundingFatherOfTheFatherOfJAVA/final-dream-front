@@ -3,7 +3,7 @@
        确定后覆盖勾选试题的考核点关联（原有考核点会被这个选择整体替换）。 -->
     <el-drawer
     :model-value="true"
-    size="460px"
+    size="560px"
     :with-header="false"
     append-to-body
     destroy-on-close
@@ -13,7 +13,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>设置考核点</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -85,12 +85,12 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 460px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 560px; height: 100%; background: #fff; display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 20px; }
@@ -109,7 +109,7 @@ onMounted(async () => {
   .point-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .default-tag {
     padding: 1px 6px; border-radius: 3px; background: #f0f5ff;
-    border: 1px solid #d6e4ff; color: #2f54eb; font-size: 11px;
+    border: 1px solid #d6e4ff; color: #2f54eb; font-size: 12px;
   }
 }
 

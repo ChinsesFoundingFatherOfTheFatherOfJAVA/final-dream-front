@@ -93,9 +93,9 @@
           />
           <el-button
             v-if="row.subjectType >= 4"
-           
             class="remove-row"
             :disabled="form.inheritParent"
+            :aria-label="`移除${row.subjectName}`"
             @click="removePermissionRow(row)"
           >
             ×

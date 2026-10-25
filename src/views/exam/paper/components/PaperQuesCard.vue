@@ -7,18 +7,21 @@
       v-if="!expanded"
       class="card-collapsed"
       draggable="true"
+      role="button"
+      tabindex="0"
       @dragstart="emit('dragstart')"
       @dragend="emit('dragend')"
       @dragover.prevent
       @drop="emit('drop')"
       @click="startEdit"
+      @keydown.enter.prevent="startEdit"
     >
-      <span class="idx">{{ index }}.</span>
+      <span class="idx" aria-hidden="true">{{ index }}.</span>
       <div class="collapsed-main">
         <p class="stem">{{ plainStem }}</p>
         <ul v-if="displayOptions.length" class="opt-preview">
           <li v-for="(opt, i) in displayOptions" :key="i">
-            <span class="dot" :class="{ on: opt.answer === 1 }"></span>
+            <span class="dot" :class="{ on: opt.answer === 1 }" aria-hidden="true"></span>
             <span class="opt-text">{{ String.fromCharCode(65 + i) }}. {{ stripHtml(opt.itemContent) }}</span>
           </li>
         </ul>
@@ -32,9 +35,11 @@
       <span v-if="type === 5" class="sub-count">含 {{ subDrafts.length }} 个小题</span>
       <span class="score">{{ score }}分</span>
       <div class="card-tools" @click.stop>
-        <span class="tool" title="拖拽调整顺序">⠿</span>
-        <span class="tool" title="复制此题" @click="emit('duplicate')">⧉</span>
-        <span class="tool danger" title="删除此题" @click="emit('remove')">🗑</span>
+        <span class="tool" title="拖拽调整顺序" aria-hidden="true">⠿</span>
+        <span class="tool" title="复制此题" aria-label="复制此题" role="button" tabindex="0"
+              @click="emit('duplicate')" @keydown.enter.prevent.stop="emit('duplicate')">⧉</span>
+        <span class="tool danger" title="删除此题" aria-label="删除此题" role="button" tabindex="0"
+              @click="emit('remove')" @keydown.enter.prevent.stop="emit('remove')">🗑</span>
       </div>
     </div>
 
@@ -92,7 +97,7 @@
               <span class="sub-tag">{{ typeLabel(sub.type) }}</span>
               <span class="sub-stem">{{ stripHtml(sub.body.content) || '未命名小题' }}</span>
               <span class="sub-score">{{ sub.score }} 分</span>
-              <span class="sub-del" @click="removeSub(i)">删除</span>
+              <span class="sub-del" role="button" tabindex="0" @click="removeSub(i)" @keydown.enter.prevent="removeSub(i)">删除</span>
             </div>
           </div>
 
@@ -614,6 +619,8 @@ const MissScoreField = defineComponent({
 .card-collapsed {
   display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; cursor: pointer;
 
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 6px; }
+
   .idx { flex: 0 0 auto; font-size: 14px; color: #303133; }
   .collapsed-main { flex: 1; min-width: 0; }
   .stem { margin: 0 0 8px; font-size: 13px; color: #303133; word-break: break-word; }
@@ -640,6 +647,7 @@ const MissScoreField = defineComponent({
       color: #8a92a5; cursor: pointer; font-size: 14px;
       &:hover { color: #1890ff; }
       &.danger:hover { color: #f5222d; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
     }
   }
 }
@@ -676,7 +684,7 @@ const MissScoreField = defineComponent({
   .sub-tag { color: #8a92a5; font-size: 12px; }
   .sub-stem { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #303133; }
   .sub-score { color: #303133; }
-  .sub-del { color: #f5222d; cursor: pointer; &:hover { text-decoration: underline; } }
+  .sub-del { color: #f5222d; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
 }
 
 .sub-editor {
@@ -699,24 +707,27 @@ const MissScoreField = defineComponent({
 }
 
 .setting-row {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px;
   padding: 12px 0 4px; border-top: 1px dashed #eef1f6; margin-top: 8px;
 
   .setting-item {
     display: inline-flex; align-items: center; gap: 8px;
+    // 最小宽度保证题库/难度下拉不被 flex 压缩到看不见；放不下时整项换行
+    min-width: 200px; flex: 1 1 200px;
     font-size: 13px; color: #4a5368;
 
-    select, .num {
-      border: 1px solid #d9d9d9; border-radius: 4px;
-      padding: 5px 8px; font-size: 13px; outline: none;
-    }
+    // 题库/难度下拉定宽
+    .el-select { width: 150px; }
+
+    // el-input-number 根只定宽：边框由 EP wrapper 提供，根上不再画边框（避免双层）
     .num { width: 84px; }
   }
 
-  /* 考核点选择器要给足宽度，否则下拉里名字被挤没了 */
+  /* 考核点选择器独占一行，给足宽度，否则下拉里名字被挤没了 */
   .point-item {
+    flex: 1 1 100%;
     :deep(.point-picker),
-    :deep(.picker-field) { min-width: 240px; }
+    :deep(.picker-field) { width: 100%; min-width: 240px; }
   }
 }
 

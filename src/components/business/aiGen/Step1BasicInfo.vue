@@ -45,17 +45,33 @@
       </div>
 
       <div v-for="name in extractingNames" :key="'ing-' + name" class="file-item extracting">
-        <span class="file-icon doc">…</span>
+        <span class="file-icon doc" aria-hidden="true">…</span>
         <span class="file-name">{{ name }}</span>
         <span class="extracting-tip">解析中...</span>
       </div>
 
       <div v-for="(m, i) in materials" :key="i" class="file-item">
-        <span class="file-icon" :class="extClass(m.fileName)">{{ extGlyph(m.fileName) }}</span>
+        <span class="file-icon" :class="extClass(m.fileName)" aria-hidden="true">{{ extGlyph(m.fileName) }}</span>
         <span class="file-name" :title="m.fileName">{{ m.fileName }}</span>
         <span v-if="m.truncated" class="file-truncated" title="素材文本已截断至3万字">已截断</span>
-        <span class="file-op" title="预览" @click="previewIndex = i">👁</span>
-        <span class="file-op" title="删除" @click="removeMaterial(i)">🗑</span>
+        <span
+          class="file-op"
+          role="button"
+          tabindex="0"
+          title="预览"
+          aria-label="预览素材"
+          @click="previewIndex = i"
+          @keydown.enter.prevent="previewIndex = i"
+        >👁</span>
+        <span
+          class="file-op"
+          role="button"
+          tabindex="0"
+          title="删除"
+          aria-label="删除素材"
+          @click="removeMaterial(i)"
+          @keydown.enter.prevent="removeMaterial(i)"
+        >🗑</span>
       </div>
     </div>
 
@@ -73,13 +89,13 @@
         class="btn-ai-outline"
         :disabled="generating || !localDescription.trim()"
         @click="emit('generate')"
-      >✨ AI生成对话场景</el-button>
+      ><el-icon class="btn-caret"><MagicStick /></el-icon> AI生成对话场景</el-button>
       <el-button
         v-else
         class="btn-ai-outline"
         :disabled="generating || !localDescription.trim()"
         @click="emit('generate')"
-      >✨ AI重新生成对话场景</el-button>
+      ><el-icon class="btn-caret"><MagicStick /></el-icon> AI重新生成对话场景</el-button>
     </div>
 
     <!-- 素材文本预览（眼睛） -->
@@ -87,7 +103,14 @@
       <div class="preview-box">
         <div class="preview-header">
           <span>{{ materials[previewIndex]?.fileName }}</span>
-          <span class="close-btn" @click="previewIndex = null">×</span>
+          <span
+            class="close-btn"
+            role="button"
+            tabindex="0"
+            aria-label="关闭预览"
+            @click="previewIndex = null"
+            @keydown.enter.prevent="previewIndex = null"
+          >×</span>
         </div>
         <pre class="preview-text">{{ materials[previewIndex]?.text }}</pre>
       </div>
@@ -105,6 +128,7 @@
 </template>
 
 <script setup lang="ts">
+import { MagicStick } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import KngMaterialDrawer from './KngMaterialDrawer.vue'
 import { toast } from '@/utils/toast'
@@ -344,6 +368,7 @@ const extGlyph = (name: string) => {
 
   .file-name {
     flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -358,7 +383,12 @@ const extGlyph = (name: string) => {
     padding: 0 4px;
   }
 
-  .file-op { cursor: pointer; color: #999; &:hover { color: #333; } }
+  .file-op {
+    cursor: pointer; color: #999;
+    &:hover { color: #333; }
+    // 素材行图标操作已补按钮语义，补键盘焦点环
+    &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: 2px; }
+  }
 }
 
 .radio-group { display: flex; gap: 10px; }
@@ -423,7 +453,11 @@ const extGlyph = (name: string) => {
     font-size: 14px;
     font-weight: 500;
 
-    .close-btn { font-size: 20px; color: #999; cursor: pointer; }
+    .close-btn {
+      font-size: 20px; color: #999; cursor: pointer;
+      // 图标关闭按钮：补键盘焦点环
+      &:focus-visible { outline: 2px solid #6b5ce7; outline-offset: 2px; }
+    }
   }
 
   .preview-text {
@@ -437,4 +471,6 @@ const extGlyph = (name: string) => {
     word-break: break-all;
   }
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

@@ -12,14 +12,14 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>快速出卷</span>
-        <span class="close-btn" @click="emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
         <ol class="steps">
           <!-- ① 下载模板 -->
           <li class="step">
-            <span class="step-no">1</span>
+            <span class="step-no" aria-hidden="true">1</span>
             <div class="step-main">
               <p class="step-title">点击「下载」按钮下载需要导入的模板文件。</p>
               <p class="step-warn">请仔细阅读模板中的说明，并按要求格式填写导入的数据。</p>
@@ -31,7 +31,7 @@
 
           <!-- ② 选择题库（整卷题目归属库） -->
           <li class="step">
-            <span class="step-no">2</span>
+            <span class="step-no" aria-hidden="true">2</span>
             <div class="step-main">
               <p class="step-title">选择试题所属题库。</p>
               <el-select v-model="libId" class="field">
@@ -44,21 +44,25 @@
 
           <!-- ③ 选试卷分类 + 保密 -->
           <li class="step">
-            <span class="step-no">3</span>
+            <span class="step-no" aria-hidden="true">3</span>
             <div class="step-main">
               <p class="step-title">选择试卷所属分类。</p>
               <div class="inline-field">
                 <span class="inline-label">选择分类</span>
-                <div class="catalog-select" @click="showCatalogPicker = !showCatalogPicker">
+                <div class="catalog-select" role="button" tabindex="0" aria-label="选择试卷分类"
+                     @click="showCatalogPicker = !showCatalogPicker"
+                     @keydown.enter.prevent="showCatalogPicker = !showCatalogPicker">
                   <span :class="{ placeholder: !catalogName }">{{ catalogName || '请选择试卷分类' }}</span>
-                  <span class="select-arrow">▾</span>
+                  <span class="select-arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
                   <div v-if="showCatalogPicker" class="catalog-dropdown" @click.stop>
                     <div
                       v-for="node in flatNodes"
                       :key="node.id"
                       class="dropdown-node"
                       :style="{ paddingLeft: 10 + node.level * 16 + 'px' }"
+                      role="button" tabindex="0"
                       @click="pickCatalog(node)"
+                      @keydown.enter.prevent="pickCatalog(node)"
                     >{{ node.name }}</div>
                   </div>
                 </div>
@@ -78,7 +82,7 @@
 
           <!-- ④ 上传文件 -->
           <li class="step">
-            <span class="step-no">4</span>
+            <span class="step-no" aria-hidden="true">4</span>
             <div class="step-main">
               <p class="step-title">完成文件的填写后，点击或将文件拖拽到上传区域进行上传。</p>
               <p class="step-hint">
@@ -86,7 +90,9 @@
               </p>
               <p class="step-warn">.xls 后缀的 Excel 模板不再支持题干中添加图片上传，如有需要请下载最新模板编辑后上传。</p>
               <div class="drop-zone" :class="{ over: dragOver }"
+                   role="button" tabindex="0" aria-label="上传文件"
                    @click="pickFile"
+                   @keydown.enter.prevent="pickFile"
                    @dragover.prevent="dragOver = true"
                    @dragleave.prevent="dragOver = false"
                    @drop.prevent="onDrop">
@@ -100,7 +106,8 @@
                 </p>
                 <p v-else class="drop-file">
                   {{ file.name }}（{{ Math.round(file.size / 1024) }} KB）
-                  <i @click.stop="file = null">×</i>
+                  <i role="button" tabindex="0" aria-label="移除文件" @click.stop="file = null"
+                     @keydown.enter.prevent.stop="file = null">×</i>
                 </p>
                 <input ref="fileInput" type="file" class="hidden-file" accept=".xlsx,.xls" @change="onPicked" />
               </div>
@@ -137,6 +144,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { getLibList, type LibItem } from '@/api/exam'
@@ -272,7 +280,7 @@ onMounted(async () => {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
@@ -322,6 +330,7 @@ onMounted(async () => {
   font-size: 13px; cursor: pointer; margin-bottom: 10px;
 
   &:hover { border-color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   .placeholder { color: #b0b7c3; }
   .select-arrow { color: #8a92a5; font-size: 11px; }
 
@@ -334,6 +343,7 @@ onMounted(async () => {
     .dropdown-node {
       padding: 7px 12px; font-size: 12px; color: #4a5368; cursor: pointer;
       &:hover { background: #f2f6ff; color: #1890ff; }
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     }
   }
 }
@@ -366,12 +376,14 @@ onMounted(async () => {
   cursor: pointer;
 
   &:hover, &.over { border-color: #1890ff; background: #f5f9ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   .drop-tip { margin: 0; font-size: 13px; color: #4a5368; line-height: 2.1; em { color: #1890ff; font-style: normal; } }
   .hint { font-size: 11px; color: #b0b7c3; }
   .drop-file {
     margin: 0; font-size: 13px; color: #1f2937;
-    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer; }
+    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer;
+      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
   }
 
   .drop-icon {

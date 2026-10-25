@@ -19,10 +19,17 @@
         placeholder="请输入课程分类名称搜索"
         clearable
       >
-        <template #prefix>⌕</template>
+        <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
       </el-input>
       <div class="tree-wrap">
-        <div class="tree-row root-row" :class="{ selected: selectedId === '' }" @click="selectedId = ''">
+        <div
+          class="tree-row root-row"
+          :class="{ selected: selectedId === '' }"
+          role="button"
+          tabindex="0"
+          @click="selectedId = ''"
+          @keydown.enter.prevent="selectedId = ''"
+        >
           <span class="expand-placeholder"></span>
           <span>主课堂</span>
         </div>
@@ -32,15 +39,18 @@
           class="tree-row"
           :class="{ selected: selectedId === row.node.id }"
           :style="{ paddingLeft: `${row.depth * 22}px` }"
+          role="button"
+          tabindex="0"
           @click="selectedId = row.node.id"
+          @keydown.enter.prevent="selectedId = row.node.id"
         >
           <el-button
             v-if="row.hasChildren"
-           
             class="expand-btn"
+            :aria-label="row.expanded ? '收起子分类' : '展开子分类'"
             @click.stop="toggle(row.node.id)"
           >
-            {{ row.expanded ? '▾' : '▸' }}
+            <el-icon class="fold" v-if="row.expanded"><CaretBottom /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon>
           </el-button>
           <span v-else class="expand-placeholder"></span>
           <span>{{ row.node.name }}</span>
@@ -58,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import { CaretBottom, CaretRight, Search } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import KngDrawer from '../../components/KngDrawer.vue'
 import { getKngCatalogTree, type KngTreeNode } from '@/api/kng'
@@ -192,6 +203,12 @@ h4 {
   font-size: 13px;
   cursor: pointer;
 
+  /* 自定义可点分类行：键盘可达，补可见焦点环（不占布局空间） */
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: -2px;
+  }
+
   &:hover {
     background: #f5f8fc;
   }
@@ -243,4 +260,6 @@ h4 {
     }
   }
 }
+
+.fold { vertical-align: -2px; margin-left: 2px; }
 </style>

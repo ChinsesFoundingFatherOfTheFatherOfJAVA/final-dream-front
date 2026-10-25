@@ -6,30 +6,31 @@
         <h3 class="menu-title">AI对练</h3>
         <div class="menu-list">
           <div class="menu-group expanded">
-            <div class="menu-group-title" @click="toggleGroup('speechNew')">
-              <span class="group-icon">🔄</span>
+            <div class="menu-group-title" role="button" tabindex="0" @keydown.enter.prevent="toggleGroup('speechNew')" @click="toggleGroup('speechNew')">
+              <span class="group-icon" aria-hidden="true">🔄</span>
               <span>话术训练(新)</span>
-              <span class="arrow" :class="{ open: openGroups.speechNew }">▾</span>
+              <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
             <div v-if="openGroups.speechNew" class="menu-group-items">
               <router-link to="/sparring/newmanage" class="menu-item">话术训练中心</router-link>
               <router-link to="/sparring/newtemplate" class="menu-item active">话术模版</router-link>
             </div>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">🔄</span>
+          <!-- 占位菜单：暂无功能，去掉可点暗示 -->
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">🔄</span>
             <span>话术训练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">👥</span>
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">👥</span>
             <span>演讲训练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
-          <div class="menu-item collapsed">
-            <span class="group-icon">⚔️</span>
+          <div class="menu-item collapsed" title="敬请期待">
+            <span class="group-icon" aria-hidden="true">⚔️</span>
             <span>实战演练</span>
-            <span class="arrow">▸</span>
+            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
         </div>
       </aside>
@@ -130,6 +131,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, CaretRight } from '@element-plus/icons-vue'
 import { ref, reactive, onMounted } from 'vue'
 import { toast } from '@/utils/toast'
 import { useRouter } from 'vue-router'
@@ -245,6 +247,7 @@ const handleCreate = async () => {
     cursor: pointer;
 
     &:hover { background: #f5f5f5; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     .arrow { font-size: 10px; margin-left: auto; }
   }
 }
@@ -257,12 +260,18 @@ const handleCreate = async () => {
   font-size: 14px;
   color: #666;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   text-decoration: none;
 
   &:hover { background: #f5f5f5; color: #1890ff; }
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
   &.active { background: #e6f7ff; color: #1890ff; border-right: 3px solid #1890ff; }
-  &.collapsed { padding-left: 20px; }
+  &.collapsed {
+    padding-left: 20px;
+    /* 占位入口：暂无功能，不做可点暗示 */
+    cursor: default;
+    &:hover { background: none; color: inherit; }
+  }
   .arrow { font-size: 10px; margin-left: auto; }
   .group-icon { font-size: 16px; }
 }
@@ -284,12 +293,9 @@ const handleCreate = async () => {
 
 .filter-select, .filter-input {
   height: 32px;
-  padding: 0 12px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 14px;
   color: #333;
-  outline: none;
 
   &:focus { border-color: #1890ff; }
 }
@@ -301,7 +307,7 @@ const handleCreate = async () => {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity 0.2s;
   border: 1px solid #d9d9d9;
 
   &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }

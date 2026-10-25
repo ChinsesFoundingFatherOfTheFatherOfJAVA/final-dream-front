@@ -12,7 +12,7 @@
     <div class="drawer">
       <div class="drawer-header">
         <span>选择创建人</span>
-        <span class="close-btn" @click="$emit('close')">×</span>
+        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="$emit('close')" @keydown.enter.prevent="$emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
@@ -72,7 +72,8 @@
             <span v-if="!picked.length" class="selected-empty">请选择...</span>
             <span v-for="u in picked" :key="u.userId" class="selected-tag">
               {{ u.fullname || u.account }}
-              <i @click="remove(u)">×</i>
+              <i role="button" tabindex="0" :aria-label="`移除 ${u.fullname || u.account}`"
+                 @click="remove(u)" @keydown.enter.prevent="remove(u)">×</i>
             </span>
           </div>
           <el-button v-if="picked.length" class="clear-btn" @click="picked = []">清空</el-button>
@@ -192,13 +193,12 @@ onMounted(() => {
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center; flex: none;
   padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; }
+  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
 }
 .drawer-body { flex: 1; min-height: 0; display: flex; }
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 16px 20px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .f-select, .f-input {
-  border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 8px; font-size: 12px; outline: none; background: #fff;
   &:focus { border-color: #1890ff; }
 }
 .f-select.dept { width: 160px; }
@@ -231,7 +231,9 @@ tr.picked td { background: #f5f9ff; }
 .selected-tag {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 6px;
   padding: 4px 8px; border-radius: 4px; background: #fff; border: 1px solid #e5e8ef; font-size: 12px; color: #4a5368;
-  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; } }
+  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  }
 }
 .clear-btn { margin-top: 10px; border: none; background: none; color: #1890ff; font-size: 12px; cursor: pointer; text-align: left; }
 .drawer-footer { flex: none; display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }

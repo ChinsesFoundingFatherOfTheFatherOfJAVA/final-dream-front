@@ -4,7 +4,7 @@
     <header class="top-bar">
       <div class="bar-left">
         <el-button class="exit-btn" @click="onExit">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 2a10 10 0 1 0 10 10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
             <path d="M12 12l7-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
           </svg>
@@ -19,7 +19,7 @@
         <span class="progress-text">进度 {{ store.progressPercent }}%</span>
         <span class="lang-badge" title="语音识别与评分一律按普通话处理，不提供语种切换">普通话</span>
         <el-button class="detail-toggle-btn" @click="toggleDetailPanel">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
             <line x1="15" y1="4" x2="15" y2="20" stroke="currentColor" stroke-width="1.8"/>
           </svg>
@@ -34,7 +34,7 @@
       <aside class="trainer-panel">
         <div class="trainer-figure">
           <!-- 形象卡按栏高自适应，cover 裁切且不拉伸 -->
-          <img :src="trainerFace(store.trainerAvatar)" alt="" class="figure-img" />
+          <img :src="trainerFace(store.trainerAvatar)" alt="AI扮演的陪练者形象" class="figure-img" />
         </div>
         <div class="trainer-info">
           <p class="info-label">AI扮演角色</p>
@@ -52,11 +52,18 @@
         <div class="detail-card">
           <div class="detail-header">
             <span class="detail-title">训练详情</span>
-            <span class="detail-close" @click="store.detailPanelVisible = false">×</span>
+            <span
+              class="detail-close"
+              role="button"
+              tabindex="0"
+              aria-label="收起训练详情"
+              @click="store.detailPanelVisible = false"
+              @keydown.enter.prevent="store.detailPanelVisible = false"
+            >×</span>
           </div>
           <div class="detail-body">
             <div class="section-title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M6 2h9l5 5v15H6V2Z" stroke="#8fa3d9" stroke-width="1.6" fill="#232b47"/>
                 <line x1="9" y1="12" x2="16" y2="12" stroke="#8fa3d9" stroke-width="1.6" stroke-linecap="round"/>
                 <line x1="9" y1="16" x2="14" y2="16" stroke="#8fa3d9" stroke-width="1.6" stroke-linecap="round"/>
@@ -238,7 +245,7 @@ export default { name: 'ScriptTraining' }
   color: #dfe5f2;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.12);
@@ -290,7 +297,7 @@ export default { name: 'ScriptTraining' }
     color: #cdd5e8;
     font-size: 12px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 
     &:hover {
       background: rgba(255, 255, 255, 0.12);
@@ -361,7 +368,7 @@ export default { name: 'ScriptTraining' }
     color: #cdd5e8;
     font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);
@@ -472,6 +479,12 @@ export default { name: 'ScriptTraining' }
 
     &:hover {
       color: #fff;
+    }
+
+    // 图标关闭按钮：补键盘焦点环
+    &:focus-visible {
+      outline: 2px solid #7a9bff;
+      outline-offset: 2px;
     }
   }
 }

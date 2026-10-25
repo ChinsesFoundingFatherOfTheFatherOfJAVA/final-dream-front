@@ -55,5 +55,10 @@ const onChange = (checked: boolean) => emit('update:modelValue', checked ? 1 : 0
   }
 
   &.disabled { cursor: not-allowed; opacity: .5; }
+
+  // 内部 checkbox 被 width/height:0 隐藏，键盘聚焦时用滑块描边提供可见焦点
+  &:has(input:focus-visible) .slider {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, .35);
+  }
 }
 </style>

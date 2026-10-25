@@ -1,7 +1,7 @@
 <template>
   <div class="kng-layout">
     <header class="kng-header">
-      <el-button class="back-btn" @click="router.push('/homepage')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回首页" @click="router.push('/homepage')">‹</el-button>
       <div>
         <h1>在线课堂</h1>
         <p>企业学习资源运营</p>
@@ -16,7 +16,7 @@
             :index="item.path"
             class="menu-item"
           >
-            <span class="menu-icon">{{ item.icon }}</span>
+            <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
             <span>{{ item.label }}</span>
           </el-menu-item>
         </el-menu>

@@ -50,13 +50,14 @@
 
     <div class="footer-btns">
       <el-button class="btn-gradient" :disabled="generating" @click="emit('next')">
-        ✨ 确认无误，生成对话大纲
+        <el-icon class="btn-caret"><MagicStick /></el-icon> 确认无误，生成对话大纲
       </el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { MagicStick } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 import type { SceneData } from '@/api/aiGen'
 
@@ -123,4 +124,6 @@ const local = computed({
   &:hover { opacity: 0.92; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+
+.btn-caret { vertical-align: -2px; margin-left: 2px; font-size: 12px; }
 </style>

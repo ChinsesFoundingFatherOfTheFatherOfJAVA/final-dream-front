@@ -19,17 +19,26 @@
           }"
           :style="{ paddingLeft: 12 + node.level * 18 + 'px' }"
           @click="selectCatalog(node)"
+          role="button"
+          tabindex="0"
+          @keydown.enter.prevent="selectCatalog(node)"
         >
           <span
             v-if="node.children && node.children.length"
             class="expand-arrow"
             :class="{ expanded: expandedKeys.has(node.id) }"
+            role="button" tabindex="0"
+            :aria-label="expandedKeys.has(node.id) ? '收起子分类' : '展开子分类'"
             @click.stop="toggleExpand(node.id)"
+            @keydown.enter.prevent="toggleExpand(node.id)"
           >›</span>
           <span v-else class="expand-placeholder"></span>
           <span class="node-name" :title="node.name">{{ node.name }}</span>
           <!-- 齿轮菜单（悬浮子分类显示，截图05） -->
-          <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作" @click.stop="openGearMenu(node, $event)">⚙</span>
+          <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作" aria-label="分类操作"
+                role="button" tabindex="0"
+                @click.stop="openGearMenu(node, $event)"
+                @keydown.enter.prevent="openGearMenu(node, $event as unknown as MouseEvent)">⚙</span>
         </div>
       </div>
     </aside>
@@ -70,6 +79,8 @@
           row-key="id"
           class="lib-table"
           empty-text="暂无题库"
+          :default-sort="{ prop: 'updateTime', order: 'descending' }"
+          @sort-change="onSortChange"
         >
           <el-table-column width="44" align="center">
             <template #header>
@@ -85,22 +96,22 @@
               <span v-if="row.secrecy === 1" class="secrecy-tag">保密</span>
             </template>
           </el-table-column>
-          <el-table-column label="试题数" width="110">
-            <template #header><el-button link @click="sortBy('totalQuesQty')">试题数 {{ orderIcon('totalQuesQty') }}</el-button></template>
+          <el-table-column label="试题数" width="110" prop="totalQuesQty" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.totalQuesQty }}</template>
           </el-table-column>
           <el-table-column prop="pointQty" label="考核点" width="100" />
           <el-table-column label="创建人" width="160">
             <template #default="{ row }">{{ row.createFullname }}<span v-if="row.createUserName" class="account-no">({{ row.createUserName }})</span></template>
           </el-table-column>
-          <el-table-column label="更新日期" width="170">
-            <template #header><el-button link @click="sortBy('updateTime')">更新日期 {{ orderIcon('updateTime') }}</el-button></template>
+          <el-table-column label="更新日期" width="170" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.updateTime }}</template>
           </el-table-column>
           <el-table-column label="启用" width="100">
             <template #default="{ row }">
-                <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'" @click="toggleDisabled(row)">
-                  <i class="enable-dot" :class="{ off: row.disabled === 1 }"></i>
+                <span class="enable-cell" :title="row.disabled === 0 ? '禁用' : '启用'"
+                      role="button" tabindex="0"
+                      @click="toggleDisabled(row)" @keydown.enter.prevent="toggleDisabled(row)">
+                  <i class="enable-dot" :class="{ off: row.disabled === 1 }" aria-hidden="true"></i>
                   <span>{{ row.disabled === 0 ? '启用' : '禁用' }}</span>
                 </span>
             </template>
@@ -108,7 +119,7 @@
           <el-table-column label="操作" width="150" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="openDetail(row)">管理</el-button>
-              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多▾</el-button>
+              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -132,26 +143,28 @@
     <!-- 齿轮下拉菜单（截图05：新建/编辑/删除/禁用/移动） -->
     <div v-if="gearMenu.visible" class="dropdown-mask" @click="gearMenu.visible = false">
       <div class="dropdown-menu" :style="{ top: gearMenu.y + 'px', left: gearMenu.x + 'px' }">
-        <div class="dropdown-item" @click="openCreateUnder(gearMenu.node!)">新建</div>
-        <div class="dropdown-item" @click="openEditCatalog(gearMenu.node!)">编辑</div>
-        <div class="dropdown-item" @click="onDeleteCatalog(gearMenu.node!)">删除</div>
-        <div class="dropdown-item" @click="onToggleCatalogDisabled(gearMenu.node!)">
+        <div class="dropdown-item" role="button" tabindex="0" @click="openCreateUnder(gearMenu.node!)" @keydown.enter.prevent="openCreateUnder(gearMenu.node!)">新建</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openEditCatalog(gearMenu.node!)" @keydown.enter.prevent="openEditCatalog(gearMenu.node!)">编辑</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="onDeleteCatalog(gearMenu.node!)" @keydown.enter.prevent="onDeleteCatalog(gearMenu.node!)">删除</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="onToggleCatalogDisabled(gearMenu.node!)" @keydown.enter.prevent="onToggleCatalogDisabled(gearMenu.node!)">
           {{ gearMenu.node!.disabled === 0 ? '禁用' : '启用' }}
         </div>
-        <div class="dropdown-item" @click="openMoveCatalog(gearMenu.node!)">移动</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openMoveCatalog(gearMenu.node!)" @keydown.enter.prevent="openMoveCatalog(gearMenu.node!)">移动</div>
       </div>
     </div>
 
     <!-- 更多菜单（截图02：编辑/删除/正确率/共享/转移/修改分类） -->
     <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
       <div class="dropdown-menu" :style="{ top: moreMenu.y + 'px', left: moreMenu.x + 'px' }">
-        <div class="dropdown-item" @click="openEditLib(moreMenu.row!)">编辑</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openEditLib(moreMenu.row!)" @keydown.enter.prevent="openEditLib(moreMenu.row!)">编辑</div>
         <div class="dropdown-item" :class="{ disabled: !moreMenu.row!.permissions.canDelete }"
-             @click="moreMenu.row!.permissions.canDelete && onDeleteLib(moreMenu.row!)">删除</div>
-        <div class="dropdown-item" @click="toast.warn('正确率统计待 FP-16 实施')">正确率</div>
-        <div class="dropdown-item" @click="openShare(moreMenu.row!)">共享</div>
-        <div class="dropdown-item" @click="openTransfer(moreMenu.row!)">转移</div>
-        <div class="dropdown-item" @click="openChangeCatalog(moreMenu.row!)">修改分类</div>
+             role="button" tabindex="0"
+             @click="moreMenu.row!.permissions.canDelete && onDeleteLib(moreMenu.row!)"
+             @keydown.enter.prevent="moreMenu.row!.permissions.canDelete && onDeleteLib(moreMenu.row!)">删除</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="toast.warn('正确率统计待 FP-16 实施')" @keydown.enter.prevent="toast.warn('正确率统计待 FP-16 实施')">正确率</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openShare(moreMenu.row!)" @keydown.enter.prevent="openShare(moreMenu.row!)">共享</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openTransfer(moreMenu.row!)" @keydown.enter.prevent="openTransfer(moreMenu.row!)">转移</div>
+        <div class="dropdown-item" role="button" tabindex="0" @click="openChangeCatalog(moreMenu.row!)" @keydown.enter.prevent="openChangeCatalog(moreMenu.row!)">修改分类</div>
       </div>
     </div>
 
@@ -219,6 +232,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
@@ -436,18 +450,12 @@ const reload = async (next?: number) => {
   }
 }
 
-const sortBy = (field: string) => {
-  if (orderby.value === field) {
-    direction.value = direction.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    orderby.value = field
-    direction.value = 'desc'
-  }
+const onSortChange = ({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) => {
+  if (!prop || !order) return
+  orderby.value = prop
+  direction.value = order === 'ascending' ? 'asc' : 'desc'
   reload(1)
 }
-
-const orderIcon = (field: string) =>
-  orderby.value === field ? (direction.value === 'asc' ? '↑' : '↓') : '⇅'
 
 const allPageChecked = computed(
   () => page.records.length > 0 && page.records.every(r => selectedLibIds.value.has(r.id))
@@ -626,14 +634,18 @@ onMounted(() => {
     color: #a0a7b8;
     transition: transform 0.15s;
     flex-shrink: 0;
+    cursor: pointer;
 
     &.expanded { transform: rotate(90deg); }
+
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
   }
 
   .expand-placeholder { width: 16px; flex-shrink: 0; }
 
   .node-name {
     flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -644,9 +656,16 @@ onMounted(() => {
     color: #8a92a5;
     font-size: 12px;
     padding: 0 2px;
+    cursor: pointer;
+
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
   }
 
   &:hover .gear-btn { display: inline; }
+  // 键盘 Tab 聚焦时同步显示齿轮按钮（原本仅 hover 显示）
+  &:focus-within .gear-btn { display: inline; }
+
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
 
   &.active {
     background: #e8f1ff;
@@ -706,26 +725,24 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
+  // 窄屏（如侧边预览面板）下整行宽度不足，允许折行，避免控件互相挤压
+  flex-wrap: wrap;
 
+  // el-select/el-input 的 EP wrapper 自带边框与焦点态，根元素上不再画边框/加内边距，
+  // 否则形成"边框套边框"的双层嵌套（此前按原生控件写的样式套在了组件根上）
   .filter-select {
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 8px;
+    // el-select 根为块级 div，在 flex 行内无宽度约束时会挤压相邻搜索框，固定宽度
+    width: 130px;
     font-size: 12px;
     color: #4a5368;
-    outline: none;
   }
 
   .keyword-input {
     flex: 1;
+    // flex-basis 为 0 时空间不足会把输入框塌缩到 0 宽（完全不可见），必须给下限
+    min-width: 160px;
     max-width: 260px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 10px;
     font-size: 12px;
-    outline: none;
-
-    &:focus { border-color: #1890ff; }
   }
 
   .search-btn {
@@ -762,7 +779,7 @@ th {
   font-weight: 500;
   font-size: 12px;
 
-  &.sortable { cursor: pointer; user-select: none; &:hover { color: #1890ff; } }
+
 }
 
 tr:hover td { background: #fafbfe; }
@@ -803,6 +820,8 @@ tr.checked td { background: #f0f7ff; }
   cursor: pointer;
   font-size: 12px;
   color: #52c41a;
+
+  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; }
 
   .enable-dot {
     width: 8px; height: 8px;
@@ -884,7 +903,10 @@ td:nth-child(7) .enable-cell { color: #4a5368; }
     cursor: pointer;
 
     &:hover { background: #f2f6ff; color: #1890ff; }
+    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
     &.disabled { color: #c2c8d4; cursor: not-allowed; &:hover { background: none; color: #c2c8d4; } }
   }
 }
+
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>
