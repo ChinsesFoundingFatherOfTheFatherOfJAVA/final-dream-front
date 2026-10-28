@@ -177,21 +177,22 @@
               </div>
               <div class="col-evidence">
                 <div class="metric-picker">
-                  <el-select v-model="dim.evidenceType" class="dim-select" :disabled="!dim.enabled">
-                    <el-option label="看文字" :value="1" />
-                    <el-option label="看语音" :value="2" />
-                    <el-option label="文字+语音" :value="3" />
-                  </el-select>
+                  <span class="evidence-fixed">{{ evidenceLabel(dim.evidenceType) }}</span>
+                  <span v-if="!dim.isCustom" class="evidence-fixed">{{ metricLabel(dim.metricKey) }}</span>
                   <el-select
+                    v-else
                     v-model="dim.metricKey"
                     class="dim-select"
                     :disabled="!dim.enabled"
                     @change="handleMetricKeyChange(dim)"
                   >
-                    <el-option label="AI 评分" value="" />
-                    <el-option label="语速规则算分" value="speech_speed" />
-                    <el-option label="违禁词规则算分" value="forbidden_words" />
-                    <el-option label="音频模型评语气" value="tone" />
+                    <el-option
+                      v-for="option in metricOptions(dim)"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                      :disabled="option.disabled"
+                    />
                   </el-select>
                 </div>
                 <div v-if="dim.metricKey === 'speech_speed'" class="metric-params">
@@ -477,7 +478,7 @@ const passStrategies = [
 
 /**
  * 默认评分维度。evidenceType：1=看文字，2=看语音，3=文字+语音
- * （语音依据维度在无语音数据时 score=null，但权重仍按 0 分计入总分）
+ * （语速指标无语音时记 0 分并占权重；其余纯语音依据维度无数据时不参与评分）
  * metricKey：非空表示分数由后端规则算、AI 只写评语，空表示完全交给 AI 评分
  */
 const dimensions = ref<DimensionForm[]>([
@@ -492,7 +493,7 @@ const dimensions = ref<DimensionForm[]>([
       '无需与标准话术完全一致，仅需表达出对应的要点即可。按照要点命中比例得分。'
     ),
     evidenceType: 1,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: false
@@ -511,7 +512,7 @@ const dimensions = ref<DimensionForm[]>([
       '0分：表述非常困难，长时间停顿，句子破碎，几乎无法顺畅传递信息，沟通难以进行。'
     ),
     evidenceType: 3,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: false
@@ -546,7 +547,7 @@ const dimensions = ref<DimensionForm[]>([
       '0分：出现不礼貌甚至冒犯性表达。'
     ),
     evidenceType: 1,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: false
@@ -565,7 +566,7 @@ const dimensions = ref<DimensionForm[]>([
       '0分：态度消极、冷漠，甚至带有抵触情绪。'
     ),
     evidenceType: 1,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: false
@@ -584,7 +585,7 @@ const dimensions = ref<DimensionForm[]>([
       '0分：表述完全无法理解，语言混乱。'
     ),
     evidenceType: 1,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: false
@@ -621,7 +622,7 @@ const addCustomDimension = () => {
     ruleType: 'grade',
     scoringRule: '分级评分',
     evidenceType: 1,
-    metricKey: '',
+    metricKey: 'ai',
     metricAspect: '',
     metricParams: emptyMetricParams(),
     isCustom: true
@@ -698,10 +699,45 @@ const isValidToneAspect = (value: string) => {
   return length >= 2 && length <= 6
 }
 
+const EVIDENCE_LABELS: Record<number, string> = { 1: '看文字', 2: '看语音', 3: '文字+语音' }
+const METRIC_OPTIONS = [
+  { value: 'ai', label: 'AI 评分' },
+  { value: 'speech_speed', label: '语速规则算分' },
+  { value: 'forbidden_words', label: '违禁词规则算分' },
+  { value: 'tone', label: '音频模型评语气' }
+]
+const METRIC_LABELS = Object.fromEntries(METRIC_OPTIONS.map((option) => [option.value, option.label]))
+
+const evidenceLabel = (value: number) => EVIDENCE_LABELS[value] || '看文字'
+const metricLabel = (value: string) => METRIC_LABELS[value] || 'AI 评分'
+
+/** 内置维度的评分方式是固定的。自定义维度才可选，且只能选和名称对得上的规则。 */
+const metricOptions = (dim: DimensionForm) => {
+  const name = dim.name.trim()
+  return METRIC_OPTIONS.map((option) => ({
+    ...option,
+    disabled: option.value === 'speech_speed'
+      ? name !== '语速适中'
+      : option.value === 'forbidden_words'
+        ? name !== '违禁词'
+        : option.value === 'tone'
+          ? !name.startsWith('语气')
+          : false
+  }))
+}
+
+/** 评分依据由评分方式决定，不让用户另选。AI 评分沿用该维度已有依据。 */
+const defaultEvidenceType = (dim: DimensionForm) => {
+  if (dim.metricKey === 'speech_speed' || dim.metricKey === 'tone') return 2
+  if (dim.metricKey === 'forbidden_words') return 1
+  return dim.evidenceType || 1
+}
+
 const handleMetricKeyChange = (dim: DimensionForm) => {
   if (dim.metricKey === 'tone' && !dim.metricAspect.trim()) {
     dim.metricAspect = '热情'
   }
+  dim.evidenceType = defaultEvidenceType(dim)
 }
 
 const loadProject = async (id: number) => {
@@ -735,7 +771,7 @@ const loadProject = async (id: number) => {
         ruleType: RULE_TYPE_BY_CODE[Number(d.ruleType)] ?? 'grade',
         scoringRule: d.scoringRule || '',
         evidenceType: Number(d.evidenceType ?? 1),
-        metricKey: d.metricKey || '',
+        metricKey: d.metricKey || 'ai',
         metricAspect: parseMetricAspect(d),
         metricParams: parseMetricParams(d),
         isCustom: d.isCustom === 1
@@ -778,7 +814,7 @@ const handleSubmit = async () => {
     // 只上传启用行会让被禁用的默认维度永久消失（下次编辑连重新勾选的机会都没有）
     fd.append('scoringDimensions', JSON.stringify(
       dimensions.value.map((d, i) => ({
-        id: /^\d+$/.test(d.id) ? Number(d.id) : undefined,
+        id: editId.value && /^\d+$/.test(d.id) ? Number(d.id) : undefined,
         dimensionName: d.name,
         weight: d.weight,
         enabled: d.enabled ? 1 : 0,
@@ -787,7 +823,7 @@ const handleSubmit = async () => {
         scoringRule: d.scoringRule,
         // 评分依据与评分方式：evidenceType=2 的维度在纯文字场次不参与评分；metricKey 非空时分数由后端规则算
         evidenceType: d.evidenceType,
-        metricKey: d.metricKey,
+        metricKey: d.metricKey === 'ai' ? '' : d.metricKey,
         metricAspect: d.metricKey === 'tone' ? d.metricAspect.trim() : undefined,
         metricParams: cleanMetricParams(d),
         isCustom: d.isCustom ? 1 : 0,
@@ -1187,24 +1223,17 @@ const handleSubmit = async () => {
 
 .rule-input {
   width: 100%;
-  min-height: 120px;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #333;
-  resize: vertical;
-
-  &:focus { border-color: #1890ff; }
 }
 
 .dim-select {
-  width: 110px;
-  border-radius: 4px;
+  width: 148px;
+}
+
+.evidence-fixed {
+  min-width: 72px;
+  color: #333;
   font-size: 13px;
-  background: #fff;
-  &:focus { border-color: #1890ff; }
-  &:disabled { background: #f5f5f5; color: #bfbfbf; }
+  line-height: 32px;
 }
 
 .metric-picker,
@@ -1221,23 +1250,19 @@ const handleSubmit = async () => {
 
 .metric-param-input {
   width: 62px;
-  padding: 4px 6px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  font-size: 13px;
-  outline: none;
 
-  &:focus { border-color: #1890ff; }
-  &:disabled { background: #f5f5f5; color: #bfbfbf; }
+  :deep(.el-input__wrapper) {
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #d9d9d9 inset;
+  }
+
+  :deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #1890ff inset;
+  }
 }
 
 .metric-aspect-input {
   width: 88px;
-  border-radius: 4px;
-  font-size: 13px;
-
-  &:focus { border-color: #1890ff; }
-  &:disabled { background: #f5f5f5; color: #bfbfbf; }
 }
 
 .table-hint {
@@ -1249,19 +1274,19 @@ const handleSubmit = async () => {
 
 .weight-input {
   width: 60px;
-  padding: 4px 8px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  text-align: center;}
+
+  :deep(.el-input__wrapper) {
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #d9d9d9 inset;
+  }
+
+  :deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #1890ff inset;
+  }
+}
 
 .dim-edit {
   width: 100%;
-  padding: 4px 8px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  font-size: 13px;
-  outline: none;
-  &:focus { border-color: #1890ff; }
 }
 
 .weight-total {

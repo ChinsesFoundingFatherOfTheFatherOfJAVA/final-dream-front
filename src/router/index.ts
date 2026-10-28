@@ -138,6 +138,18 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    // 课程设计器是独立全屏工作区，不套在线课堂侧栏，避免编辑器被主布局压缩
+    path: '/kng/course/edit/:id/designer',
+    name: 'KngCourseDesigner',
+    component: () => import('@/views/onlineclassroom/course/designer/CourseDesigner.vue'),
+    meta: {
+      title: '编辑课程-章节任务',
+      requiresAuth: true,
+      requiresAdmin: true,
+      permission: 'kng:course'
+    }
+  },
+  {
     path: '/kng',
     component: () => import('@/views/onlineclassroom/OnlineClassroomLayout.vue'),
     redirect: () => {
@@ -232,13 +244,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/onlineclassroom/course/CourseForm.vue'),
         props: { mode: 'edit' },
         meta: { title: '编辑课程', permission: 'kng:course' }
-      },
-      {
-        // CS-07a 设计器（正式实现由设计器负责人填充 CourseDesigner.vue，当前为占位页）
-        path: 'course/edit/:id/designer',
-        name: 'KngCourseDesigner',
-        component: () => import('@/views/onlineclassroom/course/designer/CourseDesigner.vue'),
-        meta: { title: '编辑课程-章节任务', permission: 'kng:course' }
       },
       {
         path: 'catalog',

@@ -1,8 +1,8 @@
 <template>
-  <!-- 开关（Element 同款样式）：值统一用 0/1，和后端 JSON 设置保持一致 -->
+  <!-- 开关（Element 同款样式）：兼容布尔、0/1 和字符串枚举值 -->
   <label class="toggle" :class="{ disabled }">
-    <el-checkbox :model-value="on" :disabled="disabled"
-           @change="onChange(Boolean($event))" />
+    <input type="checkbox" :checked="on" :disabled="disabled"
+           @change="onChange(Boolean(($event.target as HTMLInputElement).checked))" />
     <span class="slider"></span>
   </label>
 </template>
@@ -10,38 +10,49 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{ modelValue: number | boolean; disabled?: boolean }>()
-const emit = defineEmits<{ 'update:modelValue': [value: number] }>()
+type ToggleValue = number | string | boolean
 
-const on = computed(() => props.modelValue === 1 || props.modelValue === true)
-const onChange = (checked: boolean) => emit('update:modelValue', checked ? 1 : 0)
+const props = withDefaults(defineProps<{
+  modelValue: ToggleValue
+  disabled?: boolean
+  activeValue?: ToggleValue
+  inactiveValue?: ToggleValue
+}>(), {
+  activeValue: 1,
+  inactiveValue: 0
+})
+const emit = defineEmits<{ 'update:modelValue': [value: ToggleValue] }>()
+
+const on = computed(() => props.modelValue === props.activeValue)
+const onChange = (checked: boolean) =>
+  emit('update:modelValue', checked ? props.activeValue : props.inactiveValue)
 </script>
 
 <style scoped lang="scss">
 .toggle {
   display: inline-flex;
   flex-shrink: 0;
-  width: 36px;
-  height: 20px;
+  width: 52px;
+  height: 28px;
   cursor: pointer;
 
   input { position: absolute; opacity: 0; width: 0; height: 0; }
 
   .slider {
     position: relative;
-    width: 36px;
-    height: 20px;
-    border-radius: 10px;
+    width: 52px;
+    height: 28px;
+    border-radius: 14px;
     background: #d9d9d9;
     transition: background .16s ease;
 
     &::after {
       content: '';
       position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 16px;
-      height: 16px;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: #fff;
       box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
@@ -51,7 +62,7 @@ const onChange = (checked: boolean) => emit('update:modelValue', checked ? 1 : 0
 
   input:checked + .slider {
     background: #1890ff;
-    &::after { transform: translateX(16px); }
+    &::after { transform: translateX(24px); }
   }
 
   &.disabled { cursor: not-allowed; opacity: .5; }

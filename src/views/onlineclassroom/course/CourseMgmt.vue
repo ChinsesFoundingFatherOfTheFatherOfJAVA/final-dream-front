@@ -96,19 +96,18 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="名称" min-width="420">
+          <el-table-column label="名称" width="260">
             <template #default="{ row }">
               <div class="title-cell">
-                <span class="cover-thumb">
-                  <img v-if="row.coverUrl" :src="resolveAssetUrl(row.coverUrl)" :alt="`${row.title}封面`" loading="lazy" />
-                  <i v-else aria-hidden="true">▣</i>
+                <span v-if="row.coverUrl" class="cover-thumb">
+                  <img :src="resolveAssetUrl(row.coverUrl)" :alt="`${row.title}封面`" loading="lazy" />
                 </span>
                 <el-button class="title-link" @click="openDetail(row.id)">{{ row.title }}</el-button>
                 <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="更新日期" width="160" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
+          <el-table-column label="更新日期" min-width="160" prop="updateTime" sortable="custom" :sort-orders="['descending', 'ascending']">
             <template #default="{ row }">{{ row.updateTime || '--' }}</template>
           </el-table-column>
           <el-table-column label="学习人数" width="120" prop="studyCount" sortable="custom" :sort-orders="['descending', 'ascending']">
@@ -657,6 +656,8 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
+  padding-right: 0;
+  padding-left: 0;
   border: none;
   background: transparent;
   color: #253047;

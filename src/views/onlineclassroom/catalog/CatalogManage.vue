@@ -45,6 +45,7 @@
                 >
                   <el-icon class="fold" v-if="expanded.has(row.node.id) || keyword"><ArrowDown /></el-icon><el-icon class="fold" v-else><CaretRight /></el-icon>
                 </span>
+                <span v-else class="expand-icon placeholder" aria-hidden="true" />
                 <span class="name-text" :style="{ paddingLeft: `${(row.node.level - 1) * 24}px` }">
                   {{ row.node.name }}
                 </span>
@@ -421,12 +422,18 @@ onMounted(reload)
 }
 
 .name-cell {
-  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 
 .expand-icon {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 18px;
+  height: 20px;
+  flex: 0 0 18px;
   color: #7a8396;
   cursor: pointer;
 
@@ -435,14 +442,18 @@ onMounted(reload)
     outline: 2px solid #2e7cf6;
     outline-offset: 1px;
   }
+
+  &.placeholder {
+    cursor: default;
+  }
 }
 
 .name-text {
   display: inline-block;
+  min-width: 0;
   overflow: hidden;
   max-width: calc(100% - 24px);
   text-overflow: ellipsis;
-  vertical-align: middle;
   white-space: nowrap;
 }
 

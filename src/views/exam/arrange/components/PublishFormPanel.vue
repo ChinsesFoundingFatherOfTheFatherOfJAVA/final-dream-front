@@ -16,12 +16,11 @@
             <em>{{ form.name.length }}/1000</em>
           </div>
 
-          <label class="check-line">
-            <el-checkbox :model-value="form.important === 1"
-                   @change="setFlag(form, 'important', Boolean($event))" />
+          <div class="switch-line">
+            <ToggleSwitch v-model="form.important" />
             <span>重要考试</span>
             <i class="help" title="标记后，考试列表会突出显示">?</i>
-          </label>
+          </div>
 
           <div class="switch-line">
             <ToggleSwitch v-model="form.secrecy" />
@@ -78,39 +77,39 @@
         </div>
 
         <div class="field" :class="{ locked: published }">
-          <span class="label">是否必修</span>
-          <div class="radio-row">
-            <label><el-radio v-model.number="form.requiredType" :value="1" :disabled="published" /> 必修</label>
-            <label><el-radio v-model.number="form.requiredType" :value="2" :disabled="published" /> 选修</label>
+          <div class="switch-line">
+            <ToggleSwitch v-model="form.requiredType" :active-value="1" :inactive-value="2" :disabled="published" />
+            <span>是否必修</span>
+            <em class="switch-value">{{ form.requiredType === 1 ? '必修' : '选修' }}</em>
           </div>
         </div>
 
         <div class="field" :class="{ locked: published }">
           <span class="label required">通过分数</span>
           <p class="hint">当前试卷分数：{{ paperScoreText }} 分</p>
-          <div class="radio-row">
-            <span class="radio-pair">
-              <label><el-radio v-model.number="form.passScoreType" :value="1" :disabled="published" /> 固定分数</label>
-              <span class="inline-input">
-                <el-input-number v-model="form.passScore" :min="0" :step="0.5" :disabled="published || form.passScoreType !== 1" :controls="false" />
-                <em>分</em>
-              </span>
+          <div class="switch-line">
+            <ToggleSwitch v-model="form.passScoreType" :active-value="2" :inactive-value="1" :disabled="published" />
+            <span>通过分数方式</span>
+            <em class="switch-value">{{ form.passScoreType === 2 ? '总分比例' : '固定分数' }}</em>
+            <span v-if="form.passScoreType === 1" class="inline-input">
+              <el-input-number v-model="form.passScore" :min="0" :step="0.5" :disabled="published" :controls="false" />
+              <em>分</em>
             </span>
-            <span class="radio-pair">
-              <label><el-radio v-model.number="form.passScoreType" :value="2" :disabled="published" /> 总分比例</label>
-              <span class="inline-input">
-                <el-input-number v-model="form.passRatio" :min="0" :max="100" :step="1" :disabled="published || form.passScoreType !== 2" :controls="false" />
-                <em>%</em>
-              </span>
+            <span v-else class="inline-input">
+              <el-input-number v-model="form.passRatio" :min="0" :max="100" :step="1" :disabled="published" :controls="false" />
+              <em>%</em>
             </span>
           </div>
         </div>
 
         <div class="field" :class="{ locked: published }">
           <span class="label">学员奖励</span>
-          <div class="radio-row">
-            <label><el-radio v-model.number="form.rewardType" :value="1" :disabled="published" /> 考试归档后</label>
-            <label><el-radio v-model.number="form.rewardType" :value="2" :disabled="published" /> 考试通过后</label>
+          <div class="switch-line">
+            <ToggleSwitch v-model="form.rewardType" :active-value="2" :inactive-value="1" :disabled="published" />
+            <span>学员奖励发放时机</span>
+            <em class="switch-value">
+              {{ form.rewardType === 2 ? '考试通过后' : form.rewardType === 1 ? '考试归档后' : '未开启' }}
+            </em>
           </div>
           <div class="reward-box">
             <label class="reward-line">
@@ -138,15 +137,10 @@
           </div>
 
           <template v-if="form.internalEnabled === 1">
-            <div class="radio-row">
-              <label>
-                <el-radio v-model="form.participantScope" value="assigned" :disabled="published" />
-                指定员工参与
-              </label>
-              <label>
-                <el-radio v-model="form.participantScope" value="all" :disabled="published" />
-                全员参与
-              </label>
+            <div class="switch-line">
+              <ToggleSwitch v-model="form.participantScope" active-value="all" inactive-value="assigned" :disabled="published" />
+              <span>参与范围</span>
+              <em class="switch-value">{{ form.participantScope === 'all' ? '全员参与' : '指定员工参与' }}</em>
             </div>
 
             <div v-if="form.participantScope === 'assigned'" class="user-box"
@@ -178,22 +172,17 @@
 
         <div class="field">
           <span class="label">优秀分数</span>
-          <div class="radio-row">
-            <span class="radio-pair">
-              <label><el-radio v-model.number="form.excellentScoreType" :value="1" /> 固定分数</label>
-              <span class="inline-input">
-                <el-input-number v-model="form.excellentScore" :min="0" :step="0.5"
-                       :disabled="form.excellentScoreType !== 1" :controls="false" />
-                <em>分</em>
-              </span>
+          <div class="switch-line">
+            <ToggleSwitch v-model="form.excellentScoreType" :active-value="2" :inactive-value="1" />
+            <span>优秀分数方式</span>
+            <em class="switch-value">{{ form.excellentScoreType === 2 ? '总分比例' : '固定分数' }}</em>
+            <span v-if="form.excellentScoreType === 1" class="inline-input">
+              <el-input-number v-model="form.excellentScore" :min="0" :step="0.5" :controls="false" />
+              <em>分</em>
             </span>
-            <span class="radio-pair">
-              <label><el-radio v-model.number="form.excellentScoreType" :value="2" /> 总分比例</label>
-              <span class="inline-input">
-                <el-input-number v-model="form.excellentRatio" :min="0" :max="100" :step="1"
-                       :disabled="form.excellentScoreType !== 2" :controls="false" />
-                <em>%</em>
-              </span>
+            <span v-else class="inline-input">
+              <el-input-number v-model="form.excellentRatio" :min="0" :max="100" :step="1" :controls="false" />
+              <em>%</em>
             </span>
           </div>
           <p class="hint">本期统计按及格线计算，优秀分配置仅保存、暂不参与统计。</p>
@@ -393,21 +382,18 @@
                 <span>允许学员查看考试成绩</span>
               </div>
               <div v-if="advanced.answerView.viewScore" class="sub-box">
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewScoreValue === 1"
-                         @change="setFlag(advanced.answerView, 'viewScoreValue', Boolean($event))" />
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewScoreValue" />
                   <span>允许学员查看考试分数</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewPassFlag === 1"
-                         @change="setFlag(advanced.answerView, 'viewPassFlag', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewPassFlag" />
                   <span>允许学员查看是否通过标识</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewPointScore === 1"
-                         @change="setFlag(advanced.answerView, 'viewPointScore', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewPointScore" />
                   <span>允许学员查看考核点得分情况</span>
-                </label>
+                </div>
               </div>
 
               <div class="switch-line">
@@ -415,31 +401,26 @@
                 <span>允许学员查看考试答卷详情页面</span>
               </div>
               <div v-if="advanced.answerView.viewAnswerDetail" class="sub-box">
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.wrongOnly === 1"
-                         @change="setFlag(advanced.answerView, 'wrongOnly', Boolean($event))" />
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.wrongOnly" />
                   <span>仅支持学员查看错题</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewAnswer === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnswer', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewAnswer" />
                   <span>允许学员查看考试答案</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewAnalysis === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnalysis', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewAnalysis" />
                   <span>允许学员查看考试解析</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.viewAnswerTimeRange === 1"
-                         @change="setFlag(advanced.answerView, 'viewAnswerTimeRange', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.viewAnswerTimeRange" />
                   <span>允许查看答题时间范围</span>
-                </label>
-                <label class="check-line">
-                  <el-checkbox :model-value="advanced.answerView.forbidPdfDownload === 1"
-                         @change="setFlag(advanced.answerView, 'forbidPdfDownload', Boolean($event))" />
+                </div>
+                <div class="switch-line">
+                  <ToggleSwitch v-model="advanced.answerView.forbidPdfDownload" />
                   <span>不允许学员下载 PDF 答题结果</span>
-                </label>
+                </div>
               </div>
             </div>
           </div>
@@ -488,22 +469,14 @@
 
           <div class="group">
             <p class="group-title">信息安全设置</p>
-            <div class="radio-line">
-              <span>复制下载图片</span>
-              <div class="radio-row">
-                <label><el-radio :value="0" :model-value="advanced.security.copyDownloadImage !== 1"
-                              @change="setFlag(advanced.security, 'copyDownloadImage', false)" /> 禁止</label>
-                <label><el-radio :value="1" :model-value="advanced.security.copyDownloadImage === 1"
-                              @change="setFlag(advanced.security, 'copyDownloadImage', true)" /> 允许</label>
+            <div class="switch-list">
+              <div class="switch-line">
+                <ToggleSwitch v-model="advanced.security.copyDownloadImage" />
+                <span>允许复制下载图片</span>
               </div>
-            </div>
-            <div class="radio-line">
-              <span>复制文字</span>
-              <div class="radio-row">
-                <label><el-radio :value="0" :model-value="advanced.security.copyText !== 1"
-                              @change="setFlag(advanced.security, 'copyText', false)" /> 禁止</label>
-                <label><el-radio :value="1" :model-value="advanced.security.copyText === 1"
-                              @change="setFlag(advanced.security, 'copyText', true)" /> 允许</label>
+              <div class="switch-line">
+                <ToggleSwitch v-model="advanced.security.copyText" />
+                <span>允许复制文字</span>
               </div>
             </div>
           </div>
@@ -518,15 +491,10 @@
                 <ToggleSwitch v-model="advanced.learningTask.enabled" :disabled="published" />
                 <span>生成学习任务</span>
               </div>
-              <div v-if="advanced.learningTask.enabled" class="radio-rows">
-                <label class="radio-option">
-                  <el-radio value="pass" v-model="advanced.learningTask.removeOn" :disabled="published" />
-                  <span>考试通过移除任务卡</span>
-                </label>
-                <label class="radio-option">
-                  <el-radio value="submit" v-model="advanced.learningTask.removeOn" :disabled="published" />
-                  <span>考试提交移除任务卡</span>
-                </label>
+              <div v-if="advanced.learningTask.enabled" class="switch-line">
+                <ToggleSwitch v-model="advanced.learningTask.removeOn" active-value="pass" inactive-value="submit" :disabled="published" />
+                <span>学习任务移除时机</span>
+                <em class="switch-value">{{ advanced.learningTask.removeOn === 'pass' ? '考试通过后' : '考试提交后' }}</em>
               </div>
             </div>
           </div>
@@ -1104,30 +1072,29 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-.check-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #4a5368;
-  cursor: pointer;
-
-  input { accent-color: #1890ff; }
-}
-
 .switch-line {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  min-height: 24px;
+  min-height: 26px;
   font-size: 13px;
   color: #4a5368;
 }
 
 /* 「循环考试」这类同时带 field / switch-line 的行必须横排 */
 .field.switch-line { flex-direction: row; align-items: center; }
+
+.switch-value {
+  padding: 1px 8px;
+  border-radius: 12px;
+  background: #f0f5ff;
+  color: #2f54eb;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 18px;
+}
 
 .switch-list {
   display: flex;
@@ -1156,53 +1123,6 @@ onMounted(async () => {
   padding: 10px 14px;
   border-radius: 4px;
   background: #fafbfd;
-}
-
-.radio-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 13px;
-  color: #4a5368;
-  flex-wrap: wrap;
-
-  label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; input { accent-color: #1890ff; } }
-}
-
-.radio-pair {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.radio-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 13px;
-  color: #4a5368;
-
-  input { accent-color: #1890ff; }
-}
-
-.radio-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-left: 44px;
-  .radio-line { justify-content: flex-start; gap: 8px; }
-}
-
-.radio-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #4a5368;
-  cursor: pointer;
-
-  input { accent-color: #1890ff; }
 }
 
 .inline-input {

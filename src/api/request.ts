@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { toast } from '@/utils/toast'
+import { useAuthStore } from '@/stores/auth'
 import {
-  clearStoredAuth,
   getStoredToken,
   redirectToForbidden,
   redirectToLogin
@@ -58,8 +58,8 @@ request.interceptors.response.use(
     if (code === 0) return data
     const text = message || '请求失败'
     if (code === 40101 || code === 401001) {
-      clearStoredAuth()
-      if (!response.config?.silent) toast.error(text)
+      // 只清 localStorage 的话，Pinia 仍认为已登录，登录页会立刻跳回原页面并继续 401
+      useAuthStore().logout()
       redirectToLogin()
       return Promise.reject(new Error(text))
     }
@@ -73,9 +73,11 @@ request.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      clearStoredAuth()
+      useAuthStore().logout()
       redirectToLogin()
-    } else if (error.response?.status === 403) {
+      return Promise.reject(error)
+    }
+    if (error.response?.status === 403) {
       redirectToForbidden()
     }
     if (!error.config?.silent) toast.error(error.message || '网络错误')
@@ -112,7 +114,7 @@ export async function downloadBlob(url: string, options: DownloadOptions = {}): 
     return res.data as Blob
   } catch (error: any) {
     if (error?.response?.status === 401) {
-      clearStoredAuth()
+      useAuthStore().logout()
       redirectToLogin()
     } else if (error?.response?.status === 403) {
       redirectToForbidden()

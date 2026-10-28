@@ -33,6 +33,7 @@ export interface KeyPointItem {
 
 export interface RoundItem {
   round: number
+  speakerOrder?: 'student' | 'trainer' | string
   trainerQuestion: string
   standardScript: string
   keyPoints: KeyPointItem[]

@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import type { DesignerChapter } from '../model'
 
 /**
@@ -65,6 +65,21 @@ const menuIndex = ref(-1)
 function toggleMenu(index: number) {
   menuIndex.value = menuIndex.value === index ? -1 : index
 }
+
+function closeMenuOnOutsidePointer(event: PointerEvent) {
+  if (menuIndex.value < 0) return
+  const target = event.target
+  if (
+    target instanceof Element &&
+    (target.closest('.more-menu') || target.closest('.more-btn'))
+  ) {
+    return
+  }
+  menuIndex.value = -1
+}
+
+onMounted(() => document.addEventListener('pointerdown', closeMenuOnOutsidePointer))
+onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOutsidePointer))
 </script>
 
 <style scoped lang="scss">
@@ -192,6 +207,7 @@ function toggleMenu(index: number) {
   button {
     display: block;
     width: 100%;
+    margin-left: 0;
     padding: 7px 10px;
     border: none;
     border-radius: 5px;
@@ -205,6 +221,11 @@ function toggleMenu(index: number) {
       background: #f2f7ff;
       color: #2e7cf6;
     }
+  }
+
+  /* Element Plus 会默认给相邻按钮加 12px 间距，弹层菜单需统一左基线 */
+  :deep(.el-button + .el-button) {
+    margin-left: 0;
   }
 }
 

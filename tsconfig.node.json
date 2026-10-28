@@ -14,6 +14,9 @@
     "module": "preserve",
     "moduleResolution": "bundler",
 
+    // vite.config.ts 以 .ts 扩展名引入 mock/devApiMock.ts（Vite native config loader 要求显式扩展名）
+    "allowImportingTsExtensions": true,
+
     // Include Node.js types and avoid accidentally including other `@types/*` packages.
     "types": ["node"],
 

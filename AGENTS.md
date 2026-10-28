@@ -17,8 +17,7 @@
 
 1. **请求一律走 `src/api/request.ts`**（axios 实例，baseURL `/api`）：
    - 请求拦截器统一附 `Authorization: Bearer <token>`（网关边缘鉴权依赖它，缺头会被 401 拦截）；
-   - 响应拦截器统一解 `{code,message,data}`：code=0 返回 data；40101/401001 清凭证跳登录；403xx 跳无权限页；
-     HTTP 401/403（网关直返）同口径处理；
+   - 响应拦截器统一解 `{code,message,data}`：code=0 返回 data；40101/401001 与 HTTP 401 必须 `logout()` 清 Pinia，不能只清 localStorage，否则登录页会跳回原页面并持续弹出 401；401 不弹 axios 原文；403xx 跳无权限页；
    - `silent: true` 供"失败不打扰用户"的调用（如详情页说明性请求）；
    - **禁止**在组件里直接 new axios/fetch 调后端，禁止绕过拦截器吞掉 code≠0。
 2. **静态资源 URL 用 `resolveAssetUrl()`** 补全（`/coverImage/**`、`/audio/**`、`/avatar/**` 经网关前缀访问）；
@@ -51,6 +50,7 @@
 - dev 代理在 `vite.config.ts`：`/api/act/ws` → ws://localhost:8082（WS 直连）、其余 `/api` → 网关 8080，
   可用 `VITE_PROXY_TARGET` / `VITE_SM_PROXY_TARGET` 环境变量覆盖。
 - token 存 localStorage（`final_dream.auth`）；JWT 12h 过期，过期统一走 401 分支跳登录。
+- **报告雷达图（2026-10-26）**：`score=null` 不进坐标轴；`score=0` 必须画。语速指标无语音轮是 0 分，不是未参与。
 - 仓库卫生（2026-10-02）：`.mimosa/`、`test-results/` 已加入 `.gitignore` 并移出索引；
   源码树内的《复刻平台前端》《复刻话术训练模块》文档目录已迁至 `D:\JACK\plan` 仓库。
 - **UI 控件口径（2026-10-22）**：普通表单、列表、分页、弹窗、抽屉、树控件统一使用 Element Plus；文件上传原生 `input`、聊天输入区、FlowDesign/NodeConfigPanel/EdgeWeightDialog、玩家/字幕专用交互和全屏 AI 生成向导属于已登记例外。新增页面不得恢复手写通用控件。

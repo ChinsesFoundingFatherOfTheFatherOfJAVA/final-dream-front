@@ -726,24 +726,23 @@ const saveAll = async () => {
 
 .count-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+  min-width: 0;
 }
 
 .count-item {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   font-size: 12px;
   color: #4a5368;
 
-  input {
-    width: 60px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 5px 8px;
-    font-size: 12px;
-    outline: none;
+  // Element Plus 数字输入默认 140px，三列会把左侧面板撑出横向滚动条
+  :deep(.el-input-number) {
+    width: 84px;
+    flex: 0 0 84px;
   }
 }
 

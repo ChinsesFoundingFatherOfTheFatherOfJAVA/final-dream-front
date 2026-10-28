@@ -41,15 +41,17 @@
             <label class="field span-2">
               <span>分类<em>*</em></span>
               <div class="inline-control">
-                <el-select v-model="form.catalogId" placeholder="请选择分类">
-                  <el-option label="请选择分类" value="" />
-                  <el-option
-                    v-for="node in flatCatalogs"
-                    :key="node.id"
-                    :label="`${'　'.repeat(Math.max(0, node.level - 1))}${node.name}`"
-                    :value="node.id"
-                  />
-                </el-select>
+                <el-tree-select
+                  v-model="form.catalogId"
+                  class="catalog-tree-select"
+                  :data="catalogs"
+                  node-key="id"
+                  :props="{ label: 'name', children: 'children' }"
+                  check-strictly
+                  clearable
+                  :render-after-expand="false"
+                  placeholder="请选择分类"
+                />
                 <el-button class="ghost-small" @click="openCatalogWindow">新增分类</el-button>
               </div>
               <p v-if="errors.catalogId" class="field-error">{{ errors.catalogId }}</p>
@@ -575,6 +577,12 @@ onMounted(load)
     font-size: 13px;
     cursor: pointer;
 
+    &.el-button {
+      justify-content: flex-start;
+      text-align: left;
+      margin-left: 0;
+    }
+
     &.active {
       background: #f2f7ff;
       color: #2e7cf6;
@@ -685,6 +693,11 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 10px;
+
+  .el-tree-select {
+    flex: 1;
+    min-width: 0;
+  }
 
   select,
   input {

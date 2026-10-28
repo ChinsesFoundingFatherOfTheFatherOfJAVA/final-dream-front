@@ -108,6 +108,8 @@ export interface SendMessageResp {
   finishedRounds: number
   totalRounds: number
   nextTrainerMessage: SessionMessage | null
+  /** type 3 本轮陪练者回应，先于下一轮开场展示 */
+  currentTrainerReply?: SessionMessage | null
   /** 流转途中经过的旁白消息（v1.2 role=3 灰条，先于 nextTrainerMessage 展示） */
   narrationMessages?: SessionMessage[] | null
 }

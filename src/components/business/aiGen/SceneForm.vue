@@ -8,15 +8,14 @@
         type="textarea"
         :rows="4"
         maxlength="500"
+        show-word-limit
         class="form-textarea tall"
         :disabled="generating"
       />
-      <div class="char-count">{{ local.scene.length }}/500</div>
     </div>
     <div class="form-item">
       <label class="form-label required">陪练角色</label>
-      <el-input class="form-input" v-model="local.trainerRole" maxlength="20" :disabled="generating" />
-      <div class="char-count">{{ local.trainerRole.length }}/20</div>
+      <el-input class="form-input" v-model="local.trainerRole" maxlength="20" show-word-limit :disabled="generating" />
     </div>
     <div class="form-item">
       <label class="form-label required">角色画像</label>
@@ -25,15 +24,14 @@
         type="textarea"
         :rows="3"
         maxlength="200"
+        show-word-limit
         class="form-textarea"
         :disabled="generating"
       />
-      <div class="char-count">{{ local.trainerProfile.length }}/200</div>
     </div>
     <div class="form-item">
       <label class="form-label required">学员角色</label>
-      <el-input class="form-input" v-model="local.studentRole" maxlength="20" :disabled="generating" />
-      <div class="char-count">{{ local.studentRole.length }}/20</div>
+      <el-input class="form-input" v-model="local.studentRole" maxlength="20" show-word-limit :disabled="generating" />
     </div>
     <div class="form-item">
       <label class="form-label required">对话目标</label>
@@ -42,10 +40,10 @@
         type="textarea"
         :rows="4"
         maxlength="500"
+        show-word-limit
         class="form-textarea"
         :disabled="generating"
       />
-      <div class="char-count">{{ local.goal.length }}/500</div>
     </div>
 
     <div class="footer-btns">
@@ -91,21 +89,24 @@ const local = computed({
     &.required::after { content: ' *'; color: #f5222d; }
   }
 
+  /* 边框只留在 EP wrapper，避免根节点 border 和内层 inset 描边套盒。 */
   .form-input, .form-textarea {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #d9d9d9;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    box-sizing: border-box;
-
-    &:focus { border-color: #6b5ce7; }
   }
 
-  .form-textarea { resize: vertical; min-height: 64px; &.tall { min-height: 96px; } }
-  .char-count { text-align: right; font-size: 12px; color: #999; margin-top: 3px; }
+  .form-input :deep(.el-input__wrapper),
+  .form-textarea :deep(.el-textarea__inner) {
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    font-family: inherit;
+  }
+
+  .form-input :deep(.el-input__wrapper.is-focus),
+  .form-textarea :deep(.el-textarea__inner:focus) {
+    box-shadow: 0 0 0 1px #6b5ce7 inset;
+  }
+
+  .form-textarea.tall :deep(.el-textarea__inner) { min-height: 96px; }
 }
 
 .footer-btns { margin-top: auto; padding-top: 10px; }

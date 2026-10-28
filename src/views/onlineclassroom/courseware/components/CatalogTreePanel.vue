@@ -22,13 +22,14 @@
         @click="select('')"
         @keydown.enter.prevent="select('')"
       >
-        <el-button class="tree-arrow expanded" :aria-label="rootExpanded ? '收起子分类' : '展开子分类'" @click.stop="toggleRoot">
+        <el-button class="tree-arrow" :class="{ expanded: rootExpanded }"
+                   :aria-label="rootExpanded ? '收起子分类' : '展开子分类'" @click.stop="toggleRoot">
           <span aria-hidden="true" />
         </el-button>
         <span class="tree-label">主课堂</span>
       </div>
 
-      <template v-if="!keyword || rootExpanded">
+      <template v-if="rootExpanded || keyword">
         <div
           v-for="row in rows"
           :key="row.node.id"

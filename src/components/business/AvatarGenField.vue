@@ -18,7 +18,7 @@
     <!-- 形象预览：统一按 3:4 展示，生图原图保留不裁掉画质 -->
     <div v-if="modelValue" class="preview-wrap">
       <div class="preview-card">
-        <img :src="modelValue" alt="陪练者形象预览" class="preview-img" />
+        <img :src="resolveAssetUrl(modelValue)" alt="陪练者形象预览" class="preview-img" />
         <div class="preview-mask">
           <span
             class="mask-btn"
@@ -67,6 +67,7 @@
 import { ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { generateAvatar } from '@/api/ai'
+import { resolveAssetUrl } from '@/api/request'
 
 /**
  * FP-26 管理端陪练者形象生成字段（v1.1）

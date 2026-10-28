@@ -29,7 +29,7 @@ const lastIncomplete = ref(false)
 const render = async () => {
   if (!chartRef.value) return
 
-  // 未参与本次评分的维度（无分数）不进雷达图，否则会被画成 0 分
+  // score=null 才是未参与；0 分要画出来，否则语速没开口会从雷达图消失
   const scored = scoredDimensions(props.dimensions)
   if (!scored.length) {
     empty.value = true

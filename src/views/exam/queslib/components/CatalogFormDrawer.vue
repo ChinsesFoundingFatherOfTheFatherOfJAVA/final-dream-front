@@ -205,6 +205,13 @@ const handleSave = async () => {
 }
 
 onMounted(async () => {
+  // 齿轮「新建」传入的是选中分类。不查名称时面包屑会一直停在默认分类。
+  if (props.mode === 'create' && props.parentId && props.parentId !== 'root') {
+    try {
+      const parent: any = await catalogApi.value.detail(props.parentId)
+      if (parent?.name) parentName.value = parent.name
+    } catch { /* 查不到就保留默认分类名 */ }
+  }
   if (props.mode === 'edit' && props.catalogId) {
     try {
       const d: any = await catalogApi.value.detail(props.catalogId)

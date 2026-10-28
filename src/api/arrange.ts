@@ -273,6 +273,17 @@ export interface ArrangeUserOption {
   positionName: string | null
 }
 
+export interface ArrangeDepartmentOption {
+  id?: string
+  deptId?: string
+  deptCode: string
+  deptName: string
+  deptPath: string
+  parentPath?: string | null
+  deptLevel: number
+  userCount?: number
+}
+
 /** F3 创建人抽屉：按部门 + 字段（姓名/账号/工号）分页查在职用户。 */
 export function searchArrangeUsers(
   keyword: string,
@@ -405,7 +416,7 @@ export function getArrangeSignatures(arrangeId: string, current = 1, limit = 10,
 
 /** API-48 部门树（选人抽屉的部门筛选）。 */
 export function getArrangeDepartments() {
-  return request.get<unknown, { list: { deptCode: string; deptName: string; deptPath: string; deptLevel: number }[] }>(
+  return request.get<unknown, { list: ArrangeDepartmentOption[] }>(
     '/exam/arrange/options/departments'
   )
 }

@@ -37,8 +37,11 @@
 
       <template v-else>
         <MessageBubble v-for="msg in visibleMessages" :key="msg.id" :message="msg" />
-        <div v-if="store.generating" class="generating-tip">
-          <span class="spinner"></span>助手正在回复…
+        <div v-if="showWaitingRow" class="generating-row">
+          <div class="avatar" aria-hidden="true">🤖</div>
+          <div class="generating-tip">
+            <span class="spinner"></span>助手正在回复…
+          </div>
         </div>
       </template>
     </div>
@@ -117,9 +120,13 @@ const samples = [
 
 const acceptAttr = '.ppt,.pptx,.doc,.docx,.pdf,.txt,.md'
 
-/** 渲染兜底：既无内容块又不在流式中的消息不画气泡（消息被合并空后只剩头像） */
+/** 没有内容块的消息不画：流式占位也会剩一颗头像，等待态由下面那一行负责 */
 const visibleMessages = computed(() =>
-  store.messages.filter((m) => m.blocks.length > 0 || m.streaming)
+  store.messages.filter((m) => m.blocks.length > 0)
+)
+const showWaitingRow = computed(() =>
+  store.generating
+  && !store.messages.some((m) => m.role === 'agent' && m.streaming && m.blocks.length > 0)
 )
 
 const voice = useVoiceInput(
@@ -167,12 +174,16 @@ function isNearBottom(): boolean {
 function scrollToBottom(force = false) {
   const el = scrollRef.value
   if (!el) return
-  if (force || isNearBottom()) {
-    void nextTick(() => {
-      el.scrollTop = el.scrollHeight
-      showScrollBtn.value = false
-    })
+  if (!force && !isNearBottom()) return
+  const stick = () => {
+    const current = scrollRef.value
+    if (!current) return
+    current.scrollTop = current.scrollHeight
+    showScrollBtn.value = false
   }
+  // 历史回补会整表替换消息。一次 nextTick 时新高度还没落地，scrollTop 会被浏览器夹回 0。
+  void nextTick(stick)
+  window.setTimeout(stick, 80)
 }
 
 function onScroll() {
@@ -317,6 +328,7 @@ onBeforeUnmount(() => {
 .message-scroll {
   flex: 1;
   min-height: 0;
+  overflow-anchor: none;
   overflow-y: auto;
   padding: 20px;
   position: relative;
@@ -385,13 +397,31 @@ onBeforeUnmount(() => {
   }
 }
 
+.generating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #2b2f3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
 .generating-tip {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
   color: #8a8f98;
-  padding-left: 42px;
 
   .spinner {
     width: 12px;

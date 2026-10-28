@@ -4,6 +4,7 @@
     title="编辑字幕"
     :width="920"
     :z-index="4100"
+    :body-scroll="false"
     @close="emit('close')"
   >
     <div class="subtitle-body">
@@ -56,6 +57,16 @@
           <!-- 字幕条目列表：index + 时间段(mm:ss 显示，毫秒保留在原始值里入参) + 文本 + 行内编辑 -->
           <ul v-else class="entry-list">
             <li v-for="(entry, position) in entries" :key="entry.index">
+              <el-button
+                v-if="editingPosition !== position"
+                link
+                class="edit-btn"
+                :aria-label="`编辑第 ${entry.index} 条字幕`"
+                title="编辑字幕"
+                @click="startEdit(position)"
+              >
+                <el-icon><EditPen /></el-icon>
+              </el-button>
               <span class="entry-no">{{ entry.index }}</span>
               <span class="entry-time"
                 >{{ shortTime(entry.beginTime) }}→{{ shortTime(entry.endTime) }}</span
@@ -69,15 +80,6 @@
                 />
               </template>
               <span v-else class="entry-text" :title="entry.text">{{ entry.text }}</span>
-              <el-button
-                v-if="editingPosition !== position"
-               
-                class="edit-btn"
-                aria-label="编辑"
-                @click="startEdit(position)"
-              >
-                ✎
-              </el-button>
             </li>
           </ul>
         </template>
@@ -99,6 +101,7 @@
 </template>
 
 <script setup lang="ts">
+import { EditPen } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import KngDrawer from '../../components/KngDrawer.vue'
@@ -288,22 +291,33 @@ watch(
 
 <style scoped lang="scss">
 .subtitle-body {
-  min-height: 540px;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(340px, 44%) 1fr;
-  gap: 42px;
+  gap: 28px;
+  overflow: hidden;
 }
 
 .preview {
   position: relative;
-  height: 360px;
+  align-self: start;
+  width: 100%;
+  max-height: min(360px, 45vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   border-radius: 3px;
   background: #111827;
 
   video {
-    width: 100%;
-    height: 100%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: min(360px, 45vh);
     object-fit: contain;
     background: #000;
   }
@@ -311,7 +325,8 @@ watch(
 
 .preview-empty {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: min(360px, 45vh);
   display: grid;
   place-items: center;
   background: #30384a;
@@ -392,10 +407,24 @@ watch(
   }
 }
 
+.caption-panel {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-toolbar {
+  flex-shrink: 0;
+}
+
 .entry-list {
-  max-height: 480px;
+  flex: 1;
+  min-height: 0;
   margin: 0;
   padding: 6px 0;
+  overflow-x: hidden;
   overflow-y: auto;
   list-style: none;
 
@@ -414,7 +443,7 @@ watch(
   width: 26px;
   flex-shrink: 0;
   color: #98a1b2;
-  text-align: right;
+  text-align: left;
 }
 
 .entry-time {
@@ -426,10 +455,10 @@ watch(
 .entry-text {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
   color: #394253;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .entry-input {
@@ -442,6 +471,8 @@ watch(
 }
 
 .edit-btn {
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   border: none;
   background: transparent;

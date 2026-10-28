@@ -225,16 +225,13 @@ const doneDismissed = ref(false)
 let pollTimer: number | null = null
 
 const progressStatus = computed(() => progress.value?.status ?? props.detail.status)
-const progressTotal = computed(() => progress.value?.total ?? props.detail.scenarioUnitCount)
-const progressCompleted = computed(() => progress.value?.completed ?? 0)
+const sceneTotal = computed(() => progress.value?.sceneTotal ?? props.detail.scenarioUnitCount)
+const sceneCompleted = computed(() => progress.value?.sceneCompleted ?? 0)
 const progressPercent = computed(() => progress.value?.progress ?? 0)
 const progressFailed = computed(() => (progress.value?.failed ?? 0) > 0)
 
-/** 预计剩余：剩余场景数 × 2 分钟（场景数为 0 时不显示） */
-const remainMinutes = computed(() => {
-  const rest = Math.max(0, progressTotal.value - progressCompleted.value)
-  return rest * 2
-})
+/** 预计剩余按还没完成的场景算。进度接口的 total 是案例数，不能拿来当场景数 */
+const remainMinutes = computed(() => Math.max(0, sceneTotal.value - sceneCompleted.value) * 2)
 
 const showInitBanner = computed(() => {
   if (props.detail.status === 1) return true
@@ -250,20 +247,14 @@ const initBannerClass = computed(() => {
 
 const initBannerText = computed(() => {
   if (progressFailed.value) {
-    return `初始化失败 ${progress.value?.failed ?? 0} 个案例，请重试（已完成 ${progressCompleted.value}/${progressTotal.value}）`
+    return `初始化失败 ${progress.value?.failed ?? 0} 个案例，请重试（已完成 ${sceneCompleted.value}/${sceneTotal.value} 个场景）`
   }
   if (progressStatus.value === 1) {
-    return `主题初始化中 · ${progressCompleted.value}/${progressTotal.value} 个案例已完成${
+    return `主题初始化中 · ${sceneCompleted.value}/${sceneTotal.value} 个场景已完成${
       remainMinutes.value > 0 ? ` · 预计剩余 ${remainMinutes.value} 分钟` : ''
     }`
   }
-  // total 的语义是"实战案例数"（后端 GetScriptProgress 按 act_case_script 统计，见 03 §3.3）：
-  // 主题下没有案例时后端无需等待，直接置为已发布并返回 0。此处不能说成"0 个场景"——
-  // 场景单元是另一张表（仍有 N 个），照抄会误导（实测用户以为发布丢了 6 个场景）。
-  if (progressTotal.value === 0) {
-    return '主题已发布（该主题下没有需要初始化的实战案例；生成并确认案例后再发布会一并编译）'
-  }
-  return `${progressTotal.value} 个案例全部就绪，主题已发布`
+  return `${sceneTotal.value} 个场景全部就绪，主题已发布`
 })
 
 /** 5s 轮询进度；status 变为 3 停止并刷新详情 */

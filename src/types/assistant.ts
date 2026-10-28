@@ -474,6 +474,10 @@ export interface AssistantScriptProgressResp {
   failed: number
   progress: number
   status: number
+  /** 当前版本场景数。横幅用这个，不用 total */
+  sceneTotal?: number
+  /** 案例已全部完成的场景数 */
+  sceneCompleted?: number
 }
 
 // ============================================================

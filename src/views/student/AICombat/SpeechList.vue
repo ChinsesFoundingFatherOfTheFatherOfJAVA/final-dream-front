@@ -450,25 +450,17 @@ $primary: #2e7cf6;
 }
 
 .search-box {
-  display: flex;
-  align-items: center;
   width: 220px;
-  height: 34px;
-  border: 1px solid #dcdfe6;
-  border-radius: 6px;
-  padding: 0 10px;
-  background: #fff;
 
-  input {
-    flex: 1;
-    border: none;
-    outline: none;
+  /* 边框只画在 EP 内层 wrapper，外层再画一圈会套框 */
+  :deep(.el-input__wrapper) {
+    height: 34px;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px #dcdfe6 inset;
+  }
+
+  :deep(.el-input__inner) {
     font-size: 13px;
-    color: #333;
-
-    &::placeholder {
-      color: #999;
-    }
   }
 
   .search-icon {

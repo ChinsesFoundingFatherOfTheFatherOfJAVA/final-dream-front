@@ -20,14 +20,33 @@
       <div v-for="(round, i) in rounds" :key="round.round" class="round-block">
         <div class="round-divider">第 {{ i + 1 }} 轮</div>
 
-        <!-- v1.2 学员先说：第 1 轮学员主动开场（上），陪练者回应（下）；气泡左右规则不变 -->
-        <template v-if="i === 0 && firstSpeaker === 'student'">
-          <div class="bubble-row student">
-            <div class="bubble student-bubble">
-              <p class="speaker-name">学员</p>
-              <p class="bubble-text">{{ round.standardScript }}</p>
+        <!-- v1.2 学员先说：第 1 轮学员主动开场（上），陪练者回应（下）；气泡左右规则不变。
+             要点/解析挂在学员话术上，开场白也要展示，不能因为顺序对调就丢掉。 -->
+        <template v-if="studentSpeaksFirst(round, i)">
+          <div class="student-block student-first">
+            <el-checkbox
+              class="round-check"
+              :model-value="checked.has(i)"
+              @change="toggle(i, Boolean($event))"
+            />
+            <div class="bubble-row student">
+              <div class="bubble student-bubble">
+                <p class="speaker-name">学员</p>
+                <p class="bubble-text">{{ round.standardScript }}</p>
+              </div>
+              <div class="avatar student-avatar">学</div>
             </div>
-            <div class="avatar student-avatar">学</div>
+            <div class="analysis-block">
+              <p class="analysis-title">要点</p>
+              <p class="analysis-text">
+                <template v-if="round.keyPoints?.length">
+                  {{ round.keyPoints.map((k) => k.content).join('；') }}
+                </template>
+                <template v-else>--</template>
+              </p>
+              <p class="analysis-title">解析</p>
+              <p class="analysis-text">{{ round.analysis || '--' }}</p>
+            </div>
           </div>
           <div class="bubble-row trainer">
             <div class="avatar trainer-avatar">陪</div>
@@ -50,7 +69,7 @@
         </template>
 
         <!-- 学员卡片：checkbox + 白底气泡（右侧）+ 要点/解析 -->
-        <div class="student-block" v-if="!(i === 0 && firstSpeaker === 'student')">
+        <div class="student-block" v-if="!studentSpeaksFirst(round, i)">
           <el-checkbox
             class="round-check"
             :model-value="checked.has(i)"
@@ -123,6 +142,12 @@ const allChecked = computed(
 const toggle = (index: number, value: boolean) => {
   if (value) checked.value.add(index)
   else checked.value.delete(index)
+}
+
+const studentSpeaksFirst = (round: RoundItem, index: number) => {
+  if (round.speakerOrder === 'student') return true
+  if (round.speakerOrder === 'trainer') return false
+  return index === 0 && props.firstSpeaker === 'student'
 }
 
 const toggleAll = (value: boolean) => {

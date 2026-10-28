@@ -5,7 +5,7 @@
     <aside class="catalog-panel">
       <div class="panel-toolbar">
         <el-input v-model.trim="catalogKeyword" placeholder="请输入分类名称搜索" />
-        <el-button class="btn-outline" @click="showCreateCatalog = true">新建题库分类</el-button>
+        <el-button class="btn-outline" @click="openCreateFromToolbar">新建题库分类</el-button>
       </div>
       <div class="tree-scroll">
         <div
@@ -118,8 +118,22 @@
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template #default="{ row }">
+              <div class="action-list">
               <el-button link type="primary" @click="openDetail(row)">管理</el-button>
-              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+              <el-dropdown trigger="hover" popper-class="more-popper" @command="(command: string) => onLibMore(command, row)">
+                <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="edit">编辑</el-dropdown-item>
+                    <el-dropdown-item command="delete" :disabled="!row.permissions.canDelete">删除</el-dropdown-item>
+                    <el-dropdown-item command="accuracy">正确率</el-dropdown-item>
+                    <el-dropdown-item command="share">共享</el-dropdown-item>
+                    <el-dropdown-item command="transfer">转移</el-dropdown-item>
+                    <el-dropdown-item command="catalog">修改分类</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -150,21 +164,6 @@
           {{ gearMenu.node!.disabled === 0 ? '禁用' : '启用' }}
         </div>
         <div class="dropdown-item" role="button" tabindex="0" @click="openMoveCatalog(gearMenu.node!)" @keydown.enter.prevent="openMoveCatalog(gearMenu.node!)">移动</div>
-      </div>
-    </div>
-
-    <!-- 更多菜单（截图02：编辑/删除/正确率/共享/转移/修改分类） -->
-    <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
-      <div class="dropdown-menu" :style="{ top: moreMenu.y + 'px', left: moreMenu.x + 'px' }">
-        <div class="dropdown-item" role="button" tabindex="0" @click="openEditLib(moreMenu.row!)" @keydown.enter.prevent="openEditLib(moreMenu.row!)">编辑</div>
-        <div class="dropdown-item" :class="{ disabled: !moreMenu.row!.permissions.canDelete }"
-             role="button" tabindex="0"
-             @click="moreMenu.row!.permissions.canDelete && onDeleteLib(moreMenu.row!)"
-             @keydown.enter.prevent="moreMenu.row!.permissions.canDelete && onDeleteLib(moreMenu.row!)">删除</div>
-        <div class="dropdown-item" role="button" tabindex="0" @click="toast.warn('正确率统计待 FP-16 实施')" @keydown.enter.prevent="toast.warn('正确率统计待 FP-16 实施')">正确率</div>
-        <div class="dropdown-item" role="button" tabindex="0" @click="openShare(moreMenu.row!)" @keydown.enter.prevent="openShare(moreMenu.row!)">共享</div>
-        <div class="dropdown-item" role="button" tabindex="0" @click="openTransfer(moreMenu.row!)" @keydown.enter.prevent="openTransfer(moreMenu.row!)">转移</div>
-        <div class="dropdown-item" role="button" tabindex="0" @click="openChangeCatalog(moreMenu.row!)" @keydown.enter.prevent="openChangeCatalog(moreMenu.row!)">修改分类</div>
       </div>
     </div>
 
@@ -341,6 +340,11 @@ const createParentId = ref('root')
 const editCatalogId = ref('')
 const moveCatalogId = ref('')
 
+const openCreateFromToolbar = () => {
+  createParentId.value = selectedCatalogId.value || 'root'
+  showCreateCatalog.value = true
+}
+
 const openCreateUnder = (node: CatalogTreeNode) => {
   gearMenu.visible = false
   createParentId.value = node.id
@@ -491,17 +495,14 @@ const openDetail = (row: LibItem) => {
   router.push(`/exam/queslib/detail?libId=${row.id}`)
 }
 
-// ---- 更多菜单 ----
-const moreMenu = reactive<{ visible: boolean; x: number; y: number; row: LibItem | null }>({
-  visible: false, x: 0, y: 0, row: null
-})
-
-const openMoreMenu = (row: LibItem, event: MouseEvent) => {
-  moreMenu.visible = true
-  moreMenu.row = row
-  const rect = (event.target as HTMLElement).getBoundingClientRect()
-  moreMenu.x = rect.left - 120
-  moreMenu.y = rect.bottom + 4
+// ---- 更多菜单（契约：悬浮展开；交给 el-dropdown，避免手写定位瞬间弹出） ----
+const onLibMore = (command: string, row: LibItem) => {
+  if (command === 'edit') openEditLib(row)
+  else if (command === 'delete') onDeleteLib(row)
+  else if (command === 'accuracy') toast.warn('正确率统计待 FP-16 实施')
+  else if (command === 'share') openShare(row)
+  else if (command === 'transfer') openTransfer(row)
+  else if (command === 'catalog') openChangeCatalog(row)
 }
 
 // ---- 抽屉族 ----
@@ -518,13 +519,11 @@ const transferringLib = ref<LibItem | null>(null)
 const changingLib = ref<LibItem | null>(null)
 
 const openEditLib = (row: LibItem) => {
-  moreMenu.visible = false
   editingLib.value = row
   showEditLib.value = true
 }
 
 const onDeleteLib = async (row: LibItem) => {
-  moreMenu.visible = false
   if (!(await confirmDialog({
     title: '确认删除该题库？',
     message: `题库「${row.name}」及其下全部试题将一并删除，不可恢复`,
@@ -538,19 +537,16 @@ const onDeleteLib = async (row: LibItem) => {
 }
 
 const openShare = (row: LibItem) => {
-  moreMenu.visible = false
   sharingLib.value = row
   showShare.value = true
 }
 
 const openTransfer = (row: LibItem) => {
-  moreMenu.visible = false
   transferringLib.value = row
   showTransfer.value = true
 }
 
 const openChangeCatalog = (row: LibItem) => {
-  moreMenu.visible = false
   changingLib.value = row
   showChangeCatalog.value = true
 }
@@ -908,5 +904,31 @@ td:nth-child(7) .enable-cell { color: #4a5368; }
   }
 }
 
+.action-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  // el-dropdown 会给触发项注入 line-height:1，不锁行高就会和「管理」错开
+  :deep(.el-button) { line-height: 20px; }
+  :deep(.el-dropdown) { display: flex; align-items: center; }
+}
 .more-trigger .caret { margin-left: 2px; font-size: 12px; }
+</style>
+
+<style lang="scss">
+.more-popper {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  padding: 6px;
+
+  .el-dropdown-menu { padding: 0; }
+  .el-dropdown-menu__item {
+    border-radius: 5px;
+    padding: 7px 12px;
+    line-height: 1.4;
+
+    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+  }
+}
 </style>

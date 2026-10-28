@@ -401,6 +401,9 @@ export const useAssistantStore = defineStore('assistant', () => {
       if (history.length > 0 || messages.value.length === 0) {
         messages.value = history
       }
+      collapseGeneratedCards(history)
+      settleInterruptedGeneration(history)
+      settleGenerationPlaceholder(history, generationSettled(history))
       // 历史里的 data 块需要重放状态（解析中→完成两态合并、右面板数据源）。
       // 必须遍历副本：重放会把被合并掉、已无内容的消息从 messages 里回收（见 dropEventBlock），
       // 直接在活数组上迭代会因元素左移漏掉相邻消息。
@@ -957,6 +960,104 @@ export const useAssistantStore = defineStore('assistant', () => {
     artifact.value = { ...snap, content: next as unknown as AssistantArtifactContent }
   }
 
+  /** 历史里已有完成或失败的生成卡。没有就不要把「请稍候」换成成功文案。 */
+  function generationSettled(history: AssistantChatMessage[]): boolean {
+    for (const msg of history) {
+      for (const block of msg.blocks) {
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        const status = String(block.params.status ?? '')
+        if (status === 'completed' || status === 'failed') return true
+      }
+    }
+    return false
+  }
+
+  /** 生成已收口时，替换助手留下的“请稍候”。只改内存，重进时按结果卡再替换一次。 */
+  function settleGenerationPlaceholder(history: AssistantChatMessage[], settled = true) {
+    if (!settled) return
+    const replacement =
+      '训练配置已生成完成：可在右侧查看场景单元、客户画像、评估维度与案例；需要我继续生成实战案例就说一声。'
+    const placeholder = /请稍候|正在生成/
+    for (let i = history.length - 1; i >= 0; i--) {
+      const blocks = history[i]?.blocks ?? []
+      for (let j = blocks.length - 1; j >= 0; j--) {
+        const block = blocks[j]
+        if (block && block.kind === 'text' && placeholder.test(block.text)) {
+          block.text = replacement
+          return
+        }
+      }
+    }
+  }
+
+  /**
+   * 同一产物的生成卡只留最终那条。完成事件在另一条消息里，重放时会先被归并掉，
+   * 旧卡就停在受理时的 0 个场景。这里在重放前把旧卡收成最终状态。
+   */
+  function collapseGeneratedCards(history: AssistantChatMessage[]) {
+    const latest = new Map<string, Record<string, unknown>>()
+    for (const msg of history) {
+      for (const block of msg.blocks) {
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        const id = String(block.params.id ?? '')
+        if (!id) continue
+        const prev = latest.get(id)
+        const incoming = String(block.params.status ?? '')
+        const previous = String(prev?.status ?? '')
+        if (prev && (previous === 'completed' || previous === 'failed') && incoming === 'in_progress') continue
+        latest.set(id, block.params)
+      }
+    }
+    const seen = new Set<string>()
+    for (let i = history.length - 1; i >= 0; i--) {
+      const msg = history[i]
+      if (!msg) continue
+      for (let j = msg.blocks.length - 1; j >= 0; j--) {
+        const block = msg.blocks[j]
+        if (!block || block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        const id = String(block.params.id ?? '')
+        const winner = latest.get(id)
+        if (!winner) continue
+        if (seen.has(id)) {
+          msg.blocks.splice(j, 1)
+          continue
+        }
+        seen.add(id)
+        block.params = winner
+      }
+      if (msg.blocks.length === 0) history.splice(i, 1)
+    }
+  }
+
+  /**
+   * 重进时历史里还停在 in_progress，说明这轮生成没有写出 completed/failed。
+   * 进度事件不落库，断线后服务端任务也已丢失，不能继续显示「正在生成」。
+   */
+  function settleInterruptedGeneration(history: AssistantChatMessage[]) {
+    const settled = new Set<string>()
+    for (const msg of history) {
+      for (const block of msg.blocks) {
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        const status = String(block.params.status ?? '')
+        const id = String(block.params.id ?? '')
+        if (id && (status === 'completed' || status === 'failed')) settled.add(id)
+      }
+    }
+    for (const msg of history) {
+      for (const block of msg.blocks) {
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (String(block.params.status ?? '') !== 'in_progress') continue
+        const id = String(block.params.id ?? '')
+        if (id && settled.has(id)) continue
+        block.params = {
+          ...block.params,
+          status: 'failed',
+          error: '生成已中断，请重新生成'
+        }
+      }
+    }
+  }
+
   /**
    * artifact-generated：受理(in_progress) → 分段(in_progress)×N → completed / failed
    *
@@ -986,20 +1087,9 @@ export const useAssistantStore = defineStore('assistant', () => {
     if (params.status === 'completed') {
       // 生成完成：以服务端为准做一次兜底刷新，取回完整产物（含案例正文）
       pendingArtifactRefresh = true
-      // 助手此前若说过"正在生成…请稍候"，在此换成完成态：生成是异步受理的（受理即返回），
-      // 助手不会在完成时补发一条"已完成"，这句占位话不主动改就会永远停在"请稍候"。
-      const placeholder = /请稍候|正在生成/
-      let replaced = false
-      for (let i = messages.value.length - 1; i >= 0 && !replaced; i--) {
-        const blocks = messages.value[i]?.blocks ?? []
-        for (let j = blocks.length - 1; j >= 0 && !replaced; j--) {
-          const b = blocks[j]
-          if (b && b.kind === 'text' && placeholder.test(b.text)) {
-            b.text = '训练配置已生成完成：可在右侧查看场景单元、客户画像、评估维度与案例；需要我继续生成实战案例就说一声。'
-            replaced = true
-          }
-        }
-      }
+      settleGenerationPlaceholder(messages.value)
+    } else if (params.status === 'failed') {
+      settleGenerationPlaceholder(messages.value, '主题内容生成失败，可重新发起生成。')
     }
     // 消息流：同 artifact id 的生成卡原地更新
     mergeGeneratedCard(params, ctx)
@@ -1023,6 +1113,13 @@ export const useAssistantStore = defineStore('assistant', () => {
         if (!b || b.kind !== 'event' || b.bizType !== 'biz-side-manage-artifact-generated') continue
         if (b === ctx.block) continue
         if (String(b.params.id ?? '') !== artifactId) continue
+        const previous = String(b.params.status ?? '')
+        const incoming = String(params.status ?? '')
+        // 受理卡没有 content，场景数是 0。完成事件已经落库后，不能再被这条空进度盖回去。
+        if ((previous === 'completed' || previous === 'failed') && incoming === 'in_progress') {
+          dropEventBlock(ctx)
+          return
+        }
         b.params = params as unknown as Record<string, unknown>
         // 本次事件块是新的一段：合并进先前卡片后移除，空出来的消息一并回收（见 dropEventBlock）
         dropEventBlock(ctx)

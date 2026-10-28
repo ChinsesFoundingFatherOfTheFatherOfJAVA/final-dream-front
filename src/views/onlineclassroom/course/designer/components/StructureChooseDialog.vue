@@ -2,10 +2,12 @@
   <!-- 截图20：创建首入"选择要创建的课程结构"弹窗（无章节/有章节两卡片 + 说明文案） -->
   <el-dialog
     :model-value="visible"
-    width="620px"
+    width="660px"
+    top="10vh"
     :show-close="false"
     :close-on-click-modal="false"
     append-to-body
+    class="structure-dialog"
     @close="emit('close')"
   >
     <template #header>
@@ -15,21 +17,34 @@
       </div>
     </template>
     <div class="cards">
-      <el-button class="card" @click="emit('choose', 0)">
-        <span class="card-icon flat" aria-hidden="true">▤</span>
-        <strong>无章节</strong>
-        <span class="desc">任务平铺展示，适合内容较少、无需分章的课程</span>
-      </el-button>
-      <el-button class="card" @click="emit('choose', 1)">
-        <span class="card-icon chaptered" aria-hidden="true">☰</span>
-        <strong>有章节</strong>
-        <span class="desc">按章节组织任务，自动创建"章节1"，适合体系化课程</span>
-      </el-button>
+      <button type="button" class="card" @click="emit('choose', 0)">
+        <span class="card-preview flat" aria-hidden="true">
+          <span class="preview-icon"><el-icon><Document /></el-icon></span>
+          <span class="preview-lines"><i /><i /><i /></span>
+        </span>
+        <span class="card-copy">
+          <strong>无章节</strong>
+          <span class="desc">学习任务较少时，可以使用无章节，所有任务将平铺展示</span>
+        </span>
+      </button>
+      <button type="button" class="card" @click="emit('choose', 1)">
+        <span class="card-preview chaptered" aria-hidden="true">
+          <span class="chapter-lines"><i /><i /></span>
+          <span class="preview-icon"><el-icon><Tickets /></el-icon></span>
+          <span class="preview-lines"><i /><i /><i /></span>
+        </span>
+        <span class="card-copy">
+          <strong>有章节</strong>
+          <span class="desc">学习任务较多时，可以使用章节将任务组织分类，方便学员按章节进行学习</span>
+        </span>
+      </button>
     </div>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
+import { Document, Tickets } from '@element-plus/icons-vue'
+
 /**
  * 创建课程首入的结构选择弹窗（CS-08/截图20）。
  * 由设计器主页在 route query choose=1 时展示一次；选择后由主页设置 structureType
@@ -63,27 +78,44 @@ const emit = defineEmits<{
 
 .cards {
   display: flex;
-  gap: 16px;
-  margin-top: 24px;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 22px;
 }
 
 .card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  min-height: 112px;
+  display: grid;
+  grid-template-columns: 138px minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
-  padding: 26px 18px 22px;
+  gap: 24px;
+  padding: 16px 22px;
   border: 1px solid #e2e7f0;
-  border-radius: 10px;
-  background: #fbfcfe;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 
   &:hover {
     border-color: #2e7cf6;
+    background: #f8fbff;
     box-shadow: 0 8px 22px rgba(46, 124, 246, 0.14);
   }
+
+  &:focus-visible {
+    outline: 2px solid #2e7cf6;
+    outline-offset: 2px;
+  }
+}
+
+.card-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 
   strong {
     color: #30384a;
@@ -92,26 +124,78 @@ const emit = defineEmits<{
 
   .desc {
     color: #8a92a5;
-    font-size: 12px;
-    line-height: 1.6;
-    text-align: center;
+    font-size: 13px;
+    line-height: 1.65;
+    text-align: left;
   }
 }
 
-.card-icon {
+.card-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 68px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: #f7f9fc;
+}
+
+.preview-icon {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 34px;
+  height: 42px;
+  flex: 0 0 34px;
+  border-radius: 6px 6px 9px 6px;
   color: #fff;
-  font-size: 20px;
+  font-size: 18px;
+}
 
-  &.flat {
-    background: #27b788;
+.flat .preview-icon {
+  background: #27b788;
+}
+
+.chaptered .preview-icon {
+  background: #f45b69;
+}
+
+.preview-lines {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  i {
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: #e7ebf2;
   }
 
-  &.chaptered {
+  i:nth-child(2) {
+    width: 82%;
+  }
+
+  i:nth-child(3) {
+    width: 62%;
+  }
+}
+
+.chapter-lines {
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  i {
+    display: block;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
     background: #2e7cf6;
   }
 }

@@ -3,18 +3,21 @@
     <!-- 顶栏（截图09）：← 返回 / 课程名 / 结构切换 / 解锁模式下拉+暂存关闭+保存（右对齐） -->
     <header class="top-bar">
       <div class="bar-left">
-        <el-button class="back-btn" @click="backToList">← 返回列表</el-button>
+        <el-button class="back-btn" circle aria-label="返回列表" title="返回列表" @click="backToList">
+          <el-icon><ArrowLeft /></el-icon>
+        </el-button>
         <span class="divider"></span>
         <h1 class="course-name" :title="courseTitle">{{ courseTitle || '课程设计器' }}</h1>
         <!-- 顶栏按钮：有章节↔无章节 切换（CS-07a） -->
         <el-button class="toggle-btn" @click="toggleStructure">
-          {{ structureType === 1 ? '切换为无章节' : '切换为章节模式' }}
+          <el-icon><Tickets /></el-icon>
+          <span>{{ structureType === 1 ? '切换为无章节' : '切换为章节模式' }}</span>
         </el-button>
       </div>
       <div class="bar-right">
         <el-button class="mode-btn" @click="unlockVisible = true">
           {{ unlockMode === UNLOCK_MODE_ORDER ? '按顺序学习' : '自由学习模式' }}
-          <span class="caret" aria-hidden="true">▼</span>
+          <el-icon class="caret" aria-hidden="true"><ArrowDown /></el-icon>
         </el-button>
         <el-button class="btn ghost" :disabled="saving || loading" @click="submitDesigner(false)">
           暂存关闭
@@ -109,6 +112,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDown, ArrowLeft, Tickets } from '@element-plus/icons-vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRoute, useRouter } from 'vue-router'
@@ -549,12 +553,12 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .designer-page {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 104px);
-  min-height: 560px;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
   background: #fff;
   overflow: hidden;
 }
@@ -565,8 +569,10 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 20px;
+  height: 64px;
+  padding: 0 24px;
   border-bottom: 1px solid #e9edf4;
+  background: #fff;
 }
 
 .bar-left {
@@ -577,14 +583,18 @@ onBeforeUnmount(() => {
 }
 
 .back-btn {
+  width: 34px;
+  height: 34px;
   flex-shrink: 0;
-  border: none;
-  background: transparent;
+  border: 1px solid #d9deea;
+  border-radius: 8px;
+  background: #fff;
   color: #4d5568;
-  font-size: 13px;
+  font-size: 17px;
   cursor: pointer;
 
   &:hover {
+    border-color: #2e7cf6;
     color: #2e7cf6;
   }
 }
@@ -607,13 +617,16 @@ onBeforeUnmount(() => {
 }
 
 .toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
   height: 30px;
   padding: 0 12px;
   border: 1px solid #d9deea;
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: #f8fafc;
+  color: #596274;
   font-size: 12px;
   cursor: pointer;
 
@@ -631,6 +644,9 @@ onBeforeUnmount(() => {
 
 /* 附录D：顶栏按钮组右对齐（模式下拉+暂存关闭白钮+保存蓝钮） */
 .mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   height: 34px;
   padding: 0 14px;
   border: 1px solid #d9deea;
@@ -647,8 +663,8 @@ onBeforeUnmount(() => {
 }
 
 .caret {
-  margin-left: 6px;
-  font-size: 10px;
+  margin-left: 2px;
+  font-size: 12px;
   color: #98a1b2;
 }
 

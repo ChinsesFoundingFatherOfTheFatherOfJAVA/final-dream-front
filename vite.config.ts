@@ -3,12 +3,15 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import { devApiMockPlugin } from './mock/devApiMock.ts'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    // 离线浏览用 Mock：仅 VITE_USE_MOCK=1 的 dev 会话生效，平时零影响（见 mock/devApiMock.ts）
+    devApiMockPlugin(),
   ],
   resolve: {
     alias: {

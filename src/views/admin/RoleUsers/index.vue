@@ -370,23 +370,23 @@ onMounted(async () => {
 }
 
 .search-field {
-  min-width: 310px;
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  align-items: center;
-
-  > span {
-    grid-column: 1 / -1;
-  }
+  width: 320px;
+  flex: 0 0 320px;
 }
 
 .search-composite {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 68px minmax(0, 1fr);
+  display: flex;
+  width: 100%;
 
   :deep(.el-select) {
-    min-width: 0;
+    width: 88px;
+    flex: 0 0 88px;
+    min-width: 88px;
+  }
+
+  :deep(.el-input) {
+    flex: 1 1 auto;
+    min-width: 120px;
   }
 
   :deep(.el-select__wrapper) {
@@ -456,11 +456,8 @@ onMounted(async () => {
   }
 
   .search-field {
-    min-width: 100%;
-  }
-
-  .search-composite {
-    grid-template-columns: 64px minmax(0, 1fr);
+    width: 100%;
+    flex-basis: 100%;
   }
 }
 </style>

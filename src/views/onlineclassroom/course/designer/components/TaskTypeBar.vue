@@ -10,13 +10,29 @@
       :title="item.enabled ? '' : '功能建设中'"
       @click="item.enabled && emit('pick', item.type)"
     >
-      <span class="type-icon" :style="{ background: item.color }" aria-hidden="true">{{ item.glyph }}</span>
+      <span class="type-icon" :style="{ background: item.color }" aria-hidden="true">
+        <el-icon><component :is="iconFor(item.type)" /></el-icon>
+      </span>
       <span class="type-label">{{ item.label }}</span>
     </el-button>
   </div>
 </template>
 
 <script setup lang="ts">
+import {
+  Box,
+  Collection,
+  Document,
+  EditPen,
+  Headset,
+  Link,
+  MagicStick,
+  Monitor,
+  Trophy,
+  UploadFilled,
+  VideoPlay
+} from '@element-plus/icons-vue'
+import type { Component } from 'vue'
 import { TASK_TYPE_ITEMS } from '../model'
 
 /**
@@ -30,26 +46,47 @@ const emit = defineEmits<{
 }>()
 
 const items = TASK_TYPE_ITEMS
+
+const TYPE_ICONS: Record<number, Component> = {
+  1: Document,
+  2: VideoPlay,
+  3: Headset,
+  4: Box,
+  6: Collection,
+  7: Monitor,
+  8: Link,
+  0: UploadFilled,
+  5: MagicStick,
+  [-1]: EditPen,
+  [-2]: Trophy
+}
+
+const iconFor = (type: number) => TYPE_ICONS[type] ?? Document
 </script>
 
 <style scoped lang="scss">
 .task-type-bar {
-  display: flex;
-  align-items: flex-start;
-  gap: 26px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 14px 12px;
+  align-items: start;
   padding: 14px 16px;
   border: 1px solid #edf0f5;
   border-radius: 8px;
   background: #fff;
 }
 
-.type-item {
+.task-type-bar > .type-item {
+  width: 100%;
+  height: 70px;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: 6px;
-  min-width: 58px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -57,17 +94,17 @@ const items = TASK_TYPE_ITEMS
   .type-icon {
     display: grid;
     place-items: center;
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 9px;
     color: #fff;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 19px;
   }
 
   .type-label {
     color: #4d5568;
     font-size: 12px;
+    white-space: nowrap;
   }
 
   &:hover:not(.disabled) .type-label {
@@ -82,5 +119,15 @@ const items = TASK_TYPE_ITEMS
       color: #b3bac7;
     }
   }
+}
+
+/* EP 按钮会生成无 scoped 标记的插槽 span，需穿透后改成纵向图标+文字 */
+.task-type-bar :deep(.type-item > span) {
+  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
 }
 </style>

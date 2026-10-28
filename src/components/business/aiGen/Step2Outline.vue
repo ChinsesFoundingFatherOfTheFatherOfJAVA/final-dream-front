@@ -180,13 +180,18 @@ const choose = (lang: 'zh' | 'en') => {
 
     .name-input {
       flex: 1;
-      border: none;
-      border-bottom: 1px dashed #d9d9d9;
-      outline: none;
-      font-size: 14px;
-      padding: 4px 2px;
+      min-width: 120px;
 
-      &:focus { border-bottom-color: #6b5ce7; }
+      :deep(.el-input__wrapper) {
+        border-radius: 0;
+        box-shadow: none;
+        border-bottom: 1px dashed #d9d9d9;
+        padding: 0 2px;
+      }
+
+      :deep(.el-input__wrapper.is-focus) {
+        border-bottom-color: #6b5ce7;
+      }
     }
 
     .name-count { font-size: 12px; color: #999; }
@@ -210,18 +215,14 @@ const choose = (lang: 'zh' | 'en') => {
 
     label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; }
 
-    textarea {
-      width: 100%;
-      border: 1px solid #e8e8e8;
+    :deep(.el-textarea__inner) {
       border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 13px;
+      box-shadow: 0 0 0 1px #e8e8e8 inset;
       font-family: inherit;
-      resize: vertical;
-      outline: none;
-      box-sizing: border-box;
+    }
 
-      &:focus { border-color: #6b5ce7; }
+    :deep(.el-textarea__inner:focus) {
+      box-shadow: 0 0 0 1px #6b5ce7 inset;
     }
 
     .field-count { display: block; text-align: right; font-size: 11px; color: #bbb; margin-top: 2px; }

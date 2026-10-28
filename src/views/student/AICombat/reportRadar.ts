@@ -1,6 +1,6 @@
 import type { LastDimension, ReportDimension } from '@/types/student'
 
-/** 参与雷达图的维度：score 为 null 表示本次未参与评分，画出来会被当成 0 分 */
+/** 参与雷达图的维度。null 是没评，不画；0 分是评了并且没拿到分，必须画。 */
 export const scoredDimensions = (dimensions: ReportDimension[] | null | undefined): ReportDimension[] =>
   (dimensions ?? []).filter((d) => d.score != null)
 

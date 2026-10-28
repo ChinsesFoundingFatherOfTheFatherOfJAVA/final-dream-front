@@ -50,8 +50,8 @@
           <el-option :value="0" label="不通过" />
           <el-option :value="2" label="未知" />
         </el-select>
-        <el-input v-model.trim="query.keyword" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
-        <el-button class="btn primary" @click="reload(1)">查询</el-button>
+        <el-input v-model.trim="query.keyword" class="filter-search" placeholder="姓名/账号搜索" @keyup.enter="reload(1)" />
+        <el-button class="btn primary filter-submit" @click="reload(1)">查询</el-button>
       </div>
 
       <div class="table-wrap">
@@ -408,8 +408,13 @@ onMounted(async () => {
 }
 .list-card { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 0 0 12px; }
 .toolbar-row { display: flex; flex-wrap: wrap; gap: 8px; .export-btn { margin-left: auto; } }
-.filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; .el-input { flex: 1; min-width: 160px; font-size: 12px; } }
-.filter-select { font-size: 12px; }
+.filter-row {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  // 与题库管理页一致：EP 下拉根节点必须定宽，否则块级元素会各占一行
+  .filter-select { width: 130px; flex: 0 0 130px; font-size: 12px; color: #4a5368; }
+  .filter-search { flex: 1 1 160px; min-width: 160px; max-width: 260px; font-size: 12px; }
+  .filter-submit { flex: none; }
+}
 .table-wrap { flex: 1; min-height: 0; overflow: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f2f4f8; vertical-align: middle; }

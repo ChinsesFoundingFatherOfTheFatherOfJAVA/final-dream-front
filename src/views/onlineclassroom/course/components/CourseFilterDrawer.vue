@@ -4,7 +4,7 @@
       <div class="filter-grid">
         <label class="filter-item">
           <span>是否上架</span>
-          <el-select v-model="form.onSale" placeholder="请选择">
+          <el-select v-model="form.onSale" placeholder="请选择" popper-class="filter-control-popper">
             <el-option label="请选择" :value="null" />
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
@@ -18,6 +18,7 @@
               type="date"
               value-format="YYYY-MM-DD"
               placeholder="开始日期"
+              popper-class="filter-control-popper"
             />
             <i aria-hidden="true">~</i>
             <el-date-picker
@@ -25,6 +26,7 @@
               type="date"
               value-format="YYYY-MM-DD"
               placeholder="结束日期"
+              popper-class="filter-control-popper"
             />
           </div>
         </label>
@@ -36,6 +38,7 @@
               type="date"
               value-format="YYYY-MM-DD"
               placeholder="开始日期"
+              popper-class="filter-control-popper"
             />
             <i aria-hidden="true">~</i>
             <el-date-picker
@@ -43,6 +46,7 @@
               type="date"
               value-format="YYYY-MM-DD"
               placeholder="结束日期"
+              popper-class="filter-control-popper"
             />
           </div>
         </label>
@@ -117,11 +121,15 @@ function confirm() {
 .filter-item {
   min-width: 0;
   display: grid;
-  grid-template-columns: 112px 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
+  column-gap: 8px;
   color: #4d5568;
   font-size: 13px;
+
+  > span {
+    white-space: nowrap;
+  }
 
   :deep(.el-select),
   :deep(.el-date-editor) {
@@ -134,10 +142,6 @@ function confirm() {
     min-height: 36px;
     border-radius: 6px;
   }
-}
-
-.date-item {
-  grid-template-columns: 82px 1fr;
 }
 
 .date-range {
@@ -173,5 +177,12 @@ footer {
       color: #fff;
     }
   }
+}
+</style>
+
+<style lang="scss">
+/* 复合筛选面板在 3500 层，EP 下拉/日期弹层必须位于其上方 */
+.filter-control-popper.el-popper {
+  z-index: 3600 !important;
 }
 </style>

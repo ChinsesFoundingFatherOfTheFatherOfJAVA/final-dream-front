@@ -327,6 +327,7 @@ const uploadRecording = async (blob: Blob) => {
       return
     }
 
+    if (res.currentTrainerReply) store.appendMessage(res.currentTrainerReply)
     if (res.narrationMessages?.length) {
       for (const nm of res.narrationMessages) store.appendMessage(nm)
     }
@@ -448,6 +449,7 @@ const onSend = async () => {
       return
     }
 
+    if (res.currentTrainerReply) store.appendMessage(res.currentTrainerReply)
     if (res.narrationMessages?.length) {
       for (const nm of res.narrationMessages) store.appendMessage(nm)
     }

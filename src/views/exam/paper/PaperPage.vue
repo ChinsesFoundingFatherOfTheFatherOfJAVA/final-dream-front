@@ -7,7 +7,7 @@
       search-placeholder="请输入分类名称搜索"
       create-label="新建试卷分类"
       @select="onSelectCatalog"
-      @create="openCreateCatalog('root')"
+      @create="openCreateCatalog(selectedCatalogId || 'root')"
       @gear="onGear"
     />
 
@@ -120,10 +120,24 @@
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template #default="{ row }">
+              <div class="action-list">
               <el-button link type="primary" @click="row.status !== 4 ? releaseRow(row) : goManageRow(row)">
                 {{ row.status !== 4 ? '发布' : '管理' }}
               </el-button>
-              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+              <el-dropdown trigger="hover" popper-class="more-popper" @command="(command: string) => onPaperMore(command, row)">
+                <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-if="row.status !== 4" command="manage">管理</el-dropdown-item>
+                    <el-dropdown-item command="edit">编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="row.status === 4" command="share">共享</el-dropdown-item>
+                    <el-dropdown-item command="transfer">转移</el-dropdown-item>
+                    <el-dropdown-item command="catalog">修改分类</el-dropdown-item>
+                    <el-dropdown-item command="delete" :disabled="!row.permissions.canDelete">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -154,19 +168,6 @@
           {{ gearMenu.node!.disabled === 1 ? '启用' : '禁用' }}
         </div>
         <div class="menu-item danger" role="button" tabindex="0" @click="removeCatalog()" @keydown.enter.prevent="removeCatalog()">删除</div>
-      </div>
-    </div>
-
-    <!-- 行"更多"菜单（同样带遮罩，点空白处关闭） -->
-    <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
-      <div class="float-menu" :style="{ left: moreMenu.x + 'px', top: moreMenu.y + 'px' }">
-        <div v-if="moreMenu.row?.status !== 4" class="menu-item" role="button" tabindex="0" @click="goManage" @keydown.enter.prevent="goManage">管理</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openEditPaper()" @keydown.enter.prevent="openEditPaper()">编辑</div>
-        <div v-if="moreMenu.row?.status === 4" class="menu-item" role="button" tabindex="0" @click="openShare()" @keydown.enter.prevent="openShare()">共享</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openTransfer()" @keydown.enter.prevent="openTransfer()">转移</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openChangeCatalog()" @keydown.enter.prevent="openChangeCatalog()">修改分类</div>
-        <div class="menu-item danger" :class="{ disabled: !moreMenu.row?.permissions.canDelete }"
-             role="button" tabindex="0" @click="removePaper()" @keydown.enter.prevent="removePaper()">删除</div>
       </div>
     </div>
 
@@ -336,22 +337,11 @@ const somePageChecked = computed(() =>
 const gearMenu = reactive<{ visible: boolean; x: number; y: number; node: CatalogNode | null }>({
   visible: false, x: 0, y: 0, node: null
 })
-const moreMenu = reactive<{ visible: boolean; x: number; y: number; row: PaperItem | null }>({
-  visible: false, x: 0, y: 0, row: null
-})
-
 const router = useRouter()
-
-
 
 /** 管理 → 试卷管理页（FP-07）。 */
 const goManageRow = (row: PaperItem) => {
-  moreMenu.visible = false
   router.push(`/exam/paper/detail?paperId=${row.id}`)
-}
-
-const goManage = () => {
-  if (moreMenu.row) goManageRow(moreMenu.row)
 }
 
 const onSortChange = ({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) => {
@@ -441,7 +431,6 @@ const onGear = (payload: { node: CatalogNode; event: MouseEvent }) => {
   gearMenu.node = payload.node
   gearMenu.x = rect.left - 60
   gearMenu.y = rect.bottom + 4
-  moreMenu.visible = false
 }
 
 const openCreateCatalog = (parentId: string) => {
@@ -506,36 +495,32 @@ const onCatalogSaved = () => {
 }
 
 // ---- 行操作 ----
-const openMoreMenu = (row: PaperItem, event: MouseEvent) => {
-  const rect = (event.target as HTMLElement).getBoundingClientRect()
-  moreMenu.visible = true
-  moreMenu.row = row
-  moreMenu.x = rect.left - 140
-  moreMenu.y = rect.bottom + 4
-  gearMenu.visible = false
+const onPaperMore = (command: string, row: PaperItem) => {
+  if (command === 'manage') goManageRow(row)
+  else if (command === 'edit') openEditPaper(row)
+  else if (command === 'share') openShare(row)
+  else if (command === 'transfer') openTransfer(row)
+  else if (command === 'catalog') openChangeCatalog(row)
+  else if (command === 'delete') removePaper(row)
 }
 
 const openUseDrawer = (row: PaperItem) => {
-  moreMenu.visible = false
   usingPaperId.value = row.id
   showUseDrawer.value = true
 }
 
-const openShare = () => {
-  moreMenu.visible = false
-  sharingPaper.value = moreMenu.row
+const openShare = (row: PaperItem) => {
+  sharingPaper.value = row
   showShare.value = true
 }
 
-const openTransfer = () => {
-  moreMenu.visible = false
-  transferringPaper.value = moreMenu.row
+const openTransfer = (row: PaperItem) => {
+  transferringPaper.value = row
   showTransfer.value = true
 }
 
-const openChangeCatalog = () => {
-  moreMenu.visible = false
-  changingPaper.value = moreMenu.row
+const openChangeCatalog = (row: PaperItem) => {
+  changingPaper.value = row
   showChangeCatalog.value = true
 }
 
@@ -616,10 +601,7 @@ const releaseRow = async (row: PaperItem) => {
  * （固定卷 → PaperQuickEditPage，随机卷 → PaperAutoEditPage），
  * 不是打开基本信息抽屉——基本信息抽屉归管理页的「编辑基本信息」用。
  */
-const openEditPaper = () => {
-  moreMenu.visible = false
-  const row = moreMenu.row
-  if (!row) return
+const openEditPaper = (row: PaperItem) => {
   const path = row.buildType === 1 ? '/exam/paper/auto' : '/exam/paper/quick'
   router.push(`${path}?paperId=${row.id}`)
 }
@@ -632,10 +614,7 @@ const toggleDisabled = async (row: PaperItem) => {
   } catch { /* 拦截器已提示 */ }
 }
 
-const removePaper = async () => {
-  moreMenu.visible = false
-  const row = moreMenu.row
-  if (!row) return
+const removePaper = async (row: PaperItem) => {
   if (!row.permissions.canDelete) {
     toast.warn('非创建者不能删除该试卷')
     return
@@ -803,5 +782,30 @@ tr.checked td { background: #f5f9ff; }
   z-index: 2999;
 }
 
+.action-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  :deep(.el-button) { line-height: 20px; }
+  :deep(.el-dropdown) { display: flex; align-items: center; }
+}
 .more-trigger .caret { margin-left: 2px; font-size: 12px; }
+</style>
+
+<style lang="scss">
+.more-popper {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  padding: 6px;
+
+  .el-dropdown-menu { padding: 0; }
+  .el-dropdown-menu__item {
+    border-radius: 5px;
+    padding: 7px 12px;
+    line-height: 1.4;
+
+    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+  }
+}
 </style>

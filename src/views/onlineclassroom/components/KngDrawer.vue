@@ -3,6 +3,7 @@
     :model-value="visible"
     :size="`${width}px`"
     class="kng-drawer"
+    :class="{ 'kng-drawer--body-fixed': !bodyScroll }"
     append-to-body
     destroy-on-close
     @update:model-value="handleVisibleChange"
@@ -27,10 +28,12 @@ withDefaults(defineProps<{
   subtitle?: string
   width?: number
   zIndex?: number
+  bodyScroll?: boolean
 }>(), {
   subtitle: '',
   width: 560,
-  zIndex: 3000
+  zIndex: 3000,
+  bodyScroll: true
 })
 
 const emit = defineEmits<{ close: [] }>()
@@ -61,6 +64,10 @@ const handleVisibleChange = (visible: boolean) => {
   }
 }
 
+.kng-drawer.kng-drawer--body-fixed :deep(.el-drawer__body) {
+  overflow: hidden;
+}
+
 .drawer-header {
   h3 {
     margin: 0;
@@ -74,5 +81,12 @@ const handleVisibleChange = (visible: boolean) => {
     font-size: 12px;
   }
 
+}
+</style>
+
+<style lang="scss">
+/* 需要内部列表自行滚动的抽屉：外层 body 必须锁定，避免出现第二条页面级滚动条 */
+.kng-drawer.kng-drawer--body-fixed .el-drawer__body {
+  overflow: hidden !important;
 }
 </style>

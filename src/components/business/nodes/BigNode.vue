@@ -18,6 +18,23 @@
     </div>
 
     <div class="big-node-body">
+      <!-- type 3 学员问陪练者：学员说在上。type 2 仍是陪练者说在上。 -->
+      <div
+        v-if="studentFirst"
+        class="sub-node student-sub"
+        :class="{ active: activeSub === 'student' }"
+        data-sub="student"
+        role="button"
+        tabindex="0"
+        @keydown.enter.prevent="synthClick"
+      >
+        <div class="sub-label">
+          <span class="label-bar" style="background: #1890ff" aria-hidden="true"></span>
+          学员说
+        </div>
+        <div class="sub-content">{{ data.standardScript || '暂无内容' }}</div>
+      </div>
+
       <!-- 陪练者子节点 -->
       <div
         class="sub-node trainer-sub"
@@ -34,8 +51,8 @@
         <div class="sub-content">{{ data.trainerQuestion || '暂无内容' }}</div>
       </div>
 
-      <!-- 学员子节点 -->
       <div
+        v-if="!studentFirst"
         class="sub-node student-sub"
         :class="{ active: activeSub === 'student' }"
         data-sub="student"
@@ -67,7 +84,8 @@ const props = defineProps<{
 }>()
 
 const title = computed(() => props.data.nodeTypeTitle || '陪练者问学员说')
-const themeColor = computed(() => (props.data.nodeType === 'student_ask' ? '#1890ff' : '#fa8c16'))
+const studentFirst = computed(() => props.data.nodeType === 'student_ask' || props.data.nodeType === 3)
+const themeColor = computed(() => (studentFirst.value ? '#1890ff' : '#fa8c16'))
 const activeSub = computed(() => (props.data.activeSubType as string) || null)
 
 // 键盘 Enter 激活：节点的点击交互由 FlowDesign 以原生 click 事件委托实现，这里合成 click 复用既有链路

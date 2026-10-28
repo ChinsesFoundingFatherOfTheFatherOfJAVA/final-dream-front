@@ -7,7 +7,7 @@
       search-placeholder="请输入分类名称搜索"
       create-label="新建考试分类"
       @select="onSelectCatalog"
-      @create="openCreateCatalog('root')"
+      @create="openCreateCatalog(selectedCatalogId || 'root')"
       @gear="onGear"
     />
 
@@ -119,10 +119,26 @@
           </el-table-column>
           <el-table-column label="操作" width="130" fixed="right">
             <template #default="{ row }">
+              <div class="action-list">
               <el-button link type="primary" @click="row.status === 0 ? doPublish(row) : goDetail(row)">
                 {{ row.status === 0 ? '发布' : '管理' }}
               </el-button>
-              <el-button link class="more-trigger" @click="openMoreMenu(row, $event)">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+              <el-dropdown trigger="hover" popper-class="more-popper" @command="(command: string) => onArrangeMore(command, row)">
+                <el-button link class="more-trigger">更多 <el-icon class="caret"><ArrowDown /></el-icon></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-if="row.status === 0" command="manage">管理</el-dropdown-item>
+                    <el-dropdown-item command="edit">编辑</el-dropdown-item>
+                    <el-dropdown-item command="notice">变更通知</el-dropdown-item>
+                    <el-dropdown-item v-if="row.status === 0" command="publish">发布</el-dropdown-item>
+                    <el-dropdown-item v-if="row.status === 2" command="end">结束考试</el-dropdown-item>
+                    <el-dropdown-item command="copy">复制</el-dropdown-item>
+                    <el-dropdown-item command="link">考试链接</el-dropdown-item>
+                    <el-dropdown-item command="delete" :disabled="!row.permissions.canDelete">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -177,21 +193,6 @@
       </div>
     </div>
 
-
-    <!-- 行"更多"菜单（F4） -->
-    <div v-if="moreMenu.visible" class="dropdown-mask" @click="moreMenu.visible = false">
-      <div class="float-menu" :style="{ left: moreMenu.x + 'px', top: moreMenu.y + 'px' }">
-        <div v-if="moreMenu.row?.status === 0" class="menu-item" role="button" tabindex="0" @click="goDetail(moreMenu.row!)" @keydown.enter.prevent="goDetail(moreMenu.row!)">管理</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openEditArrange" @keydown.enter.prevent="openEditArrange">编辑</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openChangeNotice" @keydown.enter.prevent="openChangeNotice">变更通知</div>
-        <div v-if="moreMenu.row?.status === 0" class="menu-item" role="button" tabindex="0" @click="doPublish(moreMenu.row!)" @keydown.enter.prevent="doPublish(moreMenu.row!)">发布</div>
-        <div v-if="moreMenu.row?.status === 2" class="menu-item" role="button" tabindex="0" @click="doEnd(moreMenu.row!)" @keydown.enter.prevent="doEnd(moreMenu.row!)">结束考试</div>
-        <div class="menu-item" role="button" tabindex="0" @click="doCopy(moreMenu.row!)" @keydown.enter.prevent="doCopy(moreMenu.row!)">复制</div>
-        <div class="menu-item" role="button" tabindex="0" @click="openLink(moreMenu.row!)" @keydown.enter.prevent="openLink(moreMenu.row!)">考试链接</div>
-        <div class="menu-item danger" :class="{ disabled: !moreMenu.row?.permissions.canDelete }"
-             role="button" tabindex="0" @click="removeArrange()" @keydown.enter.prevent="removeArrange()">删除</div>
-      </div>
-    </div>
 
     <!-- 考试链接（F19 第一版：链接文本 + 复制；二维码待引入 qrcode.vue） -->
         <el-drawer
@@ -293,9 +294,6 @@ const noticeRow = ref<ArrangeItem | null>(null)
 
 const gearMenu = reactive<{ visible: boolean; x: number; y: number; node: CatalogNode | null }>({
   visible: false, x: 0, y: 0, node: null
-})
-const moreMenu = reactive<{ visible: boolean; x: number; y: number; row: ArrangeItem | null }>({
-  visible: false, x: 0, y: 0, row: null
 })
 const typeMenu = reactive<{ visible: boolean; x: number; y: number }>({ visible: false, x: 0, y: 0 })
 
@@ -413,35 +411,27 @@ const openTypeMenu = (event: MouseEvent) => {
   typeMenu.x = rect.left
   typeMenu.y = rect.bottom + 6
   gearMenu.visible = false
-  moreMenu.visible = false
 }
 /** F16/F17：线上考试走三步向导（创建试卷 → 编辑试题 → 发布考试）。 */
 const pickOnlineExam = () => {
   typeMenu.visible = false
   router.push(`/exam/exam-mgmt/create?examType=onlineExam&catalogId=${selectedCatalogId.value}`)
 }
-const openEditArrange = () => {
-  moreMenu.visible = false
-  const row = moreMenu.row
-  if (!row) return
+const openEditArrange = (row: ArrangeItem) => {
   // F18.1：编辑统一走向导；已发布时步骤 1/2 只读，只有第 3 步可改
   router.push(`/exam/exam-mgmt/create?examType=onlineExam&arrangeId=${row.id}&step=3`)
 }
 
 const goDetail = (row: ArrangeItem) => {
-  moreMenu.visible = false
   router.push(`/exam/exam-mgmt/detail?arrangeId=${row.id}`)
 }
 
 /** F20：变更通知（发送 + 历史）。 */
-const openChangeNotice = () => {
-  const row = moreMenu.row
-  moreMenu.visible = false
-  if (row) noticeRow.value = row
+const openChangeNotice = (row: ArrangeItem) => {
+  noticeRow.value = row
 }
 
 const doPublish = async (row: ArrangeItem) => {
-  moreMenu.visible = false
   const ok = await confirmDialog({
     title: `确认发布考试「${row.name}」？`,
     message: '发布时会冻结试卷快照，之后修改试卷不影响本次考试',
@@ -456,7 +446,6 @@ const doPublish = async (row: ArrangeItem) => {
 }
 
 const doEnd = async (row: ArrangeItem) => {
-  moreMenu.visible = false
   const ok = await confirmDialog({
     title: `确认结束考试「${row.name}」？`,
     message: '结束后学员不能再进入考试',
@@ -471,7 +460,6 @@ const doEnd = async (row: ArrangeItem) => {
 }
 
 const doCopy = async (row: ArrangeItem) => {
-  moreMenu.visible = false
   try {
     await copyArrange(row.id)
     toast.success('已复制为新的草稿考试')
@@ -480,7 +468,6 @@ const doCopy = async (row: ArrangeItem) => {
 }
 
 const openLink = async (row: ArrangeItem) => {
-  moreMenu.visible = false
   try {
     const res = await getArrangeLink(row.id)
     linkUrl.value = res.linkUrl
@@ -497,10 +484,7 @@ const copyLink = async () => {
   }
 }
 
-const removeArrange = async () => {
-  moreMenu.visible = false
-  const row = moreMenu.row
-  if (!row) return
+const removeArrange = async (row: ArrangeItem) => {
   if (!row.permissions.canDelete) {
     toast.warn('非创建者不能删除该考试')
     return
@@ -551,7 +535,6 @@ const onGear = (payload: { node: CatalogNode; event: MouseEvent }) => {
   gearMenu.node = payload.node
   gearMenu.x = rect.left - 60
   gearMenu.y = rect.bottom + 4
-  moreMenu.visible = false
 }
 const openCreateCatalog = (parentId: string) => {
   gearMenu.visible = false
@@ -607,13 +590,15 @@ const onCatalogSaved = () => {
   loadTree(); reload()
 }
 
-const openMoreMenu = (row: ArrangeItem, event: MouseEvent) => {
-  const rect = (event.target as HTMLElement).getBoundingClientRect()
-  moreMenu.visible = true
-  moreMenu.row = row
-  moreMenu.x = rect.left - 150
-  moreMenu.y = rect.bottom + 4
-  gearMenu.visible = false
+const onArrangeMore = (command: string, row: ArrangeItem) => {
+  if (command === 'manage') goDetail(row)
+  else if (command === 'edit') openEditArrange(row)
+  else if (command === 'notice') openChangeNotice(row)
+  else if (command === 'publish') doPublish(row)
+  else if (command === 'end') doEnd(row)
+  else if (command === 'copy') doCopy(row)
+  else if (command === 'link') openLink(row)
+  else if (command === 'delete') removeArrange(row)
 }
 
 onMounted(() => {
@@ -748,5 +733,30 @@ tr.checked td { background: #f5f9ff; }
 }
 .account-no { color: #a0a7b8; }
 
+.action-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  :deep(.el-button) { line-height: 20px; }
+  :deep(.el-dropdown) { display: flex; align-items: center; }
+}
 .more-trigger .caret { margin-left: 2px; font-size: 12px; }
+</style>
+
+<style lang="scss">
+.more-popper {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  padding: 6px;
+
+  .el-dropdown-menu { padding: 0; }
+  .el-dropdown-menu__item {
+    border-radius: 5px;
+    padding: 7px 12px;
+    line-height: 1.4;
+
+    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+  }
+}
 </style>

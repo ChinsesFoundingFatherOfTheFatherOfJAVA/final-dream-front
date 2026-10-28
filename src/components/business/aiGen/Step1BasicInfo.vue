@@ -9,10 +9,10 @@
         :rows="4"
         class="form-textarea"
         maxlength="500"
+        show-word-limit
         placeholder="请描述想要生成的话术内容"
         :disabled="generating"
       />
-      <div class="char-count">{{ localDescription.length }}/500</div>
       <div class="suggest-box">
         <p>建议：包含对话场景，2个人物，对话目标。</p>
         <p>示例：帮我生成一段保险销售话术，具体场景是一位宝妈想要给2岁的宝宝选购一款重疾险，<b>公司保险经纪人需要探询客户的详细需求并针对性推荐对应的保险产品，引导客户购买。</b></p>
@@ -281,22 +281,20 @@ const extGlyph = (name: string) => {
   &.required::after { content: ' *'; color: #f5222d; }
 }
 
+/* 边框只留在 EP wrapper。根节点再画 border/padding 会和内层 inset 描边套成双盒。 */
 .form-textarea {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 88px;
-  outline: none;
-  box-sizing: border-box;
 
-  &:focus { border-color: #6b5ce7; }
+  :deep(.el-textarea__inner) {
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    font-family: inherit;
+  }
+
+  :deep(.el-textarea__inner:focus) {
+    box-shadow: 0 0 0 1px #6b5ce7 inset;
+  }
 }
-
-.char-count { text-align: right; font-size: 12px; color: #999; margin-top: 4px; }
 
 .suggest-box {
   background: #f5f5f7;
