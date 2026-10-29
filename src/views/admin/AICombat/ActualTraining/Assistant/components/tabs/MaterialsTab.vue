@@ -12,7 +12,12 @@
     <div v-for="m in materials" :key="m.id" class="material-card">
       <span class="file-icon" aria-hidden="true">{{ fileIcon(m.fileType) }}</span>
       <div class="material-meta">
-        <div class="material-name">{{ m.name }}</div>
+        <div class="material-name">
+          {{ m.name }}
+          <!-- 来源标识：在线课堂导入的材料与本地文件语义不同，必须让用户看得出 -->
+          <span v-if="Number(m.fileSource) === 3" class="source-tag">在线课堂</span>
+          <span v-else-if="Number(m.fileSource) === 2" class="source-tag local">本地</span>
+        </div>
         <div class="material-sub">{{ (m.fileType || '').toUpperCase() }} · {{ sizeText(m) }}</div>
       </div>
       <label class="visibility-switch">
@@ -47,7 +52,7 @@ const FILE_ICON: Record<string, string> = {
   docx: '📝',
   pdf: '📕',
   txt: '📄',
-  md: '📄'
+  md: '📄',
 }
 const fileIcon = (type: string) => FILE_ICON[(type || '').toLowerCase()] ?? '📎'
 
@@ -86,8 +91,15 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   padding: 50px 0;
   text-align: center;
 
-  .empty-icon { font-size: 34px; margin-bottom: 10px; }
-  .empty-text { font-size: 14px; color: #999; margin: 0; }
+  .empty-icon {
+    font-size: 34px;
+    margin-bottom: 10px;
+  }
+  .empty-text {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+  }
 }
 
 .material-card {
@@ -100,7 +112,10 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   margin-bottom: 10px;
   background: #fff;
 
-  .file-icon { font-size: 24px; flex-shrink: 0; }
+  .file-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
 
   .material-meta {
     flex: 1;
@@ -113,9 +128,35 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
     }
 
-    .material-sub { font-size: 12px; color: #a5a9b0; margin-top: 3px; }
+    .source-tag {
+      flex-shrink: 0;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: #2f54eb;
+      background: #f0f5ff;
+      border: 1px solid #adc6ff;
+
+      &.local {
+        color: #8a8f98;
+        background: #f7f8fa;
+        border-color: #e5e7eb;
+      }
+    }
+
+    .material-sub {
+      font-size: 12px;
+      color: #a5a9b0;
+      margin-top: 3px;
+    }
   }
 }
 
@@ -158,10 +199,14 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   input:checked + .switch-track {
     background: #1890ff;
 
-    .switch-thumb { transform: translateX(18px); }
+    .switch-thumb {
+      transform: translateX(18px);
+    }
   }
 
-  input:disabled + .switch-track { opacity: 0.5; }
+  input:disabled + .switch-track {
+    opacity: 0.5;
+  }
 
   /* 视觉隐藏的原生 checkbox：键盘聚焦时在轨道上显示焦点环 */
   input:focus-visible + .switch-track {

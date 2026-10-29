@@ -31,7 +31,8 @@
             class="sample-chip"
             :disabled="store.inputDisabled"
             @click="useSample(s)"
-          >{{ s }}</el-button>
+            >{{ s }}</el-button
+          >
         </div>
       </div>
 
@@ -39,14 +40,18 @@
         <MessageBubble v-for="msg in visibleMessages" :key="msg.id" :message="msg" />
         <div v-if="showWaitingRow" class="generating-row">
           <div class="avatar" aria-hidden="true">🤖</div>
-          <div class="generating-tip">
-            <span class="spinner"></span>助手正在回复…
-          </div>
+          <div class="generating-tip"><span class="spinner"></span>助手正在回复…</div>
         </div>
       </template>
     </div>
 
-    <el-button v-if="showScrollBtn" class="scroll-bottom-btn" aria-label="滚动到底部" @click="scrollToBottom(true)">↓</el-button>
+    <el-button
+      v-if="showScrollBtn"
+      class="scroll-bottom-btn"
+      aria-label="滚动到底部"
+      @click="scrollToBottom(true)"
+      >↓</el-button
+    >
 
     <!-- 输入区 -->
     <div class="chat-input-area">
@@ -72,9 +77,25 @@
             :accept="acceptAttr"
             @change="onFileChange"
           />
-          <el-button class="tool-btn" :disabled="store.inputDisabled || uploading" @click="pickFile">
-            <span v-if="uploading">上传中…</span><template v-else><span aria-hidden="true">📎</span> 上传资料</template>
-          </el-button>
+          <!-- 上传资料菜单：在线课堂 / 知识空间（置灰）/ 本地上传（原平台同一菜单，2026-10-28 接入） -->
+          <el-dropdown
+            trigger="click"
+            placement="top-start"
+            :disabled="store.inputDisabled || uploading"
+            @command="onUploadCommand"
+          >
+            <el-button class="tool-btn" :disabled="store.inputDisabled || uploading">
+              <span v-if="uploading">上传中…</span>
+              <template v-else><span aria-hidden="true">📎</span> 上传资料</template>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="kng">从在线课堂选择</el-dropdown-item>
+                <el-dropdown-item command="kspace" disabled>从知识空间选择</el-dropdown-item>
+                <el-dropdown-item command="local" divided>本地上传</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <el-button
             class="tool-btn"
             :class="{ recording }"
@@ -86,17 +107,32 @@
           <span class="tool-hint">支持 ppt / pptx / doc / docx / pdf / txt / md</span>
         </div>
 
-        <el-button class="send-btn" :disabled="store.inputDisabled || !draft.trim()" @click="send">发送</el-button>
+        <el-button class="send-btn" :disabled="store.inputDisabled || !draft.trim()" @click="send"
+          >发送</el-button
+        >
       </div>
     </div>
+
+    <!-- 在线课堂资源选择（设计助手：文档类，上限 5） -->
+    <KngSourcePickerDrawer
+      v-if="pickerOpen"
+      purpose="designAssistant"
+      variant="designAssistant"
+      :max-select="5"
+      :exclude-ids="importedCoursewareIds"
+      @cancel="pickerOpen = false"
+      @confirm="onKngConfirm"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { isAllowedAssistantFile, uploadAssistantFile } from '@/api/assistant'
+import type { KngAiSourceItem } from '@/api/kngAiSource'
 import { useAssistantStore } from '../composables/useAssistantStore'
 import { useVoiceInput } from '../composables/useVoiceInput'
+import KngSourcePickerDrawer from '@/components/business/onlineClassroom/KngSourcePickerDrawer.vue'
 import MessageBubble from './MessageBubble.vue'
 import { showToast } from '../../components/ui'
 
@@ -110,23 +146,31 @@ const scrollRef = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const fileRef = ref<HTMLInputElement | null>(null)
 const showScrollBtn = ref(false)
+/** 在线课堂选择抽屉（设计助手上限 5，只列文档类课件） */
+const pickerOpen = ref(false)
+/** 抽屉打开时排除已导入过的在线课堂材料，避免重复点选 */
+const importedCoursewareIds = computed<string[]>(() =>
+  (store.materials ?? [])
+    .map((m) => String(m.fileId ?? ''))
+    .filter((fileId) => fileId.startsWith('kng_'))
+    .map((fileId) => fileId.slice('kng_'.length)),
+)
 let recordTimer: number | null = null
 
 const samples = [
   '我想做一个面向新入职销售的训练主题',
   '给订单运营部做一版职能培训演练',
-  '基于我上传的材料生成训练主题'
+  '基于我上传的材料生成训练主题',
 ]
 
 const acceptAttr = '.ppt,.pptx,.doc,.docx,.pdf,.txt,.md'
 
 /** 没有内容块的消息不画：流式占位也会剩一颗头像，等待态由下面那一行负责 */
-const visibleMessages = computed(() =>
-  store.messages.filter((m) => m.blocks.length > 0)
-)
-const showWaitingRow = computed(() =>
-  store.generating
-  && !store.messages.some((m) => m.role === 'agent' && m.streaming && m.blocks.length > 0)
+const visibleMessages = computed(() => store.messages.filter((m) => m.blocks.length > 0))
+const showWaitingRow = computed(
+  () =>
+    store.generating &&
+    !store.messages.some((m) => m.role === 'agent' && m.streaming && m.blocks.length > 0),
 )
 
 const voice = useVoiceInput(
@@ -135,7 +179,7 @@ const voice = useVoiceInput(
     draft.value = draft.value ? `${draft.value}${text}` : text
     void nextTick(() => textareaRef.value?.focus())
   },
-  (msg) => showToast(msg)
+  (msg) => showToast(msg),
 )
 const { recording, recognizing, toggle: toggleVoiceRaw } = voice
 
@@ -200,7 +244,10 @@ const tailSignal = computed(() => {
 })
 
 watch(tailSignal, () => scrollToBottom())
-watch(() => store.sessionId, () => scrollToBottom(true))
+watch(
+  () => store.sessionId,
+  () => scrollToBottom(true),
+)
 
 // ---------- 发送 ----------
 function send() {
@@ -216,9 +263,46 @@ function useSample(text: string) {
 }
 
 // ---------- 文件上传 ----------
+/** 上传资料菜单：在线课堂开抽屉，知识空间置灰，本地上传走原流程 */
+function onUploadCommand(command: string | number | object) {
+  if (command === 'kng') {
+    pickerOpen.value = true
+    return
+  }
+  if (command === 'local') {
+    pickFile()
+  }
+}
+
 function pickFile() {
   fileError.value = ''
   fileRef.value?.click()
+}
+
+/**
+ * 在线课堂选择确认：调后端导入（同步抽取 + 落材料 + 推解析完成卡片）。
+ * 成功后关抽屉并切到"培训材料"tab —— 用户点了确定，就应该立刻看到材料进来了。
+ */
+async function onKngConfirm(items: KngAiSourceItem[]) {
+  if (!items.length) return
+  const ids = items.map((item) => item.id)
+  pickerOpen.value = false
+  fileError.value = ''
+  try {
+    const resp = await store.importKngMaterials(ids)
+    const ok = resp.materials.length
+    const failed = resp.failures.length
+    if (ok) {
+      store.requestPanelTab('materials')
+      showToast(
+        failed ? `已导入 ${ok} 份材料，${failed} 个课件解析失败` : `已导入 ${ok} 份培训材料`,
+      )
+    } else {
+      fileError.value = resp.failures[0]?.reason ?? '在线课堂材料导入失败，请重试'
+    }
+  } catch (e) {
+    fileError.value = e instanceof Error && e.message ? e.message : '在线课堂材料导入失败，请重试'
+  }
 }
 
 async function onFileChange(ev: Event) {
@@ -306,15 +390,24 @@ onBeforeUnmount(() => {
       background: #c9cdd4;
     }
 
-    &.status-open .dot { background: #52c41a; }
+    &.status-open .dot {
+      background: #52c41a;
+    }
     &.status-connecting .dot,
-    &.status-reconnecting .dot { background: #fa8c16; animation: pulse 1.2s infinite; }
-    &.status-closed .dot { background: #e5484d; }
+    &.status-reconnecting .dot {
+      background: #fa8c16;
+      animation: pulse 1.2s infinite;
+    }
+    &.status-closed .dot {
+      background: #e5484d;
+    }
   }
 }
 
 @keyframes pulse {
-  50% { opacity: 0.3; }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .reconnect-banner {
@@ -389,10 +482,18 @@ onBeforeUnmount(() => {
       color: #4e5969;
       cursor: pointer;
       text-align: left;
-      transition: border-color 0.2s, color 0.2s;
+      transition:
+        border-color 0.2s,
+        color 0.2s;
 
-      &:hover:not(:disabled) { border-color: #1890ff; color: #1890ff; }
-      &:disabled { opacity: 0.6; cursor: not-allowed; }
+      &:hover:not(:disabled) {
+        border-color: #1890ff;
+        color: #1890ff;
+      }
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     }
   }
 }
@@ -434,7 +535,9 @@ onBeforeUnmount(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .scroll-bottom-btn {
@@ -451,7 +554,10 @@ onBeforeUnmount(() => {
   cursor: pointer;
   font-size: 15px;
 
-  &:hover { color: #1890ff; border-color: #1890ff; }
+  &:hover {
+    color: #1890ff;
+    border-color: #1890ff;
+  }
 }
 
 .chat-input-area {
@@ -480,7 +586,9 @@ onBeforeUnmount(() => {
   color: #1f2329;
   transition: border-color 0.2s;
 
-  &:focus { border-color: #1890ff; }
+  &:focus {
+    border-color: #1890ff;
+  }
 
   &:disabled,
   &.disabled {
@@ -503,7 +611,9 @@ onBeforeUnmount(() => {
     gap: 10px;
     min-width: 0;
 
-    .hidden-file { display: none; }
+    .hidden-file {
+      display: none;
+    }
 
     .tool-btn {
       padding: 6px 12px;
@@ -514,11 +624,25 @@ onBeforeUnmount(() => {
       color: #4e5969;
       cursor: pointer;
       white-space: nowrap;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      transition:
+        color 0.2s,
+        border-color 0.2s,
+        background 0.2s;
 
-      &:hover:not(:disabled) { color: #1890ff; border-color: #1890ff; }
-      &:disabled { color: #c0c4cc; border-color: #ebeef5; cursor: not-allowed; }
-      &.recording { color: #e5484d; border-color: #e5484d; background: #fff1f0; }
+      &:hover:not(:disabled) {
+        color: #1890ff;
+        border-color: #1890ff;
+      }
+      &:disabled {
+        color: #c0c4cc;
+        border-color: #ebeef5;
+        cursor: not-allowed;
+      }
+      &.recording {
+        color: #e5484d;
+        border-color: #e5484d;
+        background: #fff1f0;
+      }
     }
 
     .tool-hint {
@@ -540,10 +664,19 @@ onBeforeUnmount(() => {
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
-    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+    transition:
+      opacity 0.2s,
+      background 0.2s,
+      border-color 0.2s;
 
-    &:hover:not(:disabled) { opacity: 0.85; }
-    &:disabled { background: #c8d6e8; border-color: #c8d6e8; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+    &:disabled {
+      background: #c8d6e8;
+      border-color: #c8d6e8;
+      cursor: not-allowed;
+    }
   }
 }
 </style>

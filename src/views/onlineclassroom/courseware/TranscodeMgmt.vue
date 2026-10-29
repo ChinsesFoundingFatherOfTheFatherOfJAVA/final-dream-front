@@ -1,14 +1,13 @@
 <template>
   <div class="manage-page">
     <header>
-      <el-button class="back-btn" aria-label="返回课件管理" @click="router.push('/kng/courseware')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回课件管理" @click="router.push('/kng/courseware')"
+        >‹</el-button
+      >
       <h1>转码管理</h1>
     </header>
     <nav class="tabs">
-      <el-button
-        :class="{ active: tab === 'processing' }"
-        @click="switchTab('processing')"
-      >
+      <el-button :class="{ active: tab === 'processing' }" @click="switchTab('processing')">
         转码中
       </el-button>
       <el-button :class="{ active: tab === 'failed' }" @click="switchTab('failed')">
@@ -23,27 +22,50 @@
         clearable
         @keyup.enter="load(1)"
       >
-        <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
+        <template #prefix
+          ><span aria-hidden="true"
+            ><el-icon><Search /></el-icon></span
+        ></template>
       </el-input>
       <div v-if="tab === 'processing'" class="toolbar-note">
         有 <strong>{{ processingTotal }}</strong> 个课程处于转码中 <i aria-hidden="true">i</i>
       </div>
-      <el-button v-else class="reason-link" @click="showReasons">
-        查看常见出错原因
-      </el-button>
+      <el-button v-else class="reason-link" @click="showReasons"> 查看常见出错原因 </el-button>
     </div>
     <div class="table-wrap">
-      <el-table :data="displayRecords" row-key="id" class="media-table" empty-text="暂无数据"
-  :default-sort="{ prop: 'createdAt', order: 'descending' }"
-  @sort-change="onSortChange"
-        <el-table-column prop="coursewareTitle" label="名称" min-width="220" show-overflow-tooltip />
+      <el-table
+        :data="displayRecords"
+        row-key="id"
+        class="media-table"
+        empty-text="暂无数据"
+        :default-sort="{ prop: 'createdAt', order: 'descending' }"
+        @sort-change="onSortChange"
+      >
+        <el-table-column
+          prop="coursewareTitle"
+          label="名称"
+          min-width="220"
+          show-overflow-tooltip
+        />
         <el-table-column label="分类" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">{{ row.catalogName || '--' }}</template>
         </el-table-column>
-        <el-table-column label="上传日期" width="170" prop="createdAt" sortable="custom" :sort-orders="['descending', 'ascending']">
+        <el-table-column
+          label="上传日期"
+          width="170"
+          prop="createdAt"
+          sortable="custom"
+          :sort-orders="['descending', 'ascending']"
+        >
           <template #default="{ row }">{{ row.createdAt || '--' }}</template>
         </el-table-column>
-        <el-table-column label="已转换时间" width="150" prop="elapsed" sortable="custom" :sort-orders="['descending', 'ascending']">
+        <el-table-column
+          label="已转换时间"
+          width="150"
+          prop="elapsed"
+          sortable="custom"
+          :sort-orders="['descending', 'ascending']"
+        >
           <template #default="{ row }">{{ formatSeconds(liveElapsed(row)) }}</template>
         </el-table-column>
         <el-table-column label="分享者" width="130">
@@ -293,7 +315,6 @@ header {
   justify-content: space-between;
   gap: 18px;
   padding: 20px 24px 16px;
-
 }
 
 .manage-search {
@@ -369,5 +390,4 @@ header {
   white-space: nowrap;
   color: #e05a4e;
 }
-
 </style>

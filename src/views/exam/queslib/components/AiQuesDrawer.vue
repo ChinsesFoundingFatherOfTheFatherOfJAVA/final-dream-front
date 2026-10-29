@@ -1,7 +1,7 @@
 <template>
   <!-- FP-11 AI建题（截图25）：左区素材 + 题型数量，右区生成卡片流。
        确定录入直接调 /exam/ques 落库（不经编辑页，保证 AI 这条链路闭环可用）。 -->
-    <el-drawer
+  <el-drawer
     :model-value="true"
     size="1040px"
     :with-header="false"
@@ -14,20 +14,38 @@
       <div class="drawer-header">
         <!-- 原平台是同一页面上用左侧两个 tab 切换 AI建题 / 快速建题，这里对齐同一形态 -->
         <div class="mode-tabs">
-          <el-button class="mode-tab" :class="{ active: mode === 'ai' }"
-                  @click="switchMode('ai')">AI建题</el-button>
-          <el-button class="mode-tab" :class="{ active: mode === 'quick' }"
-                  @click="switchMode('quick')">快速建题</el-button>
+          <el-button class="mode-tab" :class="{ active: mode === 'ai' }" @click="switchMode('ai')"
+            >AI建题</el-button
+          >
+          <el-button
+            class="mode-tab"
+            :class="{ active: mode === 'quick' }"
+            @click="switchMode('quick')"
+            >快速建题</el-button
+          >
         </div>
-        <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
+        <span
+          class="close-btn"
+          role="button"
+          tabindex="0"
+          aria-label="关闭"
+          @click="emit('close')"
+          @keydown.enter.prevent="emit('close')"
+          >×</span
+        >
       </div>
 
       <div class="drawer-body">
         <!-- 左区：素材与数量 -->
         <section v-if="mode === 'ai'" class="left-pane">
           <label class="form-label">素材文本<span class="hint">（≤5000 字）</span></label>
-          <el-input v-model.trim="materialText" :rows="10" maxlength="20000"
-                    placeholder="粘贴产品资料、课件内容等，AI 将严格依据素材出题" type="textarea" />
+          <el-input
+            v-model.trim="materialText"
+            :rows="10"
+            maxlength="20000"
+            placeholder="粘贴产品资料、课件内容等，AI 将严格依据素材出题"
+            type="textarea"
+          />
           <div class="char-count">{{ materialText.length }} 字</div>
 
           <div class="upload-row">
@@ -35,8 +53,30 @@
               {{ parsing ? `解析中 ${parsePercent}%` : '上传文件解析' }}
             </el-button>
             <span class="hint">支持 .doc/.docx/.ppt/.pptx/.pdf</span>
-            <input ref="fileInput" type="file" class="file-input"
-                   accept=".doc,.docx,.ppt,.pptx,.pps,.pdf" @change="onFileChange" />
+            <input
+              ref="fileInput"
+              type="file"
+              class="file-input"
+              accept=".doc,.docx,.ppt,.pptx,.pps,.pdf"
+              @change="onFileChange"
+            />
+          </div>
+
+          <!-- 在线课堂课件：单选，确定后只显示资源条目；点「提取知识点」才写入素材（原平台口径） -->
+          <div class="kng-row">
+            <el-button class="btn" @click="openKngPicker">选择课件</el-button>
+            <el-button class="btn" disabled>选择知识</el-button>
+            <span v-if="kngSource" class="kng-selected">
+              <span class="kng-name" :title="kngSource.title">{{ kngSource.title }}</span>
+              <el-button link class="link danger" @click="clearKngSource">移除</el-button>
+            </span>
+            <span v-else class="hint">可从在线课堂选择 1 个文档课件</span>
+          </div>
+          <div v-if="kngSource" class="extract-row">
+            <el-button class="btn" :loading="extracting" @click="extractKngText"
+              >提取知识点</el-button
+            >
+            <span class="hint">{{ kngExtractHint }}</span>
           </div>
 
           <label class="form-label">题型数量<span class="hint">（各 0~35）</span></label>
@@ -58,8 +98,14 @@
               {{ showFormatHelp ? '收起标准格式' : '查看标准格式示例' }}
             </el-button>
           </label>
-          <el-input ref="quickTextarea" v-model="quickText" :rows="12" maxlength="10000"
-                    placeholder="[单选题][中]题干&#10;A. 选项一&#10;B. 选项二&#10;答案: A" type="textarea" />
+          <el-input
+            ref="quickTextarea"
+            v-model="quickText"
+            :rows="12"
+            maxlength="10000"
+            placeholder="[单选题][中]题干&#10;A. 选项一&#10;B. 选项二&#10;答案: A"
+            type="textarea"
+          />
           <div class="char-count">{{ quickText.length }} 字</div>
 
           <div v-if="showFormatHelp" class="format-help">
@@ -80,22 +126,37 @@
             <!-- 题型示例（照截图23：标题 + 题型 tab + 示例正文） -->
             <p class="example-title">题型示例</p>
             <div class="example-tabs">
-              <el-button v-for="tab in FORMAT_TABS" :key="tab.key"
-                      class="example-tab" :class="{ active: formatTab === tab.key }"
-                      @click="formatTab = tab.key">{{ tab.label }}</el-button>
+              <el-button
+                v-for="tab in FORMAT_TABS"
+                :key="tab.key"
+                class="example-tab"
+                :class="{ active: formatTab === tab.key }"
+                @click="formatTab = tab.key"
+                >{{ tab.label }}</el-button
+              >
             </div>
             <pre class="example-body">{{ FORMAT_EXAMPLES[formatTab] }}</pre>
           </div>
 
           <div class="insert-row">
             <span class="hint">设为</span>
-            <el-button v-for="label in QUICK_TYPES" :key="label" class="chip"
-                    @click="insertMarker(`[${label}]`)">{{ label }}</el-button>
+            <el-button
+              v-for="label in QUICK_TYPES"
+              :key="label"
+              class="chip"
+              @click="insertMarker(`[${label}]`)"
+              >{{ label }}</el-button
+            >
           </div>
           <div class="insert-row">
             <span class="hint">难度</span>
-            <el-button v-for="label in QUICK_LEVELS" :key="label" class="chip"
-                    @click="insertMarker(`[${label}]`)">{{ label }}</el-button>
+            <el-button
+              v-for="label in QUICK_LEVELS"
+              :key="label"
+              class="chip"
+              @click="insertMarker(`[${label}]`)"
+              >{{ label }}</el-button
+            >
           </div>
 
           <el-button class="btn-primary generate" :disabled="generating" @click="generate">
@@ -113,35 +174,55 @@
         <section class="right-pane">
           <div class="right-header">
             <span>生成结果（{{ drafts.length }}）</span>
-            <el-button v-if="drafts.length" class="link danger" @click="drafts = []">清空</el-button>
+            <el-button v-if="drafts.length" class="link danger" @click="drafts = []"
+              >清空</el-button
+            >
           </div>
 
           <div class="card-list">
-            <article v-for="(card, index) in drafts" :key="index" class="card" :class="{ expanded: card.expanded }">
-              <div class="card-top" role="button" tabindex="0"
-                   :aria-expanded="card.expanded"
-                   @click="card.expanded = !card.expanded"
-                   @keydown.enter.prevent="card.expanded = !card.expanded">
+            <article
+              v-for="(card, index) in drafts"
+              :key="index"
+              class="card"
+              :class="{ expanded: card.expanded }"
+            >
+              <div
+                class="card-top"
+                role="button"
+                tabindex="0"
+                :aria-expanded="card.expanded"
+                @click="card.expanded = !card.expanded"
+                @keydown.enter.prevent="card.expanded = !card.expanded"
+              >
                 <span class="tag">{{ typeLabel(card.data.type) }}</span>
                 <span class="level">{{ levelLabel(card.data.levelType) }}</span>
                 <span class="expand-hint">{{ card.expanded ? '收起' : '点击展开编辑' }}</span>
-                <el-button class="link danger" @click.stop="drafts.splice(index, 1)">删除</el-button>
+                <el-button class="link danger" @click.stop="drafts.splice(index, 1)"
+                  >删除</el-button
+                >
               </div>
 
               <!-- 折叠态：预览 -->
               <template v-if="!card.expanded">
                 <div class="card-stem">{{ card.data.stem }}</div>
                 <ul v-if="card.data.options?.length" class="card-options">
-                  <li v-for="(opt, i) in card.data.options" :key="i"
-                      :class="{ correct: isCorrect(card.data, i) }">
+                  <li
+                    v-for="(opt, i) in card.data.options"
+                    :key="i"
+                    :class="{ correct: isCorrect(card.data, i) }"
+                  >
                     {{ String.fromCharCode(65 + i) }}. {{ opt }}
                   </li>
                 </ul>
                 <div class="card-answer">答案：{{ card.data.answer || '--' }}</div>
                 <div v-if="card.data.keywords?.length" class="card-keywords">
-                  关键词：{{ card.data.keywords.map(k => `${k.keyword}(${k.scoreRatio}%)`).join('、') }}
+                  关键词：{{
+                    card.data.keywords.map((k) => `${k.keyword}(${k.scoreRatio}%)`).join('、')
+                  }}
                 </div>
-                <div v-if="card.data.analysis" class="card-analysis">解析：{{ card.data.analysis }}</div>
+                <div v-if="card.data.analysis" class="card-analysis">
+                  解析：{{ card.data.analysis }}
+                </div>
               </template>
 
               <!-- 展开态：直接编辑，改完即生效（确定录入时按当前值落库） -->
@@ -160,24 +241,44 @@
 
                 <template v-if="card.data.type === 0 || card.data.type === 1">
                   <label class="edit-label">选项（勾选正确答案，拖手柄可调序）</label>
-                  <div v-for="(opt, i) in card.data.options" :key="i" class="edit-option"
-                       :class="{ dragging: cardDragIndex === i }"
-                       @dragover.prevent
-                       @drop="onCardDrop(card, i)">
-                    <span class="drag-handle" draggable="true" title="拖拽调整顺序"
-                          @dragstart="cardDragIndex = i" @dragend="cardDragIndex = null">⠿</span>
+                  <div
+                    v-for="(opt, i) in card.data.options"
+                    :key="i"
+                    class="edit-option"
+                    :class="{ dragging: cardDragIndex === i }"
+                    @dragover.prevent
+                    @drop="onCardDrop(card, i)"
+                  >
+                    <span
+                      class="drag-handle"
+                      draggable="true"
+                      title="拖拽调整顺序"
+                      @dragstart="cardDragIndex = i"
+                      @dragend="cardDragIndex = null"
+                      >⠿</span
+                    >
                     <span class="option-key">{{ String.fromCharCode(65 + i) }}</span>
                     <el-input v-model="card.data.options[i]" />
                     <label class="answer-flag">
-                      <el-checkbox :model-value="isCorrect(card.data, i)"
-                             @change="toggleCorrect(card.data, i, Boolean($event))" />
+                      <el-checkbox
+                        :model-value="isCorrect(card.data, i)"
+                        @change="toggleCorrect(card.data, i, Boolean($event))"
+                      />
                       正确
                     </label>
-                    <el-button class="link danger" :disabled="card.data.options.length <= 2"
-                            @click="card.data.options.splice(i, 1)">×</el-button>
+                    <el-button
+                      class="link danger"
+                      :disabled="card.data.options.length <= 2"
+                      @click="card.data.options.splice(i, 1)"
+                      >×</el-button
+                    >
                   </div>
-                  <el-button class="btn small" :disabled="card.data.options.length >= 12"
-                          @click="card.data.options.push('')">+ 新增选项</el-button>
+                  <el-button
+                    class="btn small"
+                    :disabled="card.data.options.length >= 12"
+                    @click="card.data.options.push('')"
+                    >+ 新增选项</el-button
+                  >
                 </template>
 
                 <template v-else-if="card.data.type === 2">
@@ -195,9 +296,17 @@
                     <label class="edit-label">关键词及占比</label>
                     <div v-for="(kw, i) in card.data.keywords" :key="i" class="edit-option">
                       <el-input v-model="kw.keyword" placeholder="关键词" />
-                      <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" :controls="false" />
+                      <el-input-number
+                        v-model="kw.scoreRatio"
+                        :min="0"
+                        :max="100"
+                        class="score-input"
+                        :controls="false"
+                      />
                       <span class="percent">%</span>
-                      <el-button class="link danger" @click="card.data.keywords.splice(i, 1)">×</el-button>
+                      <el-button class="link danger" @click="card.data.keywords.splice(i, 1)"
+                        >×</el-button
+                      >
                     </div>
                   </template>
                 </template>
@@ -215,38 +324,60 @@
       </div>
 
       <div class="drawer-footer">
-        <span class="footer-tip">{{ materialText.length > 5000 ? '⚠ 粘贴文本超过 5000 字，建议精简' : '' }}</span>
+        <span class="footer-tip">{{
+          materialText.length > 5000 ? '⚠ 粘贴文本超过 5000 字，建议精简' : ''
+        }}</span>
         <el-button class="btn" @click="emit('close')">取消</el-button>
         <el-button class="btn primary" :disabled="!drafts.length || saving" @click="saveAll">
           {{ saving ? '录入中…' : `确定录入（${drafts.length}）` }}
         </el-button>
       </div>
     </div>
-    </el-drawer>
+
+    <!-- 在线课堂课件选择：出题侧上限 1（后选替换先选） -->
+    <KngSourcePickerDrawer
+      v-if="kngPickerOpen"
+      purpose="question"
+      variant="question"
+      :max-select="1"
+      @cancel="kngPickerOpen = false"
+      @confirm="onKngConfirm"
+    />
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import {
-  aiGenerateQues, createQues, getPointList, parseQuesFile,
-  type AiGenCounts, type AiGenDraft
+  aiGenerateQues,
+  createQues,
+  getPointList,
+  parseQuesFile,
+  type AiGenCounts,
+  type AiGenDraft,
 } from '@/api/exam'
 import { addPaperQuestion } from '@/api/paper'
 import { parseQuickQues } from '@/utils/quickQuesParser'
+import { extractKngAiSource, type KngAiSourceItem } from '@/api/kngAiSource'
+import KngSourcePickerDrawer from '@/components/business/onlineClassroom/KngSourcePickerDrawer.vue'
+import { ElMessageBox } from 'element-plus'
 
 /**
  * FP-11 AI建题。
  * 素材 → Dify「AI出题」工作流 → 草稿卡片流 → 确定录入（逐题落库）。
  */
-const props = withDefaults(defineProps<{
-  libId: string
-  initialMode?: 'ai' | 'quick'
-  /** 传了试卷 id 就走"录入到试卷"：题目落库后同时建 exam_paper_question 关联 */
-  paperId?: string
-}>(), {
-  initialMode: 'ai'
-})
+const props = withDefaults(
+  defineProps<{
+    libId: string
+    initialMode?: 'ai' | 'quick'
+    /** 传了试卷 id 就走"录入到试卷"：题目落库后同时建 exam_paper_question 关联 */
+    paperId?: string
+  }>(),
+  {
+    initialMode: 'ai',
+  },
+)
 const emit = defineEmits<{ close: []; saved: [] }>()
 
 const COUNT_ITEMS = [
@@ -254,10 +385,16 @@ const COUNT_ITEMS = [
   { key: 'multi' as const, label: '多选' },
   { key: 'judge' as const, label: '判断' },
   { key: 'fill' as const, label: '填空' },
-  { key: 'answer' as const, label: '问答' }
+  { key: 'answer' as const, label: '问答' },
 ]
 
-const TYPE_LABELS: Record<number, string> = { 0: '单选', 1: '多选', 2: '判断', 3: '填空', 4: '问答' }
+const TYPE_LABELS: Record<number, string> = {
+  0: '单选',
+  1: '多选',
+  2: '判断',
+  3: '填空',
+  4: '问答',
+}
 const LEVEL_LABELS: Record<number, string> = { 0: '易', 1: '中', 2: '难' }
 
 const mode = ref<'ai' | 'quick'>(props.initialMode)
@@ -272,35 +409,47 @@ const FORMAT_TABS = [
   { key: 'multi' as const, label: '多选题' },
   { key: 'judge' as const, label: '判断题' },
   { key: 'fill' as const, label: '填空题' },
-  { key: 'answer' as const, label: '问答题' }
+  { key: 'answer' as const, label: '问答题' },
 ]
 /** 标准格式示例文案照原平台截图23。 */
 const FORMAT_EXAMPLES: Record<string, string> = {
   single: [
     '[单选题][难]下面哪一项不属于面向对象的特性。',
-    'A. 封装性', 'B. 原子性', 'C. 继承性', 'D. 多态性',
-    '答案: B', '解析: 原子性不是面向对象的特性'
+    'A. 封装性',
+    'B. 原子性',
+    'C. 继承性',
+    'D. 多态性',
+    '答案: B',
+    '解析: 原子性不是面向对象的特性',
   ].join('\n'),
   multi: [
     '[多选题][中]下面哪些项属于面向对象的特性。',
-    'A. 封装性', 'B. 原子性', 'C. 继承性', 'D. 多态性',
-    '答案: A C D', '解析: 面向对象特性有封装性、继承性、多态性。'
+    'A. 封装性',
+    'B. 原子性',
+    'C. 继承性',
+    'D. 多态性',
+    '答案: A C D',
+    '解析: 面向对象特性有封装性、继承性、多态性。',
   ].join('\n'),
   judge: [
     '[判断题][易]原子性是面向三大特征之一。',
-    '答案: 错误', '解析: 原子性不是面向对象的特性'
+    '答案: 错误',
+    '解析: 原子性不是面向对象的特性',
   ].join('\n'),
   fill: [
     '[填空题][中]面向对象的特征有(_)(_)(_)。',
-    '答案: 封装性；继承性；多态性', '解析: 面向对象特性有封装性、继承性、多态性。'
+    '答案: 封装性；继承性；多态性',
+    '解析: 面向对象特性有封装性、继承性、多态性。',
   ].join('\n'),
   answer: [
     '[问答题][难]面向对象的特征包括哪些?',
-    '答案: 封装性；继承性；多态性', '解析: 面向对象特性有封装性、继承性、多态性。'
-  ].join('\n')
+    '答案: 封装性；继承性；多态性',
+    '解析: 面向对象特性有封装性、继承性、多态性。',
+  ].join('\n'),
 }
 FORMAT_EXAMPLES.all = ['single', 'multi', 'judge', 'fill', 'answer']
-  .map(key => FORMAT_EXAMPLES[key]).join('\n\n')
+  .map((key) => FORMAT_EXAMPLES[key])
+  .join('\n\n')
 /** 展开编辑卡片里的选项拖拽（同一时刻只会拖一个，共用一个下标即可）。 */
 const cardDragIndex = ref<number | null>(null)
 const QUICK_TYPES = ['单选题', '多选题', '判断题', '填空题', '问答题']
@@ -320,7 +469,70 @@ const saving = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const quickTextarea = ref<HTMLTextAreaElement | null>(null)
 
-const totalCount = computed(() => COUNT_ITEMS.reduce((sum, item) => sum + (counts.value[item.key] || 0), 0))
+// ---------- 在线课堂课件（出题侧） ----------
+/** 已选课件：单选，确定后只显示条目，不立刻覆盖素材文本 */
+const kngSource = ref<KngAiSourceItem | null>(null)
+const kngPickerOpen = ref(false)
+const extracting = ref(false)
+/** 上次抽取结果提示（字数 / 截断） */
+const kngExtractHint = ref('')
+
+function openKngPicker() {
+  kngPickerOpen.value = true
+}
+
+function onKngConfirm(items: KngAiSourceItem[]) {
+  kngPickerOpen.value = false
+  // 上限 1：抽屉已限制，这里再兜一次（后选替换先选）
+  kngSource.value = items[0] ?? null
+  kngExtractHint.value = kngSource.value ? '点击「提取知识点」把课件正文写入素材' : ''
+}
+
+function clearKngSource() {
+  kngSource.value = null
+  kngExtractHint.value = ''
+}
+
+/**
+ * 提取知识点：把课件正文写进素材框。
+ * <p>
+ * 素材里已有文字时先二次确认再覆盖（已确认决策：避免误覆盖用户手写或上一次解析的内容）。
+ */
+async function extractKngText() {
+  const source = kngSource.value
+  if (!source || extracting.value) return
+  const hasText = materialText.value.trim().length > 0
+  if (hasText) {
+    try {
+      await ElMessageBox.confirm('当前素材文本将被课件内容覆盖，是否继续？', '覆盖确认', {
+        confirmButtonText: '覆盖',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+    } catch {
+      return
+    }
+  }
+  extracting.value = true
+  try {
+    const result = await extractKngAiSource(source.id, 'question')
+    materialText.value = result.text || ''
+    // 素材换了，旧草稿引用的还是旧素材，清掉避免"改了素材但题没变"
+    drafts.value = []
+    kngExtractHint.value = result.truncated
+      ? `已写入 ${result.chars} 字（课件内容超长，已截断）`
+      : `已写入 ${result.chars} 字`
+    toast.success(`已提取《${source.title}》的正文`)
+  } catch (e) {
+    toast.warn(e instanceof Error && e.message ? e.message : '课件提取失败，请重试')
+  } finally {
+    extracting.value = false
+  }
+}
+
+const totalCount = computed(() =>
+  COUNT_ITEMS.reduce((sum, item) => sum + (counts.value[item.key] || 0), 0),
+)
 const typeLabel = (type: number) => TYPE_LABELS[type] ?? '--'
 const levelLabel = (level: number) => LEVEL_LABELS[level] ?? '--'
 
@@ -331,7 +543,12 @@ const toggleCorrect = (draft: AiGenDraft, index: number, checked: boolean) => {
     draft.answer = checked ? letter : ''
     return
   }
-  const letters = new Set(String(draft.answer || '').toUpperCase().split('').filter(Boolean))
+  const letters = new Set(
+    String(draft.answer || '')
+      .toUpperCase()
+      .split('')
+      .filter(Boolean),
+  )
   if (checked) letters.add(letter)
   else letters.delete(letter)
   draft.answer = Array.from(letters).sort().join('')
@@ -340,7 +557,9 @@ const toggleCorrect = (draft: AiGenDraft, index: number, checked: boolean) => {
 /** 单选答案是 "B"、多选是 "ACD"，据此把选项下标标红。 */
 const isCorrect = (draft: AiGenDraft, index: number) => {
   if (draft.type !== 0 && draft.type !== 1) return false
-  return String(draft.answer || '').toUpperCase().includes(String.fromCharCode(65 + index))
+  return String(draft.answer || '')
+    .toUpperCase()
+    .includes(String.fromCharCode(65 + index))
 }
 
 const pickFile = () => fileInput.value?.click()
@@ -352,7 +571,9 @@ const onFileChange = async (event: Event) => {
   parsing.value = true
   parsePercent.value = 0
   try {
-    const res = await parseQuesFile(file, (p) => { parsePercent.value = p })
+    const res = await parseQuesFile(file, (p) => {
+      parsePercent.value = p
+    })
     materialText.value = res.text || ''
     toast.success('文件已解析，文本已填入素材框')
   } finally {
@@ -400,7 +621,7 @@ const generate = async () => {
     // FP-10：前端解析器逐题切分 + 校验，错题只标红不阻断其它题
     const { drafts: parsed, issues: parseIssues } = parseQuickQues(quickText.value)
     issues.value = parseIssues
-    drafts.value = parsed.map(q => ({ data: q, expanded: false }))
+    drafts.value = parsed.map((q) => ({ data: q, expanded: false }))
     if (!parsed.length && !parseIssues.length) {
       toast.warn('请先粘贴格式化文本')
     } else if (parseIssues.length) {
@@ -422,7 +643,7 @@ const generate = async () => {
   generating.value = true
   try {
     const res = await aiGenerateQues(materialText.value, counts.value)
-    drafts.value = (res.questions || []).map(q => ({ data: q, expanded: false }))
+    drafts.value = (res.questions || []).map((q) => ({ data: q, expanded: false }))
     toast.success(`已生成 ${drafts.value.length} 道试题`)
   } finally {
     generating.value = false
@@ -444,14 +665,14 @@ const toSaveReq = (draft: AiGenDraft, pointId: string) => {
     summary,
     explainText: draft.analysis || '',
     noOrderMark: draft.type === 1 ? 1 : 0,
-    points: pointId ? [{ pointId, orderIndex: 1 }] : []
+    points: pointId ? [{ pointId, orderIndex: 1 }] : [],
   }
 
   if (draft.type === 0 || draft.type === 1) {
     req.questionItems = options.map((text, index) => ({
       itemContent: text,
       answer: answerLetters.includes(String.fromCharCode(65 + index)) ? 1 : 0,
-      orderIndex: index + 1
+      orderIndex: index + 1,
     }))
   } else if (draft.type === 2) {
     req.judgeCorrectOptionContent = options[0] || '正确'
@@ -461,7 +682,10 @@ const toSaveReq = (draft: AiGenDraft, pointId: string) => {
     req.answerContent = draft.answer || ''
   } else if (draft.type === 4) {
     req.answerContent = draft.answer || ''
-    req.answerKeywords = (draft.keywords || []).map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio }))
+    req.answerKeywords = (draft.keywords || []).map((k) => ({
+      keyword: k.keyword,
+      scoreRatio: k.scoreRatio,
+    }))
   }
   return req
 }
@@ -475,18 +699,18 @@ const saveAll = async () => {
     let ok = 0
     for (const card of drafts.value) {
       try {
-          const req = toSaveReq(card.data, pointId)
-          if (props.paperId) {
-            // 试卷编辑页：题目落库 + 建关联，sectionIndex 用题型（每题型一个大题组）
-            await addPaperQuestion(props.paperId, {
-              sectionIndex: card.data.type,
-              score: 2,
-              libId: props.libId,
-              question: req
-            })
-          } else {
-            await createQues(req)
-          }
+        const req = toSaveReq(card.data, pointId)
+        if (props.paperId) {
+          // 试卷编辑页：题目落库 + 建关联，sectionIndex 用题型（每题型一个大题组）
+          await addPaperQuestion(props.paperId, {
+            sectionIndex: card.data.type,
+            score: 2,
+            libId: props.libId,
+            question: req,
+          })
+        } else {
+          await createQues(req)
+        }
         ok++
       } catch {
         // 单题失败不阻断整体，失败明细最后由 toast 汇总
@@ -526,7 +750,16 @@ const saveAll = async () => {
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn {
+    font-size: 22px;
+    color: #999;
+    cursor: pointer;
+    &:focus-visible {
+      outline: 2px solid #1890ff;
+      outline-offset: -2px;
+      border-radius: 4px;
+    }
+  }
 }
 
 /* 双 tab：对齐原平台"左侧两个图标切换 AI建题 / 快速建题"的形态 */
@@ -543,7 +776,9 @@ const saveAll = async () => {
     color: #4a5368;
     cursor: pointer;
 
-    &:hover { background: #f5f8ff; }
+    &:hover {
+      background: #f5f8ff;
+    }
     &.active {
       background: #eaf2ff;
       border-color: #c7ddff;
@@ -613,8 +848,14 @@ const saveAll = async () => {
     color: #4a5368;
     cursor: pointer;
 
-    &:hover { color: #1890ff; }
-    &.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: 600; }
+    &:hover {
+      color: #1890ff;
+    }
+    &.active {
+      color: #1890ff;
+      border-bottom-color: #1890ff;
+      font-weight: 600;
+    }
   }
 }
 
@@ -641,7 +882,10 @@ const saveAll = async () => {
   align-items: center;
   gap: 6px;
 
-  .hint { font-size: 11px; color: #a0a7b8; }
+  .hint {
+    font-size: 11px;
+    color: #a0a7b8;
+  }
 
   .chip {
     padding: 3px 10px;
@@ -652,7 +896,10 @@ const saveAll = async () => {
     color: #4a5368;
     cursor: pointer;
 
-    &:hover { border-color: #1890ff; color: #1890ff; }
+    &:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
   }
 }
 
@@ -662,7 +909,12 @@ const saveAll = async () => {
   border: 1px solid #ffccc7;
   border-radius: 6px;
 
-  p { margin: 0 0 3px; font-size: 12px; color: #cf1322; line-height: 1.6; }
+  p {
+    margin: 0 0 3px;
+    font-size: 12px;
+    color: #cf1322;
+    line-height: 1.6;
+  }
 }
 
 .link {
@@ -672,7 +924,9 @@ const saveAll = async () => {
   color: #1890ff;
   font-size: 12px;
   cursor: pointer;
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .drawer-body {
@@ -701,10 +955,17 @@ const saveAll = async () => {
     resize: vertical;
     outline: none;
 
-    &:focus { border-color: #1890ff; }
+    &:focus {
+      border-color: #1890ff;
+    }
   }
 
-  .char-count { text-align: right; font-size: 11px; color: #b0b7c3; margin-top: -6px; }
+  .char-count {
+    text-align: right;
+    font-size: 11px;
+    color: #b0b7c3;
+    margin-top: -6px;
+  }
 }
 
 .form-label {
@@ -712,7 +973,11 @@ const saveAll = async () => {
   color: #4a5368;
   font-weight: 500;
 
-  .hint { color: #a0a7b8; font-weight: 400; font-size: 11px; }
+  .hint {
+    color: #a0a7b8;
+    font-weight: 400;
+    font-size: 11px;
+  }
 }
 
 .upload-row {
@@ -720,8 +985,58 @@ const saveAll = async () => {
   align-items: center;
   gap: 10px;
 
-  .hint { font-size: 11px; color: #a0a7b8; }
-  .file-input { display: none; }
+  .hint {
+    font-size: 11px;
+    color: #a0a7b8;
+  }
+  .file-input {
+    display: none;
+  }
+}
+
+/* 在线课堂课件行：选择按钮 + 已选条目（单选） */
+.kng-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .hint {
+    font-size: 11px;
+    color: #a0a7b8;
+  }
+
+  .kng-selected {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    padding: 3px 8px;
+    border: 1px solid #adc6ff;
+    border-radius: 4px;
+    background: #f0f5ff;
+  }
+
+  .kng-name {
+    font-size: 12px;
+    color: #2f54eb;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+  }
+}
+
+.extract-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .hint {
+    font-size: 11px;
+    color: #a0a7b8;
+  }
 }
 
 .count-grid {
@@ -746,7 +1061,10 @@ const saveAll = async () => {
   }
 }
 
-.generate { margin-top: 4px; padding: 9px 16px; }
+.generate {
+  margin-top: 4px;
+  padding: 9px 16px;
+}
 
 .right-pane {
   flex: 1;
@@ -769,7 +1087,14 @@ const saveAll = async () => {
   color: #4a5368;
 }
 
-.card-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.card-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 .card {
   border: 1px solid #e6eaf1;
@@ -777,24 +1102,72 @@ const saveAll = async () => {
   padding: 10px 12px;
   font-size: 12px;
 
-  .card-top { display: flex; align-items: center; gap: 8px; cursor: pointer;
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    &:focus-visible {
+      outline: 2px solid #1890ff;
+      outline-offset: -2px;
+      border-radius: 4px;
+    }
   }
-  .tag { background: #f0f5ff; border: 1px solid #adc6ff; color: #2f54eb; border-radius: 3px; padding: 0 6px; }
-  .level { color: #8a92a5; }
-  .card-top .link { margin-left: auto; }
+  .tag {
+    background: #f0f5ff;
+    border: 1px solid #adc6ff;
+    color: #2f54eb;
+    border-radius: 3px;
+    padding: 0 6px;
+  }
+  .level {
+    color: #8a92a5;
+  }
+  .card-top .link {
+    margin-left: auto;
+  }
 
-  &.expanded { border-color: #adc6ff; background: #fcfdff; }
+  &.expanded {
+    border-color: #adc6ff;
+    background: #fcfdff;
+  }
 
-  .expand-hint { margin-left: auto; font-size: 11px; color: #1890ff; }
-  .card-top .link { margin-left: 10px; }
+  .expand-hint {
+    margin-left: auto;
+    font-size: 11px;
+    color: #1890ff;
+  }
+  .card-top .link {
+    margin-left: 10px;
+  }
 
-  .card-stem { margin: 8px 0 6px; color: #1f2937; line-height: 1.6; }
-  .card-options { margin: 0 0 6px; padding-left: 18px; color: #4a5368; line-height: 1.8; }
-  .card-options .correct { color: #52c41a; font-weight: 600; }
-  .card-answer { color: #389e0d; }
-  .card-keywords { margin-top: 4px; color: #8a92a5; }
-  .card-analysis { margin-top: 4px; color: #a0a7b8; line-height: 1.6; }
+  .card-stem {
+    margin: 8px 0 6px;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  .card-options {
+    margin: 0 0 6px;
+    padding-left: 18px;
+    color: #4a5368;
+    line-height: 1.8;
+  }
+  .card-options .correct {
+    color: #52c41a;
+    font-weight: 600;
+  }
+  .card-answer {
+    color: #389e0d;
+  }
+  .card-keywords {
+    margin-top: 4px;
+    color: #8a92a5;
+  }
+  .card-analysis {
+    margin-top: 4px;
+    color: #a0a7b8;
+    line-height: 1.6;
+  }
 }
 
 /* 展开编辑态：与编辑页保持同一种控件手感 */
@@ -817,7 +1190,9 @@ const saveAll = async () => {
   outline: none;
   resize: vertical;
 
-  &:focus { border-color: #1890ff; }
+  &:focus {
+    border-color: #1890ff;
+  }
 }
 
 .edit-row {
@@ -826,7 +1201,9 @@ const saveAll = async () => {
   gap: 8px;
   margin-top: 10px;
 
-  .edit-label { margin: 0; }
+  .edit-label {
+    margin: 0;
+  }
 }
 
 .edit-select {
@@ -840,12 +1217,34 @@ const saveAll = async () => {
   gap: 6px;
   margin-bottom: 4px;
 
-  .option-key { width: 18px; text-align: center; font-size: 12px; color: #4a5368; font-weight: 600; }
-  .score-input { width: 80px; }
-  .percent { font-size: 11px; color: #8a92a5; }
-  .drag-handle { color: #b0b7c3; cursor: grab; user-select: none; }
-  &.dragging { opacity: .5; background: #f3f7ff; border-radius: 4px; }
-  .link:disabled { opacity: .4; cursor: not-allowed; }
+  .option-key {
+    width: 18px;
+    text-align: center;
+    font-size: 12px;
+    color: #4a5368;
+    font-weight: 600;
+  }
+  .score-input {
+    width: 80px;
+  }
+  .percent {
+    font-size: 11px;
+    color: #8a92a5;
+  }
+  .drag-handle {
+    color: #b0b7c3;
+    cursor: grab;
+    user-select: none;
+  }
+  &.dragging {
+    opacity: 0.5;
+    background: #f3f7ff;
+    border-radius: 4px;
+  }
+  .link:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 .btn.small {
@@ -857,7 +1256,10 @@ const saveAll = async () => {
   background: #fff;
   color: #4a5368;
   cursor: pointer;
-  &:disabled { opacity: .5; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .answer-flag {
@@ -876,7 +1278,12 @@ const saveAll = async () => {
   color: #4a5368;
 }
 
-.empty-tip { text-align: center; color: #b0b7c3; font-size: 13px; margin-top: 60px; }
+.empty-tip {
+  text-align: center;
+  color: #b0b7c3;
+  font-size: 13px;
+  margin-top: 60px;
+}
 
 .drawer-footer {
   display: flex;
@@ -885,18 +1292,35 @@ const saveAll = async () => {
   padding: 12px 20px;
   border-top: 1px solid #eee;
 
-  .footer-tip { margin-right: auto; font-size: 11px; color: #d46b08; }
+  .footer-tip {
+    margin-right: auto;
+    font-size: 11px;
+    color: #d46b08;
+  }
 }
 
-.btn, .btn-primary {
+.btn,
+.btn-primary {
   padding: 7px 18px;
   border-radius: 4px;
   font-size: 13px;
   cursor: pointer;
-  &:disabled { opacity: .6; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
-.btn { border: 1px solid #d9d9d9; background: #fff; color: #4a5368; }
-.btn.primary, .btn-primary { border: 1px solid #1890ff; background: #1890ff; color: #fff; }
+.btn {
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  color: #4a5368;
+}
+.btn.primary,
+.btn-primary {
+  border: 1px solid #1890ff;
+  background: #1890ff;
+  color: #fff;
+}
 
 .link {
   border: none;
@@ -904,6 +1328,8 @@ const saveAll = async () => {
   color: #1890ff;
   font-size: 12px;
   cursor: pointer;
-  &.danger { color: #f5222d; }
+  &.danger {
+    color: #f5222d;
+  }
 }
 </style>

@@ -15,8 +15,9 @@ import {
   createAssistantSession,
   getAssistantArtifact,
   getAssistantMessages,
-  getSessionMaterials
+  getSessionMaterials,
 } from '@/api/assistant'
+import { importAssistantKngMaterials as importKngMaterialsApi } from '@/api/kngAiSource'
 import type {
   ArtifactGeneratedParams,
   ArtifactUpdatedParams,
@@ -27,6 +28,7 @@ import type {
   AssistantEventFrame,
   AssistantFileResp,
   AssistantMaterialBrief,
+  AssistantPanelTab,
   AssistantRenderBlock,
   AssistantSender,
   AssistantServerFrame,
@@ -38,8 +40,9 @@ import type {
   PartStartData,
   SaveSuccessParams,
   TopicChangedParams,
-  UpdateMaterialParams
+  UpdateMaterialParams,
 } from '@/types/assistant'
+import type { AssistantKngImportResp } from '@/api/kngAiSource'
 
 /** 控制类 action：仅驱动后端流程，不在消息流里渲染成事件卡（重放时跳过，避免噪音） */
 const CONTROL_ACTIONS = new Set(['common-session-start', 'biz-side-manage-confirm'])
@@ -56,7 +59,12 @@ type EventBlock = Extract<AssistantRenderBlock, { kind: 'event' }>
 /** 服务端 data 块（事件）在历史消息中的持久化形状 */
 interface WireDataBlock {
   type: 'data'
-  data?: { type?: string; bizType?: string; actionName?: string; params?: Record<string, unknown> } | null
+  data?: {
+    type?: string
+    bizType?: string
+    actionName?: string
+    params?: Record<string, unknown>
+  } | null
 }
 
 /** biz-common-parse-file 事件里的 files[] 条目（status：0 解析中 / 1 完成） */
@@ -86,7 +94,8 @@ function isAgentRole(role: unknown): boolean {
 
 /** 生成前端 uuid（WS 发送时使用；优先 crypto.randomUUID） */
 export function newUuid(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+    return crypto.randomUUID()
   return `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`.replace(/[xy]/g, (c) => {
     const r = (Date.now() + Math.floor(performance.now() * 1000)) % 16
     const v = c === 'x' ? r : (r & 0x3) | 0x8
@@ -112,7 +121,11 @@ export function newTraceId(len = 32): string {
  * 先按分隔符（中/英文分号、换行）切；切不出三段时退化为按档位标签前视切分；
  * 每段去掉前导标签（如"优秀(90-100分)："）只留等级要求正文。
  */
-export function splitCriteriaText(text: string): { excellent: string; good: string; improve: string } {
+export function splitCriteriaText(text: string): {
+  excellent: string
+  good: string
+  improve: string
+} {
   const clean = (segment: string): string => {
     const colon = segment.search(/[：:]/)
     // 走标签兜底切分时，上一段的收尾分隔符（逗号/顿号等）会留在尾部，需去掉
@@ -134,12 +147,16 @@ export function splitCriteriaText(text: string): { excellent: string; good: stri
   return {
     excellent: bodies[0] ?? '',
     good: bodies[1] ?? '',
-    improve: bodies[2] ?? ''
+    improve: bodies[2] ?? '',
   }
 }
 
 /** 归一化 dimension.criteria → 三档文案（artifact schema 未固定该字段形状，做兼容） */
-export function normalizeCriteria(criteria: unknown): { excellent: string; good: string; improve: string } {
+export function normalizeCriteria(criteria: unknown): {
+  excellent: string
+  good: string
+  improve: string
+} {
   const empty = { excellent: '', good: '', improve: '' }
   if (!criteria) return empty
   // 字符串形态最常见：模型返回一整串，如
@@ -151,7 +168,7 @@ export function normalizeCriteria(criteria: unknown): { excellent: string; good:
     return {
       excellent: a == null ? '' : String(a),
       good: b == null ? '' : String(b),
-      improve: c == null ? '' : String(c)
+      improve: c == null ? '' : String(c),
     }
   }
   if (typeof criteria === 'object') {
@@ -166,7 +183,7 @@ export function normalizeCriteria(criteria: unknown): { excellent: string; good:
     return {
       excellent: pick('excellent', '优秀', 'excellentStandard'),
       good: pick('good', '良好', 'goodStandard'),
-      improve: pick('improve', '需改进', 'improveStandard')
+      improve: pick('improve', '需改进', 'improveStandard'),
     }
   }
   return empty
@@ -208,6 +225,16 @@ export const useAssistantStore = defineStore('assistant', () => {
   const savedAt = ref(0)
   const savedThemeId = ref('')
 
+  // ---------- 会话材料（培训材料 tab / 解析卡展开共用） ----------
+  /** 会话材料列表：在线课堂导入后刷新；解析卡展开时的兜底数据源 */
+  const materials = ref<AssistantMaterialBrief[]>([])
+  /**
+   * 请求右面板切换 Tab（一次性信号）。
+   * 面板的 activeTab 是 ArtifactPanel 内部状态，导入材料后要"跳过去让用户看见"，
+   * 由 store 发信号、面板 consume 后清空，避免把面板状态整体搬进 store。
+   */
+  const panelTabRequest = ref<AssistantPanelTab | ''>('')
+
   // ---------- WS ----------
   const wsStatus = ref<AssistantWsStatus>('idle')
   const reconnectAttempt = ref(0)
@@ -247,12 +274,14 @@ export const useAssistantStore = defineStore('assistant', () => {
   // ---------- 派生 ----------
   /** 右面板是否出现（方向明确或已有产物） */
   const panelVisible = computed(() => topicChanged.value || artifact.value != null)
-  const artifactContent = computed<AssistantArtifactContent | null>(() => artifact.value?.content ?? null)
+  const artifactContent = computed<AssistantArtifactContent | null>(
+    () => artifact.value?.content ?? null,
+  )
   const readOnly = computed(() => themeStatus.value === 5)
   /** 未连接时不能发送：帧发不出去，本地气泡会造成"已发送"的错觉 */
   const connected = computed(() => wsStatus.value === 'open')
   const inputDisabled = computed(
-    () => generating.value || readOnly.value || loadingSession.value || !connected.value
+    () => generating.value || readOnly.value || loadingSession.value || !connected.value,
   )
   const isEmptyConversation = computed(() => !loadingHistory.value && messages.value.length === 0)
 
@@ -273,7 +302,13 @@ export const useAssistantStore = defineStore('assistant', () => {
     const out: AssistantRenderBlock[] = []
     for (const raw of content) {
       if (!raw || typeof raw !== 'object') continue
-      const block = raw as { type?: string; text?: string; file?: { uri?: string }; extendedData?: Record<string, unknown>; data?: unknown }
+      const block = raw as {
+        type?: string
+        text?: string
+        file?: { uri?: string }
+        extendedData?: Record<string, unknown>
+        data?: unknown
+      }
       if (block.type === 'text') {
         out.push({ kind: 'text', text: String(block.text ?? '') })
       } else if (block.type === 'file') {
@@ -283,7 +318,7 @@ export const useAssistantStore = defineStore('assistant', () => {
           uri: String(block.file?.uri ?? ''),
           name: String(ext.name ?? '未命名文件'),
           fileType: String(ext.fileType ?? ''),
-          fileSize: Number(ext.fileSize ?? 0)
+          fileSize: Number(ext.fileSize ?? 0),
         })
       } else if (block.type === 'data') {
         const parsed = parseWireDataBlock(block as WireDataBlock)
@@ -296,7 +331,7 @@ export const useAssistantStore = defineStore('assistant', () => {
           params: parsed.params,
           raw: '',
           done: true,
-          parseError: parsed.error
+          parseError: parsed.error,
         })
       }
     }
@@ -320,12 +355,16 @@ export const useAssistantStore = defineStore('assistant', () => {
     if (!data) return empty
     if (typeof data === 'string') {
       try {
-        const parsed = JSON.parse(data) as { bizType?: string; actionName?: string; params?: Record<string, unknown> }
+        const parsed = JSON.parse(data) as {
+          bizType?: string
+          actionName?: string
+          params?: Record<string, unknown>
+        }
         return {
           bizType: (parsed.bizType ?? '') as AssistantBizType | '',
           actionName: parsed.actionName ?? '',
           params: parsed.params ?? {},
-          error: ''
+          error: '',
         }
       } catch (e) {
         return { ...empty, error: e instanceof Error ? e.message : '解析失败' }
@@ -333,7 +372,12 @@ export const useAssistantStore = defineStore('assistant', () => {
     }
     if (typeof data === 'object') {
       if (typeof data.bizType === 'string') {
-        return { bizType: data.bizType as AssistantBizType, actionName: '', params: data.params ?? {}, error: '' }
+        return {
+          bizType: data.bizType as AssistantBizType,
+          actionName: '',
+          params: data.params ?? {},
+          error: '',
+        }
       }
       if (typeof data.actionName === 'string') {
         return { bizType: '', actionName: data.actionName, params: data.params ?? {}, error: '' }
@@ -342,12 +386,16 @@ export const useAssistantStore = defineStore('assistant', () => {
       const inner = (data as { data?: unknown }).data
       if (typeof inner === 'string') {
         try {
-          const parsed = JSON.parse(inner) as { bizType?: string; actionName?: string; params?: Record<string, unknown> }
+          const parsed = JSON.parse(inner) as {
+            bizType?: string
+            actionName?: string
+            params?: Record<string, unknown>
+          }
           return {
             bizType: (parsed.bizType ?? '') as AssistantBizType | '',
             actionName: parsed.actionName ?? '',
             params: parsed.params ?? {},
-            error: ''
+            error: '',
           }
         } catch (e) {
           return { ...empty, error: e instanceof Error ? e.message : '解析失败' }
@@ -390,10 +438,14 @@ export const useAssistantStore = defineStore('assistant', () => {
           // 后端落库 role 为 user/assistant；协议文档措辞为 agent，两种都归一化为助手
           role: isAgentRole(m.role) ? ('agent' as const) : ('user' as const),
           blocks: toRenderBlocks(m.content),
-          sender: m.sender ?? (isAgentRole(m.role) ? { id: 'agent', name: '无所不知的大贤者', avatar: '' } : ADMIN_SENDER),
+          sender:
+            m.sender ??
+            (isAgentRole(m.role)
+              ? { id: 'agent', name: '无所不知的大贤者', avatar: '' }
+              : ADMIN_SENDER),
           createdAt: m.createdAt ?? '',
           dbId: m.dbId ?? '',
-          streaming: false
+          streaming: false,
         }))
         // 纯控制帧（如 common-session-start）转换后无块，不占消息流位置
         .filter((m) => m.blocks.length > 0)
@@ -444,7 +496,7 @@ export const useAssistantStore = defineStore('assistant', () => {
       createdAt: '',
       dbId: '',
       streaming: false,
-      local: true
+      local: true,
     })
     transport?.sendText(value)
   }
@@ -453,12 +505,20 @@ export const useAssistantStore = defineStore('assistant', () => {
     messages.value.push({
       id: newUuid(),
       role: 'user',
-      blocks: [{ kind: 'file', uri: file.fileId, name: file.name, fileType: file.fileType, fileSize: file.fileSize }],
+      blocks: [
+        {
+          kind: 'file',
+          uri: file.fileId,
+          name: file.name,
+          fileType: file.fileType,
+          fileSize: file.fileSize,
+        },
+      ],
       sender: ADMIN_SENDER,
       createdAt: '',
       dbId: '',
       streaming: false,
-      local: true
+      local: true,
     })
     transport?.sendFileBlock(file)
   }
@@ -478,12 +538,55 @@ export const useAssistantStore = defineStore('assistant', () => {
       id: snap.artifactId,
       version: snap.versionNo,
       materialId,
-      visibility
+      visibility,
     })
   }
 
   function simulateDrop() {
     transport?.simulateDrop()
+  }
+
+  /**
+   * 导入在线课堂培训材料（2026-10-28，03-接口文档 §3 API-04）。
+   *
+   * 后端同步抽取并落库后返回成功项与逐条失败原因；成功时：
+   *  1. 拉一次会话材料（培训材料 tab 的数据源兜底，事件丢失也能刷出来）；
+   *  2. 以服务端为准刷新 artifact（材料条目含 fileSource=3 的来源标识）。
+   * 这里不往消息流塞本地卡片：解析完成卡片由后端推 biz-common-parse-file 事件生成，
+   * 否则刷新/重进会看到两张重复卡。
+   */
+  async function importKngMaterials(coursewareIds: string[]): Promise<AssistantKngImportResp> {
+    if (!sessionId.value) throw new Error('会话尚未建立，请稍后重试')
+    const resp = await importKngMaterialsApi(sessionId.value, coursewareIds)
+    if (resp.materials.length > 0) {
+      await Promise.all([
+        refreshMaterials().catch(() => undefined),
+        refreshArtifact().catch(() => undefined),
+      ])
+    }
+    return resp
+  }
+
+  /** 会话材料列表（"培训材料"tab 兜底；接口失败返回空列表，不打断对话） */
+  async function refreshMaterials(): Promise<AssistantMaterialBrief[]> {
+    if (!sessionId.value) return []
+    try {
+      const resp = await getSessionMaterials(sessionId.value)
+      materials.value = resp.materials ?? []
+    } catch {
+      /* 兜底数据：失败保留上一次结果 */
+    }
+    return materials.value
+  }
+
+  /** 请求右面板切到指定 Tab（一次性信号，面板消费后调用 consumePanelTab） */
+  function requestPanelTab(tab: AssistantPanelTab) {
+    panelTabRequest.value = tab
+  }
+
+  /** 面板消费完信号后清空，避免重复触发 */
+  function consumePanelTab() {
+    panelTabRequest.value = ''
   }
 
   // ---------- 事件分发（§3.3） ----------
@@ -519,7 +622,10 @@ export const useAssistantStore = defineStore('assistant', () => {
         const roundTrace = startedTrace
         window.setTimeout(() => {
           if (generating.value && roundTrace && activeRoundTraces.value.includes(roundTrace)) {
-            console.warn('[ws] 本轮长时间未收到 session-finish，按库回补消息并解除回复中', roundTrace)
+            console.warn(
+              '[ws] 本轮长时间未收到 session-finish，按库回补消息并解除回复中',
+              roundTrace,
+            )
             activeRoundTraces.value = activeRoundTraces.value.filter((t) => t !== roundTrace)
             if (activeRoundTraceId.value === roundTrace) activeRoundTraceId.value = ''
             generating.value = false
@@ -552,7 +658,7 @@ export const useAssistantStore = defineStore('assistant', () => {
             sender: d.sender ?? { id: 'agent', name: 'Nova', avatar: '' },
             createdAt: String(d.agentMessageCreatedAt ?? ''),
             dbId: String(d.agentMessageDbId ?? ''),
-            streaming: true
+            streaming: true,
           })
         }
         break
@@ -579,7 +685,12 @@ export const useAssistantStore = defineStore('assistant', () => {
         // 真正要忽略的是"从未登记过"的收尾：重复握手帧的回执（服务端只回 ack + finish）。
         const finishTraceId = String((frame.data as { traceId?: string }).traceId ?? '')
         if (finishTraceId && !activeRoundTraces.value.includes(finishTraceId)) {
-          console.warn('[ws] 忽略未登记轮次的 session-finish', finishTraceId, '活跃轮次=', activeRoundTraces.value)
+          console.warn(
+            '[ws] 忽略未登记轮次的 session-finish',
+            finishTraceId,
+            '活跃轮次=',
+            activeRoundTraces.value,
+          )
           break
         }
         activeRoundTraces.value = activeRoundTraces.value.filter((t) => t !== finishTraceId)
@@ -643,14 +754,21 @@ export const useAssistantStore = defineStore('assistant', () => {
     const key = bufferKey(messageId, index)
     partBuffers.value = {
       ...partBuffers.value,
-      [key]: { messageId, index, kind, text: '', raw: '', done: false }
+      [key]: { messageId, index, kind, text: '', raw: '', done: false },
     }
     if (kind === 'text') {
       const last = msg.blocks[msg.blocks.length - 1]
       partBlockIndex.set(key, last && last.kind === 'text' ? msg.blocks.length - 1 : -1)
       return
     }
-    msg.blocks.push({ kind: 'event', bizType: '', params: {}, raw: '', done: false, parseError: '' })
+    msg.blocks.push({
+      kind: 'event',
+      bizType: '',
+      params: {},
+      raw: '',
+      done: false,
+      parseError: '',
+    })
     // 记录 index → 块位次，供 part-content/part-end 定位
     partBlockIndex.set(key, msg.blocks.length - 1)
   }
@@ -721,7 +839,7 @@ export const useAssistantStore = defineStore('assistant', () => {
   function dispatchBizEvent(
     bizType: AssistantBizType,
     params: Record<string, unknown>,
-    ctx: { block?: AssistantRenderBlock; messageId?: string; replay?: boolean } = {}
+    ctx: { block?: AssistantRenderBlock; messageId?: string; replay?: boolean } = {},
   ) {
     switch (bizType) {
       case 'biz-common-parse-file':
@@ -754,7 +872,7 @@ export const useAssistantStore = defineStore('assistant', () => {
    */
   function handleParseFile(
     params: Record<string, unknown>,
-    ctx: { block?: AssistantRenderBlock; messageId?: string }
+    ctx: { block?: AssistantRenderBlock; messageId?: string },
   ) {
     const key = String(params.context_id ?? params.call_id ?? '')
     if (!key) return
@@ -911,7 +1029,7 @@ export const useAssistantStore = defineStore('assistant', () => {
       ...card.params,
       content: `材料《${material.name ?? ''}》解析完成（提取 ${material.extractLength ?? 0} 字，按服务端结果校正）`,
       files: files.map((f) => (String(f.id ?? '') === fileId ? { ...f, status: 1 } : f)),
-      summary: String(material.preview ?? '').slice(0, PARSE_SUMMARY_PREVIEW_CHARS)
+      summary: String(material.preview ?? '').slice(0, PARSE_SUMMARY_PREVIEW_CHARS),
     }
   }
 
@@ -922,7 +1040,9 @@ export const useAssistantStore = defineStore('assistant', () => {
     card.params = {
       ...card.params,
       content: `${String(card.params.content ?? '')}\n（未能确认解析结果：本会话材料列表里没有它，多半是解析失败或未受理，请重新上传）`,
-      files: parseFilesOf(card.params).map((f) => (String(f.id ?? '') === fileId ? { ...f, status: 1 } : f))
+      files: parseFilesOf(card.params).map((f) =>
+        String(f.id ?? '') === fileId ? { ...f, status: 1 } : f,
+      ),
     }
   }
 
@@ -937,7 +1057,8 @@ export const useAssistantStore = defineStore('assistant', () => {
 
   /** artifact-updated：JSON-Patch（op=full_replace 按 path 局部更新） */
   function handleArtifactUpdated(params: ArtifactUpdatedParams) {
-    if (params.id && artifact.value && !artifact.value.artifactId) artifact.value.artifactId = params.id
+    if (params.id && artifact.value && !artifact.value.artifactId)
+      artifact.value.artifactId = params.id
     if (params.version && artifact.value) artifact.value.versionNo = params.version
     const patches = Array.isArray(params.content) ? params.content : []
     for (const patch of patches) {
@@ -964,7 +1085,8 @@ export const useAssistantStore = defineStore('assistant', () => {
   function generationSettled(history: AssistantChatMessage[]): boolean {
     for (const msg of history) {
       for (const block of msg.blocks) {
-        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated')
+          continue
         const status = String(block.params.status ?? '')
         if (status === 'completed' || status === 'failed') return true
       }
@@ -972,11 +1094,21 @@ export const useAssistantStore = defineStore('assistant', () => {
     return false
   }
 
-  /** 生成已收口时，替换助手留下的“请稍候”。只改内存，重进时按结果卡再替换一次。 */
-  function settleGenerationPlaceholder(history: AssistantChatMessage[], settled = true) {
-    if (!settled) return
+  /**
+   * 生成已收口时，替换助手留下的“请稍候”。只改内存，重进时按结果卡再替换一次。
+   *
+   * @param settled true=成功文案；false=不处理；传字符串=失败文案（生成 failed 时用，
+   *        否则失败会被替换成"已生成完成"，与右侧空的产物面板自相矛盾）
+   */
+  function settleGenerationPlaceholder(
+    history: AssistantChatMessage[],
+    settled: boolean | string = true,
+  ) {
+    if (settled === false) return
     const replacement =
-      '训练配置已生成完成：可在右侧查看场景单元、客户画像、评估维度与案例；需要我继续生成实战案例就说一声。'
+      typeof settled === 'string'
+        ? settled
+        : '训练配置已生成完成：可在右侧查看场景单元、客户画像、评估维度与案例；需要我继续生成实战案例就说一声。'
     const placeholder = /请稍候|正在生成/
     for (let i = history.length - 1; i >= 0; i--) {
       const blocks = history[i]?.blocks ?? []
@@ -998,13 +1130,19 @@ export const useAssistantStore = defineStore('assistant', () => {
     const latest = new Map<string, Record<string, unknown>>()
     for (const msg of history) {
       for (const block of msg.blocks) {
-        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated')
+          continue
         const id = String(block.params.id ?? '')
         if (!id) continue
         const prev = latest.get(id)
         const incoming = String(block.params.status ?? '')
         const previous = String(prev?.status ?? '')
-        if (prev && (previous === 'completed' || previous === 'failed') && incoming === 'in_progress') continue
+        if (
+          prev &&
+          (previous === 'completed' || previous === 'failed') &&
+          incoming === 'in_progress'
+        )
+          continue
         latest.set(id, block.params)
       }
     }
@@ -1014,7 +1152,12 @@ export const useAssistantStore = defineStore('assistant', () => {
       if (!msg) continue
       for (let j = msg.blocks.length - 1; j >= 0; j--) {
         const block = msg.blocks[j]
-        if (!block || block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (
+          !block ||
+          block.kind !== 'event' ||
+          block.bizType !== 'biz-side-manage-artifact-generated'
+        )
+          continue
         const id = String(block.params.id ?? '')
         const winner = latest.get(id)
         if (!winner) continue
@@ -1037,7 +1180,8 @@ export const useAssistantStore = defineStore('assistant', () => {
     const settled = new Set<string>()
     for (const msg of history) {
       for (const block of msg.blocks) {
-        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated')
+          continue
         const status = String(block.params.status ?? '')
         const id = String(block.params.id ?? '')
         if (id && (status === 'completed' || status === 'failed')) settled.add(id)
@@ -1045,14 +1189,15 @@ export const useAssistantStore = defineStore('assistant', () => {
     }
     for (const msg of history) {
       for (const block of msg.blocks) {
-        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated') continue
+        if (block.kind !== 'event' || block.bizType !== 'biz-side-manage-artifact-generated')
+          continue
         if (String(block.params.status ?? '') !== 'in_progress') continue
         const id = String(block.params.id ?? '')
         if (id && settled.has(id)) continue
         block.params = {
           ...block.params,
           status: 'failed',
-          error: '生成已中断，请重新生成'
+          error: '生成已中断，请重新生成',
         }
       }
     }
@@ -1067,13 +1212,13 @@ export const useAssistantStore = defineStore('assistant', () => {
    */
   function handleArtifactGenerated(
     params: ArtifactGeneratedParams,
-    ctx: { block?: AssistantRenderBlock; messageId?: string } = {}
+    ctx: { block?: AssistantRenderBlock; messageId?: string } = {},
   ) {
     const snap = artifact.value ?? {
       artifactId: params.id ?? '',
       versionNo: params.version ?? '1',
       status: 'working' as const,
-      content: null
+      content: null,
     }
     // 右面板：params.content 每次都是"当前全量产物"，按顶层字段以最新覆盖
     const merged = mergeArtifactContent(snap.content, params.content)
@@ -1081,7 +1226,7 @@ export const useAssistantStore = defineStore('assistant', () => {
       ...snap,
       artifactId: params.id || snap.artifactId,
       versionNo: params.version || snap.versionNo,
-      content: merged
+      content: merged,
     }
     topicChanged.value = true
     if (params.status === 'completed') {
@@ -1101,7 +1246,7 @@ export const useAssistantStore = defineStore('assistant', () => {
    */
   function mergeGeneratedCard(
     params: ArtifactGeneratedParams,
-    ctx: { block?: AssistantRenderBlock; messageId?: string }
+    ctx: { block?: AssistantRenderBlock; messageId?: string },
   ) {
     const artifactId = String(params.id ?? '')
     if (!artifactId) return
@@ -1145,9 +1290,9 @@ export const useAssistantStore = defineStore('assistant', () => {
               actorName: '',
               actorPosition: '',
               scriptBackground: '',
-              scriptOpening: ''
-            }
-          ]
+              scriptOpening: '',
+            },
+          ],
         }
       })
       artifact.value = { ...artifact.value!, content: { ...content, scenarios } }
@@ -1175,19 +1320,19 @@ export const useAssistantStore = defineStore('assistant', () => {
       customerProfiles: [],
       icebergModel: {
         visible: { knowledge: [], skills: [] },
-        hidden: { roles: [], selfConcept: [], personalities: [], motives: [] }
+        hidden: { roles: [], selfConcept: [], personalities: [], motives: [] },
       },
       evaluationCriteria: { passScore: 0, dimensions: [], defaultDimensionWeights: [] },
       professionalKnowledge: null,
       productProfiles: [],
-      version: ''
+      version: '',
     }
   }
 
   /** 按顶级字段合并（in_progress 只带已生成部分；completed 带全量，两者同一逻辑即可） */
   function mergeArtifactContent(
     base: AssistantArtifactContent | null,
-    incoming: Partial<AssistantArtifactContent> | null | undefined
+    incoming: Partial<AssistantArtifactContent> | null | undefined,
   ): AssistantArtifactContent {
     const current = base ?? emptyArtifactContent()
     if (!incoming) return current
@@ -1215,6 +1360,7 @@ export const useAssistantStore = defineStore('assistant', () => {
     extraInfo.value = null
     savedAt.value = 0
     savedThemeId.value = ''
+    materials.value = []
     reconnectAttempt.value = 0
     wsStatus.value = 'idle'
   }
@@ -1233,6 +1379,8 @@ export const useAssistantStore = defineStore('assistant', () => {
     topicChanged,
     savedAt,
     savedThemeId,
+    materials,
+    panelTabRequest,
     wsStatus,
     reconnectAttempt,
     partBuffers,
@@ -1253,10 +1401,14 @@ export const useAssistantStore = defineStore('assistant', () => {
     sendFile,
     confirmArtifact,
     toggleMaterialVisibility,
+    importKngMaterials,
+    refreshMaterials,
+    requestPanelTab,
+    consumePanelTab,
     simulateDrop,
     handleFrame,
     handleEvent,
     normalizeCriteria,
-    reset
+    reset,
   }
 })
