@@ -1,32 +1,38 @@
 <template>
-  <div class="theme-detail">
+  <div class="theme-detail-page">
+    <div class="dm-breadcrumb">
+      <span class="dm-breadcrumb__link" role="button" tabindex="0" @keydown.enter.prevent="goBack" @click="goBack">
+        训练主题
+      </span>
+      <span class="dm-breadcrumb__sep">/</span>
+      <span class="dm-breadcrumb__current">主题详情</span>
+    </div>
+
     <div v-if="loading" class="page-tip">加载中…</div>
     <div v-else-if="!detail" class="page-tip">主题不存在</div>
     <template v-else>
-      <!-- FP-07~09 头部：信息 + 统计 + 操作 -->
+      <!-- FP-07~09 头部：信息 + 统计 + 操作（DetailHeader 双根节点：.dm-header + .dm-stats） -->
       <DetailHeader :detail="detail" @refresh="refreshAll" />
 
-      <!-- FP-10 Tab 导航 -->
-      <div class="tab-bar">
-        <el-button
-          v-for="t in tabs"
-          :key="t.key"
-          class="tab-item"
-          :class="{ active: activeTab === t.key }"
-          @click="switchTab(t.key)"
-        >
-          {{ t.label }}
-          <span v-if="t.key === 'versions'" class="tab-count">({{ detail.versionCount }})</span>
-        </el-button>
+      <!-- FP-10 Tab 导航：原平台无外框，靠 1.6px 底边区分选中 -->
+      <div class="dm-tabs">
+        <nav class="dm-tabs__nav">
+          <button
+            v-for="t in tabs"
+            :key="t.key"
+            type="button"
+            class="dm-tab"
+            :class="{ 'is-active': activeTab === t.key }"
+            @click="switchTab(t.key)"
+          >
+            {{ t.label }}<template v-if="t.key === 'versions'"> ({{ detail.versionCount }})</template>
+          </button>
+        </nav>
       </div>
 
-      <!-- Tab 内容区 -->
-      <div class="tab-content">
+      <div class="dm-tab-panel">
         <ScenarioUnitList v-if="activeTab === 'scenario'" :units="units" :theme-id="detail.id" />
-        <StudentPanel
-          v-else-if="activeTab === 'students'"
-          :participant-count="detail.stats.participantCount"
-        />
+        <StudentPanel v-else-if="activeTab === 'students'" :theme-id="detail.id" />
         <ThemeSettings
           v-else-if="activeTab === 'settings'"
           :theme-id="detail.id"
@@ -71,12 +77,16 @@ type TabKey = (typeof tabs)[number]['key']
 
 const activeTab = computed<TabKey>(() => {
   const q = route.query.tab
-  const valid = tabs.some(t => t.key === q)
-  return (valid ? (q as TabKey) : 'scenario')
+  const valid = tabs.some((t) => t.key === q)
+  return valid ? (q as TabKey) : 'scenario'
 })
 
 const switchTab = (key: TabKey) => {
   router.replace({ query: { ...route.query, tab: key } })
+}
+
+const goBack = () => {
+  router.push('/sparring/freesimulate/topic')
 }
 
 const loadDetail = async () => {
@@ -109,11 +119,39 @@ onMounted(refreshAll)
 </script>
 
 <style scoped lang="scss">
-.theme-detail {
+/* 尺寸全部取自视觉契约 visual/measured/admin-theme-detail.json（原平台 viewport 1509x887）。
+   内容列宽 1301 由布局提供：左侧导航 184（原平台 .yxt-layout__aside 同宽）+ 内容区 12px 内边距。 */
+.theme-detail-page {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-height: 100%;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 22px;
+  color: #262626;
+}
+
+.dm-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 22px;
+  color: #757575;
+
+  &__link {
+    color: #757575;
+    cursor: pointer;
+
+    &:hover { color: #436bff; }
+  }
+
+  /* 分隔符在原平台是 / 文本，同色 */
+  &__sep { color: #a8a8a8; }
+
+  &__current { color: #757575; }
 }
 
 .page-tip {
@@ -123,55 +161,40 @@ onMounted(refreshAll)
   color: #999;
 }
 
-.tab-bar {
-  display: flex;
-  gap: 28px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  padding: 0 20px;
+/* FP-10 Tab：无外框，1.6px 底边在选中时点亮 */
+.dm-tabs {
+  display: block;
+  margin-top: 24px;
 
-  .tab-item {
-    position: relative;
-    padding: 13px 2px;
-    background: none;
-    border: none;
-    font-size: 15px;
-    color: #646a73;
-    cursor: pointer;
-    transition: color 0.2s;
-
-    .tab-count { color: #a5a9b0; }
-
-    &:hover { color: #1890ff; }
-
-    &.active {
-      color: #1890ff;
-      font-weight: 500;
-
-      .tab-count { color: #1890ff; }
-
-      &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -1px;
-        height: 2px;
-        background: #1890ff;
-        border-radius: 1px;
-      }
-    }
+  &__nav {
+    display: flex;
+    gap: 32px;
   }
 }
 
-.tab-content {
-  flex: 1;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-top: 1px solid #f2f3f5;
-  border-radius: 0 0 8px 8px;
-  padding: 18px 20px;
+.dm-tab {
+  height: 38px;
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #595959;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover { color: #436bff; }
+
+  &.is-active {
+    color: #436bff;
+    border-bottom-color: #436bff;
+  }
+}
+
+.dm-tab-panel {
+  margin-top: 24px;
 }
 </style>

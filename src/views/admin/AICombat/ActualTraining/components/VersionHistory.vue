@@ -3,35 +3,39 @@
     <p class="page-desc">查看主题的完整版本历史，了解每次更新的内容和影响范围</p>
 
     <div v-if="loading" class="list-tip">加载中…</div>
-    <div
-      v-for="v in versions"
-      :key="v.versionNo"
-      class="version-card"
-    >
-      <div class="version-head">
-        <div class="version-no-row">
-          <span class="version-no">{{ v.versionNo }}</span>
-          <span v-if="v.current" class="current-badge">当前版本</span>
+    <div class="version-list">
+      <div
+        v-for="v in versions"
+        :key="v.versionNo"
+        class="version-card"
+      >
+        <div class="version-head">
+          <div class="version-no-row">
+            <span class="version-no">{{ v.versionNo }}</span>
+            <span v-if="v.current" class="current-badge">当前版本</span>
+          </div>
+          <span class="version-time">{{ v.createdAt }}</span>
         </div>
-        <span class="version-time">{{ v.createdAt }}</span>
-      </div>
-      <div class="version-stats">
-        <div class="stat-col">
-          <span class="stat-num">{{ v.usedUserCount }} 人</span>
-          <span class="stat-label">使用人数</span>
+        <div class="version-stats">
+          <div class="stat-col">
+            <span class="stat-label">使用人数</span>
+            <span class="stat-num">{{ v.usedUserCount }} 人</span>
+          </div>
+          <div class="stat-col">
+            <span class="stat-label">已完成</span>
+            <span class="stat-num green">{{ v.completedCount }} 人</span>
+          </div>
+          <div class="stat-col">
+            <span class="stat-label">进行中</span>
+            <span class="stat-num blue">{{ v.inProgressCount }} 人</span>
+          </div>
         </div>
-        <div class="stat-col">
-          <span class="stat-num green">{{ v.completedCount }} 人</span>
-          <span class="stat-label">已完成</span>
+        <div class="version-foot">
+          <span class="creator">创建者：{{ v.creator }}</span>
+          <div class="rollback-slot">
+            <el-button v-if="!v.current" class="rollback-btn" @click="onRollback(v.versionNo)">回滚到此版本</el-button>
+          </div>
         </div>
-        <div class="stat-col">
-          <span class="stat-num blue">{{ v.inProgressCount }} 人</span>
-          <span class="stat-label">进行中</span>
-        </div>
-      </div>
-      <div class="version-foot">
-        <span class="creator">创建者：{{ v.creator }}</span>
-        <el-button v-if="!v.current" class="rollback-btn" @click="onRollback(v.versionNo)">回滚到此版本</el-button>
       </div>
     </div>
 
@@ -101,10 +105,14 @@ load()
 
 <style scoped lang="scss">
 .version-history {
+  display: block;
+
   .page-desc {
+    height: 22px;
+    margin: 0;
     font-size: 14px;
-    color: #8a8f98;
-    margin: 0 0 16px;
+    line-height: 22px;
+    color: #757575;
   }
 }
 
@@ -115,90 +123,127 @@ load()
   color: #999;
 }
 
+.version-list {
+  display: block;
+  margin-top: 16px;
+}
+
 .version-card {
+  display: block;
+  box-sizing: border-box;
+  height: 206px;
+  padding: 20px;
+  margin-top: 0;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px 18px;
-  margin-bottom: 12px;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
 
   .version-head {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+    height: 28px;
+    margin: 0 0 16px;
   }
 
   .version-no-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    height: 28px;
   }
 
   .version-no {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
-    color: #1f2329;
+    line-height: 28px;
+    color: #262626;
   }
 
   .current-badge {
-    padding: 1px 10px;
+    box-sizing: border-box;
+    height: 22px;
+    padding: 2px 8px;
+    border: 1px solid #bdd2ff;
     border-radius: 4px;
-    font-size: 13px;
-    color: #1890ff;
-    background: #e6f7ff;
+    font-size: 12px;
+    line-height: 16px;
+    color: #2e4dd9;
+    background: #f0f6ff;
   }
 
-  .version-time { font-size: 13px; color: #a5a9b0; }
+  .version-time {
+    font-size: 14px;
+    line-height: 22px;
+    color: #8c8c8c;
+  }
 
   .version-stats {
-    display: flex;
-    background: #f5f6f8;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    box-sizing: border-box;
+    height: 82px;
+    padding: 16px;
+    margin: 0 0 16px;
+    background: #fafafa;
     border-radius: 8px;
-    padding: 12px 0;
-    margin-bottom: 12px;
 
     .stat-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      display: block;
+      min-width: 0;
+    }
 
-      &:not(:last-child) { border-right: 1px solid #ebeef2; }
+    .stat-label {
+      display: block;
+      height: 22px;
+      font-size: 14px;
+      line-height: 22px;
+      color: #757575;
+    }
 
-      .stat-num {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1f2329;
+    .stat-num {
+      display: block;
+      height: 28px;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 28px;
+      color: #262626;
 
-        &.green { color: #52c41a; }
-        &.blue { color: #1890ff; }
-      }
-
-      .stat-label { font-size: 13px; color: #8a8f98; }
+      &.green { color: #059669; }
+      &.blue { color: #436bff; }
     }
   }
 
   .version-foot {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    height: 22px;
   }
 
-  .creator { font-size: 13px; color: #a5a9b0; }
+  .creator {
+    font-size: 14px;
+    line-height: 22px;
+    color: #8c8c8c;
+  }
+
+  .rollback-slot {
+    display: flex;
+    gap: 8px;
+  }
 
   .rollback-btn {
     padding: 5px 14px;
     background: #fff;
-    color: #1890ff;
-    border: 1px solid #1890ff;
+    color: #436bff;
+    border: 1px solid #436bff;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s;
 
-    &:hover { background: #f0f8ff; }
+    &:hover { background: #f0f6ff; }
   }
 }
 </style>

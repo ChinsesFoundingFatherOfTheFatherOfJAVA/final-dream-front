@@ -1,0 +1,287 @@
+{
+  "page": "drillmate-runtime",
+  "reference": "visual/reference/drillmate-runtime.original.png",
+  "capturedFrom": "https://train.chinajack.com/drillmate/drill/025de873-d629-4d9c-8cc0-55df670f7285?ex_id=4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "probes": [
+    {
+      "id": "stage",
+      "selector": ".dm-run",
+      "desc": "整屏对练舞台：深色底 + 12px 内边距（原平台把 1080 主区与右栏都包在这里）",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "main",
+      "selector": ".dm-run > .dm-run__main",
+      "desc": "主区（视频/场景/气泡/输入区）",
+      "required": true
+    },
+    {
+      "id": "video",
+      "selector": ".dm-run__video",
+      "desc": "AI 演员画面区，圆角 16；我们无数字人流，改为演员占位画面（结构位置一致）",
+      "required": true,
+      "skipProps": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "tools",
+      "selector": ".dm-run__video > .dm-run__tools",
+      "desc": "右上工具条：倒计时 / 目标达成度 / 对话模式 / 两个圆形按钮",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "tool-timer",
+      "selector": ".dm-run__timer",
+      "desc": "倒计时胶囊。原平台背景是 rgba(10,14,26,.55)，capture 丢 alpha 记成 #0a0e1a",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "tool-progress",
+      "selector": ".dm-run__progress",
+      "desc": "目标达成度胶囊。原平台边框 rgba(255,255,255,.14) 且背景半透明，只比尺寸与字重",
+      "required": true,
+      "skipProps": [
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "tool-mode",
+      "selector": ".dm-run__mode",
+      "desc": "对话模式下拉（混合/语音/文字）",
+      "required": true
+    },
+    {
+      "id": "tool-btn",
+      "selector": ".dm-run__tools > button:first-of-type",
+      "desc": "工具条按钮：帮助 / 打开/收起右栏",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "back-btn",
+      "selector": ".dm-run__back",
+      "desc": "左上角返回圆钮（触发主动结束二次确认）",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "scene-card",
+      "selector": ".dm-run__scene-card",
+      "desc": "场景背景卡，压在画面左侧",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "scene-label",
+      "selector": ".dm-run__scene-label",
+      "desc": "「场景」标签，琥珀色 900 字重",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "scene-text",
+      "selector": ".dm-run__scene-text",
+      "desc": "场景旁白正文",
+      "required": true,
+      "skipProps": [
+        "color"
+      ]
+    },
+    {
+      "id": "bubble-wrap",
+      "selector": ".dm-run__bubbles",
+      "desc": "字幕区：上方留 48px 压住画面底部渐变",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "bubble-row",
+      "selector": ".dm-run__bubble-row",
+      "desc": "单条台词行：头像 + 气泡",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "bubble-avatar",
+      "selector": ".dm-run__bubble-avatar",
+      "desc": "台詞行头像",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "bubble",
+      "selector": ".dm-run__bubble",
+      "desc": "台词气泡：右下大圆角",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "aside",
+      "selector": ".dm-run__aside",
+      "desc": "右侧资料栏（背景介绍）",
+      "required": true
+    },
+    {
+      "id": "aside-head",
+      "selector": ".dm-run__aside-head",
+      "desc": "资料栏标题条",
+      "required": true
+    },
+    {
+      "id": "aside-title",
+      "selector": ".dm-run__aside-title",
+      "desc": "「背景介绍」标题",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "aside-body",
+      "selector": ".dm-run__aside-body",
+      "desc": "资料栏滚动区",
+      "required": true
+    },
+    {
+      "id": "aside-scenario",
+      "selector": ".dm-run__aside-scenario",
+      "desc": "场景全名（16px / 800 字重）",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "aside-section",
+      "selector": ".dm-run__aside-section",
+      "desc": "资料栏分段：角色介绍/业务背景/对话目标/沟通指南/评估标准/练习进度",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "aside-section-title",
+      "selector": ".dm-run__aside-section > .dm-run__aside-section-title",
+      "desc": "分段标题（14px / 800）",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "aside-badge",
+      "selector": ".dm-run__aside-badge",
+      "desc": "分段标题前的彩色小方块",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "role-card",
+      "selector": ".dm-run__role-card",
+      "desc": "你的角色 / AI 扮演角色卡",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "aside-p",
+      "selector": ".dm-run__aside-body > .dm-run__aside-section > p",
+      "desc": "分段正文（业务背景段落）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "progress-row",
+      "selector": ".dm-run__progress-row",
+      "desc": "练习进度四行：对话轮次 / 剩余时间 / 目标达成度 / 进度条",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "input-area",
+      "selector": ".dm-run__input-area",
+      "desc": "底部输入区（含 12px 页脚）",
+      "required": true
+    },
+    {
+      "id": "input-bar",
+      "selector": ".dm-run__input-bar",
+      "desc": "输入条：大圆角半透明底",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "input-textarea",
+      "selector": ".dm-run__input-bar textarea",
+      "desc": "输入框（15px / 24 行高）",
+      "required": true
+    },
+    {
+      "id": "input-btn",
+      "selector": ".dm-run__input-actions > button",
+      "desc": "输入区圆形按钮：暂停 / 麦克风 / 上传 / 发送",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "footnote",
+      "selector": ".dm-run__footnote",
+      "desc": "「内容由AI生成」页脚",
+      "required": true,
+      "skipProps": [
+        "color"
+      ]
+    }
+  ],
+  "note": "运行时页需要存在一条 in_progress 的 attempt 才能渲染。跑审计前先建一条并开练，把 path 里的 attemptId 换掉；跑完可以结束该次练习。",
+  "pathFrom": {
+    "url": "/api/act/student/history?page=1&pageSize=5",
+    "match": {
+      "status": "in_progress"
+    },
+    "field": "attemptId",
+    "template": "/#/sparring/web/drillmate/attempt/{value}"
+  }
+}

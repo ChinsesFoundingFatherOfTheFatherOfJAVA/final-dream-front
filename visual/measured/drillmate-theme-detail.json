@@ -1,0 +1,208 @@
+{
+  "page": "drillmate-theme-detail",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-theme-detail.original.png",
+  "capturedAt": "2026-11-02T03:17:15.728Z",
+  "probes": {
+    "content": {
+      "exists": true,
+      "count": 4,
+      "width": 1200,
+      "paddingY": 0
+    },
+    "breadcrumb": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "height": 36,
+      "gap": 8,
+      "paddingY": 0,
+      "fontSize": 13,
+      "text": "AI实战训练场 主题详情"
+    },
+    "banner": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "height": 186,
+      "radius": 12
+    },
+    "banner-pad": {
+      "exists": true,
+      "count": 1,
+      "padding": 24
+    },
+    "banner-mode-pill": {
+      "exists": true,
+      "count": 1,
+      "radius": 6,
+      "paddingX": 8,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "color": "#ffffff",
+      "text": "训考一体"
+    },
+    "banner-title": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 28,
+      "fontWeight": 750,
+      "lineHeight": 42,
+      "color": "#262626",
+      "text": "杰克新销售成套方案演练（复制）"
+    },
+    "banner-desc": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "color": "#595959"
+    },
+    "banner-stats": {
+      "exists": true,
+      "count": 1,
+      "gap": 14,
+      "fontSize": 13,
+      "color": "#8c8c8c",
+      "text": "训练场景 3 个 | 已通过 0 个 | 进度 0 %"
+    },
+    "main-grid": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "gap": 24
+    },
+    "left-col": {
+      "exists": true,
+      "count": 1,
+      "width": 836,
+      "gap": 16
+    },
+    "aside-col": {
+      "exists": true,
+      "count": 1,
+      "width": 340,
+      "gap": 16
+    },
+    "card-section": {
+      "exists": true,
+      "count": 1,
+      "width": 836,
+      "radius": 12,
+      "padding": 24,
+      "background": "#ffffff"
+    },
+    "aside-section": {
+      "exists": true,
+      "count": 4,
+      "width": 340,
+      "radius": 12,
+      "padding": 24,
+      "background": "#ffffff"
+    },
+    "section-title": {
+      "exists": true,
+      "count": 4,
+      "fontSize": 16,
+      "fontWeight": 800,
+      "color": "#262626",
+      "text": "全部场景单元"
+    },
+    "scene-section-hint": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 13,
+      "color": "#8c8c8c",
+      "text": "共 3 个 · 点击场景可查看训练准备信息"
+    },
+    "scene-card": {
+      "exists": true,
+      "count": 3,
+      "width": 788,
+      "radius": 8,
+      "padding": 16,
+      "background": "#f7f8fa",
+      "borderColor": "#f0f0f0"
+    },
+    "scene-index": {
+      "exists": true,
+      "count": 3,
+      "width": 32,
+      "height": 32,
+      "radius": 10,
+      "fontSize": 13,
+      "fontWeight": 750,
+      "color": "#595959",
+      "text": "01"
+    },
+    "scene-title": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 15,
+      "fontWeight": 500,
+      "lineHeight": 22,
+      "color": "#262626",
+      "text": "初次拜访：破冰与价值初探"
+    },
+    "scene-status": {
+      "exists": true,
+      "count": 3,
+      "radius": 6,
+      "paddingX": 6,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "lineHeight": 22
+    },
+    "scene-meta": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 13,
+      "lineHeight": 20,
+      "color": "#757575"
+    },
+    "scene-action-area": {
+      "exists": true,
+      "count": 3,
+      "width": 186,
+      "gap": 24
+    },
+    "eval-score": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 28,
+      "fontWeight": 700,
+      "text": "70"
+    },
+    "eval-desc": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "lineHeight": 24,
+      "color": "#757575"
+    },
+    "eval-dim-item": {
+      "exists": true,
+      "count": 6,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#262626"
+    },
+    "record-row": {
+      "exists": true,
+      "count": 2,
+      "width": 292,
+      "paddingY": 14
+    },
+    "record-more": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "text": "查看全部"
+    }
+  }
+}

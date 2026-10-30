@@ -1,0 +1,153 @@
+{
+  "page": "drillmate-history",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/history",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".dm-history__container",
+      "props": ["width", "paddingY"]
+    },
+    {
+      "id": "breadcrumb",
+      "selector": ".dm-history__container > nav",
+      "props": ["width", "height", "gap", "fontSize", "paddingY"],
+      "text": true
+    },
+    {
+      "id": "breadcrumb-home",
+      "selector": ".dm-history__container > nav > button",
+      "props": ["fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "card",
+      "selector": ".dm-history__container > div",
+      "props": ["width", "radius", "padding", "background"]
+    },
+    {
+      "id": "title",
+      "selector": ".dm-history__container > div > div:first-child h1",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "subtitle",
+      "selector": ".dm-history__container > div > div:first-child p",
+      "props": ["fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "stat-grid",
+      "selector": ".dm-history__container .grid",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "stat-card",
+      "selector": ".dm-history__container .grid > div",
+      "props": ["radius", "padding", "borderColor", "height"],
+      "count": 4
+    },
+    {
+      "id": "stat-label",
+      "selector": ".dm-history__container .grid > div > div:first-child",
+      "props": ["fontSize", "color", "gap"],
+      "text": true
+    },
+    {
+      "id": "stat-value",
+      "selector": ".dm-history__container .grid > div > div:last-child",
+      "props": ["fontSize", "fontWeight", "color"],
+      "text": true
+    },
+    {
+      "id": "filter-row",
+      "selector": ".dm-history__container .mt-\\[24px\\] > div:first-child",
+      "props": ["width", "height", "gap"]
+    },
+    {
+      "id": "filter-tab",
+      "selector": ".dm-history__container .mt-\\[24px\\] > div:first-child > div:first-child > button",
+      "props": ["height", "radius", "paddingX", "fontSize", "fontWeight"],
+      "count": 4
+    },
+    {
+      "id": "filter-tab-active",
+      "selector": ".dm-history__container .mt-\\[24px\\] > div:first-child > div:first-child > button:first-child",
+      "props": ["background", "color"],
+      "text": true
+    },
+    {
+      "id": "filter-tab-idle",
+      "selector": ".dm-history__container .mt-\\[24px\\] > div:first-child > div:first-child > button:nth-child(2)",
+      "props": ["background", "color"],
+      "text": true
+    },
+    {
+      "id": "theme-filter-label",
+      "selector": ".dm-history__container .mt-\\[24px\\] > div:first-child > div:nth-child(2) > span",
+      "props": ["fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "theme-filter-input",
+      "selector": ".dm-history__container input",
+      "props": ["width", "height", "radius", "fontSize", "borderColor"]
+    },
+    {
+      "id": "table",
+      "selector": ".dm-history__table",
+      "props": ["width"]
+    },
+    {
+      "id": "th",
+      "selector": ".dm-history__table th:not(.gutter)",
+      "props": ["height", "fontSize", "fontWeight", "color", "background", "paddingY"],
+      "text": true
+    },
+    {
+      "id": "row",
+      "selector": ".dm-history__table tbody tr",
+      "props": ["height"]
+    },
+    {
+      "id": "cell-record-name",
+      "selector": ".dm-history__table tbody tr:first-child td:first-child span:first-child",
+      "props": ["fontSize", "fontWeight", "color"],
+      "text": true
+    },
+    {
+      "id": "cell-record-theme",
+      "selector": ".dm-history__table tbody tr:first-child td:first-child span:last-child",
+      "props": ["fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "cell-status",
+      "selector": ".dm-history__table tbody tr:first-child td:nth-child(2) span",
+      "props": ["fontSize", "fontWeight", "lineHeight", "radius", "paddingX"],
+      "text": true
+    },
+    {
+      "id": "cell-score",
+      "selector": ".dm-history__table tbody tr:first-child td:nth-child(3) span",
+      "props": ["fontSize", "fontWeight"]
+    },
+    {
+      "id": "cell-time",
+      "selector": ".dm-history__table tbody tr:first-child td:nth-child(5) span",
+      "props": ["fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "cell-action",
+      "selector": ".dm-history__table tbody tr:first-child td:last-child button",
+      "props": ["fontSize", "color"],
+      "text": true
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "page": "drillmate-scenario-prepare",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-scenario-prepare.original.png",
+  "capturedAt": "2026-11-02T08:14:17.080Z",
+  "probes": {
+    "dialog": {
+      "exists": true,
+      "count": 1,
+      "width": 480,
+      "height": 571,
+      "x": 522,
+      "y": 78,
+      "radius": 16,
+      "background": "#ffffff",
+      "display": "flex"
+    },
+    "header": {
+      "exists": true,
+      "count": 1,
+      "width": 480,
+      "height": 142,
+      "padding": 0,
+      "background": null
+    },
+    "title": {
+      "exists": true,
+      "count": 1,
+      "height": 24,
+      "marginTop": 14,
+      "fontSize": 18,
+      "fontWeight": 700,
+      "lineHeight": 24,
+      "color": "#262626",
+      "text": "初次拜访：破冰与价值初探"
+    },
+    "duration": {
+      "exists": true,
+      "count": 1,
+      "height": 20,
+      "marginTop": 8,
+      "fontSize": 13,
+      "lineHeight": 20,
+      "color": "#8c8c8c",
+      "text": "限时 15 分钟"
+    },
+    "body": {
+      "exists": true,
+      "count": 1,
+      "width": 481,
+      "height": 366,
+      "padding": 0,
+      "background": null
+    },
+    "body-content": {
+      "exists": true,
+      "count": 1,
+      "width": 481,
+      "height": 366,
+      "padding": 24,
+      "display": "flex"
+    },
+    "mode-card": {
+      "exists": true,
+      "count": 2,
+      "width": 433,
+      "radius": 8,
+      "padding": 16,
+      "background": "#fafafa",
+      "borderColor": "#e9e9e9"
+    },
+    "mode-title": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 21,
+      "color": "#262626",
+      "text": "日常训练"
+    },
+    "footer": {
+      "exists": true,
+      "count": 1,
+      "width": 480,
+      "height": 64,
+      "padding": 0,
+      "background": null
+    },
+    "footer-actions": {
+      "exists": true,
+      "count": 1,
+      "width": 480,
+      "height": 64,
+      "gap": 16,
+      "padding": 0,
+      "paddingX": 24,
+      "paddingBottom": 24,
+      "display": "flex"
+    },
+    "action-button": {
+      "exists": true,
+      "count": 2,
+      "width": 208,
+      "height": 40,
+      "radius": 6,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "color": "#ffffff",
+      "background": "#436bff",
+      "borderColor": "#436bff",
+      "text": "开始训练"
+    }
+  }
+}

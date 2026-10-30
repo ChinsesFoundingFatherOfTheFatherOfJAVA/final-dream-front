@@ -4,6 +4,10 @@ export interface AuthUser {
   name: string
   isSuperAdmin: boolean
   status: number
+  /** 部门名，首页左栏头像下展示；来源 /sm/auth/me，未加载时为 null */
+  deptName?: string | null
+  /** 岗位名，暂无展示位但保留在会话里 */
+  positionName?: string | null
 }
 
 export interface StoredAuth {

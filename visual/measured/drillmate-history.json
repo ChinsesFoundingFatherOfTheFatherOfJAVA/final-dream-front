@@ -1,0 +1,203 @@
+{
+  "page": "drillmate-history",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/history",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-history.original.png",
+  "capturedAt": "2026-11-02T03:43:38.217Z",
+  "probes": {
+    "content": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "paddingY": 0
+    },
+    "breadcrumb": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "height": 36,
+      "gap": 8,
+      "paddingY": 0,
+      "fontSize": 13,
+      "text": "AI实战训练场 练习历程"
+    },
+    "breadcrumb-home": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 13,
+      "color": "#8c8c8c",
+      "text": "AI实战训练场"
+    },
+    "card": {
+      "exists": true,
+      "count": 1,
+      "width": 1200,
+      "radius": 12,
+      "padding": 24,
+      "background": "#ffffff"
+    },
+    "title": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 24,
+      "fontWeight": 800,
+      "lineHeight": 32,
+      "color": "#262626",
+      "text": "练习历程"
+    },
+    "subtitle": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c",
+      "text": "回顾已完成报告与暂停中的练习，快速继续上次进度。"
+    },
+    "stat-grid": {
+      "exists": true,
+      "count": 1,
+      "width": 1152,
+      "gap": 12
+    },
+    "stat-card": {
+      "exists": true,
+      "count": 4,
+      "height": 92,
+      "radius": 8,
+      "padding": 16,
+      "borderColor": "#e9e9e9"
+    },
+    "stat-label": {
+      "exists": true,
+      "count": 4,
+      "gap": 8,
+      "fontSize": 14,
+      "color": "#8c8c8c",
+      "text": "总练习次数"
+    },
+    "stat-value": {
+      "exists": true,
+      "count": 4,
+      "fontSize": 22,
+      "fontWeight": 800,
+      "color": "#262626",
+      "text": "6 次"
+    },
+    "filter-row": {
+      "exists": true,
+      "count": 1,
+      "width": 1152,
+      "height": 32,
+      "gap": 14
+    },
+    "filter-tab": {
+      "exists": true,
+      "count": 4,
+      "height": 32,
+      "radius": 8,
+      "paddingX": 12,
+      "fontSize": 14,
+      "fontWeight": 500
+    },
+    "filter-tab-active": {
+      "exists": true,
+      "count": 1,
+      "color": "#ffffff",
+      "background": "#436bff",
+      "text": "全部 6"
+    },
+    "filter-tab-idle": {
+      "exists": true,
+      "count": 1,
+      "color": "#595959",
+      "background": "#f5f5f5",
+      "text": "已通过 2"
+    },
+    "theme-filter-label": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "color": "#8c8c8c",
+      "text": "所属主题"
+    },
+    "theme-filter-input": {
+      "exists": true,
+      "count": 1,
+      "width": 240,
+      "height": 32,
+      "radius": 4,
+      "fontSize": 14,
+      "borderColor": "#d9d9d9"
+    },
+    "table": {
+      "exists": true,
+      "count": 1,
+      "width": 1152
+    },
+    "th": {
+      "exists": true,
+      "count": 6,
+      "height": 50,
+      "paddingY": 14,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "color": "#262626",
+      "background": "#f9fafb",
+      "text": "练习记录"
+    },
+    "row": {
+      "exists": true,
+      "count": 6,
+      "height": 79
+    },
+    "cell-record-name": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "color": "#262626",
+      "text": "初次拜访：破冰与价值初探"
+    },
+    "cell-record-theme": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 12,
+      "color": "#8c8c8c",
+      "text": "主题：杰克新销售成套方案演练（复制）"
+    },
+    "cell-status": {
+      "exists": true,
+      "count": 1,
+      "radius": 3,
+      "paddingX": 4,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "lineHeight": 18,
+      "text": "未通过"
+    },
+    "cell-score": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 18,
+      "fontWeight": 800
+    },
+    "cell-time": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "color": "#8c8c8c",
+      "text": "2026-10-29 16:13"
+    },
+    "cell-action": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "color": "#436bff",
+      "text": "查看报告"
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "page": "admin-version-history",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "reference": "visual/reference/admin-version-history.original.png",
+  "capturedAt": "2026-11-02T06:06:03.600Z",
+  "probes": {
+    "panel": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "display": "block"
+    },
+    "desc": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "height": 22,
+      "marginTop": 0,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#757575",
+      "text": "查看主题的完整版本历史，了解每次更新的内容和影响范围"
+    },
+    "list": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "gap": 0,
+      "marginTop": 16,
+      "display": "block"
+    },
+    "card": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "height": 206,
+      "radius": 12,
+      "padding": 20,
+      "marginTop": 0,
+      "background": "#ffffff",
+      "borderColor": "#e9e9e9",
+      "display": "block"
+    },
+    "card-head": {
+      "exists": true,
+      "count": 1,
+      "width": 1211,
+      "height": 28,
+      "marginTop": 0,
+      "display": "flex"
+    },
+    "version-no-row": {
+      "exists": true,
+      "count": 1,
+      "width": 88,
+      "height": 28,
+      "gap": 12,
+      "display": "flex"
+    },
+    "version-no": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 18,
+      "fontWeight": 700,
+      "lineHeight": 28,
+      "color": "#262626",
+      "text": "1"
+    },
+    "current-badge": {
+      "exists": true,
+      "count": 1,
+      "height": 22,
+      "radius": 4,
+      "padding": 2,
+      "paddingX": 8,
+      "fontSize": 12,
+      "lineHeight": 16,
+      "color": "#2e4dd9",
+      "background": "#f0f6ff",
+      "borderColor": "#bdd2ff",
+      "text": "当前版本"
+    },
+    "version-time": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c"
+    },
+    "stat-grid": {
+      "exists": true,
+      "count": 1,
+      "width": 1211,
+      "height": 82,
+      "gap": 16,
+      "radius": 8,
+      "padding": 16,
+      "marginTop": 0,
+      "background": "#fafafa"
+    },
+    "stat-col": {
+      "exists": true,
+      "count": 3,
+      "width": 382,
+      "display": "block"
+    },
+    "stat-label": {
+      "exists": true,
+      "count": 3,
+      "width": 382,
+      "height": 22,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#757575",
+      "text": "使用人数"
+    },
+    "stat-value": {
+      "exists": true,
+      "count": 3,
+      "width": 382,
+      "height": 28,
+      "fontSize": 18,
+      "fontWeight": 700,
+      "lineHeight": 28,
+      "color": "#262626"
+    },
+    "stat-value-pass": {
+      "exists": true,
+      "count": 1,
+      "color": "#059669"
+    },
+    "stat-value-progress": {
+      "exists": true,
+      "count": 1,
+      "color": "#436bff"
+    },
+    "card-foot": {
+      "exists": true,
+      "count": 1,
+      "width": 1211,
+      "height": 22,
+      "display": "flex"
+    },
+    "creator": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c"
+    },
+    "rollback-slot": {
+      "exists": true,
+      "count": 1,
+      "gap": 8,
+      "display": "flex"
+    }
+  }
+}

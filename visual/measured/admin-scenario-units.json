@@ -1,0 +1,143 @@
+{
+  "page": "admin-scenario-units",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "reference": "visual/reference/admin-scenario-units.original.png",
+  "capturedAt": "2026-11-02T05:56:35.247Z",
+  "probes": {
+    "list": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "display": "block"
+    },
+    "toolbar": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "height": 22,
+      "display": "flex"
+    },
+    "count": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 400,
+      "lineHeight": 22,
+      "color": "#757575"
+    },
+    "ai-add": {
+      "exists": true,
+      "count": 1,
+      "height": 22,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "lineHeight": 22,
+      "color": "#436bff",
+      "background": null
+    },
+    "cards": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "display": "block"
+    },
+    "card": {
+      "exists": true,
+      "count": 3,
+      "width": 1253,
+      "height": 88,
+      "radius": 12,
+      "background": "#ffffff",
+      "borderColor": "#e9e9e9"
+    },
+    "card-summary": {
+      "exists": true,
+      "count": 3,
+      "width": 1251,
+      "height": 86,
+      "padding": 16,
+      "display": "flex"
+    },
+    "card-main": {
+      "exists": true,
+      "count": 3,
+      "height": 54,
+      "gap": 16,
+      "display": "flex"
+    },
+    "seq": {
+      "exists": true,
+      "count": 3,
+      "width": 32,
+      "height": 32,
+      "radius": 8,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "color": "#ffffff",
+      "background": null
+    },
+    "unit-name": {
+      "exists": true,
+      "count": 3,
+      "height": 22,
+      "fontSize": 16,
+      "fontWeight": 600,
+      "lineHeight": 22,
+      "color": "#262626"
+    },
+    "meta": {
+      "exists": true,
+      "count": 3,
+      "height": 24,
+      "gap": 8,
+      "marginTop": 8,
+      "display": "flex"
+    },
+    "tag-audience": {
+      "exists": true,
+      "count": 6,
+      "height": 24,
+      "radius": 4,
+      "paddingX": 8,
+      "paddingY": 2,
+      "fontSize": 13,
+      "fontWeight": 400,
+      "lineHeight": 20,
+      "color": "#7e22ce",
+      "background": "#faf5ff"
+    },
+    "tag-time": {
+      "exists": true,
+      "count": 3,
+      "height": 24,
+      "radius": 4,
+      "paddingX": 8,
+      "paddingY": 2,
+      "fontSize": 13,
+      "fontWeight": 400,
+      "lineHeight": 20,
+      "color": "#d97706",
+      "background": "#fffbeb"
+    },
+    "toggle": {
+      "exists": true,
+      "count": 3,
+      "width": 48,
+      "height": 22,
+      "gap": 4,
+      "display": "flex"
+    },
+    "toggle-label": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c"
+    }
+  }
+}

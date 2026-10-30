@@ -61,10 +61,7 @@ export interface AssistantServerDataBlock {
 
 /** 落库/返回的消息内容块（含事件块） */
 export type AssistantStoredContentBlock =
-  | AssistantTextBlock
-  | AssistantFileBlock
-  | AssistantActionBlock
-  | AssistantServerDataBlock
+  AssistantTextBlock | AssistantFileBlock | AssistantActionBlock | AssistantServerDataBlock
 
 /** WS 客户端 chat 帧（§3.2） */
 export interface AssistantChatFrame {
@@ -137,8 +134,7 @@ export type AssistantEventName =
 
 /** part-content 的 delta：text part 为 text_delta；data part 为 data_delta（JSON 字符串片段） */
 export type AssistantPartDelta =
-  | { type: 'text_delta'; text: string }
-  | { type: 'data_delta'; data: string }
+  { type: 'text_delta'; text: string } | { type: 'data_delta'; data: string }
 
 /** part 内容类型 */
 export type AssistantPartContentType = 'text' | 'data'
@@ -521,7 +517,8 @@ export interface AssistantChatMessage {
 export type AssistantWsStatus = 'idle' | 'connecting' | 'open' | 'reconnecting' | 'closed'
 
 /** 右面板 Tab */
-export type AssistantPanelTab = 'materials' | 'scenarios' | 'profiles' | 'iceberg' | 'criteria'
+export type AssistantPanelTab =
+  'materials' | 'scenarios' | 'profiles' | 'productProfiles' | 'iceberg' | 'criteria'
 
 /** 允许上传的材料格式（§1 枚举） */
 export const ASSISTANT_FILE_TYPES = ['ppt', 'pptx', 'doc', 'docx', 'pdf', 'txt', 'md'] as const
@@ -529,7 +526,7 @@ export const ASSISTANT_FILE_TYPES = ['ppt', 'pptx', 'doc', 'docx', 'pdf', 'txt',
 /** 材料 visibility 文案（03 §3.2 + AssistantActions：1 学员可见 / 0 内部可见） */
 export const ASSISTANT_VISIBILITY_TEXT: Record<number, string> = {
   1: '学员可见',
-  0: '内部可见'
+  0: '内部可见',
 }
 
 // ============================================================

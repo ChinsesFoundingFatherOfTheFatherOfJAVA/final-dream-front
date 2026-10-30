@@ -1,0 +1,395 @@
+{
+  "page": "drillmate-home",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".dm-home__inner",
+      "props": [
+        "width",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "row",
+      "selector": ".dm-home__inner > div",
+      "props": [
+        "gap",
+        "width"
+      ]
+    },
+    {
+      "id": "left-col",
+      "selector": ".dm-home__inner > div > div:nth-child(1)",
+      "props": [
+        "width",
+        "radius",
+        "background",
+        "padding"
+      ]
+    },
+    {
+      "id": "left-avatar",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "left-name",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "left-org",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(4)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "stat-grid",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "gap",
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "stat-cell",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background",
+        "paddingX",
+        "paddingY"
+      ],
+      "count": 4
+    },
+    {
+      "id": "quick-bar",
+      "selector": ".dm-home__inner > div > div:nth-child(2) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background",
+        "padding"
+      ]
+    },
+    {
+      "id": "quick-entry",
+      "selector": ".dm-quick-entry",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "gap"
+      ],
+      "count": 3
+    },
+    {
+      "id": "quick-title",
+      "selector": ".dm-quick-entry > div > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "quick-sub",
+      "selector": ".dm-quick-entry > div > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-panel",
+      "selector": ".dm-home__inner > div > div:nth-child(2) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "background",
+        "padding"
+      ]
+    },
+    {
+      "id": "theme-panel-title",
+      "selector": ".dm-home__inner > div > div:nth-child(2) > div:nth-child(2) span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-card",
+      "selector": ".dm-theme-card",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "borderColor",
+        "background"
+      ]
+    },
+    {
+      "id": "theme-name",
+      "selector": ".dm-theme-card > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-meta",
+      "selector": ".dm-theme-card > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-progress-track",
+      "selector": ".dm-theme-card > div:nth-child(3)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "theme-progress-label",
+      "selector": ".dm-theme-card > div:nth-child(4)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-col",
+      "selector": ".dm-home__inner > div > div:nth-child(3)",
+      "props": [
+        "width",
+        "radius",
+        "background",
+        "padding"
+      ]
+    },
+    {
+      "id": "recent-title",
+      "selector": ".dm-home__inner > div > div:nth-child(3) section > div:nth-child(1) span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-more",
+      "selector": ".dm-home__inner > div > div:nth-child(3) section > div:nth-child(1) span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-card",
+      "selector": ".dm-recent-card",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "borderColor",
+        "background",
+        "padding"
+      ]
+    },
+    {
+      "id": "recent-scenario",
+      "selector": ".dm-recent-card > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-theme",
+      "selector": ".dm-recent-card > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-score",
+      "selector": ".dm-recent-card > div:nth-child(3)",
+      "props": [
+        "fontSize",
+        "gap"
+      ],
+      "text": true
+    },
+    {
+      "id": "left-rank",
+      "selector": ".dm-tier-badge",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ],
+      "text": true
+    },
+    {
+      "id": "stat-value",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(1) > span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "stat-label",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "quick-icon",
+      "selector": ".dm-quick-entry > img",
+      "props": [
+        "width",
+        "height"
+      ],
+      "count": 3
+    },
+    {
+      "id": "theme-name-text",
+      "selector": ".dm-theme-card > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-status-tag",
+      "selector": ".dm-theme-card > div:nth-child(1) > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color",
+        "background",
+        "radius",
+        "paddingX",
+        "paddingY"
+      ],
+      "text": true
+    },
+    {
+      "id": "panel-count",
+      "selector": ".dm-home__inner > div > div:nth-child(2) > div:nth-child(2) span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-fill",
+      "selector": ".dm-theme-card > div:nth-child(3) > div",
+      "props": [
+        "height",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "recent-tag",
+      "selector": ".dm-recent-card > div:nth-child(1) > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color",
+        "background",
+        "radius",
+        "paddingX",
+        "paddingY"
+      ],
+      "text": true
+    },
+    {
+      "id": "recent-head",
+      "selector": ".dm-recent-card > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "stat-unit",
+      "selector": ".dm-home__inner > div > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(1) > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "tier-pill",
+      "selector": ".dm-tier-badge__pill",
+      "props": [
+        "fontSize",
+        "color",
+        "paddingX",
+        "paddingY",
+        "radius"
+      ],
+      "text": true
+    },
+    {
+      "id": "theme-name-row",
+      "selector": ".dm-theme-card > div:nth-child(1)",
+      "props": [
+        "gap"
+      ]
+    }
+  ]
+}

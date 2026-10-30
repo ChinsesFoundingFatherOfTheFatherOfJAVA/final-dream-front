@@ -1,0 +1,723 @@
+{
+  "page": "admin-theme-settings",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "reference": "visual/reference/admin-theme-settings.original.png",
+  "capturedAt": "2026-11-02T06:06:34.697Z",
+  "probes": {
+    "page": {
+      "exists": true,
+      "count": 1,
+      "display": "block"
+    },
+    "tabbar": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "display": "block"
+    },
+    "layout": {
+      "exists": true,
+      "count": 1,
+      "gap": 24,
+      "display": "flex"
+    },
+    "nav-aside": {
+      "exists": true,
+      "count": 1,
+      "width": 240,
+      "radius": 12,
+      "padding": 14,
+      "background": "#ffffff",
+      "borderColor": "#e9e9e9"
+    },
+    "nav-title": {
+      "exists": true,
+      "count": 1,
+      "height": 38,
+      "padding": 8,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c",
+      "text": "快速导航"
+    },
+    "nav-item": {
+      "exists": true,
+      "count": 5,
+      "height": 38,
+      "gap": 10,
+      "radius": 8,
+      "padding": 8,
+      "display": "flex"
+    },
+    "nav-item-active": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 600,
+      "color": "#436bff",
+      "background": "#f1f6fe"
+    },
+    "nav-index": {
+      "exists": true,
+      "count": 5,
+      "fontSize": 12,
+      "fontWeight": 600
+    },
+    "nav-text": {
+      "exists": true,
+      "count": 5,
+      "fontSize": 14,
+      "text": "基本信息"
+    },
+    "main": {
+      "exists": true,
+      "count": 1,
+      "paddingBottom": 81
+    },
+    "block-header": {
+      "exists": true,
+      "count": 5,
+      "height": 24,
+      "paddingX": 15,
+      "paddingY": 0,
+      "display": "flex"
+    },
+    "block-title": {
+      "exists": true,
+      "count": 5,
+      "fontSize": 16,
+      "fontWeight": 500,
+      "lineHeight": 24,
+      "color": "#262626",
+      "text": "基本信息"
+    },
+    "footer": {
+      "exists": true,
+      "count": 1,
+      "height": 57,
+      "gap": 12,
+      "paddingX": 24,
+      "paddingY": 12,
+      "background": "#ffffff",
+      "display": "flex"
+    },
+    "footer-cancel": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "radius": 4,
+      "paddingX": 16,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "color": "#595959",
+      "background": "#ffffff",
+      "text": "取消"
+    },
+    "footer-save": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "radius": 4,
+      "paddingX": 16,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "color": "#ffffff",
+      "background": "#436bff",
+      "text": "保存设置"
+    },
+    "label-sublabel": {
+      "exists": true,
+      "count": 9,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 22,
+      "color": "#262626",
+      "text": "主题名称*"
+    },
+    "required-star": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 14,
+      "color": "#ef4444"
+    },
+    "name-input": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "radius": 4,
+      "paddingX": 12,
+      "paddingY": 4,
+      "fontSize": 14,
+      "color": "#595959",
+      "background": "#ffffff"
+    },
+    "word-count": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 12,
+      "color": "#bfbfbf"
+    },
+    "desc-textarea": {
+      "exists": true,
+      "count": 1,
+      "height": 103,
+      "radius": 4,
+      "paddingX": 12,
+      "paddingY": 9,
+      "fontSize": 14,
+      "color": "#595959",
+      "background": "#ffffff"
+    },
+    "owner-chip": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "gap": 4,
+      "radius": 4,
+      "paddingX": 12,
+      "background": "#fff7ed",
+      "borderColor": "#fed7aa",
+      "display": "flex"
+    },
+    "owner-chip-text": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "text": "管理员"
+    },
+    "owner-add": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "gap": 4,
+      "radius": 4,
+      "paddingX": 12,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "color": "#436bff",
+      "background": "#ffffff",
+      "display": "flex"
+    },
+    "tips-trigger": {
+      "exists": true,
+      "count": 5,
+      "height": 22,
+      "gap": 5,
+      "display": "flex"
+    },
+    "tips-label": {
+      "exists": true,
+      "count": 5,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#436bff",
+      "text": "查看负责人权限说明"
+    },
+    "checkbox-inner": {
+      "exists": true,
+      "count": 11,
+      "width": 16,
+      "height": 16,
+      "radius": 2,
+      "background": "#436bff",
+      "borderColor": "#436bff"
+    },
+    "checkbox-label": {
+      "exists": true,
+      "count": 2,
+      "paddingX": 8,
+      "fontSize": 14,
+      "color": "#595959",
+      "text": "语音对话"
+    },
+    "voice-select": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "radius": 0,
+      "paddingX": 0,
+      "background": null,
+      "borderColor": "#e5e7eb"
+    },
+    "time-card": {
+      "exists": true,
+      "count": 2,
+      "radius": 12,
+      "background": "#ffffff"
+    },
+    "time-optional": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "color": "#8c8c8c",
+      "text": "（可选）"
+    },
+    "date-input": {
+      "exists": true,
+      "count": 2,
+      "height": 32,
+      "radius": 4,
+      "paddingX": 12,
+      "paddingY": 4,
+      "fontSize": 14,
+      "color": "#595959",
+      "background": "#ffffff"
+    },
+    "sf-label": {
+      "exists": true,
+      "count": 14,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 22
+    },
+    "sf-sub": {
+      "exists": true,
+      "count": 16,
+      "marginTop": 2,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#8c8c8c"
+    },
+    "cap-note": {
+      "exists": true,
+      "count": 6,
+      "fontSize": 14,
+      "color": "#757575"
+    },
+    "num-input": {
+      "exists": true,
+      "count": 6,
+      "height": 0,
+      "radius": 4,
+      "paddingX": 12,
+      "paddingY": 4,
+      "fontSize": 14,
+      "color": "#595959",
+      "background": "#ffffff"
+    },
+    "unit": {
+      "exists": true,
+      "count": 9,
+      "fontSize": 14,
+      "color": "#8c8c8c"
+    },
+    "radio-inner": {
+      "exists": true,
+      "count": 8,
+      "width": 0,
+      "height": 0,
+      "radius": 100,
+      "background": "#436bff",
+      "borderColor": "#436bff"
+    },
+    "radio-label": {
+      "exists": true,
+      "count": 2,
+      "paddingX": 8,
+      "fontSize": 14,
+      "color": "#595959"
+    },
+    "join-card": {
+      "exists": true,
+      "count": 2,
+      "gap": 0,
+      "radius": 8,
+      "padding": 16,
+      "display": "block"
+    },
+    "join-card-on": {
+      "exists": true,
+      "count": 1,
+      "radius": 8,
+      "padding": 16,
+      "background": "#f5f7ff",
+      "borderColor": "#436bff"
+    },
+    "join-title": {
+      "exists": true,
+      "count": 2,
+      "marginTop": 0,
+      "fontWeight": 700
+    },
+    "toggle-track": {
+      "exists": true,
+      "count": 6,
+      "width": 0,
+      "height": 0,
+      "radius": 14,
+      "background": "#d9d9d9"
+    },
+    "toggle-thumb": {
+      "exists": true,
+      "count": 6,
+      "width": 0,
+      "height": 0,
+      "radius": 50,
+      "background": "#ffffff"
+    },
+    "guest-row": {
+      "exists": true,
+      "count": 1,
+      "height": 0,
+      "marginTop": 24,
+      "display": "flex"
+    },
+    "text-btn": {
+      "exists": true,
+      "count": 1,
+      "height": 0,
+      "radius": 4,
+      "fontSize": 14,
+      "color": "#436bff"
+    },
+    "mode-option": {
+      "exists": true,
+      "count": 4,
+      "gap": 12,
+      "radius": 8,
+      "padding": 16,
+      "display": "flex"
+    },
+    "mode-option-active": {
+      "exists": true,
+      "count": 2,
+      "radius": 8,
+      "padding": 16,
+      "background": "#f5f7ff",
+      "borderColor": "#436bff"
+    },
+    "mode-name": {
+      "exists": true,
+      "count": 4,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 22,
+      "text": "专家模式"
+    },
+    "mode-desc": {
+      "exists": true,
+      "count": 4,
+      "marginTop": 4,
+      "fontSize": 14,
+      "color": "#8c8c8c"
+    },
+    "default-badge": {
+      "exists": true,
+      "count": 2,
+      "radius": 3,
+      "paddingX": 8,
+      "fontSize": 12,
+      "fontWeight": 500,
+      "color": "#436bff",
+      "background": "#f5f7ff",
+      "text": "默认"
+    },
+    "dm-enabled-badge": {
+      "exists": true,
+      "count": 1,
+      "radius": 12,
+      "paddingX": 11,
+      "paddingY": 3,
+      "fontSize": 12,
+      "fontWeight": 600,
+      "color": "#436bff",
+      "background": "#f5f7ff",
+      "text": "已启用 2 种"
+    },
+    "dm-card": {
+      "exists": true,
+      "count": 2,
+      "radius": 12,
+      "background": "#ffffff",
+      "borderColor": "#e9e9e9"
+    },
+    "dm-card-head": {
+      "exists": true,
+      "count": 2,
+      "gap": 12,
+      "padding": 15,
+      "display": "flex"
+    },
+    "dm-dot": {
+      "exists": true,
+      "count": 2,
+      "width": 0,
+      "height": 0,
+      "radius": 50,
+      "background": "#436bff"
+    },
+    "dm-name": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "color": "#436bff",
+      "text": "训练模式"
+    },
+    "dm-tagline": {
+      "exists": true,
+      "count": 2,
+      "marginTop": 4,
+      "fontSize": 14,
+      "color": "#595959"
+    },
+    "dm-assist": {
+      "exists": true,
+      "count": 2,
+      "gap": 12,
+      "radius": 8,
+      "padding": 16,
+      "display": "flex"
+    },
+    "dm-assist-on": {
+      "exists": true,
+      "count": 1,
+      "background": null,
+      "borderColor": "#436bff"
+    },
+    "dm-assist-name": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "text": "教练点评必选"
+    },
+    "dm-assist-desc": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "color": "#8c8c8c"
+    },
+    "dm-tag": {
+      "exists": true,
+      "count": 1,
+      "radius": 4,
+      "paddingX": 5,
+      "fontSize": 12,
+      "fontWeight": 600,
+      "color": "#8c8c8c",
+      "background": "#f5f5f5",
+      "text": "必选"
+    },
+    "adp-title": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 600,
+      "color": "#8c8c8c"
+    },
+    "pv-stage": {
+      "exists": true,
+      "count": 1,
+      "height": 0,
+      "radius": 14,
+      "paddingX": 14,
+      "paddingY": 16,
+      "background": "#35322e"
+    },
+    "pv-bubble-user": {
+      "exists": true,
+      "count": 1,
+      "radius": 10,
+      "padding": 10,
+      "fontSize": 13,
+      "background": "#ffffff"
+    },
+    "pv-review": {
+      "exists": true,
+      "count": 1,
+      "radius": 10,
+      "padding": 10,
+      "background": "#26242f"
+    },
+    "pv-ai-avatar": {
+      "exists": true,
+      "count": 1,
+      "width": 0,
+      "height": 0,
+      "radius": 50,
+      "fontSize": 11,
+      "background": "#8f86e8"
+    },
+    "pv-input": {
+      "exists": true,
+      "count": 1,
+      "height": 0,
+      "radius": 18,
+      "paddingY": 8,
+      "fontSize": 12
+    },
+    "dm-ac-item": {
+      "exists": true,
+      "count": 2,
+      "radius": 8,
+      "background": "#ffffff",
+      "borderColor": "#f0f0f0"
+    },
+    "dm-ac-name": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "text": "人脸识别"
+    },
+    "dm-combo": {
+      "exists": true,
+      "count": 1,
+      "radius": 10,
+      "paddingX": 16,
+      "paddingY": 14,
+      "marginTop": 14
+    },
+    "dm-combo-cfg-item": {
+      "exists": true,
+      "count": 2,
+      "radius": 8,
+      "padding": 16,
+      "background": "#ffffff"
+    },
+    "practice-item": {
+      "exists": true,
+      "count": 3,
+      "gap": 12,
+      "radius": 8,
+      "padding": 16,
+      "display": "flex"
+    },
+    "practice-name": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "text": "案例练习"
+    },
+    "diff-opt": {
+      "exists": true,
+      "count": 3,
+      "height": 0,
+      "gap": 6,
+      "radius": 8,
+      "paddingX": 16,
+      "paddingY": 8,
+      "fontSize": 14,
+      "fontWeight": 600,
+      "color": "#595959",
+      "background": "#ffffff",
+      "display": "flex"
+    },
+    "diff-opt-active": {
+      "exists": true,
+      "count": 1,
+      "color": "#436bff",
+      "background": "#f5f7ff",
+      "borderColor": "#436bff"
+    },
+    "diff-stars": {
+      "exists": true,
+      "count": 3,
+      "fontSize": 12,
+      "fontWeight": 600,
+      "color": "#f59e0b"
+    },
+    "pass-intro": {
+      "exists": true,
+      "count": 1,
+      "radius": 8,
+      "paddingX": 12,
+      "paddingY": 10,
+      "fontSize": 12,
+      "lineHeight": 20,
+      "color": "#595959",
+      "background": "#f5f7ff",
+      "borderColor": "#436bff"
+    },
+    "pass-intro-strong": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 12,
+      "fontWeight": 700,
+      "text": "训练模式、考核模式"
+    },
+    "opt-config": {
+      "exists": true,
+      "count": 1,
+      "gap": 8,
+      "paddingY": 10,
+      "marginTop": 10,
+      "display": "flex"
+    },
+    "pass-config-text": {
+      "exists": true,
+      "count": 2,
+      "fontSize": 13,
+      "color": "#595959"
+    },
+    "pass-fixed-note": {
+      "exists": true,
+      "count": 1,
+      "radius": 8,
+      "paddingX": 12,
+      "paddingY": 10,
+      "marginTop": 8,
+      "fontSize": 14,
+      "color": "#595959",
+      "background": "#fafafa",
+      "borderColor": "#e9e9e9"
+    },
+    "pass-fixed-strong": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "text": "全部场景单元"
+    },
+    "overview-card": {
+      "exists": true,
+      "count": 4,
+      "radius": 8,
+      "padding": 12,
+      "background": "#fafafa",
+      "borderColor": "#e9e9e9"
+    },
+    "overview-label": {
+      "exists": true,
+      "count": 4,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "color": "#757575",
+      "text": "场景单元"
+    },
+    "overview-value": {
+      "exists": true,
+      "count": 4,
+      "fontSize": 18,
+      "fontWeight": 700,
+      "lineHeight": 28
+    },
+    "ai-design-btn": {
+      "exists": true,
+      "count": 1,
+      "height": 0,
+      "gap": 8,
+      "radius": 8,
+      "paddingY": 8,
+      "fontSize": 14,
+      "fontWeight": 500,
+      "color": "#ffffff",
+      "display": "flex"
+    },
+    "overview-hint": {
+      "exists": true,
+      "count": 1,
+      "marginTop": 8,
+      "fontSize": 14,
+      "color": "#8c8c8c"
+    }
+  }
+}

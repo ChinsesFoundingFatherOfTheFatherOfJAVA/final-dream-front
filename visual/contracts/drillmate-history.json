@@ -1,0 +1,227 @@
+{
+  "$comment": "学员端练习历程页视觉契约。期望值不写在这里——全部来自 visual/measured/drillmate-history.json（原平台实测，由 visual-capture.mjs 生成）。本文件只写「原平台探针 id → 本项目选择器」的映射，以及三类显式豁免：countIgnore（数量随数据变化）、skipProps（容器继承/内容长度导致的属性）、optional（契约刻意不做的元素）。注意：契约 01 §F20 要求表格多一列「学习模式」（原平台只有 6 列），所以 th/row 的子元素全部 countIgnore，列数差异由 desc 说明而不是放宽契约。",
+  "page": "drillmate-history",
+  "path": "/#/sparring/web/drillmate/history",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-history.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/web/drillmate/history",
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".dm-history > .dm-history__container",
+      "desc": "内容区 1200 居中（底部留白由外层负责，跳过 paddingY）",
+      "required": true,
+      "skipProps": [
+        "paddingY"
+      ]
+    },
+    {
+      "id": "breadcrumb",
+      "selector": ".dm-history > .dm-history__container > .dm-breadcrumb",
+      "desc": "面包屑 AI实战训练场 › 练习历程，13px / gap8",
+      "required": true,
+      "skipProps": [
+        "paddingY"
+      ]
+    },
+    {
+      "id": "breadcrumb-home",
+      "selector": ".dm-history .dm-breadcrumb__link",
+      "desc": "面包屑首页链接（可点回首页）",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "card",
+      "selector": ".dm-history > .dm-history__container > .dm-history__card",
+      "desc": "整页白卡：1200 / r12 / p24 / #fff",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "title",
+      "selector": ".dm-history .dm-history__title",
+      "desc": "页面标题「练习历程」24px / 800 / #262626",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "subtitle",
+      "selector": ".dm-history .dm-history__subtitle",
+      "desc": "标题下说明文案 14px / lh22 / #8c8c8c",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "stat-grid",
+      "selector": ".dm-history .dm-stat-grid",
+      "desc": "四宫格统计容器，gap12",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "stat-card",
+      "selector": ".dm-history .dm-stat-grid > .dm-stat-cell",
+      "desc": "统计卡：r8 / p16 / border #e9e9e9（数量恒为 4）",
+      "required": true
+    },
+    {
+      "id": "stat-label",
+      "selector": ".dm-history .dm-stat-grid > .dm-stat-cell > .dm-stat-label",
+      "desc": "统计标签 14px / #8c8c8c / 图标 gap8（数量随卡片数）",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "stat-value",
+      "selector": ".dm-history .dm-stat-grid > .dm-stat-cell > .dm-stat-value",
+      "desc": "统计值 22px / 800 / #262626",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "filter-row",
+      "selector": ".dm-history .dm-filter-row",
+      "desc": "筛选行：Tab 左 + 主题下拉右，gap14",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "filter-tab",
+      "selector": ".dm-history .dm-filter-tabs > .dm-filter-tab",
+      "desc": "Tab 按钮：h32 / r8 / px12 / 14px / 500（4 个：全部/已通过/未通过/练习中）",
+      "required": true
+    },
+    {
+      "id": "filter-tab-active",
+      "selector": ".dm-history .dm-filter-tabs > .dm-filter-tab.is-active",
+      "desc": "选中态：bg #436bff + 白字",
+      "required": true,
+      "skipProps": [
+        "width"
+      ],
+      "countIgnore": true
+    },
+    {
+      "id": "filter-tab-idle",
+      "selector": ".dm-history .dm-filter-tabs > .dm-filter-tab:not(.is-active)",
+      "desc": "未选中态：bg #f5f5f5 + #595959",
+      "required": true,
+      "skipProps": [
+        "width"
+      ],
+      "countIgnore": true
+    },
+    {
+      "id": "theme-filter-label",
+      "selector": ".dm-history .dm-theme-filter > span",
+      "desc": "「所属主题」标签 14px / #8c8c8c",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "theme-filter-input",
+      "selector": ".dm-history .dm-theme-filter .el-select__wrapper",
+      "desc": "主题下拉输入框 240x32 / r4 / fs14（Element Plus 用 box-shadow inset 画 1px 描边，故不比 borderColor）",
+      "required": true,
+      "skipProps": [
+        "borderColor"
+      ]
+    },
+    {
+      "id": "table",
+      "selector": ".dm-history .dm-history__table",
+      "desc": "表格容器宽度铺满卡片",
+      "required": true
+    },
+    {
+      "id": "th",
+      "selector": ".dm-history .dm-history__table th",
+      "desc": "表头：h50 / 14px / 700 / #262626 / bg #f9fafb（契约 F20 要求 7 列含「学习模式」，原平台 6 列 → countIgnore）",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "row",
+      "selector": ".dm-history .dm-history__table tbody tr",
+      "desc": "数据行高 79（行数随记录数变化）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "cell-record-name",
+      "selector": ".dm-history .dm-record__name",
+      "desc": "第一列场景名 14px / 700 / #262626",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "cell-record-theme",
+      "selector": ".dm-history .dm-record__theme",
+      "desc": "第一列下方「主题：xxx」12px / #8c8c8c",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "cell-status",
+      "selector": ".dm-history .dm-record__status",
+      "desc": "状态胶囊 12px / 500 / lh18 / r3 / px4（配色随状态变化：已通过绿、未通过红、练习中蓝）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "color",
+        "background",
+        "width"
+      ]
+    },
+    {
+      "id": "cell-score",
+      "selector": ".dm-history .dm-record__score",
+      "desc": "得分 18px / 800（配色随通过与否变化）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "color",
+        "width"
+      ]
+    },
+    {
+      "id": "cell-time",
+      "selector": ".dm-history .dm-record__time",
+      "desc": "用时 / 开始时间列 14px / #8c8c8c",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "cell-action",
+      "selector": ".dm-history .dm-record__action",
+      "desc": "操作列文字按钮 14px / #436bff（进行中=继续练习，已结束=查看报告）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    }
+  ]
+}

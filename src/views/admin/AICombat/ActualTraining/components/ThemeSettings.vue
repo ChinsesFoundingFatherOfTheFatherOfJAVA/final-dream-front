@@ -1,9 +1,8 @@
 <template>
   <div class="theme-settings">
-    <div class="settings-body">
-    <!-- 左侧快速导航 -->
-    <aside class="quick-nav">
-      <div class="nav-card">
+    <div class="settings-body settingtab-layout">
+      <!-- 左侧快速导航 -->
+      <aside class="quick-nav settingtab-nav">
         <div class="nav-title">快速导航</div>
         <a
           v-for="sec in sections"
@@ -14,24 +13,20 @@
           tabindex="0"
           @keydown.enter.prevent="scrollToSection(sec.id)"
           @click="scrollToSection(sec.id)"
-        >{{ sec.label }}</a>
-      </div>
-    </aside>
+        ><span class="nav-index">{{ sec.label.slice(0, 2) }}</span><span class="nav-text">{{ sec.label.slice(3) }}</span></a>
+      </aside>
 
-    <!-- 右侧表单区（五分区共用一个表单状态，整体保存） -->
-    <div ref="formScroll" class="form-area" @scroll="onScroll">
-      <!-- 01 基本信息 -->
-      <section id="sec-basic" class="form-section">
-        <h3 class="section-title">基本信息</h3>
-        <div class="form-item">
-          <label class="form-label"><span class="required">*</span>主题名称</label>
-          <div class="name-row">
+      <!-- 右侧表单区（五分区共用一个表单状态，整体保存） -->
+      <div ref="formScroll" class="form-area settingtab-main" @scroll="onScroll">
+        <!-- 01 基本信息 -->
+        <section id="sec-basic" class="form-section">
+          <h3 class="section-title sf-block-header"><span class="sf-block-title">基本信息</span></h3>
+          <div class="form-item sf-name">
+            <label class="form-label sf-sublabel">主题名称<span class="required sf-required">*</span></label>
             <el-input v-model="form.basic.themeName" maxlength="50" show-word-limit placeholder="请输入主题名称" />
           </div>
-        </div>
-        <div class="form-item">
-          <label class="form-label">主题描述</label>
-          <div class="desc-wrap">
+          <div class="form-item sf-desc">
+            <label class="form-label sf-sublabel">主题描述</label>
             <el-input
               v-model="form.basic.themeDesc"
               type="textarea"
@@ -40,78 +35,79 @@
               placeholder="请输入主题描述"
             />
           </div>
-        </div>
-        <div class="form-item">
-          <label class="form-label">主题负责人</label>
-          <div class="owner-block">
-            <p class="owner-hint">设置主题负责人，负责人可以对项目进行管理与维护</p>
-            <div class="owner-row">
-              <span class="owner-set">已设置 1 位负责人</span>
-              <span class="owner-tag">管理员</span>
+          <div class="form-item">
+            <label class="form-label sf-sublabel">主题负责人</label>
+            <div class="owner-block">
+              <p class="owner-hint cap-note">设置主题负责人，负责人可以对项目进行管理与维护</p>
+              <div class="owner-row">
+                <span class="owner-set cap-note">已设置 1 位负责人</span>
+                <span class="owner-tag owner-chip"><span class="owner-chip-text">管理员</span></span>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="form-item">
-          <label class="form-label">计划开始时间</label>
-          <el-date-picker
-            v-model="planStart"
-            type="datetime"
-            value-format="YYYY-MM-DDTHH:mm"
-            placeholder="计划开始时间"
-            class="half"
-          />
-        </div>
-        <div class="form-item">
-          <label class="form-label">计划结束时间</label>
-          <el-date-picker
-            v-model="planEnd"
-            type="datetime"
-            value-format="YYYY-MM-DDTHH:mm"
-            placeholder="计划结束时间"
-            class="half"
-          />
-        </div>
+          <div class="time-grid">
+            <div class="form-item setting-section-time">
+              <label class="form-label">计划开始时间<span class="sf-optional">（可选）</span></label>
+              <el-date-picker
+                v-model="planStart"
+                type="datetime"
+                value-format="YYYY-MM-DDTHH:mm"
+                placeholder="计划开始时间"
+                class="half sf-date"
+              />
+            </div>
+            <div class="form-item setting-section-time">
+              <label class="form-label">计划结束时间</label>
+              <el-date-picker
+                v-model="planEnd"
+                type="datetime"
+                value-format="YYYY-MM-DDTHH:mm"
+                placeholder="计划结束时间"
+                class="half sf-date"
+              />
+            </div>
+          </div>
 
-        <div class="fold-panel">
-          <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.planTime = !fold.planTime" @click="fold.planTime = !fold.planTime">
-            <span>计划时间说明</span>
-            <span class="fold-arrow" :class="{ open: fold.planTime }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
+          <div class="fold-panel">
+            <div class="fold-head dm-tips-trigger" role="button" tabindex="0" @keydown.enter.prevent="fold.ownerPerm = !fold.ownerPerm" @click="fold.ownerPerm = !fold.ownerPerm">
+              <span class="dm-tips-label">查看负责人权限说明</span>
+              <span class="fold-arrow" :class="{ open: fold.ownerPerm }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
+            </div>
+            <div v-if="fold.ownerPerm" class="fold-body">
+              主题负责人可以查看主题数据、修改主题设置、管理场景单元与学员；负责人变更请前往人员管理功能（建设中）。
+            </div>
           </div>
-          <div v-if="fold.planTime" class="fold-body">
-            计划时间仅用于展示训练计划周期，不限制学员实际练习时间；不填写则表示不设置计划周期。
+          <div class="fold-panel">
+            <div class="fold-head dm-tips-trigger" role="button" tabindex="0" @keydown.enter.prevent="fold.planTime = !fold.planTime" @click="fold.planTime = !fold.planTime">
+              <span class="dm-tips-label">查看计划时间说明</span>
+              <span class="fold-arrow" :class="{ open: fold.planTime }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
+            </div>
+            <div v-if="fold.planTime" class="fold-body">
+              计划时间仅用于展示训练计划周期，不限制学员实际练习时间；不填写则表示不设置计划周期。
+            </div>
           </div>
-        </div>
-        <div class="fold-panel">
-          <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.ownerPerm = !fold.ownerPerm" @click="fold.ownerPerm = !fold.ownerPerm">
-            <span>负责人权限说明</span>
-            <span class="fold-arrow" :class="{ open: fold.ownerPerm }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
-          </div>
-          <div v-if="fold.ownerPerm" class="fold-body">
-            主题负责人可以查看主题数据、修改主题设置、管理场景单元与学员；负责人变更请前往人员管理功能（建设中）。
-          </div>
-        </div>
-      </section>
+        </section>
 
       <!-- 02 访问控制 -->
       <section id="sec-access" class="form-section">
-        <h3 class="section-title">访问控制</h3>
+        <h3 class="section-title sf-block-header"><span class="sf-block-title">访问控制</span></h3>
 
         <div class="sub-block">
           <div class="sub-title">演练次数配置</div>
           <p class="sub-desc">设置主题的总演练次数和单个学员的演练机会</p>
           <div class="form-item">
             <div class="label-row">
-              <label class="form-label"><span class="required">*</span>总演练次数</label>
-              <span class="capacity-note">剩余企业容量：{{ remainingCapacity }} 次</span>
+              <label class="form-label sf-sublabel">总演练次数<span class="required sf-required">*</span></label>
+              <span class="capacity-note cap-note">剩余企业容量：{{ remainingCapacity }} 次</span>
             </div>
-            <div class="input-with-unit">
+            <div class="input-with-unit sf-num">
               <el-input-number v-model="form.access.totalDrillCount" :min="1" :controls="false" />
               <span class="unit">次</span>
             </div>
-            <p class="field-hint"><span aria-hidden="true">ℹ</span> 学员在本主题内可练习的总演练次数</p>
+            <p class="field-hint cap-note">学员在本主题内可练习的总演练次数</p>
           </div>
           <div class="form-item">
-            <label class="form-label"><span class="required">*</span>单个学员每个场景演练机会</label>
+            <label class="form-label sf-sublabel">单个学员每个场景演练机会<span class="required sf-required">*</span></label>
             <div class="radio-line">
               <el-radio-group v-model="perSceneUnlimited">
                 <el-radio :value="true">不限</el-radio>
@@ -122,13 +118,14 @@
                 :min="1"
                 :controls="false"
                 :disabled="perSceneUnlimited"
+                class="sf-num"
               />
               <span class="unit">次</span>
             </div>
           </div>
           <div class="fold-panel">
-            <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.accessRule = !fold.accessRule" @click="fold.accessRule = !fold.accessRule">
-              <span class="link-text">查看规则详情</span>
+            <div class="fold-head dm-tips-trigger" role="button" tabindex="0" @keydown.enter.prevent="fold.accessRule = !fold.accessRule" @click="fold.accessRule = !fold.accessRule">
+              <span class="link-text dm-tips-label">查看规则详情</span>
               <span class="fold-arrow" :class="{ open: fold.accessRule }" aria-hidden="true"><el-icon><CaretTop /></el-icon></span>
             </div>
             <div v-if="fold.accessRule" class="fold-body">
@@ -143,17 +140,17 @@
           <div class="sub-title">学员加入方式</div>
           <p class="sub-desc">管理员指派始终可用，可开启完全公开允许其他学员加入</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.access.joinMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 1" @click="form.access.joinMode = 1">
+            <div class="select-card join-mode-item" :class="{ selected: form.access.joinMode === 1, 'is-on': form.access.joinMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 1" @click="form.access.joinMode = 1">
               <span class="card-check" aria-hidden="true">{{ form.access.joinMode === 1 ? '☑' : '☐' }}</span>
               <div>
-                <div class="select-card-title">管理员指派</div>
+                <div class="select-card-title join-title">管理员指派</div>
                 <div class="select-card-desc">管理员手动将学员添加到此主题，学员在自己的界面直接可见</div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.access.joinMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 2" @click="form.access.joinMode = 2">
+            <div class="select-card join-mode-item" :class="{ selected: form.access.joinMode === 2, 'is-on': form.access.joinMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.access.joinMode = 2" @click="form.access.joinMode = 2">
               <span class="card-check" aria-hidden="true">{{ form.access.joinMode === 2 ? '☑' : '☐' }}</span>
               <div>
-                <div class="select-card-title">完全公开</div>
+                <div class="select-card-title join-title">完全公开</div>
                 <div class="select-card-desc">所有学员无需申请即可直接参加此主题的练习</div>
               </div>
             </div>
@@ -161,37 +158,37 @@
         </div>
 
         <div class="sub-block">
-          <div class="sub-title-row">
+          <div class="sub-title-row sf-guest-row">
             <div>
               <div class="sub-title">支持游客访问</div>
               <p class="sub-desc">开启后分享链接支持游客扫码进入，数据单独统计</p>
             </div>
-            <el-switch v-model="form.access.guestAccessEnabled" />
+            <el-switch v-model="form.access.guestAccessEnabled" class="sf-toggle" />
           </div>
-          <a class="blue-link" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">配置游客信息收集 →</a>
+          <a class="blue-link sf-text-btn" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">配置游客信息收集 →</a>
         </div>
       </section>
 
       <!-- 03 训练策略 -->
       <section id="sec-strategy" class="form-section">
-        <h3 class="section-title">训练策略</h3>
+        <h3 class="section-title sf-block-header"><span class="sf-block-title">训练策略</span></h3>
 
         <div class="sub-block">
-          <div class="sub-title">AI 响应模式</div>
+          <div class="sub-title sf-sublabel">AI 响应模式</div>
           <p class="sub-desc">控制 AI 角色的思考深度与回复速度，调整后仅对新发起的练习生效，进行中的练习不受影响。</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 1" @click="form.strategy.aiResponseMode = 1">
+            <div class="select-card mode-option" :class="{ selected: form.strategy.aiResponseMode === 1, active: form.strategy.aiResponseMode === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 1" @click="form.strategy.aiResponseMode = 1">
               <span class="radio-dot" :class="{ on: form.strategy.aiResponseMode === 1 }"></span>
               <div class="flex-1">
-                <div class="select-card-title">专家模式 <span v-if="form.strategy.aiResponseMode === 1" class="default-tag">默认</span></div>
-                <div class="select-card-desc">深度思考，侧重对话质量与评估专业度</div>
+                <div class="select-card-title mode-name">专家模式 <span v-if="form.strategy.aiResponseMode === 1" class="default-tag default-badge">默认</span></div>
+                <div class="select-card-desc mode-desc">深度思考，侧重对话质量与评估专业度</div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.strategy.aiResponseMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 2" @click="form.strategy.aiResponseMode = 2">
+            <div class="select-card mode-option" :class="{ selected: form.strategy.aiResponseMode === 2, active: form.strategy.aiResponseMode === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.strategy.aiResponseMode = 2" @click="form.strategy.aiResponseMode = 2">
               <span class="radio-dot" :class="{ on: form.strategy.aiResponseMode === 2 }"></span>
               <div class="flex-1">
-                <div class="select-card-title">快速模式</div>
-                <div class="select-card-desc">快速响应，均衡专业度与响应速度，适合日常高频练习</div>
+                <div class="select-card-title mode-name">快速模式</div>
+                <div class="select-card-desc mode-desc">快速响应，均衡专业度与响应速度，适合日常高频练习</div>
               </div>
             </div>
           </div>
@@ -203,32 +200,32 @@
               <div class="sub-title">AI 演练模式</div>
               <p class="sub-desc">开启需要的演练模式，可同时启用多种；学员将按顺序依次完成。</p>
             </div>
-            <span class="enabled-pill">已启用 {{ enabledDrillModes }} 种</span>
+            <span class="enabled-pill dm-enabled-badge">已启用 {{ enabledDrillModes }} 种</span>
           </div>
 
           <!-- 训练模式 -->
-          <div class="mode-card" :class="{ on: form.strategy.trainingModeEnabled }">
-            <div class="mode-head">
+          <div class="mode-card dm-card" :class="{ on: form.strategy.trainingModeEnabled }">
+            <div class="mode-head dm-card-head">
               <div>
-                <div class="mode-title purple"><span aria-hidden="true">●</span> 训练模式</div>
-                <p class="mode-desc">AI 专注角色扮演，每轮对话结束后根据开启的辅助能力给予反馈，帮助学员在真实场景中持续提升</p>
+                <div class="mode-title dm-name purple"><span class="dm-dot" aria-hidden="true"></span>训练模式</div>
+                <p class="mode-desc dm-tagline">AI 专注角色扮演，每轮对话结束后根据开启的辅助能力给予反馈，帮助学员在真实场景中持续提升</p>
               </div>
-              <el-switch v-model="form.strategy.trainingModeEnabled" />
+              <el-switch v-model="form.strategy.trainingModeEnabled" class="sf-toggle" />
             </div>
             <div v-if="form.strategy.trainingModeEnabled" class="ai-ability">
               <div class="ability-left">
-                <div class="sub-title">AI 辅助能力</div>
+                <div class="sub-title adp-title">AI 辅助能力</div>
                 <p class="sub-desc">练习中每轮对话后实时呈现，帮助学员即时改进</p>
-                <div class="ability-card" :class="{ selected: true }">
+                <div class="ability-card dm-assist is-on" :class="{ selected: true }">
                   <label class="check-line">
                     <el-checkbox model-value disabled />
-                    <span class="ability-name">教练点评 <span class="must-tag">必选</span></span>
+                    <span class="ability-name dm-assist-name">教练点评<span class="must-tag dm-tag">必选</span></span>
                   </label>
-                  <p class="ability-desc">对话中 AI 实时分析学员回答，在表现突出、应对欠佳或触犯禁忌等关键时刻即时表扬或纠偏（按需触发，非每轮出现）</p>
+                  <p class="ability-desc dm-assist-desc">对话中 AI 实时分析学员回答，在表现突出、应对欠佳或触犯禁忌等关键时刻即时表扬或纠偏（按需触发，非每轮出现）</p>
                 </div>
                 <div
-                  class="ability-card"
-                  :class="{ selected: form.strategy.suggestionEnabled }"
+                  class="ability-card dm-assist"
+                  :class="{ selected: form.strategy.suggestionEnabled, 'is-on': form.strategy.suggestionEnabled }"
                   role="button"
                   tabindex="0"
                   @keydown.enter.prevent="form.strategy.suggestionEnabled = !form.strategy.suggestionEnabled"
@@ -239,46 +236,46 @@
                       :model-value="form.strategy.suggestionEnabled"
                       @change="form.strategy.suggestionEnabled = Boolean($event)"
                     />
-                    <span class="ability-name">应对建议</span>
+                    <span class="ability-name dm-assist-name">应对建议</span>
                   </label>
-                  <p class="ability-desc">AI 陪练发言后、学员应答前，学员可点击「生成建议」按需获取应对分析与示范话术</p>
+                  <p class="ability-desc dm-assist-desc">AI 陪练发言后、学员应答前，学员可点击「生成建议」按需获取应对分析与示范话术</p>
                 </div>
               </div>
               <!-- 学员端实时效果示例（静态 mockup，跟随开关联动） -->
               <div class="ability-right">
-                <div class="chat-mockup">
+                <div class="chat-mockup pv-stage">
                   <div class="chat-title">学员端实时效果示例 · 跟随左侧开关联动</div>
-                  <div class="bubble student">我们这款光猫稳定性业内领先，您放心买就行。</div>
-                  <div class="bubble coach">
+                  <div class="bubble student pv-bubble-user">我们这款光猫稳定性业内领先，您放心买就行。</div>
+                  <div class="bubble coach pv-review">
                     <div class="coach-label">教练点评</div>
                     主动报卖点不错，但语气略急——先共情顾虑、再推进会更稳。
                   </div>
                   <div class="bubble trainer">
-                    <div class="trainer-label">AI 陪练</div>
+                    <div class="trainer-label pv-ai-avatar">AI 陪练</div>
                     稳定性谁都会说，我家这个也没说不稳定，凭啥换你们的？
-                    <div class="suggest-btn">✦ 生成建议</div>
+                    <div class="suggest-btn">生成建议</div>
                   </div>
-                  <div class="chat-input-bar">点击说话</div>
+                  <div class="chat-input-bar pv-input">点击说话</div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 考核模式（含防作弊，只展示不做逻辑） -->
-          <div class="mode-card" :class="{ on: form.strategy.assessmentModeEnabled }">
-            <div class="mode-head">
+          <div class="mode-card dm-card" :class="{ on: form.strategy.assessmentModeEnabled }">
+            <div class="mode-head dm-card-head">
               <div>
-                <div class="mode-title gray"><span aria-hidden="true">●</span> 考核模式</div>
-                <p class="mode-desc">全程无 AI 辅助，还原真实客户，用于正式评估</p>
+                <div class="mode-title dm-name gray"><span class="dm-dot" aria-hidden="true"></span>考核模式</div>
+                <p class="mode-desc dm-tagline">全程无 AI 辅助，还原真实客户，用于正式评估</p>
               </div>
-              <el-switch v-model="form.strategy.assessmentModeEnabled" />
+              <el-switch v-model="form.strategy.assessmentModeEnabled" class="sf-toggle" />
             </div>
-            <div v-if="form.strategy.assessmentModeEnabled" class="anti-cheat">
+            <div v-show="form.strategy.assessmentModeEnabled" class="anti-cheat dm-combo">
               <div class="sub-title">防作弊</div>
-              <div class="form-item">
+              <div class="form-item dm-ac-item dm-combo-cfg-item">
                 <div class="label-row">
-                  <label class="form-label">人脸识别</label>
-                  <el-switch v-model="form.strategy.antiCheat.faceCheckEnabled" size="small" />
+                  <label class="form-label dm-ac-name">人脸识别</label>
+                  <el-switch v-model="form.strategy.antiCheat.faceCheckEnabled" size="small" class="sf-toggle" />
                 </div>
                 <el-radio-group
                   v-if="form.strategy.antiCheat.faceCheckEnabled"
@@ -289,8 +286,8 @@
                   <el-radio value="ongoing">考核中持续检测</el-radio>
                 </el-radio-group>
               </div>
-              <div class="form-item">
-                <label class="form-label">切屏检测</label>
+              <div class="form-item dm-ac-item dm-combo-cfg-item">
+                <label class="form-label dm-ac-name">切屏检测</label>
                 <div class="radio-line">
                   <el-radio-group v-model="form.strategy.antiCheat.screenSwitchMode">
                     <el-radio value="forbid">不允许切屏</el-radio>
@@ -301,17 +298,18 @@
                     :min="0"
                     :controls="false"
                     :disabled="form.strategy.antiCheat.screenSwitchMode !== 'allow'"
+                    class="sf-num"
                   />
                   <span class="unit">次</span>
                 </div>
               </div>
-              <p class="field-hint">防作弊设置仅作展示，暂不参与考核逻辑</p>
+              <p class="field-hint cap-note">防作弊设置仅作展示，暂不参与考核逻辑</p>
             </div>
           </div>
 
           <div class="fold-panel">
-            <div class="fold-head" role="button" tabindex="0" @keydown.enter.prevent="fold.drillRule = !fold.drillRule" @click="fold.drillRule = !fold.drillRule">
-              <span class="link-text">查看演练模式配置说明</span>
+            <div class="fold-head dm-tips-trigger" role="button" tabindex="0" @keydown.enter.prevent="fold.drillRule = !fold.drillRule" @click="fold.drillRule = !fold.drillRule">
+              <span class="link-text dm-tips-label">查看演练模式配置说明</span>
               <span class="fold-arrow" :class="{ open: fold.drillRule }" aria-hidden="true"><el-icon><CaretTop /></el-icon></span>
             </div>
             <div v-if="fold.drillRule" class="fold-body">
@@ -323,13 +321,13 @@
         </div>
 
         <div class="sub-block">
-          <div class="sub-title">学员练习方式</div>
+          <div class="sub-title sf-sublabel">学员练习方式</div>
           <p class="sub-desc">勾选后学员可在开始练习时选择对应方式，支持同时开启多种，至少保留一种。</p>
           <div class="select-cards three">
             <div
               v-for="pm in practiceMethodOptions"
               :key="pm.value"
-              class="select-card"
+              class="select-card practice-mode-item"
               :class="{ selected: form.strategy.practiceMethods.includes(pm.value) }"
               role="button"
               tabindex="0"
@@ -338,7 +336,7 @@
             >
               <span class="card-check" aria-hidden="true">{{ form.strategy.practiceMethods.includes(pm.value) ? '☑' : '☐' }}</span>
               <div>
-                <div class="select-card-title">{{ pm.label }}</div>
+                <div class="select-card-title practice-mode-name">{{ pm.label }}</div>
                 <div class="select-card-desc">{{ pm.desc }}</div>
               </div>
             </div>
@@ -346,16 +344,16 @@
         </div>
 
         <div class="sub-block">
-          <div class="sub-title">主题难度</div>
+          <div class="sub-title sf-sublabel">主题难度</div>
           <p class="sub-desc">设置本主题的整体难度等级，将展示在主题头部。</p>
           <div class="difficulty-row">
             <el-button
               v-for="d in [1, 2, 3]"
               :key="d"
-              class="difficulty-btn"
-              :class="{ selected: form.strategy.difficulty === d }"
+              class="difficulty-btn diff-opt"
+              :class="{ selected: form.strategy.difficulty === d, active: form.strategy.difficulty === d }"
               @click="form.strategy.difficulty = d"
-              ><span aria-hidden="true">{{ difficultyStars(d) }}</span> {{ ACT_DIFFICULTY_TEXT[d] }}</el-button>
+              ><span class="diff-opt-stars" aria-hidden="true">{{ difficultyStars(d) }}</span> {{ ACT_DIFFICULTY_TEXT[d] }}</el-button>
           </div>
         </div>
 
@@ -365,41 +363,42 @@
               <div class="sub-title">允许学员自定义难度</div>
               <p class="sub-desc">开启后学员在自定义练习和随机练习时可自行选择难度等级</p>
             </div>
-            <el-switch v-model="form.strategy.allowCustomDifficulty" />
+            <el-switch v-model="form.strategy.allowCustomDifficulty" class="sf-toggle" />
           </div>
         </div>
       </section>
 
       <!-- 04 通过标准 -->
       <section id="sec-pass" class="form-section">
-        <h3 class="section-title">通过标准</h3>
-        <div class="info-banner">基于 <b>训练模式</b> 的练习达标结果，计算场景及主题的通过结果。</div>
+        <h3 class="section-title sf-block-header"><span class="sf-block-title">通过标准</span></h3>
+        <div class="info-banner pass-intro">基于 <strong>训练模式、考核模式</strong> 的练习达标结果，计算场景及主题的通过结果。</div>
 
         <div class="sub-block">
-          <div class="sub-title">场景通过标准</div>
+          <div class="sub-title sf-sublabel">场景通过标准</div>
           <p class="sub-desc">学员达标达到设定次数，即视为通过该场景。达标次数可设 1 ~ N 次。</p>
           <div class="select-cards">
-            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 1" @click="form.passStandard.scenePassType = 1">
+            <div class="select-card mode-option" :class="{ selected: form.passStandard.scenePassType === 1, active: form.passStandard.scenePassType === 1 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 1" @click="form.passStandard.scenePassType = 1">
               <span class="radio-dot" :class="{ on: form.passStandard.scenePassType === 1 }"></span>
               <div class="flex-1">
-                <div class="select-card-title">累计达标</div>
-                <div class="select-card-desc">累计多次练习的达标次数，不要求连续</div>
-                <div v-if="form.passStandard.scenePassType === 1" class="pass-count-row" @click.stop>
-                  累计达标
+                <div class="select-card-title mode-name">累计达标 <span v-if="form.passStandard.scenePassType === 1" class="default-tag default-badge">默认</span></div>
+                <div class="select-card-desc mode-desc">累计多次练习的达标次数，不要求连续</div>
+                <div v-if="form.passStandard.scenePassType === 1" class="pass-count-row opt-config" @click.stop>
+                  <span class="pass-config-text">累计达标</span>
                   <el-input-number
                     v-model="form.passStandard.scenePassCount"
                     :min="1"
                     :controls="false"
+                    class="sf-num"
                   />
-                  次，即通过该场景
+                  <span class="pass-config-text">次，即通过该场景</span>
                 </div>
               </div>
             </div>
-            <div class="select-card" :class="{ selected: form.passStandard.scenePassType === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 2" @click="form.passStandard.scenePassType = 2">
+            <div class="select-card mode-option" :class="{ selected: form.passStandard.scenePassType === 2, active: form.passStandard.scenePassType === 2 }" role="button" tabindex="0" @keydown.enter.prevent="form.passStandard.scenePassType = 2" @click="form.passStandard.scenePassType = 2">
               <span class="radio-dot" :class="{ on: form.passStandard.scenePassType === 2 }"></span>
               <div class="flex-1">
-                <div class="select-card-title">连续达标</div>
-                <div class="select-card-desc">连续多次练习均达标，中途未达标则重新计数</div>
+                <div class="select-card-title mode-name">连续达标</div>
+                <div class="select-card-desc mode-desc">连续多次练习均达标，中途未达标则重新计数</div>
               </div>
             </div>
           </div>
@@ -407,13 +406,13 @@
 
         <div class="sub-block">
           <div class="sub-title">主题通过标准</div>
-          <div class="gray-info-box">学员需通过本主题下的<b>全部场景单元</b>（当前共 {{ contentOverview.scenarioUnitCount }} 个），才算通过本主题。</div>
+          <div class="gray-info-box pass-fixed-note">学员需通过本主题下的<strong>全部场景单元</strong>（当前共 {{ contentOverview.scenarioUnitCount }} 个），才算通过本主题。</div>
         </div>
       </section>
 
       <!-- 05 内容设计 -->
       <section id="sec-content" class="form-section">
-        <h3 class="section-title">内容设计</h3>
+        <h3 class="section-title sf-block-header"><span class="sf-block-title">内容设计</span></h3>
         <div class="sub-block">
           <div class="sub-title">当前内容概览</div>
           <p class="sub-desc">场景单元、客户画像、冰山模型、评估标准等内容通过 AI 设计助手进行配置和优化</p>
@@ -436,14 +435,14 @@
             </div>
           </div>
           <el-button class="ai-design-btn" @click="goAssistant"><span aria-hidden="true">⚡</span> 进入 AI 设计助手 调整内容</el-button>
-          <p class="ai-design-hint">在 AI 助手中可以调整场景设计、客户画像、冰山模型、评估标准和练习限制</p>
+          <p class="ai-design-hint overview-hint cap-note">在 AI 助手中可以调整场景设计、客户画像、冰山模型、评估标准和练习限制</p>
         </div>
       </section>
     </div>
     </div>
 
     <!-- 底部共用操作条 -->
-    <div class="settings-footer">
+    <div class="settings-footer sf-footer">
       <el-button class="btn-cancel" @click="reload">取消</el-button>
       <el-button class="btn-save" :disabled="saving || themeStatus === 5" @click="onSave">{{ saving ? '保存中…' : '保存设置' }}</el-button>
     </div>
@@ -1363,4 +1362,525 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
 }
+
+// 原平台「主题设置」视觉契约：仅覆盖布局与视觉外壳，不改变表单行为。
+.theme-settings {
+  display: block;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+  color: #262626;
+
+  :deep(.el-checkbox__inner) {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+  }
+
+  :deep(.el-checkbox__input.is-checked .el-checkbox__inner),
+  :deep(.el-checkbox__input.is-indeterminate .el-checkbox__inner),
+  :deep(.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner) {
+    width: 16px;
+    height: 16px;
+    background: #436bff;
+    border-color: #436bff;
+    border-radius: 2px;
+  }
+
+  :deep(.el-radio__input.is-checked .el-radio__inner) {
+    background: #436bff;
+    border-color: #436bff;
+    border-radius: 100px;
+  }
+
+  :deep(.el-radio__label) {
+    padding: 0 8px;
+    font-size: 14px;
+    color: #595959;
+  }
+
+  :deep(.el-switch__core) {
+    background: #d9d9d9;
+    border-radius: 14px;
+  }
+
+  :deep(.el-switch.is-checked .el-switch__core) {
+    background: #436bff;
+    border-color: #436bff;
+  }
+
+  :deep(.el-switch__action) {
+    background: #fff;
+    border-radius: 50%;
+  }
+}
+
+.settingtab-layout {
+  display: flex;
+  gap: 24px;
+}
+
+.settingtab-nav {
+  box-sizing: border-box;
+  flex: 0 0 240px;
+  width: 240px;
+  height: fit-content;
+  padding: 14px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+
+  .nav-title {
+    box-sizing: border-box;
+    height: 38px;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 22px;
+    color: #8c8c8c;
+  }
+
+  .nav-item {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 38px;
+    margin: 0;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #595959;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover { background: #f5f7fa; }
+    &.active { color: #436bff; background: #f1f6fe; font-weight: 600; }
+    &:focus-visible { outline-color: #436bff; }
+  }
+
+  .nav-index { font-size: 12px; font-weight: 600; }
+  .nav-text { font-size: 14px; }
+}
+
+.settingtab-main {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0 81px;
+}
+
+.sf-block-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin: 12px 0 16px;
+  padding: 0 15px;
+
+  &::before { display: none; }
+}
+
+.sf-block-title {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #262626;
+}
+
+.sf-sublabel {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  color: #262626;
+}
+
+.form-label .sf-required {
+  margin: 0 0 0 2px;
+  font-size: 14px;
+  color: #ef4444;
+}
+
+.theme-settings .sf-name :deep(.el-input__wrapper),
+.theme-settings :deep(.sf-date .el-input__wrapper),
+.theme-settings .sf-num :deep(.el-input__wrapper) {
+  box-sizing: border-box;
+  height: 32px;
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 0 0 1px #d9d9d9 inset;
+  font-size: 14px;
+  color: #595959;
+}
+
+.sf-name :deep(.el-input__inner),
+.sf-date :deep(.el-input__inner),
+.sf-num :deep(.el-input__inner) {
+  font-size: 14px;
+  color: #595959;
+}
+
+.theme-settings :deep(.el-input__count) {
+  font-size: 12px;
+  color: #bfbfbf;
+}
+
+.sf-desc :deep(.el-textarea__inner) {
+  box-sizing: border-box;
+  height: 103px;
+  min-height: 103px;
+  padding: 9px 12px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 0 0 1px #d9d9d9 inset;
+  font-size: 14px;
+  color: #595959;
+}
+
+.owner-block .owner-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 12px;
+  color: #c2410c;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 4px;
+}
+
+.owner-chip-text { font-size: 12px; font-weight: 500; }
+.owner-block .owner-tag { font-size: inherit; color: #c2410c; background: #fff7ed; }
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.setting-section-time { background: #fff; border-radius: 12px; }
+.sf-optional { font-size: 14px; color: #8c8c8c; }
+
+.fold-panel {
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+
+  .fold-head {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    gap: 5px;
+    height: 22px;
+    padding: 0;
+    color: #436bff;
+    background: transparent;
+  }
+
+  .fold-body { padding: 8px 0 0; }
+}
+
+.dm-tips-label,
+.fold-panel .fold-head .link-text {
+  font-size: 14px;
+  line-height: 22px;
+  color: #436bff;
+}
+
+.sub-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.sub-desc {
+  margin: 2px 0 12px;
+  font-size: 14px;
+  line-height: 22px;
+  color: #8c8c8c;
+}
+
+.theme-settings .cap-note { font-size: 14px; color: #757575; }
+.theme-settings .unit { font-size: 14px; color: #8c8c8c; }
+
+.join-mode-item {
+  display: block;
+  gap: 0;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.join-mode-item.is-on {
+  padding: 16px;
+  background: #f5f7ff;
+  border-color: #436bff;
+  border-radius: 8px;
+}
+
+.select-card .join-title { margin-top: 0; font-weight: 700; }
+.sf-guest-row { display: flex; margin-top: 24px; }
+.sf-text-btn { border-radius: 4px; font-size: 14px; color: #436bff; }
+
+.mode-option {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.mode-option.active {
+  padding: 16px;
+  background: #f5f7ff;
+  border-color: #436bff;
+  border-radius: 8px;
+}
+
+.select-card .mode-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.select-card .mode-desc {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.select-card .default-badge {
+  padding: 0 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #436bff;
+  background: #f5f7ff;
+}
+
+.enabled-pill.dm-enabled-badge {
+  padding: 3px 11px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #436bff;
+  background: #f5f7ff;
+}
+
+.mode-card.dm-card {
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+}
+
+.mode-card .dm-card-head {
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+}
+
+.dm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  background: #436bff;
+  border-radius: 50%;
+}
+
+.mode-card .dm-name.purple,
+.mode-card .dm-name.gray {
+  font-size: 14px;
+  font-weight: 700;
+  color: #436bff;
+}
+
+.mode-card .dm-tagline {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #595959;
+}
+
+.dm-card .ai-ability { margin: 0 15px 15px; }
+
+.ability-card.dm-assist {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.ability-card.dm-assist.is-on { border-color: #436bff; background: #f5f7ff; }
+.ability-card .dm-assist-name { font-size: 14px; font-weight: 700; }
+.ability-card .dm-assist-desc { margin: 0; font-size: 14px; color: #8c8c8c; }
+
+.ability-card .dm-tag {
+  padding: 0 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  background: #f5f5f5;
+}
+
+.sub-title.adp-title { font-size: 14px; font-weight: 600; color: #8c8c8c; }
+
+.chat-mockup.pv-stage {
+  box-sizing: border-box;
+  padding: 16px 14px;
+  background: #35322e;
+  border-radius: 14px;
+}
+
+.chat-mockup .bubble.pv-bubble-user {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #262626;
+  background: #fff;
+}
+
+.chat-mockup .bubble.pv-review {
+  padding: 10px;
+  border-radius: 10px;
+  background: #26242f;
+}
+
+.chat-mockup .bubble.trainer .pv-ai-avatar {
+  display: inline-flex;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 11px;
+  color: #fff;
+  background: #8f86e8;
+}
+
+.chat-mockup .pv-input {
+  padding: 8px 12px;
+  border-radius: 18px;
+  font-size: 12px;
+}
+
+.anti-cheat.dm-combo {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+
+.dm-ac-item {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.dm-ac-name { font-size: 14px; font-weight: 700; }
+.dm-combo-cfg-item { padding: 16px; background: #fff; border-radius: 8px; }
+
+.practice-mode-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.select-card .practice-mode-name { font-size: 14px; font-weight: 700; }
+
+.difficulty-row .diff-opt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  margin-left: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #595959;
+  background: #fff;
+}
+
+.difficulty-row .diff-opt.active {
+  color: #436bff;
+  background: #f5f7ff;
+  border-color: #436bff;
+}
+
+.diff-opt-stars { font-size: 12px; font-weight: 600; color: #f59e0b; }
+
+.info-banner.pass-intro {
+  padding: 10px 12px;
+  border: 1px solid #436bff;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 20px;
+  color: #595959;
+  background: #f5f7ff;
+}
+
+.pass-intro strong { font-size: 12px; font-weight: 700; }
+.opt-config { display: flex; gap: 8px; margin-top: 10px; padding: 10px 0; }
+.pass-config-text { font-size: 13px; color: #595959; }
+
+.gray-info-box.pass-fixed-note {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #595959;
+  background: #fafafa;
+}
+
+.pass-fixed-note strong { font-size: 14px; font-weight: 700; }
+
+.overview-card {
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+}
+
+.overview-card .overview-label { font-size: 14px; line-height: 22px; color: #757575; }
+.overview-card .overview-value { font-size: 18px; font-weight: 700; line-height: 28px; }
+
+.ai-design-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: auto;
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.theme-settings .overview-hint { margin-top: 8px; font-size: 14px; color: #8c8c8c; }
+
+.settings-footer.sf-footer {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  height: 57px;
+  padding: 12px 24px;
+  background: #fff;
+}
+
+.sf-footer > button {
+  box-sizing: border-box;
+  height: 32px;
+  margin: 0;
+  padding: 4px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sf-footer > .btn-cancel { color: #595959; background: #fff; }
+.sf-footer > .btn-save { color: #fff; background: #436bff; border-color: #436bff; }
 </style>

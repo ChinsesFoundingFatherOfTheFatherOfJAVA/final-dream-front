@@ -1,0 +1,114 @@
+{
+  "page": "admin-version-history",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「版本历史」Tab",
+  "note": "原平台 Tab 靠点击切换（location.href 不变），必须先点第 4 个 .fs-tab 再量。原平台类名是 Tailwind 原子类，所以选择器用属性包含匹配，避免方括号转义。版本历史当前只有 1 个版本（current），因此「回滚到此版本」按钮在 DOM 里是 0x0 空壳，标 optional。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(4)",
+      "wait": 1500
+    }
+  ],
+  "probes": [
+    {
+      "id": "panel",
+      "selector": "div[class*=\"min-h-\"]",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "desc",
+      "selector": "div[class*=\"space-y-4\"] > p",
+      "props": ["width", "height", "fontSize", "lineHeight", "color", "marginTop"],
+      "text": true
+    },
+    {
+      "id": "list",
+      "selector": "div[class*=\"space-y-4\"] > div[class*=\"space-y-4\"]",
+      "props": ["width", "gap", "marginTop", "display"]
+    },
+    {
+      "id": "card",
+      "selector": "div[class*=\"rounded-xl\"]",
+      "props": ["width", "height", "padding", "radius", "background", "borderColor", "marginTop", "display"]
+    },
+    {
+      "id": "card-head",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"items-start\"]",
+      "props": ["width", "height", "marginTop", "display"]
+    },
+    {
+      "id": "version-no-row",
+      "selector": "div[class*=\"rounded-xl\"] div[class*=\"gap-3\"]",
+      "props": ["width", "height", "gap", "display"]
+    },
+    {
+      "id": "version-no",
+      "selector": "div[class*=\"rounded-xl\"] div[class*=\"gap-3\"] > div",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "current-badge",
+      "selector": "div[class*=\"rounded-xl\"] div[class*=\"gap-3\"] > span",
+      "props": ["height", "padding", "paddingX", "radius", "fontSize", "lineHeight", "color", "background", "borderColor"],
+      "text": true
+    },
+    {
+      "id": "version-time",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"items-start\"] > span",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "stat-grid",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"grid-cols-3\"]",
+      "props": ["width", "height", "padding", "gap", "radius", "background", "marginTop"]
+    },
+    {
+      "id": "stat-col",
+      "selector": "div[class*=\"grid-cols-3\"] > div",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "stat-label",
+      "selector": "div[class*=\"grid-cols-3\"] > div > div[class*=\"text-sm\"]",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "stat-value",
+      "selector": "div[class*=\"grid-cols-3\"] > div > div[class*=\"text-lg\"]",
+      "props": ["width", "height", "fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "stat-value-pass",
+      "selector": "div[class*=\"grid-cols-3\"] div.text-emerald-600",
+      "props": ["color"]
+    },
+    {
+      "id": "stat-value-progress",
+      "selector": "div[class*=\"grid-cols-3\"] div.text-blue-600",
+      "props": ["color"]
+    },
+    {
+      "id": "card-foot",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"justify-between\"]:not([class*=\"mb-4\"])",
+      "props": ["width", "height", "display"]
+    },
+    {
+      "id": "creator",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"justify-between\"]:not([class*=\"mb-4\"]) > span",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "rollback-slot",
+      "selector": "div[class*=\"rounded-xl\"] > div[class*=\"justify-between\"]:not([class*=\"mb-4\"]) > div",
+      "props": ["gap", "display"],
+      "optional": true
+    }
+  ]
+}

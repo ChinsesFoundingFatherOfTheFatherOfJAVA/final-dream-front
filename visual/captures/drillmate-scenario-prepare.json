@@ -1,0 +1,77 @@
+{
+  "page": "drillmate-scenario-prepare",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "steps": [
+    { "click": ".dm-scene-btn", "wait": 1500 },
+    { "click": ".dm-scene-dialog .dm-case-btn", "wait": 1500 }
+  ],
+  "probes": [
+    {
+      "id": "dialog",
+      "selector": ".dm-check-dialog",
+      "props": ["width", "height", "x", "y", "radius", "background", "display"]
+    },
+    {
+      "id": "header",
+      "selector": ".dm-check-dialog .yxt-dialog__header",
+      "props": ["width", "height", "padding", "background"]
+    },
+    {
+      "id": "title",
+      "selector": ".dm-check-dialog .yxt-dialog__title > div > div:nth-child(2)",
+      "props": ["height", "marginTop", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "duration",
+      "selector": ".dm-check-dialog .yxt-dialog__title > div > div:nth-child(3)",
+      "props": ["height", "marginTop", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "body",
+      "selector": ".dm-check-dialog .yxt-dialog__body",
+      "props": ["width", "height", "padding", "background"]
+    },
+    {
+      "id": "body-content",
+      "selector": ".dm-check-dialog .dm-modal",
+      "props": ["width", "height", "padding", "display"]
+    },
+    {
+      "id": "mode-card",
+      "selector": ".dm-check-dialog .dm-modal > div > div",
+      "props": ["width", "radius", "padding", "background", "borderColor"],
+      "count": 2
+    },
+    {
+      "id": "mode-title",
+      "selector": ".dm-check-dialog .dm-modal > div > div > div:first-child > span",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true,
+      "count": 2
+    },
+    {
+      "id": "footer",
+      "selector": ".dm-check-dialog .yxt-dialog__footer",
+      "props": ["width", "height", "padding", "background"]
+    },
+    {
+      "id": "footer-actions",
+      "selector": ".dm-check-dialog .yxt-dialog__footer > div",
+      "props": ["width", "height", "padding", "paddingX", "paddingBottom", "gap", "display"]
+    },
+    {
+      "id": "action-button",
+      "selector": ".dm-check-dialog .dm-check-btn",
+      "props": ["width", "height", "radius", "fontSize", "fontWeight", "color", "background", "borderColor"],
+      "text": true,
+      "count": 2
+    }
+  ]
+}

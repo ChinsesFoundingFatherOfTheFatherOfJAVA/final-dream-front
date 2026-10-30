@@ -1,0 +1,183 @@
+{
+  "page": "admin-topic-list",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/topic",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → AI实战训练场 → 训练主题（列表页）",
+  "note": "列表一次加载全部卡片、无分页；页面内有跨域 iframe（stc.yxt.com），因此只用 #app / .sp-layout__v2-center 内部的选择器。本项目全局头部高 60（原平台 40），y 坐标整体 +8，故不量 x/y。卡片数量随业务数据变化，契约里统一 countIgnore。",
+  "probes": [
+    {
+      "id": "page",
+      "selector": ".theme-list-page",
+      "props": ["width", "paddingX", "paddingY", "display"]
+    },
+    {
+      "id": "page-header",
+      "selector": ".theme-list-page > .page-header",
+      "props": ["width", "height", "display"]
+    },
+    {
+      "id": "header-info",
+      "selector": ".page-header .header-info",
+      "props": ["height"]
+    },
+    {
+      "id": "page-title",
+      "selector": ".page-header .page-title",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "page-desc",
+      "selector": ".page-header .page-desc",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "header-actions",
+      "selector": ".page-header > div:nth-child(2)",
+      "props": ["width", "height", "display"]
+    },
+    {
+      "id": "btn-intro",
+      "selector": ".page-header > div:nth-child(2) > .intro-toggle",
+      "props": ["height", "radius", "paddingX", "fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "btn-template",
+      "selector": ".page-header > div:nth-child(2) > button:nth-child(2)",
+      "props": ["width", "height", "radius", "paddingX", "paddingY", "background", "borderColor", "color", "fontSize"],
+      "text": true
+    },
+    {
+      "id": "btn-create",
+      "selector": ".page-header > div:nth-child(2) > button:nth-child(3)",
+      "props": ["width", "height", "radius", "paddingX", "paddingY", "background", "borderColor", "color", "fontSize"],
+      "text": true
+    },
+    {
+      "id": "filter-bar",
+      "selector": ".filter-bar",
+      "props": ["width", "height", "display", "gap"]
+    },
+    {
+      "id": "filter-select",
+      "selector": ".filter-bar > .yxt-select",
+      "props": ["height"]
+    },
+    {
+      "id": "filter-input",
+      "selector": ".filter-bar .yxt-select .yxt-input__inner",
+      "props": ["height", "radius", "paddingX", "paddingY", "background", "borderColor", "fontSize", "color"]
+    },
+    {
+      "id": "filter-arrow",
+      "selector": ".filter-bar .yxt-select .yxt-input__suffix",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "filter-source",
+      "selector": ".filter-bar > .select.yxt-select",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "search-box",
+      "selector": ".filter-bar .search-input",
+      "props": ["width", "height", "radius", "background", "borderColor"]
+    },
+    {
+      "id": "search-input",
+      "selector": ".filter-bar .search-input .yxt-input__inner",
+      "props": ["width", "height", "paddingX", "paddingY", "fontSize", "color"]
+    },
+    {
+      "id": "search-prefix",
+      "selector": ".filter-bar .search-input .yxt-input__prefix",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "search-icon",
+      "selector": ".filter-bar .search-input .yxt-input__icon",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "page-container",
+      "selector": ".page-container",
+      "props": ["width", "paddingX", "paddingY"]
+    },
+    {
+      "id": "project-grid",
+      "selector": ".project-grid",
+      "props": ["width", "display", "gap"]
+    },
+    {
+      "id": "project-card",
+      "selector": ".project-grid > .project-card",
+      "props": ["width", "height", "radius", "paddingX", "paddingY", "background", "borderColor", "display"]
+    },
+    {
+      "id": "card-header",
+      "selector": ".project-card .card-header",
+      "props": ["width", "height", "display", "gap"]
+    },
+    {
+      "id": "card-title",
+      "selector": ".project-card .card-title",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "status-tag",
+      "selector": ".project-card .card-header .status-tag",
+      "props": ["height", "radius", "paddingX", "fontSize", "fontWeight", "lineHeight"],
+      "text": true
+    },
+    {
+      "id": "card-desc",
+      "selector": ".project-card .card-desc",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "card-bottom",
+      "selector": ".project-card .card-bottom",
+      "props": ["width", "height", "display", "gap"]
+    },
+    {
+      "id": "card-tags",
+      "selector": ".project-card .card-tags",
+      "props": ["height", "display", "gap"]
+    },
+    {
+      "id": "config-tag",
+      "selector": ".project-card .card-tags .config-tag",
+      "props": ["height", "radius", "paddingX", "paddingY", "fontSize", "fontWeight", "lineHeight"],
+      "text": true
+    },
+    {
+      "id": "card-meta",
+      "selector": ".project-card .card-meta",
+      "props": ["height", "fontSize", "color", "display", "gap"],
+      "text": true
+    },
+    {
+      "id": "card-actions",
+      "selector": ".project-card .card-actions",
+      "props": ["height", "display"]
+    },
+    {
+      "id": "action-btn",
+      "selector": ".project-card .card-actions .action-btn",
+      "props": ["height", "radius", "paddingX", "paddingY", "background", "borderColor", "color", "fontSize"],
+      "text": true
+    },
+    {
+      "id": "no-more-data",
+      "selector": ".no-more-data",
+      "props": ["width", "paddingY", "fontSize", "color"],
+      "text": true
+    }
+  ]
+}

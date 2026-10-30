@@ -47,6 +47,12 @@
         <ProfileTab v-else-if="activeTab === 'profiles'" />
         <IcebergTab v-else-if="activeTab === 'iceberg'" />
         <CriteriaTab v-else-if="activeTab === 'criteria'" />
+        <ProductProfilePanel
+          v-else-if="activeTab === 'productProfiles'"
+          :theme-id="store.themeId || ''"
+          :disabled="store.readOnly"
+          :scenario-units="artifactContent?.scenarios.map((s) => ({ id: s.id, unitName: s.name }))"
+        />
       </template>
     </div>
 
@@ -74,6 +80,7 @@ import ScenarioUnitsTab from './tabs/ScenarioUnitsTab.vue'
 import ProfileTab from './tabs/ProfileTab.vue'
 import IcebergTab from './tabs/IcebergTab.vue'
 import CriteriaTab from './tabs/CriteriaTab.vue'
+import ProductProfilePanel from './tabs/ProductProfilePanel.vue'
 import type { AssistantPanelTab } from '@/types/assistant'
 
 const store = useAssistantStore()
@@ -119,6 +126,11 @@ const tabs = computed(() => [
     count: artifactContent.value?.customerProfiles.length ?? 0,
   },
   { key: 'iceberg' as const, label: '冰山模型', count: 0 },
+  {
+    key: 'productProfiles' as const,
+    label: '产品档案',
+    count: 0,
+  },
   {
     key: 'criteria' as const,
     label: '评估标准',

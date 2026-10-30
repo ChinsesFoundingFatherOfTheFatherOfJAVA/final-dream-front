@@ -1,58 +1,50 @@
 <template>
-  <div class="detail-header">
-    <!-- FP-07 面包屑 + 标题 + 徽章 + 描述 + 时间 -->
-    <div class="breadcrumb">
-      <span class="crumb-link" role="button" tabindex="0" @keydown.enter.prevent="goBack" @click="goBack">训练主题</span>
-      <span class="crumb-sep">/</span>
-      <span class="crumb-current">主题详情</span>
+  <!-- 双根节点：.dm-header（信息+操作）与 .dm-stats（四统计卡），对齐原平台两段结构 -->
+  <div class="dm-header">
+    <div class="dm-header__info">
+      <div class="dm-header__title-row">
+        <h2 class="dm-header__title">{{ detail.themeName }}</h2>
+        <span class="dm-badge">{{ ACT_STATUS_TEXT[detail.status] }}</span>
+        <span class="dm-badge">{{ ACT_ASSIGN_MODE_TEXT[detail.assignMode] }}</span>
+        <span class="dm-badge">{{ difficultyStars(detail.difficulty) }} {{ ACT_DIFFICULTY_TEXT[detail.difficulty] }}</span>
+        <span class="dm-badge">{{ ACT_THEME_MODE_TEXT[detail.themeMode] }}</span>
+      </div>
+      <p class="dm-header__desc">{{ detail.themeDesc || '暂无描述' }}</p>
+      <div class="dm-header__time">
+        <span>创建于 {{ detail.createdAt || '--' }}</span>
+        <span>更新于 {{ detail.updatedAt || '--' }}</span>
+      </div>
     </div>
 
-    <div class="header-main">
-      <div class="header-info">
-        <div class="title-row">
-          <h2 class="theme-title">{{ detail.themeName }}</h2>
-          <span class="badge" :class="`badge-status-${detail.status}`">{{ ACT_STATUS_TEXT[detail.status] }}</span>
-          <span class="badge badge-assign">{{ ACT_ASSIGN_MODE_TEXT[detail.assignMode] }}</span>
-          <span class="badge badge-difficulty">{{ difficultyStars(detail.difficulty) }} {{ ACT_DIFFICULTY_TEXT[detail.difficulty] }}</span>
-          <span class="badge badge-mode">{{ ACT_THEME_MODE_TEXT[detail.themeMode] }}</span>
-        </div>
-        <p class="theme-desc">{{ detail.themeDesc || '暂无描述' }}</p>
-        <p class="theme-time">
-          <span>创建于 {{ detail.createdAt || '--' }}</span>
-          <span class="time-gap">更新于 {{ detail.updatedAt || '--' }}</span>
-        </p>
-      </div>
+    <!-- FP-09/FP-41/FP-43 按钮组按状态呈现；AI 设计助手是唯一主按钮 -->
+    <div class="dm-header__actions">
+      <!-- 草稿：发布主题 + AI 设计助手 -->
+      <template v-if="detail.status === 0">
+        <button type="button" class="dm-btn" @click="openPublish">发布主题</button>
+        <button type="button" class="dm-btn dm-btn--primary" @click="goAssistant">AI 设计助手</button>
+      </template>
 
-      <!-- FP-09/FP-41/FP-43 按钮组按状态呈现 -->
-      <div class="header-actions">
-        <!-- 草稿：发布主题 + AI 设计助手 -->
-        <template v-if="detail.status === 0">
-          <el-button class="btn btn-primary" @click="openPublish"><span aria-hidden="true">🚀</span> 发布主题</el-button>
-          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
-        </template>
+      <!-- 发布中（初始化中）：AI 设计助手 + 导出报表(禁用) -->
+      <template v-else-if="detail.status === 1">
+        <button type="button" class="dm-btn dm-btn--primary" @click="goAssistant">AI 设计助手</button>
+        <button type="button" class="dm-btn" disabled title="初始化完成后可导出">导出报表</button>
+      </template>
 
-        <!-- 发布中（初始化中）：AI 设计助手 + 导出报表(禁用) -->
-        <template v-else-if="detail.status === 1">
-          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
-          <el-button class="btn btn-outline" disabled title="初始化完成后可导出">导出报表</el-button>
-        </template>
+      <!-- 已结束：仅导出报表 -->
+      <template v-else-if="detail.status === 5">
+        <button type="button" class="dm-btn" @click="comingSoon('功能建设中')">导出报表</button>
+      </template>
 
-        <!-- 已结束：仅导出报表 -->
-        <template v-else-if="detail.status === 5">
-          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</el-button>
-        </template>
-
-        <!-- 已发布 / 已暂停：既有按钮组 -->
-        <template v-else>
-          <el-button class="btn btn-outline" @click="onPauseResume">
-            {{ detail.status === 4 ? '恢复' : '暂停' }}
-          </el-button>
-          <el-button class="btn btn-outline btn-danger" @click="onFinish">结束</el-button>
-          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">分享</el-button>
-          <el-button class="btn btn-outline" @click="comingSoon('功能建设中')">导出报表</el-button>
-          <el-button class="btn btn-outline btn-ai" @click="goAssistant">AI 设计助手</el-button>
-        </template>
-      </div>
+      <!-- 已发布 / 已暂停：既有按钮组 -->
+      <template v-else>
+        <button type="button" class="dm-btn" @click="onPauseResume">
+          {{ detail.status === 4 ? '恢复' : '暂停' }}
+        </button>
+        <button type="button" class="dm-btn dm-btn--danger" @click="onFinish">结束</button>
+        <button type="button" class="dm-btn" @click="comingSoon('功能建设中')">分享</button>
+        <button type="button" class="dm-btn" @click="comingSoon('功能建设中')">导出报表</button>
+        <button type="button" class="dm-btn dm-btn--primary" @click="goAssistant">AI 设计助手</button>
+      </template>
     </div>
 
     <!-- FP-41 初始化横幅：发布中蓝色（0/N 场景 · 5s 轮询）→ 完成绿色 -->
@@ -64,107 +56,110 @@
         <span class="banner-text">{{ initBannerText }}</span>
       </div>
       <div class="banner-right">
-        <el-button
+        <button
           v-if="progressFailed"
+          type="button"
           class="banner-action"
           :disabled="retrying"
           @click="onRetryInit"
         >
           {{ retrying ? '重试中…' : '重新初始化' }}
-        </el-button>
-        <el-button v-else-if="progressStatus === 1" class="banner-toggle" @click="bannerCollapsed = !bannerCollapsed">
+        </button>
+        <button v-else-if="progressStatus === 1" type="button" class="banner-action" @click="bannerCollapsed = !bannerCollapsed">
           {{ bannerCollapsed ? '展开' : '收起' }}
-        </el-button>
-        <el-button v-else class="banner-toggle" @click="dismissDoneBanner">知道了</el-button>
+        </button>
+        <button v-else type="button" class="banner-action" @click="dismissDoneBanner">知道了</button>
       </div>
       <div v-if="progressStatus === 1 && !bannerCollapsed" class="banner-bar">
         <div class="bar-fill" :style="{ width: progressPercent + '%' }"></div>
       </div>
     </div>
+  </div>
 
-    <!-- FP-08 四个统计板块（只展示） -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">主题通过率 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
-        <div class="stat-value value-purple">{{ detail.stats.passRate }}<span class="unit">%</span></div>
-        <div class="stat-progress">
-          <div class="progress-fill" :style="{ width: Math.min(100, detail.stats.passRate) + '%' }"></div>
+  <!-- FP-08 四个统计板块（只展示）：文案与配色照原平台，值统一青色 -->
+  <div class="dm-stats">
+    <div class="dm-stats__cards">
+      <div class="dm-stats__card">
+        <div class="dm-stats__label">主题通过率</div>
+        <div class="dm-stats__value">{{ detail.stats.passRate }}%</div>
+        <div class="dm-stats__sub">通过 {{ detail.stats.passUserCount }} 人 / 参与 {{ detail.stats.participantCount }} 人</div>
+      </div>
+      <div class="dm-stats__card">
+        <div class="dm-stats__label">场景单元</div>
+        <div class="dm-stats__value">{{ detail.scenarioUnitCount }}个</div>
+      </div>
+      <div class="dm-stats__card">
+        <div class="dm-stats__label">平均得分</div>
+        <div class="dm-stats__value">{{ detail.stats.avgScore }}分</div>
+        <div class="dm-stats__sub">
+          训练均分 {{ formatAverage(detail.stats.trainingAverage) }} 分 / 考核均分
+          {{ formatAverage(detail.stats.examAverage) }} 分
         </div>
-        <div class="stat-foot">通过 {{ detail.stats.passUserCount }} 人 / 参与 {{ detail.stats.participantCount }} 人</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">场景单元 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
-        <div class="stat-value value-blue">{{ detail.scenarioUnitCount }}<span class="unit">个</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">平均得分 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
-        <div class="stat-value value-orange">{{ detail.stats.avgScore }}<span class="unit">分</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">训练总次数 <span class="info-icon" aria-hidden="true">ⓘ</span></div>
-        <div class="stat-value value-blue">{{ detail.stats.totalTrainingCount }}<span class="unit">次</span></div>
+      <div class="dm-stats__card">
+        <div class="dm-stats__label">练习总次数</div>
+        <div class="dm-stats__value">{{ practiceTotal }}次</div>
+        <div class="dm-stats__sub">
+          训练 {{ detail.stats.trainingCount ?? 0 }} 次 / 考核 {{ detail.stats.examCount ?? 0 }} 次
+        </div>
       </div>
     </div>
-
-    <!-- FP-41 发布弹窗（照线上：主题名/场景数/参与学员/预估时间 + 三条说明） -->
-    <el-dialog
-      :model-value="publishVisible"
-      title="发布主题"
-      width="520px"
-      append-to-body
-      @close="publishVisible = false"
-    >
-      <div class="publish-body">
-        <div class="publish-theme">{{ detail.themeName }}</div>
-        <div class="publish-stats">
-          <div class="publish-stat">
-            <div class="stat-label">场景数</div>
-            <div class="stat-value">{{ detail.scenarioUnitCount }} <span class="unit">个</span></div>
-          </div>
-          <div class="publish-stat">
-            <div class="stat-label">参与学员</div>
-            <div class="stat-value">{{ detail.stats.participantCount }} <span class="unit">人</span></div>
-          </div>
-          <div class="publish-stat">
-            <div class="stat-label">预估初始化</div>
-            <div class="stat-value">≈ {{ estimatedMinutes }} <span class="unit">分钟</span></div>
-          </div>
-        </div>
-        <ul class="publish-notes">
-          <li v-for="(n, i) in publishNotes" :key="i">{{ n }}</li>
-        </ul>
-      </div>
-      <template #footer>
-        <el-button @click="publishVisible = false">取消</el-button>
-        <el-button type="primary" :disabled="publishing" @click="doPublish">
-          {{ publishing ? '发布中…' : '确认发布' }}
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 确认弹窗 -->
-    <ConfirmDialog
-      :visible="confirmVisible"
-      :title="confirmTitle"
-      :message="confirmMessage"
-      :confirm-text="confirmText"
-      :danger="confirmDanger"
-      :loading="actionLoading"
-      @confirm="doAction"
-      @cancel="confirmVisible = false"
-    />
   </div>
+
+  <!-- FP-41 发布弹窗（照线上：主题名/场景数/参与学员/预估时间 + 三条说明） -->
+  <el-dialog
+    :model-value="publishVisible"
+    title="发布主题"
+    width="520px"
+    append-to-body
+    @close="publishVisible = false"
+  >
+    <div class="publish-body">
+      <div class="publish-theme">{{ detail.themeName }}</div>
+      <div class="publish-stats">
+        <div class="publish-stat">
+          <div class="publish-label">场景数</div>
+          <div class="publish-value">{{ detail.scenarioUnitCount }} 个</div>
+        </div>
+        <div class="publish-stat">
+          <div class="publish-label">参与学员</div>
+          <div class="publish-value">{{ detail.stats.participantCount }} 人</div>
+        </div>
+        <div class="publish-stat">
+          <div class="publish-label">预估初始化</div>
+          <div class="publish-value">≈ {{ estimatedMinutes }} 分钟</div>
+        </div>
+      </div>
+      <ul class="publish-notes">
+        <li v-for="(n, i) in publishNotes" :key="i">{{ n }}</li>
+      </ul>
+    </div>
+    <template #footer>
+      <el-button @click="publishVisible = false">取消</el-button>
+      <el-button type="primary" :disabled="publishing" @click="doPublish">
+        {{ publishing ? '发布中…' : '确认发布' }}
+      </el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 确认弹窗 -->
+  <ConfirmDialog
+    :visible="confirmVisible"
+    :title="confirmTitle"
+    :message="confirmMessage"
+    :confirm-text="confirmText"
+    :danger="confirmDanger"
+    :loading="actionLoading"
+    @confirm="doAction"
+    @cancel="confirmVisible = false"
+  />
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { finishTheme, pauseTheme } from '@/api/actTheme'
-import {
-  getScriptProgress,
-  publishAssistantTheme,
-  retryScriptInit
-} from '@/api/assistant'
+import { getScriptProgress, publishAssistantTheme, retryScriptInit } from '@/api/assistant'
 import {
   ACT_ASSIGN_MODE_TEXT,
   ACT_DIFFICULTY_TEXT,
@@ -190,14 +185,22 @@ const confirmDanger = ref(false)
 const actionLoading = ref(false)
 let actionType: 'pause' | 'resume' | 'finish' | null = null
 
-const goBack = () => {
-  router.push('/sparring/freesimulate/topic')
-}
-
 /** FP-30/FP-43：AI 设计助手 → 对话页（携带主题 ID） */
 const goAssistant = () => {
   router.push(`/sparring/freesimulate/assistant/${props.detail.id}`)
 }
+
+// ---------- 统计卡展示 ----------
+
+/** 练习总次数 = 训练 + 考核（后端按报告表聚合；旧数据无该字段时回落 totalTrainingCount） */
+const practiceTotal = computed(() => {
+  const s = props.detail.stats
+  return s.totalPracticeCount ?? s.totalTrainingCount ?? 0
+})
+
+/** 均分：无样本时后端给 null，展示 -- 而不是 0 分 */
+const formatAverage = (value: number | null | undefined) =>
+  value === null || value === undefined ? '--' : value
 
 // ---------- FP-41 发布与初始化进度 ----------
 
@@ -237,7 +240,12 @@ const showInitBanner = computed(() => {
   if (props.detail.status === 1) return true
   // 初始化刚完成（已转为已发布）且用户未关闭 → 绿色横幅；
   // 暂停/已结束等其它状态下不再显示这条"刚完成"提示
-  return props.detail.status === 3 && progressStatus.value === 3 && !doneDismissed.value && progress.value != null
+  return (
+    props.detail.status === 3 &&
+    progressStatus.value === 3 &&
+    !doneDismissed.value &&
+    progress.value != null
+  )
 })
 
 const initBannerClass = computed(() => {
@@ -403,312 +411,269 @@ const doAction = async () => {
 </script>
 
 <style scoped lang="scss">
-.detail-header {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 20px 24px;
-}
+/* 尺寸全部取自 visual/measured/admin-theme-detail.json（原平台 viewport 1509x887） */
 
-.breadcrumb {
+.dm-header {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  margin-bottom: 14px;
-
-  .crumb-link {
-    color: #1890ff;
-    cursor: pointer;
-
-    &:hover { text-decoration: underline; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
-  }
-
-  .crumb-sep { color: #c0c4cc; }
-  .crumb-current { color: #8a8f98; }
-}
-
-.header-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-}
-
-.header-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.title-row {
-  display: flex;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 0;
+  margin-top: 24px;
+  width: 100%;
 
-  .theme-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #1f2329;
+  &__info {
+    flex: 1;
+    min-width: 0;
+    max-width: 660px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+  }
+
+  &__title {
     margin: 0;
-  }
-
-  .badge {
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-size: 13px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: #262626;
     white-space: nowrap;
-
-    &.badge-status-0 { color: #8a8f98; background: #f2f3f5; }
-    &.badge-status-1 { color: #1890ff; background: #e6f7ff; }
-    &.badge-status-2 { color: #e5484d; background: #fdecec; }
-    &.badge-status-3 { color: #52c41a; background: #f0fbe8; }
-    &.badge-status-4 { color: #fa8c16; background: #fff7e6; }
-    &.badge-status-5 { color: #8a8f98; background: #f2f3f5; }
-    &.badge-assign { color: #1890ff; background: #e6f7ff; }
-    &.badge-difficulty { color: #e8940c; background: #fff7e6; }
-    &.badge-mode { color: #6b5ce7; background: #f0edff; }
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-}
 
-.theme-desc {
-  font-size: 14px;
-  color: #8a8f98;
-  margin: 8px 0 6px;
-}
-
-.theme-time {
-  display: flex;
-  gap: 24px;
-  font-size: 13px;
-  color: #a5a9b0;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-
-  .btn {
-    padding: 7px 14px;
-    border-radius: 4px;
+  &__desc {
+    margin: 8px 0;
+    max-width: 658px;
     font-size: 14px;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s, background 0.2s, opacity 0.2s;
-    white-space: nowrap;
+    line-height: 22px;
+    color: #595959;
+  }
 
-    &.btn-outline {
-      background: #fff;
-      color: #4e5969;
-      border: 1px solid #dcdfe6;
+  &__time {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 22px;
+    font-size: 14px;
+    line-height: 22px;
+    color: #8c8c8c;
+  }
 
-      &:hover:not(:disabled) { color: #1890ff; border-color: #1890ff; }
-      &.btn-danger { color: #e5484d; border-color: #f5b5b5; }
-      &.btn-danger:hover:not(:disabled) { background: #fff1f0; border-color: #e5484d; color: #e5484d; }
-      &:disabled { color: #c0c4cc; border-color: #ebeef5; cursor: not-allowed; }
-    }
-
-    &.btn-primary {
-      background: #1890ff;
-      color: #fff;
-      border: 1px solid #1890ff;
-
-      &:hover { opacity: 0.85; }
-    }
-
-    /* AI 设计助手：入口按钮，统一样式（各状态组内可见） */
-    &.btn-ai {
-      color: #6b5ce7;
-      border-color: #d6d2f2;
-      background: #f8f7ff;
-
-      &:hover:not(:disabled) { color: #6b5ce7; border-color: #6b5ce7; background: #f0edff; }
-    }
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    margin-left: 24px;
+    height: 32px;
   }
 }
 
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 18px;
+.dm-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 2px 8px;
+  border: 1px solid #a7f3d0;
+  border-radius: 4px;
+  background: #ecfdf5;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #047857;
+  white-space: nowrap;
+
+  & + & { border-color: #bdd2ff; background: #f0f6ff; color: #2e4dd9; }
+  & + & + & { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+  & + & + & + & { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+}
+
+.dm-btn {
+  height: 32px;
+  padding: 0 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  color: #595959;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) { border-color: #436bff; color: #436bff; }
+  &:disabled { color: #bfbfbf; cursor: not-allowed; }
+
+  &--danger { border-color: #fca5a5; color: #dc2626; }
+
+  &--primary {
+    border-color: #436bff;
+    background: #436bff;
+    color: #fff;
+
+    &:hover:not(:disabled) { border-color: #3358e0; background: #3358e0; color: #fff; }
+  }
 }
 
 /* FP-41 初始化横幅 */
 .init-banner {
-  position: relative;
-  margin-top: 18px;
-  padding: 12px 14px;
+  flex-basis: 100%;
+  margin-top: 16px;
+  padding: 12px 16px;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  font-size: 14px;
+  line-height: 22px;
 
-  &.banner-running { background: #e6f7ff; border: 1px solid #bae0ff; color: #0b5b96; }
-  &.banner-done { background: #f0fbe8; border: 1px solid #d3f0c0; color: #2e7d32; }
-  &.banner-error { background: #fff1f0; border: 1px solid #ffccc7; color: #c0392b; }
+  &.banner-running { background: #f0f6ff; color: #2e4dd9; }
+  &.banner-done { background: #ecfdf5; color: #047857; }
+  &.banner-error { background: #fef2f2; color: #dc2626; }
 
   .banner-main {
     display: flex;
     align-items: center;
-    gap: 9px;
-    flex: 1;
-    min-width: 0;
-
-    .banner-icon { font-size: 15px; }
-    .banner-text { font-size: 14px; }
-  }
-
-  .banner-spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(24, 144, 255, 0.3);
-    border-top-color: #1890ff;
-    border-radius: 50%;
-    animation: banner-spin 0.8s linear infinite;
-    flex-shrink: 0;
+    gap: 8px;
   }
 
   .banner-right {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
 
-    .banner-toggle,
-    .banner-action {
-      padding: 4px 12px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid currentColor;
-      border-radius: 4px;
-      font-size: 13px;
-      color: inherit;
-      cursor: pointer;
-      white-space: nowrap;
+  .banner-action {
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+  }
 
-      &:hover:not(:disabled) { background: #fff; }
-      &:disabled { opacity: 0.6; cursor: not-allowed; }
-    }
+  .banner-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: dm-spin 0.8s linear infinite;
   }
 
   .banner-bar {
-    flex-basis: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 3px;
+    margin-top: 8px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(46, 77, 217, 0.15);
     overflow: hidden;
+  }
 
-    .bar-fill {
-      height: 100%;
-      background: #1890ff;
-      border-radius: 3px;
-      transition: width 0.4s;
-    }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: currentColor;
+    transition: width 0.3s;
   }
 }
 
-@keyframes banner-spin {
+@keyframes dm-spin {
   to { transform: rotate(360deg); }
 }
 
-.publish-body { padding: 4px 0 0; }
+/* FP-08 四统计卡 */
+.dm-stats {
+  display: block;
+  margin-top: 24px;
+  width: 100%;
 
-.publish-theme {
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f2f3f5;
-  color: #1f2329;
-  font-size: 15px;
-  font-weight: 600;
+  &__cards {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  &__card {
+    flex: 1;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #e9e9e9;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  &__label {
+    font-size: 14px;
+    line-height: 22px;
+    color: #595959;
+  }
+
+  &__value {
+    margin-top: 4px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #0891b2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__sub {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 22px;
+    color: #757575;
+  }
 }
 
-.publish-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin: 14px 0;
+/* 发布弹窗 */
+.publish-body {
+  .publish-theme {
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+  }
+
+  .publish-stats {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+  }
 
   .publish-stat {
-    padding: 10px 12px;
-    border: 1px solid #eef0f3;
+    flex: 1;
+    padding: 12px;
     border-radius: 8px;
-    background: #fafbfc;
+    background: #f7f8fa;
   }
 
-  .stat-label {
-    margin-bottom: 5px;
-    color: #8a8f98;
-    font-size: 12px;
+  .publish-label {
+    font-size: 13px;
+    color: #8c8c8c;
   }
 
-  .stat-value {
-    color: #1890ff;
-    font-size: 20px;
+  .publish-value {
+    margin-top: 4px;
+    font-size: 18px;
     font-weight: 600;
+    color: #262626;
+  }
 
-    .unit {
-      margin-left: 2px;
-      font-size: 12px;
-      font-weight: 400;
-    }
+  .publish-notes {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 22px;
+    color: #8c8c8c;
   }
 }
 
-.publish-notes {
-  margin: 0;
-  padding-left: 18px;
-
-  li {
-    color: #646a73;
-    font-size: 13px;
-    line-height: 1.9;
-  }
-}
-
-.stat-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 14px 16px;
-
-  .stat-label {
-    font-size: 13px;
-    color: #8a8f98;
-    margin-bottom: 8px;
-
-    .info-icon { color: #c9cdd4; }
-  }
-
-  .stat-value {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: 4px;
-
-    .unit { font-size: 14px; font-weight: 400; margin-left: 2px; }
-    &.value-purple { color: #6b5ce7; }
-    &.value-blue { color: #1890ff; }
-    &.value-orange { color: #e8940c; }
-  }
-
-  .stat-progress {
-    height: 6px;
-    background: #f2f3f5;
-    border-radius: 3px;
-    overflow: hidden;
-    margin: 4px 0 6px;
-
-    .progress-fill {
-      height: 100%;
-      background: #6b5ce7;
-      border-radius: 3px;
-      transition: width 0.3s;
-    }
-  }
-
-  .stat-foot {
-    font-size: 13px;
-    color: #a5a9b0;
-  }
+@media (max-width: 1200px) {
+  .dm-stats__cards { flex-wrap: wrap; }
+  .dm-stats__card { flex: 1 1 45%; }
+  .dm-header__actions { margin-left: 0; margin-top: 12px; }
 }
 </style>

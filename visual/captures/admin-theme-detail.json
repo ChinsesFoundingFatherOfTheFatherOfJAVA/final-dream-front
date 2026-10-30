@@ -1,0 +1,463 @@
+{
+  "page": "admin-theme-detail",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「学员管理」Tab",
+  "note": "Tab 面板不是 URL 参数驱动：点 .fs-tab 后 location.href 不变，内容区被整体替换。所以必须用 steps 先点 Tab 再量。本项目 viewport 用 1509x887（原平台实际渲染尺寸），避免 Tailwind 断点差异。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(2)",
+      "wait": 1500
+    }
+  ],
+  "probes": [
+    {
+      "id": "page",
+      "selector": ".theme-detail-page",
+      "props": [
+        "width",
+        "paddingX",
+        "paddingY",
+        "background"
+      ],
+      "text": false
+    },
+    {
+      "id": "breadcrumb",
+      "selector": ".theme-detail-page > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "breadcrumb-link",
+      "selector": ".theme-detail-page > div:nth-child(1) > a",
+      "props": [
+        "fontSize",
+        "color",
+        "lineHeight"
+      ]
+    },
+    {
+      "id": "breadcrumb-current",
+      "selector": ".theme-detail-page > div:nth-child(1) > span",
+      "props": [
+        "fontSize",
+        "color",
+        "fontWeight",
+        "lineHeight"
+      ]
+    },
+    {
+      "id": "header",
+      "selector": ".theme-detail-page > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "header-info",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "title-row",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "theme-title",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > h1",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "title-badge",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span",
+      "props": [
+        "height",
+        "paddingX",
+        "paddingY",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color",
+        "background",
+        "borderColor"
+      ],
+      "count": 4
+    },
+    {
+      "id": "theme-desc",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1) > p",
+      "props": [
+        "fontSize",
+        "color",
+        "lineHeight"
+      ]
+    },
+    {
+      "id": "theme-time",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)",
+      "props": [
+        "height",
+        "gap",
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "header-actions",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "action-btn",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(2) > button",
+      "props": [
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background",
+        "borderColor"
+      ],
+      "count": 5
+    },
+    {
+      "id": "action-btn-primary",
+      "selector": ".theme-detail-page > div:nth-child(2) > div:nth-child(2) > button:last-child",
+      "props": [
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "stat-strip",
+      "selector": ".stat-strip",
+      "props": [
+        "width",
+        "height",
+        "marginTop",
+        "display"
+      ]
+    },
+    {
+      "id": "stat-cards",
+      "selector": ".stat-group-cards",
+      "props": [
+        "width",
+        "height",
+        "gap",
+        "marginTop",
+        "display"
+      ]
+    },
+    {
+      "id": "stat-card",
+      "selector": ".head-stat",
+      "props": [
+        "width",
+        "height",
+        "padding",
+        "radius",
+        "background",
+        "borderColor"
+      ],
+      "count": 4
+    },
+    {
+      "id": "stat-label",
+      "selector": ".head-stat-label",
+      "props": [
+        "fontSize",
+        "color",
+        "lineHeight"
+      ],
+      "count": 4
+    },
+    {
+      "id": "stat-value",
+      "selector": ".head-stat-val",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "count": 4
+    },
+    {
+      "id": "stat-sub",
+      "selector": ".head-stat-sub",
+      "props": [
+        "fontSize",
+        "color",
+        "lineHeight"
+      ],
+      "count": 4
+    },
+    {
+      "id": "tabbar",
+      "selector": ".fs-tabbar",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "tab-nav",
+      "selector": ".fs-tabbar nav",
+      "props": [
+        "gap"
+      ]
+    },
+    {
+      "id": "tab",
+      "selector": ".fs-tab",
+      "props": [
+        "height",
+        "paddingBottom",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color",
+        "borderBottomWidth",
+        "borderBottomColor"
+      ],
+      "count": 5
+    },
+    {
+      "id": "tab-active",
+      "selector": ".fs-tab.is-active",
+      "props": [
+        "height",
+        "paddingBottom",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color",
+        "borderBottomWidth",
+        "borderBottomColor"
+      ],
+      "count": 1
+    },
+    {
+      "id": "learner",
+      "selector": ".theme-detail-comp-learner",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "learner-toolbar",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "learner-actions",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "learner-add",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1) > div:nth-child(1) > button:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "learner-urge",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1) > div:nth-child(1) > button:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "learner-export",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1) > div:nth-child(1) > button:nth-child(3)",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "learner-filters",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "learner-input",
+      "selector": ".theme-detail-comp-learner input",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "paddingY",
+        "radius",
+        "fontSize",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "source-cards",
+      "selector": ".theme-detail-comp-learner > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "gap",
+        "display"
+      ]
+    },
+    {
+      "id": "source-card",
+      "selector": ".theme-detail-comp-learner > div:nth-child(2) > button",
+      "props": [
+        "width",
+        "height",
+        "padding",
+        "radius",
+        "background",
+        "borderColor"
+      ],
+      "count": 2
+    },
+    {
+      "id": "source-tag",
+      "selector": ".theme-detail-comp-learner > div:nth-child(2) > button span",
+      "props": [
+        "height",
+        "paddingX",
+        "paddingY",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "background",
+        "borderColor",
+        "color"
+      ],
+      "count": 2
+    },
+    {
+      "id": "table-card",
+      "selector": ".theme-detail-comp-learner > div:nth-child(3)",
+      "props": [
+        "width",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "th",
+      "selector": ".theme-detail-comp-learner .yxt-table__header-wrapper th",
+      "props": [
+        "height",
+        "paddingY",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color",
+        "background",
+        "borderBottomColor"
+      ]
+    },
+    {
+      "id": "td",
+      "selector": ".theme-detail-comp-learner .yxt-table__body-wrapper td",
+      "props": [
+        "height",
+        "paddingY",
+        "fontSize",
+        "lineHeight",
+        "color",
+        "borderBottomColor"
+      ]
+    },
+    {
+      "id": "pagination",
+      "selector": ".theme-detail-comp-learner .yxt-pagination",
+      "props": [
+        "width",
+        "height",
+        "padding",
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "learner-footnote",
+      "selector": ".theme-detail-comp-learner > div:nth-child(4)",
+      "props": [
+        "height",
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    }
+  ]
+}

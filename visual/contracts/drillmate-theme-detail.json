@@ -1,0 +1,248 @@
+{
+  "$comment": "学员端主题详情视觉契约。期望值不写在这里——全部来自 visual/measured/drillmate-theme-detail.json（原平台实测，由 visual-capture.mjs 生成）。本文件只写「原平台探针 id → 本项目选择器」的映射，以及三类显式豁免：countIgnore（数量随数据变化）、skipProps（容器继承/内容长度导致的属性）、optional（契约刻意不做的元素）。",
+  "page": "drillmate-theme-detail",
+  "path": "/#/sparring/web/drillmate/detail/2114946858329477121",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-theme-detail.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".dm-detail > .dm-inner",
+      "desc": "内容区 1200 居中（原平台该选择器命中 4 个同宽容器，本项目只 1 个 .dm-inner，故不锁数量；底部留白交由页面容器，跳过 paddingY）",
+      "required": true,
+      "skipProps": [
+        "paddingY"
+      ],
+      "countIgnore": true
+    },
+    {
+      "id": "breadcrumb",
+      "selector": ".dm-detail .dm-breadcrumb",
+      "desc": "面包屑 AI实战训练场 › 主题详情",
+      "required": true,
+      "skipProps": [
+        "paddingY"
+      ]
+    },
+    {
+      "id": "banner",
+      "selector": ".dm-detail .dm-banner",
+      "desc": "页头渐变 banner 1200 / r12",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "banner-pad",
+      "selector": ".dm-detail .dm-banner > .dm-banner__pad",
+      "desc": "banner 内边距 24",
+      "required": true
+    },
+    {
+      "id": "banner-mode-pill",
+      "selector": ".dm-detail .dm-banner .dm-mode-pill",
+      "desc": "模式胶囊：训考一体 / 日常训练 / 通关考核（配色随模式变化）",
+      "required": true,
+      "skipProps": [
+        "color",
+        "background",
+        "width"
+      ]
+    },
+    {
+      "id": "banner-title",
+      "selector": ".dm-detail .dm-banner h1",
+      "desc": "主题名 28px/750/lh42",
+      "required": true
+    },
+    {
+      "id": "banner-desc",
+      "selector": ".dm-detail .dm-banner p",
+      "desc": "主题描述 14px #595959",
+      "required": true
+    },
+    {
+      "id": "banner-stats",
+      "selector": ".dm-detail .dm-banner .dm-banner__stats",
+      "desc": "训练场景 N 个 | 已通过 M 个 | 进度 X%",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "main-grid",
+      "selector": ".dm-detail .dm-grid",
+      "desc": "左右两列 1fr / 340px，间距 24",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "left-col",
+      "selector": ".dm-detail .dm-grid > .dm-left",
+      "desc": "左列 836 / gap16",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "aside-col",
+      "selector": ".dm-detail .dm-grid > .dm-aside",
+      "desc": "右列 340 / gap16",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "card-section",
+      "selector": ".dm-detail .dm-grid > .dm-left > section",
+      "desc": "全部场景单元卡片：836 / r12 / p24 / #fff",
+      "required": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "aside-section",
+      "selector": ".dm-detail .dm-grid > .dm-aside > section",
+      "desc": "右栏四段：评估标准 / 学习资料 / 产品档案 / 我的训练记录（无档案时该段不渲染，故不锁数量）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "section-title",
+      "selector": ".dm-detail .dm-grid section h2",
+      "desc": "栏目标题 16px/800/#262626",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "scene-section-hint",
+      "selector": ".dm-detail .dm-left > section .dm-section__hint",
+      "desc": "共 N 个 · 点击场景可查看训练准备信息",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "scene-card",
+      "selector": ".dm-detail .dm-scene",
+      "desc": "场景卡：788 / r8 / p16 / #f7f8fa / border #f0f0f0",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "scene-index",
+      "selector": ".dm-detail .dm-scene > .dm-scene__index",
+      "desc": "两位序号方块 32x32 r10",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "scene-title",
+      "selector": ".dm-detail .dm-scene h3",
+      "desc": "场景名 15px/500/lh22",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "scene-status",
+      "selector": ".dm-detail .dm-scene .dm-scene__status",
+      "desc": "场景状态胶囊（未开始 / 进行中 / 已通过，配色随状态变化）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "color",
+        "background",
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "scene-meta",
+      "selector": ".dm-detail .dm-scene > .dm-scene__main > .dm-scene__meta",
+      "desc": "适用人群 + 练习次数 13px/lh20/#757575",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "scene-action-area",
+      "selector": ".dm-detail .dm-scene > .dm-scene__actions",
+      "desc": "最高分 + 开始练习按钮区 186 / gap24",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "eval-score",
+      "selector": ".dm-detail .dm-aside section .dm-eval__score strong",
+      "desc": "通过分数数值 28px/700",
+      "required": true,
+      "skipProps": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "eval-desc",
+      "selector": ".dm-detail .dm-eval__desc",
+      "desc": "评估说明文字 14px/#757575（原平台该选择器同时命中「通过分数」行与说明行共 2 个，本项目分数行有独立类名，故不锁数量）",
+      "required": true,
+      "skipProps": [
+        "height",
+        "lineHeight",
+        "width"
+      ],
+      "countIgnore": true
+    },
+    {
+      "id": "eval-dim-item",
+      "selector": ".dm-detail .dm-eval__dims > .dm-eval__dim",
+      "desc": "评估维度行 14px/lh22/#262626",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "record-row",
+      "selector": ".dm-detail .dm-records > .dm-record",
+      "desc": "我的训练记录行（数量随我的练习数变化）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "record-more",
+      "selector": ".dm-detail .dm-records__more span",
+      "desc": "查看全部 14px/500",
+      "required": true,
+      "skipProps": [
+        "width",
+        "height"
+      ]
+    }
+  ]
+}

@@ -84,6 +84,13 @@ export interface ActThemeStats {
   participantCount: number
   avgScore: number
   totalTrainingCount: number
+  /** 练习总次数（训练 + 考核，后端按报告表聚合） */
+  totalPracticeCount?: number | null
+  trainingCount?: number | null
+  examCount?: number | null
+  /** 训练均分 / 考核均分，无样本时为 null */
+  trainingAverage?: number | null
+  examAverage?: number | null
 }
 
 export interface ActThemeDetail {

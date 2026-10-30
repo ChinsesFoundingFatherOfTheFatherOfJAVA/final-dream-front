@@ -1,0 +1,343 @@
+{
+  "page": "admin-data-analysis",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「数据分析」Tab",
+  "note": "原平台 Tab 靠点击切换（location.href 不变），必须先点第 5 个 .fs-tab 再量。原平台图表全部是 CSS 条形（无 canvas/echarts），所以标题里的「图表容器」在这里就是 .fs-insight-panel / .fs-insight-bin-track / .fs-insight-distbar 这些容器，只量容器尺寸与背景，不涉及 canvas 内部像素。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(5)",
+      "wait": 1800
+    }
+  ],
+  "probes": [
+    {
+      "id": "panel-wrap",
+      "selector": "div[class*=\"min-h-\"]",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "layout",
+      "selector": ".fs-insight-layout",
+      "props": ["width", "gap", "display"]
+    },
+    {
+      "id": "nav-holder",
+      "selector": ".fs-insight-nav-holder",
+      "props": ["width"]
+    },
+    {
+      "id": "nav",
+      "selector": ".fs-insight-nav",
+      "props": ["width", "padding", "paddingX", "radius", "background", "borderColor", "display"]
+    },
+    {
+      "id": "nav-title",
+      "selector": ".fs-insight-nav-title",
+      "props": ["width", "height", "padding", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "nav-list",
+      "selector": ".fs-insight-nav-list",
+      "props": ["gap", "display"]
+    },
+    {
+      "id": "nav-item-active",
+      "selector": ".fs-insight-nav-item.is-active",
+      "props": ["height", "padding", "paddingX", "gap", "radius", "fontSize", "fontWeight", "lineHeight", "color", "background", "display"],
+      "text": true
+    },
+    {
+      "id": "nav-no-active",
+      "selector": ".fs-insight-nav-item.is-active .fs-insight-nav-no",
+      "props": ["width", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "nav-name-active",
+      "selector": ".fs-insight-nav-item.is-active .fs-insight-nav-name",
+      "props": ["width", "height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "nav-item",
+      "selector": ".fs-insight-nav-item:not(.is-active)",
+      "props": ["padding", "paddingX", "gap", "radius", "fontSize", "fontWeight", "lineHeight", "color", "display"]
+    },
+    {
+      "id": "nav-no",
+      "selector": ".fs-insight-nav-item:not(.is-active) .fs-insight-nav-no",
+      "props": ["width", "fontSize", "fontWeight", "color"]
+    },
+    {
+      "id": "main",
+      "selector": ".fs-insight-main",
+      "props": ["width", "background"]
+    },
+    {
+      "id": "modebar",
+      "selector": ".fs-insight-modebar",
+      "props": ["height", "gap", "display"]
+    },
+    {
+      "id": "modetab-active",
+      "selector": ".fs-insight-modetab.is-active",
+      "props": ["width", "height", "paddingX", "radius", "fontSize", "fontWeight", "lineHeight", "color", "background", "borderColor", "display"],
+      "text": true
+    },
+    {
+      "id": "modetab",
+      "selector": ".fs-insight-modetab:not(.is-active)",
+      "props": ["width", "height", "paddingX", "radius", "fontSize", "fontWeight", "lineHeight", "color", "background", "borderColor", "display"],
+      "text": true
+    },
+    {
+      "id": "section",
+      "selector": ".fs-insight-section",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "stats",
+      "selector": ".fs-insight-stats",
+      "props": ["width", "height", "gap", "display"]
+    },
+    {
+      "id": "stat",
+      "selector": ".fs-insight-stat",
+      "props": ["width", "height", "padding", "radius", "background"]
+    },
+    {
+      "id": "stat-val",
+      "selector": ".fs-insight-stat-val",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "stat-val-unit",
+      "selector": ".fs-insight-stat-val i",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "stat-label",
+      "selector": ".fs-insight-stat-label",
+      "props": ["height", "fontSize", "lineHeight", "color", "marginTop"],
+      "text": true
+    },
+    {
+      "id": "scope",
+      "selector": ".fs-insight-scope",
+      "props": ["height", "gap", "display"]
+    },
+    {
+      "id": "scope-label",
+      "selector": ".fs-insight-scope-label",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "scope-select",
+      "selector": ".fs-insight-scope-sel",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "scope-input",
+      "selector": ".fs-insight-scope-sel input",
+      "props": ["width", "height", "padding", "paddingX", "radius", "fontSize", "lineHeight", "color", "background", "borderColor"]
+    },
+    {
+      "id": "panel",
+      "selector": ".fs-insight-panel",
+      "props": ["width", "padding", "radius", "background", "borderColor", "display"]
+    },
+    {
+      "id": "panel-hd",
+      "selector": ".fs-insight-panel-hd",
+      "props": ["width", "height", "gap", "marginTop", "display"]
+    },
+    {
+      "id": "panel-title",
+      "selector": ".fs-insight-panel-title",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "panel-extra",
+      "selector": ".fs-insight-panel-extra",
+      "props": ["height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "panel-extra-val",
+      "selector": ".fs-insight-panel-extra b",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "bin",
+      "selector": ".fs-insight-bin",
+      "props": ["width", "height", "gap", "marginTop", "display"]
+    },
+    {
+      "id": "bin-label",
+      "selector": ".fs-insight-bin-label",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "bin-track",
+      "selector": ".fs-insight-bin-track",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "bin-in",
+      "selector": ".fs-insight-bin-in",
+      "props": ["height", "radius", "background"]
+    },
+    {
+      "id": "bin-num",
+      "selector": ".fs-insight-bin-num",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "panel-sub",
+      "selector": ".fs-insight-panel-sub",
+      "props": ["height", "fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "dim",
+      "selector": ".fs-insight-dim",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "dim-hd",
+      "selector": ".fs-insight-dim-hd",
+      "props": ["width", "height", "marginTop", "display"]
+    },
+    {
+      "id": "dim-name",
+      "selector": ".fs-insight-dim-name",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "dim-avg",
+      "selector": ".fs-insight-dim-avg",
+      "props": ["fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "distbar",
+      "selector": ".fs-insight-distbar",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "seg",
+      "selector": ".fs-insight-seg",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+    },
+    {
+      "id": "seg-weak",
+      "selector": ".fs-insight-seg.is-weak",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"],
+      "optional": true
+    },
+    {
+      "id": "seg-mid",
+      "selector": ".fs-insight-seg.is-mid",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"],
+      "optional": true
+    },
+    {
+      "id": "seg-good",
+      "selector": ".fs-insight-seg.is-good",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+    },
+    {
+      "id": "bandnote",
+      "selector": ".fs-insight-bandnote",
+      "props": ["width", "height", "gap", "marginTop", "display"]
+    },
+    {
+      "id": "band",
+      "selector": ".fs-insight-band",
+      "props": ["height", "display"]
+    },
+    {
+      "id": "band-dot",
+      "selector": ".fs-insight-dot",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "band-range",
+      "selector": ".fs-insight-band-range",
+      "props": ["fontSize", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "band-val",
+      "selector": ".fs-insight-band-val",
+      "props": ["fontSize", "fontWeight", "color"],
+      "text": true
+    },
+    {
+      "id": "cv-endpoint",
+      "selector": ".fs-insight-cv-endpoint",
+      "props": ["height", "gap", "display"]
+    },
+    {
+      "id": "cv-head",
+      "selector": ".fs-insight-cvrow.is-head",
+      "props": ["width", "height", "padding", "paddingX", "gap", "radius", "background", "display"]
+    },
+    {
+      "id": "cv-name-head",
+      "selector": ".fs-insight-cvrow.is-head .fs-insight-cv-name",
+      "props": ["width", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "cv-nums-head",
+      "selector": ".fs-insight-cvrow.is-head .fs-insight-cv-nums",
+      "props": ["width", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "cv-track-head",
+      "selector": ".fs-insight-cvrow.is-head .fs-insight-cv-track-head",
+      "props": ["width", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "cv-row",
+      "selector": ".fs-insight-cvrow:not(.is-head)",
+      "props": ["width", "padding", "gap", "display"]
+    },
+    {
+      "id": "cv-name",
+      "selector": ".fs-insight-cvrow:not(.is-head) .fs-insight-cv-name",
+      "props": ["width", "fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "cv-nums",
+      "selector": ".fs-insight-cvrow:not(.is-head) .fs-insight-cv-nums",
+      "props": ["width", "fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "cv-track",
+      "selector": ".fs-insight-cv-track",
+      "props": ["height", "radius", "background"]
+    },
+    {
+      "id": "cv-delta",
+      "selector": ".fs-insight-delta",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"]
+    }
+  ]
+}

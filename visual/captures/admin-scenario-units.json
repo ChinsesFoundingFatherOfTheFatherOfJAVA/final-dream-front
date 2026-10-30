@@ -1,0 +1,94 @@
+{
+  "page": "admin-scenario-units",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「场景单元管理」Tab（默认折叠态）",
+  "note": "Tab 面板不是 URL 参数驱动：点 .fs-tab 后 location.href 不变，内容区被整体替换，所以必须用 steps 先点 Tab 再量。量的是**折叠态**（该 Tab 的默认渲染状态），因为本项目审计脚本 visual-audit.mjs 没有 steps 能力，无法在审计时点击展开；展开态的结构与配色另用 tmp 脚本按同一份 measured 逐项核对。选择器全部锚在 .fs-tabbar 之后的面板 div 上，避免匹配到页头同色系徽章（页头也有 bg-amber-50 的「正常」徽章）。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(1)",
+      "wait": 2000
+    }
+  ],
+  "probes": [
+    {
+      "id": "list",
+      "selector": ".fs-tabbar + div > div",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "toolbar",
+      "selector": ".fs-tabbar + div > div > div:nth-child(1)",
+      "props": ["width", "height", "display"]
+    },
+    {
+      "id": "count",
+      "selector": ".fs-tabbar + div > div > div:nth-child(1) > p",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "ai-add",
+      "selector": ".fs-tabbar + div > div > div:nth-child(1) > button",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+    },
+    {
+      "id": "cards",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2)",
+      "props": ["width", "display"]
+    },
+    {
+      "id": "card",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div",
+      "props": ["width", "height", "radius", "background", "borderColor"]
+    },
+    {
+      "id": "card-summary",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button",
+      "props": ["width", "height", "padding", "display"]
+    },
+    {
+      "id": "card-main",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(1)",
+      "props": ["height", "gap", "display"]
+    },
+    {
+      "id": "seq",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(1) > div:nth-child(1)",
+      "props": ["width", "height", "radius", "fontSize", "fontWeight", "color", "background"]
+    },
+    {
+      "id": "unit-name",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "meta",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)",
+      "props": ["height", "gap", "marginTop", "display"]
+    },
+    {
+      "id": "tag-audience",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button span.bg-purple-50",
+      "props": ["height", "paddingX", "paddingY", "radius", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+    },
+    {
+      "id": "tag-time",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button span.bg-amber-50",
+      "props": ["height", "paddingX", "paddingY", "radius", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+    },
+    {
+      "id": "toggle",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(2)",
+      "props": ["width", "height", "gap", "display"]
+    },
+    {
+      "id": "toggle-label",
+      "selector": ".fs-tabbar + div > div > div:nth-child(2) > div > button > div:nth-child(2) > span",
+      "props": ["fontSize", "lineHeight", "color"]
+    }
+  ]
+}

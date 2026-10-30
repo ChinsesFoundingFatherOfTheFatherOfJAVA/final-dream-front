@@ -1,0 +1,93 @@
+{
+  "page": "drillmate-scenario-prepare",
+  "path": "/#/sparring/web/drillmate/detail/2114946858329477121",
+  "steps": [
+    {
+      "click": ".dm-scene__btn",
+      "wait": 1500
+    }
+  ],
+  "probes": [
+    {
+      "id": "dialog",
+      "selector": ".el-overlay-dialog .dm-check-dialog",
+      "desc": "场景准备弹窗",
+      "required": true
+    },
+    {
+      "id": "header",
+      "selector": ".dm-check-dialog .el-dialog__header",
+      "desc": "弹窗头部容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "title",
+      "selector": ".dm-check-dialog .dm-check-title__text",
+      "desc": "标题样式对齐；场景名称来自业务上下文，本项目沿用既有通用标题，固定文本豁免",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "duration",
+      "selector": ".dm-check-dialog .dm-check-duration",
+      "desc": "既有 preflight 限时信息；原平台该场景限时 15 分钟，本项目由 preflight 返回真实限时（当前 10 分钟），属业务数据差异",
+      "required": true,
+      "text": false
+    },
+    {
+      "id": "body",
+      "selector": ".dm-check-dialog .el-dialog__body",
+      "desc": "Element Plus 弹窗 body 叶子容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "body-content",
+      "selector": ".dm-check-dialog .dm-modal",
+      "desc": "弹窗内容包裹",
+      "required": true
+    },
+    {
+      "id": "mode-card",
+      "selector": ".dm-check-dialog .dm-mode-card",
+      "desc": "日常训练/通关考核两张展示卡；只读展示既有 studyMode，不新增切换行为",
+      "required": true
+    },
+    {
+      "id": "mode-title",
+      "selector": ".dm-check-dialog .dm-mode-card__title",
+      "desc": "模式卡标题",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "footer",
+      "selector": ".dm-check-dialog .el-dialog__footer",
+      "desc": "Element Plus 弹窗 footer 容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "required": true,
+      "skipProps": [
+        "background"
+      ]
+    },
+    {
+      "id": "footer-actions",
+      "selector": ".dm-check-dialog .dm-check-actions",
+      "desc": "底部操作按钮组",
+      "required": true
+    },
+    {
+      "id": "action-button",
+      "selector": ".dm-check-dialog .dm-check-actions .dm-check-btn",
+      "desc": "开始训练与取消按钮；恢复/下一步保留独立业务入口且不纳入此双按钮探针",
+      "required": true,
+      "text": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# 浏览器配置目录（体积大、含缓存与本机状态，不入库）
+# 含并行审计时各成员用的独立端口 profile（VISUAL_PROFILE_DIR）
+.chrome-profile*/
+.chrome-profile/
+.chrome-profile-original/
+
+# 原平台登录态（含 token，勿提交）
+.original-auth.json
+
+# 勘探过程中的临时截图（结论已沉淀进 captures/contracts）
+reference/_probe-*.png
+
+# 审计产物（每次 npm run visual:check 重新生成）
+reports/

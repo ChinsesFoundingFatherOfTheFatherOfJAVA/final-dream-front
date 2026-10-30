@@ -1,0 +1,48 @@
+{
+  "page": "admin-topic-list",
+  "path": "/#/sparring/freesimulate/topic",
+  "pathNote": "本项目 hash 路由，sparring 下 freesimulate 重定向到 topic（router/index.ts:396），因此直接用 /#/sparring/freesimulate/topic 打开列表页；原平台是 /sparring/#/freesimulate/topic。",
+  "measured": "admin-topic-list",
+  "reference": "visual/reference/admin-topic-list.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/freesimulate/topic",
+  "probes": [
+    { "id": "page", "selector": ".theme-list-page", "desc": "列表页容器 1301 宽 / 24px 内边距 / flex 纵向", "required": true },
+
+    { "id": "page-header", "selector": ".theme-list-page > .page-header", "desc": "标题行 1253x56（标题 32 + 间距 4 + 副标题 20）", "required": true },
+    { "id": "header-info", "selector": ".page-header .header-info", "desc": "标题块高 56", "required": true },
+    { "id": "page-title", "selector": ".page-header .page-title", "desc": "「训练主题管理」24px/700/32 行高 #262626", "required": true, "text": true },
+    { "id": "page-desc", "selector": ".page-header .page-desc", "desc": "「管理所有训练主题」14px/20 行高 #757575", "required": true, "text": true },
+
+    { "id": "header-actions", "selector": ".page-header > .header-actions", "desc": "右侧按钮组 344x32（84 + 16 + 110 + 12 + 122）", "required": true },
+    { "id": "btn-intro", "selector": ".page-header .header-actions > .intro-toggle", "desc": "「查看产品介绍」文字按钮 22 高 / r4 / 无内边距 / #436bff", "required": true, "text": true },
+    { "id": "btn-template", "selector": ".page-header .header-actions > .btn-template", "desc": "「从模板创建」110x32 / r4 / px19 / 白底 #d9d9d9 边框", "required": true, "text": true },
+    { "id": "btn-create", "selector": ".page-header .header-actions > .btn-create", "desc": "「+ 创建新主题」122x32 / r4 / 蓝底 #436bff", "required": true, "text": true },
+
+    { "id": "filter-bar", "selector": ".filter-bar", "desc": "筛选行 1253x32 / gap 12", "required": true },
+    { "id": "filter-select", "selector": ".filter-bar > .yxt-select", "desc": "四个下拉（归属/状态/模式 160x32，来源 148x32）", "required": true },
+    { "id": "filter-input", "selector": ".filter-bar .yxt-select .yxt-input__inner", "desc": "下拉输入框 32 高 / r4 / px12 / 白底 #d9d9d9 边框 / 14px #595959", "required": true },
+    { "id": "filter-arrow", "selector": ".filter-bar .yxt-select .yxt-input__suffix", "desc": "下拉箭头槽 24x32", "required": true },
+    { "id": "filter-source", "selector": ".filter-bar > .select.yxt-select", "desc": "来源下拉 148x32（占位项，不参与查询）", "required": true },
+    { "id": "search-box", "selector": ".filter-bar .search-input", "desc": "搜索框外层 240x32：本身无背景无圆角（白底与 r4 在内层 input）", "required": true, "skipProps": ["borderColor", "background"], "skipReason": "外层只作定位容器，白底/圆角/边框都绘制在内层 input 上；原平台外层 background 实测为全透明（记为 null）、border-color 是浏览器默认 #e5e7eb 残留值，两者都无视觉含义" },
+    { "id": "search-input", "selector": ".filter-bar .search-input .yxt-input__inner", "desc": "搜索输入框 240x32 / 左侧 32px（图标位）/ 14px #595959", "required": true },
+    { "id": "search-prefix", "selector": ".filter-bar .search-input .yxt-input__prefix", "desc": "搜索图标槽 32x32", "required": true },
+    { "id": "search-icon", "selector": ".filter-bar .search-input .yxt-input__icon", "desc": "搜索图标 24x32（图形图标，非 emoji）", "required": true },
+
+    { "id": "page-container", "selector": ".page-container", "desc": "网格外壳 1277 宽（-8/-12 负外边距把网格对齐回 1253）/ 内边距 8x12", "required": true },
+    { "id": "project-grid", "selector": ".project-grid", "desc": "三列卡片网格 1253 宽 / gap 20", "required": true },
+
+    { "id": "project-card", "selector": ".project-grid > .project-card", "desc": "卡片 404x161 / r12 / p20 / 白底 #e9e9e9 边框", "required": true, "countIgnore": true },
+    { "id": "card-header", "selector": ".project-card .card-header", "desc": "标题行 362x24 / gap 12", "required": true, "countIgnore": true },
+    { "id": "card-title", "selector": ".project-card .card-title", "desc": "主题名 16px/700/22 行高 #262626（内容来自业务数据，不比对文案）", "required": true, "countIgnore": true },
+    { "id": "status-tag", "selector": ".project-card .card-header .status-tag", "desc": "状态标签 24 高 / r4 / px6 / 12px 500（颜色随状态变化，文案随数据变化，故只比尺寸）", "required": true, "countIgnore": true, "skipProps": ["color", "background", "borderColor"] },
+    { "id": "card-desc", "selector": ".project-card .card-desc", "desc": "描述 362x45 / 14px/22.4 行高 #757575 / 两行截断", "required": true, "countIgnore": true },
+    { "id": "card-bottom", "selector": ".project-card .card-bottom", "desc": "底部信息行 362x26 / gap 8", "required": true, "countIgnore": true },
+    { "id": "card-tags", "selector": ".project-card .card-tags", "desc": "标签组 26 高 / gap 8", "required": true, "countIgnore": true },
+    { "id": "config-tag", "selector": ".project-card .card-tags .config-tag", "desc": "配置标签 26 高 / r6 / p2x8 / 12px 500（模式色随数据变化，只比尺寸）", "required": true, "countIgnore": true, "skipProps": ["color", "background"] },
+    { "id": "card-meta", "selector": ".project-card .card-meta", "desc": "学员数与更新时间 22 高 / gap 6 / 12px #8c8c8c（文案随数据变化）", "required": true, "countIgnore": true },
+    { "id": "card-actions", "selector": ".project-card .card-actions", "desc": "右下角操作区 32 高（绝对定位）", "required": true, "countIgnore": true },
+    { "id": "action-btn", "selector": ".project-card .card-actions .action-btn", "desc": "「复制」按钮 32 高 / r4 / px16 / 白底 #d9d9d9 边框", "required": true, "countIgnore": true, "text": true },
+
+    { "id": "no-more-data", "selector": ".no-more-data", "desc": "列表尾部「已加载全部数据」1253 宽 / 上下 24 内边距 / 14px #8c8c8c", "required": true, "text": true }
+  ]
+}

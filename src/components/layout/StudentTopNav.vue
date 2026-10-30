@@ -5,21 +5,43 @@
         <span class="logo-text">JACK 杰克</span>
       </router-link>
       <nav class="nav-menu">
-        <router-link to="/study/userhome" class="nav-item" :class="{ active: currentRoute === '/study/userhome' }">
+        <router-link
+          to="/study/userhome"
+          class="nav-item"
+          :class="{ active: currentRoute === '/study/userhome' }"
+        >
           我的陪练
         </router-link>
-        <router-link to="/study/home" class="nav-item" :class="{ active: currentRoute === '/study/home' }">
+        <router-link
+          to="/study/home"
+          class="nav-item"
+          :class="{ active: currentRoute === '/study/home' }"
+        >
           首页
         </router-link>
         <span class="nav-item disabled" title="敬请期待">话术目录</span>
         <span class="nav-item disabled" title="敬请期待">课程中心</span>
-        <router-link to="/sparring/web/speech/list" class="nav-item" :class="{ active: currentRoute === '/sparring/web/speech/list' }">
+        <router-link
+          to="/sparring/web/speech/list"
+          class="nav-item"
+          :class="{ active: currentRoute === '/sparring/web/speech/list' }"
+        >
           AI对练
         </router-link>
-        <span class="nav-item disabled" title="敬请期待">AI实战训练场</span>
+        <router-link
+          to="/sparring/web/drillmate"
+          class="nav-item"
+          :class="{ active: currentRoute.startsWith('/sparring/web/drillmate') }"
+        >
+          AI实战训练场
+        </router-link>
         <span class="nav-item disabled" title="敬请期待">陪练看板</span>
         <el-dropdown trigger="hover">
-          <span class="nav-item">更多 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
+          <span class="nav-item"
+            >更多
+            <span class="arrow"
+              ><el-icon><ArrowDown /></el-icon></span
+          ></span>
           <template #dropdown>
             <el-dropdown-menu class="more-menu">
               <el-dropdown-item disabled>学习路径</el-dropdown-item>
@@ -38,7 +60,9 @@
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
           <span class="user-name">{{ auth.displayName }}</span>
-          <span class="arrow"><el-icon><ArrowDown /></el-icon></span>
+          <span class="arrow"
+            ><el-icon><ArrowDown /></el-icon
+          ></span>
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-menu">
@@ -49,9 +73,7 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span class="nav-item workbench">
-        <span>⊞</span> 工作台
-      </span>
+      <span class="nav-item workbench"> <span>⊞</span> 工作台 </span>
     </div>
   </header>
 </template>
@@ -141,14 +163,17 @@ const handleUserCommand = (command: string) => {
   position: relative;
   white-space: nowrap;
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: #1890ff;
   }
 
   &.disabled {
     color: #c0c4cc;
     cursor: not-allowed;
-    &:hover { color: #c0c4cc; }
+    &:hover {
+      color: #c0c4cc;
+    }
   }
 
   &.active {

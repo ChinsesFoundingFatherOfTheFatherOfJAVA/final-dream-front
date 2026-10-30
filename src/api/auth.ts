@@ -11,6 +11,8 @@ export interface MeResult {
   userId: string
   fullname: string
   permissions: string[]
+  deptName?: string | null
+  positionName?: string | null
 }
 
 export function login(account: string, password: string) {

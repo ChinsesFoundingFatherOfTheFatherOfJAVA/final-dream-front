@@ -1,0 +1,258 @@
+{
+  "page": "drillmate-report",
+  "path": "/#/sparring/web/drillmate/report/2116051254866075650",
+  "viewport": { "width": 1524, "height": 727 },
+  "reference": "visual/reference/drillmate-report.original.png",
+  "capturedFrom": "https://train.chinajack.com/drillmate/drill/8cad79a4-c6c6-45b5-8d94-6509822ddeac?ex_id=4fa7a1e92ac94429ad9cfaba38b0e45b&recordId=1d103692-fb7e-4023-80de-a7f04504554e&reportArtifactId=770926865155715909",
+  "note": "原平台报告页是独立路由（非 #/web），Tailwind 类名不可靠，captures 里全部用绝对路径；本项目用语义类名映射。契约只写映射与豁免，期望数值一律来自 visual/measured/drillmate-report.json。",
+  "probes": [
+    {
+      "id": "topbar",
+      "selector": ".dm-topbar",
+      "desc": "顶栏（返回/标题/再练一次）",
+      "required": true,
+      "skipProps": ["borderColor"]
+    },
+    {
+      "id": "topbar-back",
+      "selector": ".dm-topbar__back",
+      "desc": "返回按钮（原平台该选择器命中 2 个 button，本项目只有 1 个）",
+      "countIgnore": true
+    },
+    { "id": "topbar-title", "selector": ".dm-topbar__title", "desc": "顶栏标题" },
+    {
+      "id": "topbar-action",
+      "selector": ".dm-topbar__action",
+      "desc": "再练一次（渐变按钮）",
+      "skipProps": ["background"]
+    },
+    { "id": "scroll", "selector": ".dm-scroll", "desc": "滚动容器（视口 727 - 顶栏 56 = 671）" },
+    { "id": "sheet", "selector": ".dm-sheet", "desc": "报告纸（1000 宽白卡）", "skipProps": ["background"] },
+    { "id": "hero", "selector": ".dm-hero", "desc": "报告头（高度随内容，不锁 240）", "skipProps": ["height"] },
+    {
+      "id": "hero-inner",
+      "selector": ".dm-hero__inner",
+      "desc": "报告头内层（左信息 + 右结论卡）",
+      "skipProps": ["height"]
+    },
+    { "id": "hero-left", "selector": ".dm-hero__left", "desc": "左信息块", "skipProps": ["height"] },
+    { "id": "hero-title", "selector": ".dm-hero__title", "desc": "场景名 24/600" },
+    {
+      "id": "hero-meta-grid",
+      "selector": ".dm-hero__meta",
+      "desc": "元信息 3 列×2 行",
+      "skipProps": ["height"]
+    },
+    {
+      "id": "hero-meta-item",
+      "selector": ".dm-hero__meta-item",
+      "desc": "元信息格（固定 6 项：主题/学员/完成时间/时长/轮次/模式·类型）",
+      "skipProps": ["height"]
+    },
+    {
+      "id": "hero-meta-label",
+      "selector": ".dm-hero__meta-label",
+      "desc": "元信息标签",
+      "text": true
+    },
+    {
+      "id": "hero-meta-value",
+      "selector": ".dm-hero__meta-value",
+      "desc": "元信息值（内容随报告变化，不比文本）"
+    },
+    {
+      "id": "hero-card",
+      "selector": ".dm-hero__card",
+      "desc": "结论卡 320 宽",
+      "skipProps": ["height"]
+    },
+    {
+      "id": "hero-verdict",
+      "selector": ".dm-verdict__text",
+      "desc": "通过/未通过（配色随结果）",
+      "skipProps": ["color"]
+    },
+    {
+      "id": "hero-fact",
+      "selector": ".dm-hero__fact",
+      "desc": "结论事实块（目标 / 综合分+通过线；原平台选择器只命中第 1 个）",
+      "countIgnore": true,
+      "skipProps": ["height"]
+    },
+    {
+      "id": "hero-fact-value",
+      "selector": ".dm-hero__fact-value",
+      "desc": "事实值（配色随结果；原平台只命中第 1 个）",
+      "countIgnore": true,
+      "skipProps": ["color"]
+    },
+    {
+      "id": "hero-fact-label",
+      "selector": ".dm-hero__fact-label",
+      "desc": "事实标签（原平台只命中第 1 个）",
+      "countIgnore": true
+    },
+    { "id": "hero-divider", "selector": ".dm-hero__divider", "desc": "竖分隔线" },
+    { "id": "body", "selector": ".dm-body", "desc": "报告正文容器" },
+    {
+      "id": "section",
+      "selector": ".dm-section",
+      "desc": "正文段落（未通过原因/总体评价/维度/评估标准/表现优秀/改进建议/关键对话/下一步/回放）；段数与数据相关",
+      "countIgnore": true
+    },
+    {
+      "id": "section-title",
+      "selector": ".dm-section__title-text",
+      "desc": "段标题 16/600（未通过原因段没有独立标题，故首条是总体评价）",
+      "countIgnore": true
+    },
+    {
+      "id": "reason-box",
+      "selector": ".dm-reason",
+      "desc": "未通过原因块（通过时不出现）",
+      "optional": true,
+      "skipProps": ["height"]
+    },
+    { "id": "reason-title", "selector": ".dm-reason__title", "desc": "未通过原因标题", "optional": true },
+    { "id": "reason-text", "selector": ".dm-reason__text", "desc": "未通过原因正文", "optional": true },
+    { "id": "summary-text", "selector": ".dm-summary", "desc": "总体评价正文" },
+    {
+      "id": "dim-grid",
+      "selector": ".dm-dim-grid",
+      "desc": "维度卡网格（每行 3 张）",
+      "skipProps": ["height"]
+    },
+    {
+      "id": "dim-card",
+      "selector": ".dm-dim-card",
+      "desc": "维度卡（个数=报告维度数，drill-report-v1 允许 1-8）",
+      "countIgnore": true,
+      "skipProps": ["height"]
+    },
+    {
+      "id": "dim-score",
+      "selector": ".dm-dim-card__score",
+      "desc": "维度得分（配色按分段，条数与维度数相同）",
+      "countIgnore": true,
+      "skipProps": ["color"]
+    },
+    { "id": "dim-name", "selector": ".dm-dim-card__name", "desc": "维度名", "countIgnore": true },
+    { "id": "dim-weight", "selector": ".dm-dim-card__weight", "desc": "维度权重", "countIgnore": true },
+    { "id": "dim-track", "selector": ".dm-dim-card__track", "desc": "维度进度条槽", "countIgnore": true },
+    { "id": "dim-formula", "selector": ".dm-formula", "desc": "加权公式说明" },
+    {
+      "id": "detail-card",
+      "selector": ".dm-detail-card",
+      "desc": "评估标准明细卡（每维度一张）",
+      "countIgnore": true
+    },
+    {
+      "id": "detail-head",
+      "selector": ".dm-detail-card__head",
+      "desc": "明细卡折叠头（原平台 934 = 936 卡宽减两侧 1px 描边）",
+      "countIgnore": true
+    },
+    { "id": "detail-name", "selector": ".dm-detail-card__name", "desc": "明细维度名", "countIgnore": true },
+    {
+      "id": "detail-score",
+      "selector": ".dm-detail-card__score",
+      "desc": "明细维度分（配色随分数）",
+      "countIgnore": true,
+      "skipProps": ["color", "background"]
+    },
+    {
+      "id": "detail-block",
+      "selector": ".dm-detail-card__block",
+      "desc": "明细色块（证据/做得好/待改进/得分原因；原平台另有总结块共 5 块）",
+      "countIgnore": true,
+      "skipProps": ["background"]
+    },
+    {
+      "id": "detail-block-label",
+      "selector": ".dm-detail-card__block-label",
+      "desc": "色块标题（配色按块类型）",
+      "countIgnore": true,
+      "skipProps": ["color"]
+    },
+    {
+      "id": "detail-block-text",
+      "selector": ".dm-detail-card__block-text",
+      "desc": "色块正文（配色按块类型）",
+      "countIgnore": true,
+      "skipProps": ["color"]
+    },
+    {
+      "id": "strength-box",
+      "selector": ".dm-strength",
+      "desc": "表现优秀块（无优秀项时不出现）",
+      "optional": true
+    },
+    { "id": "strength-item", "selector": ".dm-strength__item", "desc": "优秀项", "countIgnore": true },
+    {
+      "id": "improve-box",
+      "selector": ".dm-improve",
+      "desc": "AI 改进建议块（建议为空时不出现）",
+      "optional": true
+    },
+    {
+      "id": "improve-item",
+      "selector": ".dm-improve__item",
+      "desc": "建议卡（条数=improvementSuggestions 长度）",
+      "countIgnore": true
+    },
+    { "id": "improve-title", "selector": ".dm-improve__title", "desc": "建议标题", "countIgnore": true },
+    {
+      "id": "dialogue-item",
+      "selector": ".dm-dialogue",
+      "desc": "关键对话片段（条数=keyDialogues 长度）",
+      "countIgnore": true
+    },
+    {
+      "id": "dialogue-badge",
+      "selector": ".dm-dialogue__badge",
+      "desc": "片段徽标（配色按 优秀/注意/改写）",
+      "countIgnore": true,
+      "skipProps": ["background"]
+    },
+    {
+      "id": "dialogue-quote",
+      "selector": ".dm-dialogue__quote",
+      "desc": "片段引用原文",
+      "countIgnore": true
+    },
+    {
+      "id": "next-box",
+      "selector": ".dm-next",
+      "desc": "推荐下一步训练块（recommendations 为空时不出现）",
+      "optional": true
+    },
+    { "id": "next-item", "selector": ".dm-next__item", "desc": "推荐项", "countIgnore": true },
+    { "id": "next-index", "selector": ".dm-next__index", "desc": "推荐序号圆标", "countIgnore": true },
+    { "id": "next-title", "selector": ".dm-next__title", "desc": "推荐标题", "countIgnore": true },
+    {
+      "id": "replay",
+      "selector": ".dm-replay",
+      "desc": "完整对话回放（transcript 为空时不出现）",
+      "optional": true
+    },
+    { "id": "replay-scene", "selector": ".dm-replay__scene", "desc": "回放顶部场景条", "skipProps": ["height"] },
+    { "id": "replay-scene-label", "selector": ".dm-replay__scene-label", "desc": "场景条标签" },
+    {
+      "id": "replay-avatar",
+      "selector": ".dm-replay__avatar",
+      "desc": "回放头像（对方/我方底色不同）",
+      "countIgnore": true,
+      "skipProps": ["background"]
+    },
+    {
+      "id": "replay-bubble",
+      "selector": ".dm-replay__bubble",
+      "desc": "回放气泡（宽度随文本长度）",
+      "countIgnore": true,
+      "skipProps": ["background", "width"]
+    },
+    { "id": "replay-speaker", "selector": ".dm-replay__speaker", "desc": "回放说话人", "countIgnore": true },
+    { "id": "replay-text", "selector": ".dm-replay__text", "desc": "回放正文", "countIgnore": true },
+    { "id": "footnote", "selector": ".dm-footnote", "desc": "页脚（生成时间）", "skipProps": ["height"] }
+  ]
+}

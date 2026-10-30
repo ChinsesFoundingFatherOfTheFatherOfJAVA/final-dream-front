@@ -1,88 +1,123 @@
 <template>
-  <div class="topic-list">
-    <!-- FP-03 标题区 + 仅一个创建按钮 -->
+  <div class="theme-list-page">
+    <!-- FP-03 标题区：左侧标题/副标题，右侧「查看产品介绍 / 从模板创建 / 创建新主题」 -->
     <div class="page-header">
-      <div class="header-left">
-        <h2 class="page-title">训练主题管理</h2>
-        <p class="page-subtitle">管理所有训练主题</p>
+      <div class="header-info">
+        <h1 class="page-title">训练主题管理</h1>
+        <p class="page-desc">管理所有训练主题</p>
       </div>
-      <el-button class="btn-create" @click="goCreate">+ 创建新主题</el-button>
+      <div class="header-actions">
+        <button type="button" class="intro-toggle" @click="showIntro">查看产品介绍</button>
+        <button type="button" class="btn-template" @click="goTemplate">从模板创建</button>
+        <button type="button" class="btn-create" @click="goCreate">+ 创建新主题</button>
+      </div>
     </div>
 
     <!-- FP-04 五个筛选条件（归属/来源为占位，前端不传值） -->
     <div class="filter-bar">
-      <el-select v-model="filters.jurisdiction" class="filter-select" title="归属（占位）">
-        <el-option label="我管辖的" value="1" />
-        <el-option label="我负责的" value="2" />
-      </el-select>
-      <el-select v-model="filters.status" class="filter-select" placeholder="所有状态" @change="fetchList">
-        <el-option label="所有状态" value="" />
-        <el-option label="草稿" value="0" />
-        <el-option label="发布中" value="1" />
-        <el-option label="发布失败" value="2" />
-        <el-option label="已发布" value="3" />
-        <el-option label="已暂停" value="4" />
-        <el-option label="已结束" value="5" />
-      </el-select>
-      <el-select v-model="filters.themeMode" class="filter-select" placeholder="所有模式" @change="fetchList">
-        <el-option label="所有模式" value="" />
-        <el-option label="日常训练" value="1" />
-        <el-option label="通关考核" value="2" />
-        <el-option label="训考一体" value="3" />
-      </el-select>
-      <el-select v-model="filters.sourceType" class="filter-select" title="来源（占位）">
-        <el-option label="来源" value="" />
-        <el-option label="单独安排" value="1" />
-        <el-option label="项目安排" value="2" />
-      </el-select>
-      <el-input
-          v-model="filters.keyword"
-          class="search-input"
-          placeholder="搜索主题..."
-          clearable
-          @keyup.enter="fetchList"
+      <div
+        v-for="f in SELECT_FILTERS"
+        :key="f.key"
+        class="yxt-select filter-item"
+        :class="{ select: f.key === 'sourceType' }"
+        role="combobox"
+        tabindex="0"
+        aria-haspopup="listbox"
+        :aria-expanded="openFilter === f.key"
+        :aria-label="f.label"
+        @click="toggleFilter(f.key)"
+        @keydown.enter.prevent="toggleFilter(f.key)"
+        @keydown.space.prevent="toggleFilter(f.key)"
+        @keydown.esc="openFilter = ''"
       >
-        <template #prefix><span aria-hidden="true">🔍</span></template>
-      </el-input>
+        <input
+          class="yxt-input__inner"
+          :class="{ 'is-placeholder': !labelOf(f.options, filters[f.key]) }"
+          :value="labelOf(f.options, filters[f.key])"
+          readonly
+          tabindex="-1"
+        />
+        <span class="yxt-input__suffix" aria-hidden="true"><i class="yxt-input__arrow"></i></span>
+        <div v-if="openFilter === f.key" class="yxt-select__panel" role="listbox" :aria-label="f.label">
+          <div
+            v-for="opt in f.options"
+            :key="opt.value"
+            class="yxt-select__option"
+            :class="{ 'is-selected': filters[f.key] === opt.value }"
+            role="option"
+            :aria-selected="filters[f.key] === opt.value"
+            @click.stop="pick(f.key, opt.value)"
+          >
+            {{ opt.label }}
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-item search-input">
+        <span class="yxt-input__prefix" aria-hidden="true">
+          <i class="yxt-input__icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+          </i>
+        </span>
+        <input
+          v-model="filters.keyword"
+          class="yxt-input__inner"
+          placeholder="搜索主题..."
+          aria-label="搜索主题"
+          @keyup.enter="fetchList"
+        />
+      </div>
     </div>
 
     <!-- FP-05 主题卡片列表 -->
     <div v-if="loading" class="list-tip">加载中…</div>
     <div v-else-if="themes.length === 0" class="empty-state">
-      <div class="empty-icon" aria-hidden="true">📭</div>
       <p class="empty-text">暂无训练主题</p>
     </div>
-    <div v-else class="card-grid">
-      <div
-        v-for="theme in themes"
-        :key="theme.id"
-        class="theme-card"
-        role="button"
-        tabindex="0"
-        @keydown.enter.prevent="goToDetail(theme.id)"
-        @click="goToDetail(theme.id)"
-      >
-        <span class="status-badge" :class="`status-${theme.status}`">{{ ACT_STATUS_TEXT[theme.status] }}</span>
-        <h3 class="card-title">{{ theme.themeName }}</h3>
-        <p class="card-desc">{{ theme.themeDesc || '暂无描述' }}</p>
-        <div class="card-tags">
-          <span class="tag-mode">{{ ACT_THEME_MODE_TEXT[theme.themeMode] }}</span>
-          <span class="tag-source">{{ theme.sourceType ? ACT_SOURCE_TYPE_TEXT[theme.sourceType] : '单独安排' }}</span>
-        </div>
-        <div class="card-meta">
-          <span>学员 {{ theme.participantCount }} 人</span>
-          <span class="meta-dot">·</span>
-          <span>{{ formatUpdatedAt(theme.updatedAt) }}</span>
+    <div v-else class="page-container">
+      <div class="project-grid">
+        <div
+          v-for="theme in themes"
+          :key="theme.id"
+          class="project-card"
+          role="button"
+          tabindex="0"
+          @keydown.enter.prevent="goToDetail(theme.id)"
+          @click="goToDetail(theme.id)"
+        >
+          <!-- 卡片操作区：绝对定位在右下角，避免与底部信息行挤在一起 -->
+          <div class="card-actions">
+            <button type="button" class="action-btn" @click.stop="copyTheme(theme.themeName)">复制</button>
+          </div>
+          <div class="card-header">
+            <h3 class="card-title">{{ theme.themeName }}</h3>
+            <span class="status-tag" :class="`status-${theme.status}`">{{ ACT_STATUS_TEXT[theme.status] }}</span>
+          </div>
+          <p class="card-desc">{{ theme.themeDesc || '暂无描述' }}</p>
+          <div class="card-bottom">
+            <div class="card-tags">
+              <span class="config-tag" :class="`mode-${theme.themeMode}`">{{ ACT_THEME_MODE_TEXT[theme.themeMode] }}</span>
+              <span class="config-tag">{{ theme.sourceType ? ACT_SOURCE_TYPE_TEXT[theme.sourceType] : '单独安排' }}</span>
+            </div>
+            <div class="card-meta">
+              <span>学员 {{ theme.participantCount }} 人</span>
+              <span class="meta-dot">·</span>
+              <span>{{ formatUpdatedAt(theme.updatedAt) }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div v-if="!loading && themes.length > 0" class="list-footer">已加载全部数据</div>
+    <div v-if="!loading && themes.length > 0" class="no-more-data">已加载全部数据</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getThemeList } from '@/api/actTheme'
 import {
@@ -97,14 +132,105 @@ const router = useRouter()
 const loading = ref(false)
 const themes = ref<ActThemeCard[]>([])
 
-/** 归属/来源为占位展示：模型保留选中值，但查询时不加入请求参数 */
+/**
+ * 归属/来源为占位展示：模型保留选中值，但查询时不加入请求参数。
+ * 归属默认「我负责的」，与原平台列表页初始状态一致。
+ */
 const filters = ref({
-  jurisdiction: '1',
+  jurisdiction: '2',
   status: '' as '' | '0' | '1' | '2' | '3' | '4' | '5',
   themeMode: '' as '' | '1' | '2' | '3',
   sourceType: '',
   keyword: ''
 })
+
+interface SelectOption {
+  label: string
+  value: string
+}
+
+type FilterKey = 'jurisdiction' | 'status' | 'themeMode' | 'sourceType'
+
+/**
+ * 筛选项配置。控件按原平台手写（尺寸 160/148 x 32 取自视觉契约
+ * visual/measured/admin-topic-list.json）：Element Plus 的 el-select 无法同时满足
+ * 三种宽度、24x32 后缀与 4px/12px 内边距，故此处不复用通用控件。
+ */
+const SELECT_FILTERS: { key: FilterKey; label: string; options: SelectOption[] }[] = [
+  {
+    key: 'jurisdiction',
+    label: '归属',
+    options: [
+      { label: '我管辖的', value: '1' },
+      { label: '我负责的', value: '2' }
+    ]
+  },
+  {
+    key: 'status',
+    label: '状态',
+    options: [
+      { label: '所有状态', value: '' },
+      { label: '草稿', value: '0' },
+      { label: '发布中', value: '1' },
+      { label: '发布失败', value: '2' },
+      { label: '已发布', value: '3' },
+      { label: '已暂停', value: '4' },
+      { label: '已结束', value: '5' }
+    ]
+  },
+  {
+    key: 'themeMode',
+    label: '模式',
+    options: [
+      { label: '所有模式', value: '' },
+      { label: '日常训练', value: '1' },
+      { label: '通关考核', value: '2' },
+      { label: '训考一体', value: '3' }
+    ]
+  },
+  {
+    key: 'sourceType',
+    label: '来源',
+    options: [
+      { label: '来源', value: '' },
+      { label: '单独安排', value: '1' },
+      { label: '项目安排', value: '2' }
+    ]
+  }
+]
+
+/** 当前展开的下拉项（同一时刻只开一个） */
+const openFilter = ref<'' | FilterKey>('')
+
+const labelOf = (options: SelectOption[], value: string): string =>
+  options.find((o) => o.value === value)?.label ?? ''
+
+const toggleFilter = (key: FilterKey) => {
+  openFilter.value = openFilter.value === key ? '' : key
+}
+
+/** 选中筛选项：状态/模式即时重新查询，归属/来源只改变展示值 */
+const pick = (key: FilterKey, value: string) => {
+  openFilter.value = ''
+  if (key === 'jurisdiction') {
+    filters.value.jurisdiction = value
+    return
+  }
+  if (key === 'sourceType') {
+    filters.value.sourceType = value
+    return
+  }
+  if (value === filters.value[key]) return
+  if (key === 'status') filters.value.status = value as typeof filters.value.status
+  else filters.value.themeMode = value as typeof filters.value.themeMode
+  fetchList()
+}
+
+/** 点击下拉以外的区域收起面板 */
+const onDocumentMouseDown = (e: MouseEvent) => {
+  const target = e.target as HTMLElement | null
+  if (!target?.closest('.yxt-select')) openFilter.value = ''
+}
 
 const fetchList = async () => {
   loading.value = true
@@ -126,7 +252,14 @@ const fetchList = async () => {
   }
 }
 
-onMounted(fetchList)
+onMounted(() => {
+  document.addEventListener('mousedown', onDocumentMouseDown)
+  fetchList()
+})
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', onDocumentMouseDown)
+})
 
 const goToDetail = (id: string) => {
   router.push(`/sparring/freesimulate/theme/${id}`)
@@ -136,6 +269,13 @@ const goToDetail = (id: string) => {
 const goCreate = () => {
   router.push('/sparring/freesimulate/assistant')
 }
+
+/** 从模板创建 / 查看产品介绍：原平台列表页的入口，本期未实现，按占位处理 */
+const goTemplate = () => comingSoon('从模板创建功能建设中')
+const showIntro = () => comingSoon('产品介绍建设中')
+
+/** 卡片「复制」：与服务端复制接口未对接，先给出提示 */
+const copyTheme = (name: string) => comingSoon(`复制「${name}」功能建设中`)
 
 /** 更新时间：24 小时内显示相对时间，否则显示日期 */
 function formatUpdatedAt(time: string | null): string {
@@ -151,190 +291,446 @@ function formatUpdatedAt(time: string | null): string {
 </script>
 
 <style scoped lang="scss">
-.topic-list {
+/* 尺寸全部取自视觉契约 visual/measured/admin-topic-list.json（原平台 viewport 1509x887） */
+.theme-list-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   padding: 24px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 22px;
+  color: #262626;
 }
 
 .page-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  margin: 0 0 24px;
 
   .page-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #1f2329;
     margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: #262626;
   }
 
-  .page-subtitle {
-    font-size: 14px;
-    color: #8a8f98;
+  .page-desc {
     margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: #757575;
   }
-}
 
-.btn-create {
-  padding: 8px 18px;
-  background: #1890ff;
-  color: #fff;
-  border: 1px solid #1890ff;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: opacity 0.2s;
+  /* 三个按钮按行内块排布：原平台容器宽 344 = 84 + 16 + 110 + 12 + 122，
+     font-size:0 消除标签间空白节点的宽度，保证总宽精确 */
+  .header-actions {
+    display: block;
+    font-size: 0;
+    line-height: 0;
+  }
 
-  &:hover { opacity: 0.85; }
+  .btn-template,
+  .btn-create {
+    display: inline-block;
+    vertical-align: top;
+    height: 32px;
+    padding: 4px 19px;
+    box-sizing: border-box;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #1f2329;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 22px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid #436bff;
+      outline-offset: 1px;
+    }
+  }
+
+  /* 文字按钮：22 高压在 32 高的按钮行里，顶部下移 5px 与原平台基线一致 */
+  .intro-toggle {
+    display: inline-block;
+    vertical-align: top;
+    height: 22px;
+    margin-top: 5px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #436bff;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 22px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid #436bff;
+      outline-offset: 1px;
+    }
+  }
+
+  .btn-template {
+    margin-left: 16px;
+  }
+
+  .btn-create {
+    margin-left: 12px;
+    background: #436bff;
+    border-color: #436bff;
+    color: #ffffff;
+  }
 }
 
 .filter-bar {
   display: flex;
-  gap: 12px;
   align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin: 0 0 20px;
 }
 
-.filter-select {
-  // el-select 根元素是块级 div，不限宽时每个筛选项独占一行、纵向堆叠；
-  // 对齐原平台：四个下拉等宽、与搜索框同排（窄屏由 flex-wrap 自然折行）
-  width: 190px;
-  border-radius: 6px;
+/* 下拉与搜索框共用输入框外观：高 32 / r4 / 1px #d9d9d9 / 14px #595959 */
+.yxt-input__inner {
+  width: 100%;
+  height: 100%;
+  padding: 4px 32px 4px 12px;
+  box-sizing: border-box;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #595959;
+  font-family: inherit;
   font-size: 14px;
-  color: #333;
+  line-height: 22px;
+  outline: none;
 
-  :deep(.el-select__wrapper) {
-    min-height: 34px;
+  &::placeholder {
+    color: #bfbfbf;
+  }
+
+  &.is-placeholder {
+    color: #bfbfbf;
+  }
+
+  &:focus-visible {
+    border-color: #436bff;
   }
 }
 
-.search-input {
-  // 原平台搜索框比下拉更宽
-  width: 260px;
-
-  :deep(.el-input__wrapper) {
-    min-height: 34px;
-    border-radius: 6px;
-    font-size: 14px;
-  }
-}
-
-.list-tip {
-  padding: 60px 0;
-  text-align: center;
-  font-size: 15px;
-  color: #999;
-}
-
-.empty-state {
-  padding: 80px 0;
-  text-align: center;
-
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-text { font-size: 15px; color: #999; margin: 0; }
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.theme-card {
+.yxt-select {
   position: relative;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 18px 16px 14px;
+  width: 160px;
+  height: 32px;
+  flex: none;
   cursor: pointer;
-  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+
+  &.select {
+    width: 148px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #436bff;
+    outline-offset: 1px;
+  }
+}
+
+/* 后缀箭头槽 24x32，图形箭头由 CSS 绘制（原平台无 emoji） */
+.yxt-input__suffix {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 32px;
+  pointer-events: none;
+}
+
+.yxt-input__arrow {
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid #8c8c8c;
+  border-bottom: 1px solid #8c8c8c;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.yxt-select__panel {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  z-index: 20;
+  min-width: 100%;
+  padding: 4px 0;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 8%);
+}
+
+.yxt-select__option {
+  padding: 0 12px;
+  color: #262626;
+  font-size: 14px;
+  line-height: 30px;
+  white-space: nowrap;
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-    border-color: #c9d4f5;
+    background: #f5f6f8;
   }
 
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
-
-  .status-badge {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-size: 13px;
-
-    &.status-0 { color: #8a8f98; background: #f2f3f5; }
-    &.status-1 { color: #1890ff; background: #e6f7ff; }
-    &.status-2 { color: #e5484d; background: #fdecec; }
-    &.status-3 { color: #52c41a; background: #f0fbe8; }
-    &.status-4 { color: #fa8c16; background: #fff7e6; }
-    &.status-5 { color: #8a8f98; background: #f2f3f5; }
-  }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2329;
-    margin: 0 60px 8px 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .card-desc {
-    height: 40px;
-    font-size: 14px;
-    color: #8a8f98;
-    line-height: 20px;
-    margin: 0 0 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-tags {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-
-    .tag-mode {
-      padding: 1px 8px;
-      border-radius: 4px;
-      font-size: 13px;
-      color: #52c41a;
-      background: #f0fbe8;
-    }
-
-    .tag-source {
-      padding: 1px 8px;
-      border-radius: 4px;
-      font-size: 13px;
-      color: #8a8f98;
-      background: #f2f3f5;
-    }
-  }
-
-  .card-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding-top: 10px;
-    border-top: 1px solid #f5f5f5;
-    font-size: 13px;
-    color: #a5a9b0;
-
-    .meta-dot { color: #d5d8dd; }
+  &.is-selected {
+    color: #436bff;
+    font-weight: 500;
   }
 }
 
-.list-footer {
-  padding: 24px 0 8px;
-  text-align: center;
+/* 搜索框外层只占位，白底与圆角在内层 input 上（契约：外层 radius 0 / 无背景） */
+.search-input {
+  position: relative;
+  width: 240px;
+  height: 32px;
+  flex: none;
+  border: 0 solid #e5e7eb;
+
+  .yxt-input__inner {
+    padding: 4px 12px 4px 32px;
+  }
+}
+
+.yxt-input__prefix {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+}
+
+.yxt-input__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 32px;
+  color: #8c8c8c;
+}
+
+/* 负外边距把网格对齐回 1253 的内容列宽（原平台 .page-container 同款处理） */
+.page-container {
+  margin: -8px -12px;
+  padding: 8px 12px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #436bff;
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    border-color: #c7d2fe;
+  }
+}
+
+.card-actions {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  height: 32px;
+  padding: 4px 16px;
+  box-sizing: border-box;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #595959;
+  font-family: inherit;
   font-size: 14px;
-  color: #bbb;
+  line-height: 22px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #436bff;
+    color: #436bff;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 8px;
+}
+
+.card-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #262626;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-tag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 24px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #f5f5f5;
+  color: #595959;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.status-tag.status-1,
+.status-tag.status-5 {
+  border-color: #bdd2ff;
+  background: #f0f6ff;
+  color: #2e4dd9;
+}
+
+.status-tag.status-2 {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.status-tag.status-3 {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-tag.status-4 {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+/* 描述固定两行高度：卡片高度与原平台一致（44.8 + 页内外边距 = 161） */
+.card-desc {
+  display: -webkit-box;
+  min-height: 44.8px;
+  margin: 0 0 16px;
+  overflow: hidden;
+  color: #757575;
+  font-size: 14px;
+  line-height: 22.4px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+}
+
+.card-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.config-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 2px 8px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: #f5f5f5;
+  color: #757575;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.config-tag.mode-1 {
+  background: #f0f6ff;
+  color: #2e4dd9;
+}
+
+.config-tag.mode-3 {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8c8c8c;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.meta-dot {
+  color: #d9d9d9;
+}
+
+.no-more-data {
+  width: 100%;
+  padding: 24px 0;
+  color: #8c8c8c;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+}
+
+.list-tip,
+.empty-state {
+  padding: 24px 0;
+  color: #8c8c8c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.empty-text {
+  margin: 0;
 }
 </style>

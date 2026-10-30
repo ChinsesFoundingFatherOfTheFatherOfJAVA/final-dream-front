@@ -19,6 +19,8 @@ export const useAuthStore = defineStore('auth', () => {
   const isSuperAdmin = computed(() => Boolean(user.value?.isSuperAdmin))
   const displayName = computed(() => user.value?.name || user.value?.account || '用户')
   const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
+  /** 部门名（如"杰克科技股份"），首页左栏展示；无数据时为空串 */
+  const deptName = computed(() => user.value?.deptName || '')
 
   const persist = () => {
     writeStoredAuth({
@@ -47,7 +49,9 @@ export const useAuthStore = defineStore('auth', () => {
       account: user.value?.account || me.userId,
       name: me.fullname,
       isSuperAdmin: user.value?.isSuperAdmin ?? false,
-      status: user.value?.status ?? 1
+      status: user.value?.status ?? 1,
+      deptName: me.deptName ?? user.value?.deptName ?? null,
+      positionName: me.positionName ?? user.value?.positionName ?? null
     }
     permissions.value = me.permissions ?? []
     identityLoaded.value = true
@@ -77,6 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
     isSuperAdmin,
     displayName,
     userInitial,
+    deptName,
     login,
     loadMe,
     hasPermission,

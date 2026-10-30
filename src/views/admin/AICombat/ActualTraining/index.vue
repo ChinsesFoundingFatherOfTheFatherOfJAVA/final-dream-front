@@ -52,7 +52,8 @@ import { comingSoon } from './components/ui'
 }
 
 .side-menu {
-  width: 200px;
+  // 与原平台左导航同宽（原平台 aside 实测 184px），内容区宽度才对得上视觉契约
+  width: 184px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -118,6 +119,7 @@ import { comingSoon } from './components/ui'
 }
 
 .app-content {
+  padding: 0 12px;
   flex: 1;
   min-width: 0;
   overflow-y: auto;

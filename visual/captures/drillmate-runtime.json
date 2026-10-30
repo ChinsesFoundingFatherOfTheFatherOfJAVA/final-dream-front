@@ -1,0 +1,173 @@
+{
+  "page": "drillmate-runtime",
+  "path": "/drillmate/drill/025de873-d629-4d9c-8cc0-55df670f7285?ex_id=4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": { "width": 1524, "height": 727 },
+  "probes": [
+    {
+      "id": "stage",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)",
+      "props": ["width", "height", "padding", "background"]
+    },
+    {
+      "id": "main",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "video",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)",
+      "props": ["width", "height", "radius"]
+    },
+    {
+      "id": "tools",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(5)",
+      "props": ["width", "height", "gap"]
+    },
+    {
+      "id": "tool-timer",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(5) > div:nth-child(1)",
+      "props": ["height", "radius", "paddingX", "fontSize", "fontWeight", "color", "background"]
+    },
+    {
+      "id": "tool-progress",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(5) > div:nth-child(2)",
+      "props": ["width", "height", "radius", "paddingX", "fontSize", "fontWeight", "background", "borderColor"]
+    },
+    {
+      "id": "tool-mode",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(5) > div:nth-child(3)",
+      "props": ["width", "height", "fontSize", "color"]
+    },
+    {
+      "id": "tool-btn",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(5) > button:nth-child(4)",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "back-btn",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > button",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "scene-card",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(2)",
+      "props": ["width", "radius", "paddingX", "paddingY", "background"]
+    },
+    {
+      "id": "scene-label",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div:nth-child(1)",
+      "props": ["fontSize", "fontWeight", "color"]
+    },
+    {
+      "id": "scene-text",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div:nth-child(2)",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "bubble-wrap",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(3)",
+      "props": ["width", "paddingX", "paddingY"]
+    },
+    {
+      "id": "bubble-row",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(3) > div:nth-child(1)",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "bubble-avatar",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)",
+      "props": ["width", "height", "radius"]
+    },
+    {
+      "id": "bubble",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(6) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)",
+      "props": ["width", "radius", "paddingX", "paddingY", "background", "fontSize", "lineHeight"]
+    },
+    {
+      "id": "aside",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3)",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "aside-head",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(1)",
+      "props": ["height", "paddingX"]
+    },
+    {
+      "id": "aside-title",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(1) > span",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "aside-body",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2)",
+      "props": ["padding", "gap"]
+    },
+    {
+      "id": "aside-scenario",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > div:nth-child(1)",
+      "props": ["width", "fontSize", "fontWeight"],
+      "text": true
+    },
+    {
+      "id": "aside-section",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section",
+      "props": ["width"],
+      "count": 6
+    },
+    {
+      "id": "aside-section-title",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section > div:nth-child(1)",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"]
+    },
+    {
+      "id": "aside-badge",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section > div:nth-child(1) > span",
+      "props": ["width", "height", "radius"]
+    },
+    {
+      "id": "role-card",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section:nth-child(2) > div:nth-child(2) > div",
+      "props": ["width", "radius", "padding", "background"],
+      "count": 2
+    },
+    {
+      "id": "aside-p",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section:nth-child(3) > p",
+      "props": ["width", "fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "progress-row",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > aside:nth-child(3) > div:nth-child(2) > section:nth-child(7) > div:nth-child(2) > div",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"],
+      "count": 4
+    },
+    {
+      "id": "input-area",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)",
+      "props": ["width", "height"]
+    },
+    {
+      "id": "input-bar",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)",
+      "props": ["width", "height", "radius", "paddingX", "paddingY", "gap", "background"]
+    },
+    {
+      "id": "input-textarea",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > textarea",
+      "props": ["width", "height", "fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "input-btn",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(2) > button",
+      "props": ["width", "height", "radius", "background"]
+    },
+    {
+      "id": "footnote",
+      "selector": "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)",
+      "props": ["height", "fontSize", "lineHeight", "color"],
+      "text": true
+    }
+  ]
+}

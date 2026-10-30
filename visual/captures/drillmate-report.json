@@ -1,0 +1,645 @@
+{
+  "page": "drillmate-report",
+  "origin": "https://train.chinajack.com",
+  "path": "/drillmate/drill/8cad79a4-c6c6-45b5-8d94-6509822ddeac?ex_id=4fa7a1e92ac94429ad9cfaba38b0e45b&recordId=1d103692-fb7e-4023-80de-a7f04504554e&reportArtifactId=770926865155715909",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "probes": [
+    {
+      "id": "topbar",
+      "selector": "body > div > div > div > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "background",
+        "paddingX",
+        "paddingY",
+        "borderColor"
+      ],
+      "text": true
+    },
+    {
+      "id": "topbar-back",
+      "selector": "body > div > div > div > div:nth-child(1) > button",
+      "props": [
+        "fontSize",
+        "color",
+        "gap"
+      ],
+      "text": true
+    },
+    {
+      "id": "topbar-title",
+      "selector": "body > div > div > div > div:nth-child(1) > div",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "topbar-action",
+      "selector": "body > div > div > div > div:nth-child(1) > button:nth-child(3)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "paddingX",
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "scroll",
+      "selector": "body > div > div > div > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "sheet",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "hero",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "hero-inner",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "hero-left",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1)",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "hero-title",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color",
+        "width"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-meta-grid",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "hero-meta-item",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "hero-meta-label",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-meta-value",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-card",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "hero-verdict",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-fact",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "hero-fact-value",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-fact-label",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "hero-divider",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > span:nth-child(2)",
+      "props": [
+        "width",
+        "height",
+        "background"
+      ]
+    },
+    {
+      "id": "body",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2)",
+      "props": [
+        "width",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "section",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section",
+      "props": [
+        "width",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "section-title",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section > div > span > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "reason-box",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "reason-title",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(1) > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "reason-text",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(1) > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "summary-text",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(2) > p",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "dim-grid",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3)",
+      "props": [
+        "width",
+        "height",
+        "gap"
+      ]
+    },
+    {
+      "id": "dim-card",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3) > div",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "dim-score",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3) > div > div:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "dim-name",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3) > div > div:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "dim-weight",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3) > div > div:nth-child(3)",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "dim-track",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > div:nth-child(3) > div > div:nth-child(4)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "dim-formula",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(3) > p:nth-child(4)",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "detail-card",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "detail-head",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > button",
+      "props": [
+        "width",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "detail-name",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > button > span > span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "detail-score",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > button > span > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "color",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "detail-block",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > div > div",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "detail-block-label",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > div > div > div > span:nth-child(2)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "detail-block-text",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(4) > div:nth-child(2) > div > div > div > p",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "strength-box",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(5) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "strength-item",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(5) > div:nth-child(2) > p",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "improve-box",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(6) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "improve-item",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(6) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "improve-title",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(6) > div:nth-child(2) > div > p:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "dialogue-item",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(7) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "dialogue-badge",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(7) > div:nth-child(2) > div > span",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "dialogue-quote",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(7) > div:nth-child(2) > div > div > p:nth-child(1)",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "next-box",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(8) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "next-item",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(8) > div:nth-child(2) > div",
+      "props": [
+        "width",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "next-index",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(8) > div:nth-child(2) > div > span",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "next-title",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(8) > div:nth-child(2) > div > div > span:nth-child(1)",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "replay",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "replay-scene",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(1)",
+      "props": [
+        "width",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "replay-scene-label",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(1) > div > span",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "replay-avatar",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "replay-bubble",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)",
+      "props": [
+        "width",
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "replay-speaker",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div > span",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "replay-text",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > section:nth-child(9) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > p",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ]
+    },
+    {
+      "id": "footnote",
+      "selector": "body > div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(10)",
+      "props": [
+        "width",
+        "height",
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    }
+  ]
+}

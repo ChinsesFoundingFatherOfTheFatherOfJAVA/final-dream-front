@@ -1,0 +1,52 @@
+{
+  "page": "drillmate-file-viewer",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freeSimulate/fileViewer?id=20abe947-4876-4e54-b294-afe91ced8649&type=pdf&source=1&target=&old=0",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-file-viewer.original.png",
+  "capturedAt": "2026-11-02T08:12:50.961Z",
+  "probes": {
+    "viewer-list": {
+      "exists": true,
+      "count": 1,
+      "width": 1524,
+      "x": 0,
+      "y": 0,
+      "padding": 0,
+      "background": null,
+      "display": "flex"
+    },
+    "preview-page": {
+      "exists": true,
+      "count": 23,
+      "width": 793,
+      "height": 446,
+      "marginTop": 0,
+      "background": null,
+      "display": "block"
+    },
+    "first-page": {
+      "exists": true,
+      "count": 1,
+      "width": 793,
+      "height": 446,
+      "x": 366,
+      "y": 0,
+      "background": null,
+      "display": "block"
+    },
+    "first-image": {
+      "exists": true,
+      "count": 1,
+      "width": 793,
+      "height": 446,
+      "x": 366,
+      "y": 0,
+      "radius": 0,
+      "display": "inline"
+    }
+  }
+}

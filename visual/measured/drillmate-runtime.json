@@ -1,0 +1,269 @@
+{
+  "page": "drillmate-runtime",
+  "origin": "https://train.chinajack.com",
+  "path": "/drillmate/drill/025de873-d629-4d9c-8cc0-55df670f7285?ex_id=4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-runtime.original.png",
+  "capturedAt": "2026-11-02T04:24:24.278Z",
+  "probes": {
+    "stage": {
+      "exists": true,
+      "count": 1,
+      "width": 1524,
+      "height": 727,
+      "padding": 12,
+      "background": "#12141d"
+    },
+    "main": {
+      "exists": true,
+      "count": 1,
+      "width": 1050,
+      "height": 703
+    },
+    "video": {
+      "exists": true,
+      "count": 1,
+      "width": 1050,
+      "height": 573,
+      "radius": 16
+    },
+    "tools": {
+      "exists": true,
+      "count": 1,
+      "width": 339,
+      "height": 34,
+      "gap": 8
+    },
+    "tool-timer": {
+      "exists": true,
+      "count": 1,
+      "height": 34,
+      "radius": 10,
+      "paddingX": 12,
+      "fontSize": 13,
+      "fontWeight": 800,
+      "color": "#ffffff",
+      "background": "#0a0e1a"
+    },
+    "tool-progress": {
+      "exists": true,
+      "count": 1,
+      "width": 67,
+      "height": 34,
+      "radius": 10,
+      "paddingX": 12,
+      "fontSize": 13,
+      "fontWeight": 800,
+      "background": "#0a0e1a",
+      "borderColor": "#ffffff"
+    },
+    "tool-mode": {
+      "exists": true,
+      "count": 1,
+      "width": 88,
+      "height": 34,
+      "fontSize": 13,
+      "color": "#ffffff"
+    },
+    "tool-btn": {
+      "exists": true,
+      "count": 1,
+      "width": 34,
+      "height": 34,
+      "radius": 10,
+      "background": "#0a0e1a"
+    },
+    "back-btn": {
+      "exists": true,
+      "count": 1,
+      "width": 36,
+      "height": 36,
+      "radius": 50,
+      "background": "#0a0e1a"
+    },
+    "scene-card": {
+      "exists": true,
+      "count": 1,
+      "width": 800,
+      "radius": 12,
+      "paddingX": 16,
+      "paddingY": 12,
+      "background": "#0d111e"
+    },
+    "scene-label": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 13,
+      "fontWeight": 900,
+      "color": "#fbbf24"
+    },
+    "scene-text": {
+      "exists": true,
+      "count": 1,
+      "fontSize": 13,
+      "lineHeight": 23,
+      "color": "#ffffff"
+    },
+    "bubble-wrap": {
+      "exists": true,
+      "count": 1,
+      "width": 800,
+      "paddingX": 4,
+      "paddingY": 48
+    },
+    "bubble-row": {
+      "exists": true,
+      "count": 1,
+      "width": 792,
+      "gap": 12
+    },
+    "bubble-avatar": {
+      "exists": true,
+      "count": 1,
+      "width": 34,
+      "height": 34,
+      "radius": 50
+    },
+    "bubble": {
+      "exists": true,
+      "count": 1,
+      "width": 748,
+      "radius": 4,
+      "paddingX": 14,
+      "paddingY": 11,
+      "fontSize": 13,
+      "lineHeight": 20,
+      "background": "#0d111e"
+    },
+    "aside": {
+      "exists": true,
+      "count": 1,
+      "width": 438,
+      "height": 703,
+      "radius": 16,
+      "background": "#ffffff"
+    },
+    "aside-head": {
+      "exists": true,
+      "count": 1,
+      "height": 50,
+      "paddingX": 16
+    },
+    "aside-title": {
+      "exists": true,
+      "count": 1,
+      "height": 22,
+      "fontSize": 14,
+      "fontWeight": 800,
+      "lineHeight": 22,
+      "color": "#1d2129",
+      "text": "背景介绍"
+    },
+    "aside-body": {
+      "exists": true,
+      "count": 1,
+      "gap": 16,
+      "padding": 16
+    },
+    "aside-scenario": {
+      "exists": true,
+      "count": 1,
+      "width": 404,
+      "fontSize": 16,
+      "fontWeight": 850,
+      "text": "深度沟通：应对交付与数据质疑"
+    },
+    "aside-section": {
+      "exists": true,
+      "count": 6,
+      "width": 404
+    },
+    "aside-section-title": {
+      "exists": true,
+      "count": 6,
+      "height": 22,
+      "fontSize": 14,
+      "fontWeight": 800,
+      "lineHeight": 22,
+      "color": "#1d2129"
+    },
+    "aside-badge": {
+      "exists": true,
+      "count": 6,
+      "width": 18,
+      "height": 18,
+      "radius": 6
+    },
+    "role-card": {
+      "exists": true,
+      "count": 2,
+      "width": 404,
+      "radius": 12,
+      "padding": 12,
+      "background": "#f7f8fa"
+    },
+    "aside-p": {
+      "exists": true,
+      "count": 1,
+      "width": 404,
+      "fontSize": 14,
+      "lineHeight": 24,
+      "color": "#4e5969"
+    },
+    "progress-row": {
+      "exists": true,
+      "count": 4,
+      "width": 404,
+      "height": 21,
+      "fontSize": 14,
+      "lineHeight": 21,
+      "color": "#4e5969"
+    },
+    "input-area": {
+      "exists": true,
+      "count": 1,
+      "width": 1050,
+      "height": 120
+    },
+    "input-bar": {
+      "exists": true,
+      "count": 1,
+      "width": 1050,
+      "height": 94,
+      "gap": 8,
+      "radius": 18,
+      "paddingX": 14,
+      "paddingY": 12,
+      "background": "#ffffff"
+    },
+    "input-textarea": {
+      "exists": true,
+      "count": 1,
+      "width": 1020,
+      "height": 24,
+      "fontSize": 15,
+      "lineHeight": 24,
+      "color": "#f3f4f6"
+    },
+    "input-btn": {
+      "exists": true,
+      "count": 2,
+      "width": 38,
+      "height": 38,
+      "radius": 10,
+      "background": null
+    },
+    "footnote": {
+      "exists": true,
+      "count": 1,
+      "height": 18,
+      "fontSize": 12,
+      "lineHeight": 18,
+      "color": "#ffffff",
+      "text": "内容由AI生成"
+    }
+  }
+}

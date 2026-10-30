@@ -1,0 +1,155 @@
+{
+  "page": "drillmate-theme-detail",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".dm-detail > div",
+      "props": ["width", "paddingY"]
+    },
+    {
+      "id": "breadcrumb",
+      "selector": ".dm-detail nav",
+      "props": ["width", "height", "gap", "fontSize", "paddingY"],
+      "text": true
+    },
+    {
+      "id": "banner",
+      "selector": ".dm-detail .dm-banner",
+      "props": ["width", "height", "radius"]
+    },
+    {
+      "id": "banner-pad",
+      "selector": ".dm-detail .dm-banner > div",
+      "props": ["padding"]
+    },
+    {
+      "id": "banner-mode-pill",
+      "selector": ".dm-detail .dm-banner .sp-theme-mode-pill",
+      "props": ["fontSize", "fontWeight", "radius", "paddingX", "color"],
+      "text": true
+    },
+    {
+      "id": "banner-title",
+      "selector": ".dm-detail .dm-banner h1",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "banner-desc",
+      "selector": ".dm-detail .dm-banner p",
+      "props": ["fontSize", "color"]
+    },
+    {
+      "id": "banner-stats",
+      "selector": ".dm-detail .dm-banner .relative > div > div:nth-child(4)",
+      "props": ["fontSize", "gap", "color"],
+      "text": true
+    },
+    {
+      "id": "main-grid",
+      "selector": ".dm-detail .grid",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "left-col",
+      "selector": ".dm-detail .grid > div",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "aside-col",
+      "selector": ".dm-detail .grid > aside",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "card-section",
+      "selector": ".dm-detail .grid > div > section",
+      "props": ["width", "radius", "background", "padding"]
+    },
+    {
+      "id": "aside-section",
+      "selector": ".dm-detail .grid > aside > section",
+      "props": ["width", "radius", "background", "padding"],
+      "count": 4
+    },
+    {
+      "id": "section-title",
+      "selector": ".dm-detail .grid section h2",
+      "props": ["fontSize", "fontWeight", "color"],
+      "text": true
+    },
+    {
+      "id": "scene-section-hint",
+      "selector": ".dm-detail .grid > div > section > div:nth-child(1) > span",
+      "props": ["fontSize", "color"],
+      "text": true
+    },
+    {
+      "id": "scene-card",
+      "selector": ".dm-scene",
+      "props": ["width", "radius", "background", "borderColor", "padding"],
+      "count": 3
+    },
+    {
+      "id": "scene-index",
+      "selector": ".dm-scene > div:nth-child(1)",
+      "props": ["width", "height", "radius", "fontSize", "fontWeight", "color"],
+      "text": true
+    },
+    {
+      "id": "scene-title",
+      "selector": ".dm-scene h3",
+      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true
+    },
+    {
+      "id": "scene-status",
+      "selector": ".dm-scene > div:nth-child(2) > div:nth-child(1) > span",
+      "props": ["fontSize", "fontWeight", "radius", "paddingX", "lineHeight"]
+    },
+    {
+      "id": "scene-meta",
+      "selector": ".dm-scene > div:nth-child(2) > div:nth-child(2)",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "scene-action-area",
+      "selector": ".dm-scene > div:nth-child(3)",
+      "props": ["width", "gap"]
+    },
+    {
+      "id": "eval-score",
+      "selector": ".dm-detail .grid > aside > section > div:nth-child(2) strong",
+      "props": ["fontSize", "fontWeight"],
+      "text": true
+    },
+    {
+      "id": "eval-desc",
+      "selector": ".dm-detail .grid > aside > section > div:nth-child(3)",
+      "props": ["fontSize", "lineHeight", "color"]
+    },
+    {
+      "id": "eval-dim-item",
+      "selector": ".dm-detail .grid > aside > section > div:nth-child(4) > div",
+      "props": ["fontSize", "lineHeight", "color"],
+      "count": 6
+    },
+    {
+      "id": "record-row",
+      "selector": ".dm-detail .grid > aside > section:nth-child(4) > div:nth-child(2) > div",
+      "props": ["width", "paddingY"],
+      "count": 2
+    },
+    {
+      "id": "record-more",
+      "selector": ".dm-detail .grid > aside > section:nth-child(4) > div:last-child span",
+      "props": ["fontSize", "fontWeight"],
+      "text": true
+    }
+  ]
+}

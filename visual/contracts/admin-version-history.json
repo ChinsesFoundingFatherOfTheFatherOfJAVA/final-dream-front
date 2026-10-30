@@ -1,0 +1,28 @@
+{
+  "page": "admin-version-history",
+  "path": "/#/sparring/freesimulate/theme/2114946858329477121?tab=versions",
+  "pathNote": "本项目版本历史由 route.query.tab=versions 直接渲染；原平台为第 4 个 Tab。",
+  "measured": "admin-version-history",
+  "reference": "visual/reference/admin-version-history.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b（切到「版本历史」Tab）",
+  "probes": [
+    { "id": "panel", "selector": ".version-history", "desc": "版本历史面板", "required": true },
+    { "id": "desc", "selector": ".version-history > .page-desc", "desc": "页面说明", "required": true, "text": true },
+    { "id": "list", "selector": ".version-list", "desc": "版本卡片列表", "required": true },
+    { "id": "card", "selector": ".version-card", "desc": "版本卡片；版本数量由真实历史数据决定", "required": true, "countIgnore": true },
+    { "id": "card-head", "selector": ".version-head", "desc": "卡片头部；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "version-no-row", "selector": ".version-no-row", "desc": "版本号与当前版本徽章；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "version-no", "selector": ".version-no", "desc": "版本号；数量及编号文本均由真实版本数据决定", "required": true, "countIgnore": true, "skipProps": ["text"] },
+    { "id": "current-badge", "selector": ".current-badge", "desc": "当前版本徽章", "required": true, "text": true },
+    { "id": "version-time", "selector": ".version-time", "desc": "版本创建时间；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "stat-grid", "selector": ".version-stats", "desc": "版本统计三列网格；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "stat-col", "selector": ".version-stats > .stat-col", "desc": "统计列；总数随真实版本数量变化", "required": true, "countIgnore": true },
+    { "id": "stat-label", "selector": ".version-stats .stat-label", "desc": "统计标签；总数随真实版本数量变化", "required": true, "text": true, "countIgnore": true },
+    { "id": "stat-value", "selector": ".version-stats .stat-num", "desc": "统计值；总数随真实版本数量变化", "required": true, "countIgnore": true },
+    { "id": "stat-value-pass", "selector": ".version-stats .stat-num.green", "desc": "已完成统计值；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "stat-value-progress", "selector": ".version-stats .stat-num.blue", "desc": "进行中统计值；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "card-foot", "selector": ".version-foot", "desc": "卡片底部；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "creator", "selector": ".creator", "desc": "创建者；随真实版本卡片数量重复", "required": true, "countIgnore": true },
+    { "id": "rollback-slot", "selector": ".rollback-slot", "desc": "回滚操作槽；当前版本保留空容器，总数随真实版本数量变化", "required": true, "countIgnore": true }
+  ]
+}

@@ -1,0 +1,884 @@
+{
+  "page": "admin-theme-settings",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「主题设置」Tab",
+  "note": "Tab 面板不是 URL 参数驱动：点 .fs-tab 后 location.href 不变，内容区被整体替换，所以必须用 steps 先点 Tab 再量。原平台 5 个分区始终在 DOM 里（未激活的只是 display:none，rect 变 0 但 computed style 全部有效），所以不需要逐个点左侧快速导航。选择器写成逗号列表 = 原平台节点, 本项目节点：原平台 .yxt-* 是它自家设计系统内部类，本项目用 Element Plus，所以输入框/开关/复选等内部节点在两边名字不同，必须各写一支；本项目侧只用 .sf-*/.dm-*/.el-* 钩子，不会命中原平台那支。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(3)",
+      "wait": 1500
+    }
+  ],
+  "probes": [
+    {
+      "id": "page",
+      "selector": ".theme-detail-page",
+      "props": [
+        "display"
+      ]
+    },
+    {
+      "id": "tabbar",
+      "selector": ".fs-tabbar",
+      "props": [
+        "display",
+        "width"
+      ]
+    },
+    {
+      "id": "layout",
+      "selector": ".settingtab-layout",
+      "props": [
+        "display",
+        "gap"
+      ]
+    },
+    {
+      "id": "nav-aside",
+      "selector": ".settingtab-nav",
+      "props": [
+        "width",
+        "padding",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "nav-title",
+      "selector": ".settingtab-nav .nav-title",
+      "props": [
+        "height",
+        "padding",
+        "fontSize",
+        "color",
+        "lineHeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "nav-item",
+      "selector": ".settingtab-nav .nav-item",
+      "props": [
+        "height",
+        "display",
+        "padding",
+        "radius",
+        "gap"
+      ]
+    },
+    {
+      "id": "nav-item-active",
+      "selector": ".settingtab-nav .nav-item.active",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "nav-index",
+      "selector": ".settingtab-nav .nav-index",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ]
+    },
+    {
+      "id": "nav-text",
+      "selector": ".settingtab-nav .nav-text",
+      "props": [
+        "fontSize"
+      ],
+      "text": true
+    },
+    {
+      "id": "main",
+      "selector": ".settingtab-main",
+      "props": [
+        "paddingBottom"
+      ]
+    },
+    {
+      "id": "block-header",
+      "selector": ".yxt-block-header, .sf-block-header",
+      "props": [
+        "height",
+        "display",
+        "paddingX",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "block-title",
+      "selector": ".yxt-block-title, .sf-block-title",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "footer",
+      "selector": ".footer, .sf-footer",
+      "props": [
+        "display",
+        "height",
+        "gap",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "footer-cancel",
+      "selector": ".footer > button:nth-child(1), .sf-footer > button:nth-child(1)",
+      "props": [
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "footer-save",
+      "selector": ".footer > button:nth-child(2), .sf-footer > button:nth-child(2)",
+      "props": [
+        "height",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "label-sublabel",
+      "selector": ".sf-sublabel",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "required-star",
+      "selector": ".sf-sublabel .text-red-500, .sf-sublabel .sf-required",
+      "props": [
+        "color",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "name-input",
+      "selector": ".yxt-input__wordlimit, .sf-name .el-input__wrapper",
+      "props": [
+        "height",
+        "paddingY",
+        "paddingX",
+        "radius",
+        "background",
+        "color",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "word-count",
+      "selector": ".yxt-input__count, .sf-name .el-input__count",
+      "props": [
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "desc-textarea",
+      "selector": ".yxt-textarea__inner, .sf-desc .el-textarea__inner",
+      "props": [
+        "height",
+        "paddingY",
+        "paddingX",
+        "radius",
+        "background",
+        "color",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "owner-chip",
+      "selector": ".bg-orange-50",
+      "props": [
+        "height",
+        "display",
+        "gap",
+        "paddingX",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "owner-chip-text",
+      "selector": ".bg-orange-50 .text-xs",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "owner-add",
+      "selector": ".sf-add-btn",
+      "props": [
+        "height",
+        "display",
+        "gap",
+        "paddingX",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "tips-trigger",
+      "selector": ".dm-tips-trigger",
+      "props": [
+        "display",
+        "gap",
+        "height"
+      ]
+    },
+    {
+      "id": "tips-label",
+      "selector": ".dm-tips-label",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "checkbox-inner",
+      "selector": ".yxt-checkbox__inner, .el-checkbox__inner",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "checkbox-label",
+      "selector": ".yxt-checkbox__label, .el-checkbox__label",
+      "props": [
+        "fontSize",
+        "color",
+        "paddingX"
+      ],
+      "text": true
+    },
+    {
+      "id": "voice-select",
+      "selector": ".yxt-select--small, .sf-voice .el-select__wrapper",
+      "props": [
+        "height",
+        "paddingX",
+        "radius",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "time-card",
+      "selector": ".setting-section-time",
+      "props": [
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "time-optional",
+      "selector": ".setting-section-time .color-gray-7, .sf-optional",
+      "props": [
+        "fontSize",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "date-input",
+      "selector": ".yxt-date-editor .yxt-input__inner, .sf-date .el-input__wrapper",
+      "props": [
+        "height",
+        "paddingY",
+        "paddingX",
+        "radius",
+        "background",
+        "color",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "sf-label",
+      "selector": ".sf-label",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight"
+      ]
+    },
+    {
+      "id": "sf-sub",
+      "selector": ".sf-sub",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "cap-note",
+      "selector": ".text-slate-500",
+      "props": [
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "num-input",
+      "selector": ".yxt-input-number--small .yxt-input__inner, .sf-num .el-input__wrapper",
+      "props": [
+        "paddingY",
+        "paddingX",
+        "radius",
+        "background",
+        "color",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "unit",
+      "selector": ".text-slate-400",
+      "props": [
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "radio-inner",
+      "selector": ".yxt-radio__inner, .el-radio__inner",
+      "props": [
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "radio-label",
+      "selector": ".yxt-radio__label, .el-radio__label",
+      "props": [
+        "fontSize",
+        "color",
+        "paddingX"
+      ]
+    },
+    {
+      "id": "join-card",
+      "selector": ".join-mode-item",
+      "props": [
+        "display",
+        "gap",
+        "padding",
+        "radius"
+      ]
+    },
+    {
+      "id": "join-card-on",
+      "selector": ".join-mode-item.is-on",
+      "props": [
+        "background",
+        "borderColor",
+        "padding",
+        "radius"
+      ]
+    },
+    {
+      "id": "join-title",
+      "selector": ".join-mode-item .sf-sublabel",
+      "props": [
+        "fontWeight",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "toggle-track",
+      "selector": ".toggle-switch, .sf-toggle .el-switch__core",
+      "props": [
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "toggle-thumb",
+      "selector": ".toggle-thumb, .sf-toggle .el-switch__action",
+      "props": [
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "guest-row",
+      "selector": ".sf-guest-row",
+      "props": [
+        "display",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "text-btn",
+      "selector": ".yxt-button--text, .sf-text-btn",
+      "props": [
+        "fontSize",
+        "color",
+        "radius"
+      ]
+    },
+    {
+      "id": "mode-option",
+      "selector": ".mode-option",
+      "props": [
+        "display",
+        "gap",
+        "padding",
+        "radius"
+      ]
+    },
+    {
+      "id": "mode-option-active",
+      "selector": ".mode-option.active",
+      "props": [
+        "padding",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "mode-name",
+      "selector": ".mode-name",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "mode-desc",
+      "selector": ".mode-desc",
+      "props": [
+        "fontSize",
+        "color",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "default-badge",
+      "selector": ".default-badge",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background",
+        "radius",
+        "paddingX"
+      ],
+      "text": true
+    },
+    {
+      "id": "dm-enabled-badge",
+      "selector": ".dm-enabled-badge",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background",
+        "radius",
+        "paddingX",
+        "paddingY"
+      ],
+      "text": true
+    },
+    {
+      "id": "dm-card",
+      "selector": ".dm-card",
+      "props": [
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "dm-card-head",
+      "selector": ".dm-card-head",
+      "props": [
+        "display",
+        "gap",
+        "padding"
+      ]
+    },
+    {
+      "id": "dm-dot",
+      "selector": ".dm-dot",
+      "props": [
+        "radius",
+        "background"
+      ]
+    },
+    {
+      "id": "dm-name",
+      "selector": ".dm-name",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "dm-tagline",
+      "selector": ".dm-tagline",
+      "props": [
+        "fontSize",
+        "color",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "dm-assist",
+      "selector": ".dm-assist",
+      "props": [
+        "display",
+        "gap",
+        "padding",
+        "radius"
+      ]
+    },
+    {
+      "id": "dm-assist-on",
+      "selector": ".dm-assist.is-on",
+      "props": [
+        "borderColor"
+      ]
+    },
+    {
+      "id": "dm-assist-name",
+      "selector": ".dm-assist-name",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "dm-assist-desc",
+      "selector": ".dm-assist-desc",
+      "props": [
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "dm-tag",
+      "selector": ".dm-tag",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background",
+        "radius",
+        "paddingX"
+      ],
+      "text": true
+    },
+    {
+      "id": "adp-title",
+      "selector": ".adp-title",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ]
+    },
+    {
+      "id": "pv-stage",
+      "selector": ".pv-stage",
+      "props": [
+        "radius",
+        "paddingX",
+        "paddingY",
+        "background"
+      ]
+    },
+    {
+      "id": "pv-bubble-user",
+      "selector": ".pv-bubble-user",
+      "props": [
+        "radius",
+        "padding",
+        "background",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "pv-review",
+      "selector": ".pv-review",
+      "props": [
+        "radius",
+        "padding",
+        "background"
+      ]
+    },
+    {
+      "id": "pv-ai-avatar",
+      "selector": ".pv-ai-avatar",
+      "props": [
+        "radius",
+        "background",
+        "fontSize"
+      ]
+    },
+    {
+      "id": "pv-input",
+      "selector": ".pv-input",
+      "props": [
+        "radius",
+        "fontSize",
+        "paddingY"
+      ]
+    },
+    {
+      "id": "dm-ac-item",
+      "selector": ".dm-ac-item",
+      "props": [
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "dm-ac-name",
+      "selector": ".dm-ac-name",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "dm-combo",
+      "selector": ".dm-combo",
+      "props": [
+        "radius",
+        "paddingX",
+        "paddingY",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "dm-combo-cfg-item",
+      "selector": ".dm-combo-cfg-item",
+      "props": [
+        "radius",
+        "padding",
+        "background"
+      ]
+    },
+    {
+      "id": "practice-item",
+      "selector": ".practice-mode-item",
+      "props": [
+        "display",
+        "gap",
+        "padding",
+        "radius"
+      ]
+    },
+    {
+      "id": "practice-name",
+      "selector": ".practice-mode-name",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "diff-opt",
+      "selector": ".diff-opt",
+      "props": [
+        "display",
+        "gap",
+        "paddingX",
+        "paddingY",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ]
+    },
+    {
+      "id": "diff-opt-active",
+      "selector": ".diff-opt.active",
+      "props": [
+        "color",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "diff-stars",
+      "selector": ".diff-opt-stars",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "color"
+      ]
+    },
+    {
+      "id": "pass-intro",
+      "selector": ".pass-intro",
+      "props": [
+        "fontSize",
+        "lineHeight",
+        "color",
+        "background",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "pass-intro-strong",
+      "selector": ".pass-intro strong",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "opt-config",
+      "selector": ".opt-config",
+      "props": [
+        "display",
+        "gap",
+        "paddingY",
+        "marginTop"
+      ]
+    },
+    {
+      "id": "pass-config-text",
+      "selector": ".pass-config-text",
+      "props": [
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "id": "pass-fixed-note",
+      "selector": ".pass-fixed-note",
+      "props": [
+        "fontSize",
+        "color",
+        "background",
+        "radius",
+        "paddingX",
+        "paddingY",
+        "marginTop",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "pass-fixed-strong",
+      "selector": ".pass-fixed-note strong",
+      "props": [
+        "fontSize",
+        "fontWeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "overview-card",
+      "selector": ".bg-slate-50",
+      "props": [
+        "padding",
+        "radius",
+        "background",
+        "borderColor"
+      ]
+    },
+    {
+      "id": "overview-label",
+      "selector": ".bg-slate-50 .text-slate-500",
+      "props": [
+        "fontSize",
+        "color",
+        "lineHeight"
+      ],
+      "text": true
+    },
+    {
+      "id": "overview-value",
+      "selector": ".text-lg",
+      "props": [
+        "fontSize",
+        "fontWeight",
+        "lineHeight"
+      ]
+    },
+    {
+      "id": "ai-design-btn",
+      "selector": ".from-indigo-600, .ai-design-btn",
+      "props": [
+        "display",
+        "gap",
+        "paddingY",
+        "radius",
+        "fontSize",
+        "fontWeight",
+        "color"
+      ]
+    },
+    {
+      "id": "overview-hint",
+      "selector": ".text-center",
+      "props": [
+        "fontSize",
+        "color",
+        "marginTop"
+      ]
+    }
+  ]
+}

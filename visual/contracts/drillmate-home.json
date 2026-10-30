@@ -1,0 +1,245 @@
+{
+  "$comment": "学员端首页视觉契约。期望值不写在这里——全部来自 visual/measured/drillmate-home.json（原平台实测）。本文件只写「原平台探针 id → 本项目选择器」的映射，以及三类显式豁免：countIgnore（数量随数据变化）、skipProps（容器继承属性）、optional（契约刻意不做的元素）。",
+  "page": "drillmate-home",
+  "path": "/#/sparring/web/drillmate",
+  "viewport": {
+    "width": 1524,
+    "height": 727
+  },
+  "reference": "visual/reference/drillmate-home.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/web/drillmate",
+  "probes": [
+    {
+      "id": "content",
+      "selector": ".drillmate-home",
+      "required": true
+    },
+    {
+      "id": "row",
+      "selector": ".drillmate-home > .layout",
+      "required": true
+    },
+    {
+      "id": "left-col",
+      "selector": ".col-left",
+      "required": true
+    },
+    {
+      "id": "left-avatar",
+      "selector": ".col-left .user-avatar",
+      "required": true
+    },
+    {
+      "id": "left-name",
+      "selector": ".col-left .user-name",
+      "required": true
+    },
+    {
+      "id": "left-org",
+      "selector": ".col-left .user-meta",
+      "desc": "原平台第 4 行是公司名；本项目按契约 F02 展示「部门 · 岗位」，语义等价、位置相同"
+    },
+    {
+      "id": "left-rank",
+      "selector": ".col-left .user-tier",
+      "optional": true,
+      "desc": "契约 F02：首期不展示等级/段位，刻意不做（原平台有青铜徽章）"
+    },
+    {
+      "id": "tier-pill",
+      "selector": ".col-left .user-tier__pill",
+      "optional": true,
+      "desc": "同上：段位徽章内的文字胶囊，本项目不展示"
+    },
+    {
+      "id": "stat-grid",
+      "selector": ".col-left .stat-grid",
+      "required": true
+    },
+    {
+      "id": "stat-cell",
+      "selector": ".col-left .stat-cell",
+      "required": true
+    },
+    {
+      "id": "stat-value",
+      "selector": ".col-left .stat-cell .stat-value",
+      "required": true
+    },
+    {
+      "id": "stat-unit",
+      "selector": ".col-left .stat-cell .stat-unit",
+      "required": true
+    },
+    {
+      "id": "stat-label",
+      "selector": ".col-left .stat-cell .stat-label",
+      "required": true
+    },
+    {
+      "id": "quick-bar",
+      "selector": ".col-main .quick-bar",
+      "required": true
+    },
+    {
+      "id": "quick-entry",
+      "selector": ".col-main .quick-entry",
+      "required": true
+    },
+    {
+      "id": "quick-icon",
+      "selector": ".col-main .quick-entry > svg",
+      "required": true
+    },
+    {
+      "id": "quick-title",
+      "selector": ".col-main .quick-entry .quick-title",
+      "text": true,
+      "required": true
+    },
+    {
+      "id": "quick-sub",
+      "selector": ".col-main .quick-entry .quick-sub",
+      "text": true,
+      "required": true
+    },
+    {
+      "id": "theme-panel",
+      "selector": ".col-main .theme-panel",
+      "required": true
+    },
+    {
+      "id": "theme-panel-title",
+      "selector": ".col-main .theme-panel__title",
+      "text": true,
+      "required": true
+    },
+    {
+      "id": "panel-count",
+      "selector": ".col-main .theme-panel__count",
+      "countIgnore": true,
+      "desc": "原平台该区域有 4 个 span，本项目只有一个计数；数量不比对"
+    },
+    {
+      "id": "theme-card",
+      "selector": ".theme-card",
+      "countIgnore": true,
+      "desc": "主题条数随学员参与情况变化，数量不比对（契约 F04 最多展示 4 个）"
+    },
+    {
+      "id": "theme-name",
+      "selector": ".theme-card > .theme-head",
+      "skipProps": [
+        "fontSize",
+        "lineHeight",
+        "color"
+      ],
+      "desc": "这是 flex 行容器：字号/行高/颜色都继承自页面默认样式，真正要比的是主题名叶子元素（theme-name-text）与状态标签（theme-status-tag）",
+      "countIgnore": true
+    },
+    {
+      "id": "theme-name-row",
+      "selector": ".theme-card > .theme-head",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "theme-name-text",
+      "selector": ".theme-card .theme-name",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "theme-meta",
+      "selector": ".theme-card .theme-meta",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "theme-status-tag",
+      "selector": ".theme-card .theme-status",
+      "desc": "标签配色按状态区分；原平台示例是「进行中」，本项目颜色随状态变化",
+      "countIgnore": true
+    },
+    {
+      "id": "theme-progress-track",
+      "selector": ".theme-card .theme-track",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "theme-fill",
+      "selector": ".theme-card .theme-fill",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "theme-progress-label",
+      "selector": ".theme-card .theme-progress-label",
+      "text": true,
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "recent-col",
+      "selector": ".col-right",
+      "required": true
+    },
+    {
+      "id": "recent-title",
+      "selector": ".col-right .recent-title",
+      "text": true,
+      "required": true
+    },
+    {
+      "id": "recent-more",
+      "selector": ".col-right .recent-more",
+      "text": true,
+      "required": true
+    },
+    {
+      "id": "recent-card",
+      "selector": ".recent-card",
+      "count": 1,
+      "desc": "契约 D09/F06：首页最近练习只展示最新 1 条（原平台展示 5 条）；高度随文案行数变化，不比对",
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "recent-head",
+      "selector": ".recent-card > .recent-head",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "recent-scenario",
+      "selector": ".recent-card .recent-scenario",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "recent-tag",
+      "selector": ".recent-card .recent-status",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "color",
+        "background"
+      ],
+      "desc": "状态标签配色随 attempt 状态变化，不比对颜色"
+    },
+    {
+      "id": "recent-theme",
+      "selector": ".recent-card .recent-theme",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "recent-score",
+      "selector": ".recent-card .recent-score",
+      "required": true,
+      "countIgnore": true
+    }
+  ]
+}
