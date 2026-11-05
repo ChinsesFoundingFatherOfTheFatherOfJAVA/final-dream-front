@@ -232,6 +232,86 @@ export interface ActVersionItem {
   creator: string
 }
 
+// ---------- 数据分析（FP-20，真实统计） ----------
+
+/** 统计范围四档：首次 / 最近一次 / 全部记录 / 个人最高 */
+export type ActAnalysisScope = 'first' | 'last' | 'all' | 'max'
+/** 维度掌握变化的对比终点：最近一次 / 最高 */
+export type ActCompareEnd = 'last' | 'max'
+
+/** 分布单位：person=人（first/last/max）· percent=百分比（all） */
+export type ActAnalysisUnit = 'person' | 'percent'
+
+export interface ActAnalysisOverview {
+  practiced: number
+  totalUser: number
+  participantCount: number
+  totalCount: number
+  passCount: number
+  passRate: number
+}
+
+export interface ActAnalysisSegment {
+  range: string
+  value: number
+  /** 与首次相比的增减；首次口径为 null（不显示） */
+  delta: number | null
+}
+
+export interface ActAnalysisDistribution {
+  unit: ActAnalysisUnit
+  /** 无数据为 null */
+  avg: number | null
+  segments: ActAnalysisSegment[]
+}
+
+export interface ActAnalysisMastery {
+  dimensionId: string
+  dimensionName: string
+  weight: number | null
+  /** 无数据为 null */
+  avg: number | null
+  low: number
+  mid: number
+  high: number
+  unit: ActAnalysisUnit
+  /** 是否暂无练习数据（avg=null）；用它判空，不要用 0 判空 */
+  empty: boolean
+}
+
+export interface ActAnalysisChange {
+  dimensionName: string
+  /** 无数据为 null */
+  firstScore: number | null
+  lastScore: number | null
+  maxScore: number | null
+  delta: number | null
+  /** 主题内没有任何学员练过两次 */
+  notSecondTime: boolean
+}
+
+export interface ActAnalysisDimension {
+  id: string
+  dimensionName: string
+  weight: number | null
+  dimensionDesc: string | null
+  sortOrder: number
+}
+
+/** FP-20 数据分析响应（GET /act/admin/theme/{id}/analysis） */
+export interface ActThemeAnalysis {
+  themeId: string
+  sceneUnitId: string | null
+  scope: ActAnalysisScope
+  compareEnd: ActCompareEnd
+  studyMode: number | null
+  overview: ActAnalysisOverview
+  distribution: ActAnalysisDistribution
+  mastery: ActAnalysisMastery[]
+  change: ActAnalysisChange[]
+  dimensions: ActAnalysisDimension[]
+}
+
 // ---------- 状态操作 ----------
 
 export interface ActThemeStatusResp {

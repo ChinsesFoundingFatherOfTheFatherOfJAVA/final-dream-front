@@ -1,0 +1,12 @@
+{
+  "page": "admin-prepare-dialog-ref",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": { "width": 1524, "height": 727 },
+  "steps": [{ "click": ".dm-scene__btn, .dm-scene-btn", "wait": 2500 }],
+  "probes": [
+    { "id": "dialog-any", "selector": ".yxt-dialog, .el-dialog, [class*='dialog']", "props": ["width", "height", "radius", "display"], "text": true, "optional": true },
+    { "id": "body-text", "selector": "body", "props": ["width", "height"], "text": true },
+    { "id": "buttons", "selector": "button", "props": ["width", "height", "fontSize", "radius"], "text": true, "optional": true }
+  ]
+}

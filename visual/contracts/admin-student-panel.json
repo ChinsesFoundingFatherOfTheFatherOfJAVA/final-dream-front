@@ -1,0 +1,93 @@
+{
+  "page": "admin-student-panel",
+  "path": "/#/sparring/freesimulate/theme/2114946858329477121?tab=students",
+  "pathNote": "本项目 Tab 由 route.query.tab 驱动，带 tab=students 直接渲染学员管理面板；原平台需点第 2 个 .fs-tab。",
+  "measured": "admin-student-panel",
+  "reference": "visual/reference/admin-student-panel.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b（切到「学员管理」Tab）",
+  "note": "本页契约此前是 any-input / any-th / any-tr / any-button 这类模糊探针且全部 optional，量到的是页面上任意一个元素（含页头导航和其它表格），既定位不到学员面板，又因 optional 永不报错——这就是台账点名的「假通过」。本版每个探针都绑定到学员面板内的精确类名，并去掉 optional。",
+  "probes": [
+    {
+      "id": "tabbar",
+      "selector": ".dm-tabs__nav .dm-tab",
+      "desc": "Tab 栏（等待锚点 + 结构对比）。学员面板只有切到「学员管理」才挂载，审计用首个探针等页面就绪，故放第一位",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "learner",
+      "selector": ".dm-learner",
+      "desc": "学员管理面板容器（存在性探针：整块区域漏做时这条先红）",
+      "required": true,
+      "skipProps": [
+        "width",
+        "display"
+      ]
+    },
+    {
+      "id": "learner-toolbar",
+      "selector": ".dm-learner__toolbar",
+      "desc": "工具栏：左侧动作组 + 右侧筛选区",
+      "required": true,
+      "skipProps": [
+        "min-height"
+      ]
+    },
+    {
+      "id": "learner-search-input",
+      "selector": ".dm-learner__search input",
+      "desc": "搜索框 256x32 / r4 / 左内边距 32（图标位）。数量随筛选控件增减，不比对数量——原平台面板内有 4 个带 placeholder 的 input（搜索/部门/状态/分页），本项目收敛为 1 个原生搜索框（部门与状态走下拉、分页走 el-pagination），属布局实现差异而非结构缺失。注意：数量比对只认 countIgnore，写进 skipProps 是无效的（审计脚本的 skip 集合本就默认含 count）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width"
+      ]
+    },
+    {
+      "id": "learner-th",
+      "selector": ".dm-learner__table th",
+      "desc": "表头单元格：50 高 / 14px 700 / #f9fafb。列数随训考一体模式变化，数量不比对",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "learner-td",
+      "selector": ".dm-learner__table td",
+      "desc": "表体单元格 72 高 / 14px / #262626；行与列数量随真实数据变化",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "height"
+      ]
+    },
+    {
+      "id": "learner-tr",
+      "selector": ".dm-learner__table tbody tr",
+      "desc": "表体行 72 高；行数由真实学员数据决定",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "learner-checkbox",
+      "selector": ".dm-learner__table .el-checkbox",
+      "desc": "多选框（台账 #2：表头全选 + 行选）。EP 复选框外框高度与原生不同，只比勾选列内布局稳定项",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": [
+        "width",
+        "height",
+        "radius",
+        "count"
+      ]
+    },
+    {
+      "id": "learner-pager",
+      "selector": ".dm-learner__pager",
+      "desc": "分页条 60 高 / 16 内边距 / 14px #595959",
+      "required": true,
+      "skipProps": [
+        "width"
+      ]
+    }
+  ]
+}

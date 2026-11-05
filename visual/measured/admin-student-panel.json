@@ -1,0 +1,78 @@
+{
+  "page": "admin-student-panel",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "reference": "visual/reference/admin-student-panel.original.png",
+  "capturedAt": "2026-11-04T09:47:08.695Z",
+  "probes": {
+    "tabbar": {
+      "exists": true,
+      "count": 5,
+      "height": 38,
+      "fontSize": 16
+    },
+    "learner": {
+      "exists": true,
+      "count": 1,
+      "width": 1253,
+      "display": "block"
+    },
+    "learner-toolbar": {
+      "exists": true,
+      "count": 1,
+      "height": 32,
+      "gap": 12,
+      "display": "flex"
+    },
+    "learner-search-input": {
+      "exists": true,
+      "count": 4,
+      "width": 256,
+      "height": 32,
+      "radius": 4,
+      "paddingX": 32,
+      "fontSize": 14
+    },
+    "learner-th": {
+      "exists": true,
+      "count": 2,
+      "height": 50,
+      "fontSize": 14,
+      "fontWeight": 700,
+      "color": "#262626",
+      "background": "#f9fafb",
+      "text": "学员姓名"
+    },
+    "learner-td": {
+      "exists": true,
+      "count": 26,
+      "height": 72,
+      "fontSize": 14,
+      "color": "#262626"
+    },
+    "learner-tr": {
+      "exists": true,
+      "count": 2,
+      "height": 72
+    },
+    "learner-checkbox": {
+      "exists": true,
+      "count": 4,
+      "width": 16,
+      "height": 16,
+      "radius": 2
+    },
+    "learner-pager": {
+      "exists": true,
+      "count": 1,
+      "height": 60,
+      "padding": 16,
+      "fontSize": 14,
+      "color": "#595959"
+    }
+  }
+}

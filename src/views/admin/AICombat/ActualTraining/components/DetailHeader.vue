@@ -90,8 +90,9 @@
       </div>
       <div class="dm-stats__card">
         <div class="dm-stats__label">平均得分</div>
-        <div class="dm-stats__value">{{ detail.stats.avgScore }}分</div>
-        <div class="dm-stats__sub">
+        <!-- 台账 R1-3：训考一体大号＝训练+考核合计均值，小号淡色补两套口径；单模式大号即该模式均分，不出小号 -->
+        <div class="dm-stats__value">{{ formatAverage(averageMain) }}分</div>
+        <div v-if="isDualMode" class="dm-stats__sub">
           训练均分 {{ formatAverage(detail.stats.trainingAverage) }} 分 / 考核均分
           {{ formatAverage(detail.stats.examAverage) }} 分
         </div>
@@ -99,7 +100,7 @@
       <div class="dm-stats__card">
         <div class="dm-stats__label">练习总次数</div>
         <div class="dm-stats__value">{{ practiceTotal }}次</div>
-        <div class="dm-stats__sub">
+        <div v-if="isDualMode" class="dm-stats__sub">
           训练 {{ detail.stats.trainingCount ?? 0 }} 次 / 考核 {{ detail.stats.examCount ?? 0 }} 次
         </div>
       </div>
@@ -172,6 +173,11 @@ import type { AssistantScriptProgressResp } from '@/types/assistant'
 import ConfirmDialog from './ConfirmDialog.vue'
 import { initNotified, readInitProgress, writeInitProgress, clearInitProgress } from './initProgress'
 import { comingSoon, showToast } from './ui'
+import {
+  averageOf as modeAverage,
+  isDualMode as modeIsDual,
+  practiceCountOf as modePracticeCount
+} from './studentModeDisplay'
 
 const props = defineProps<{ detail: ActThemeDetail }>()
 const emit = defineEmits<{ (e: 'refresh'): void }>()
@@ -192,11 +198,29 @@ const goAssistant = () => {
 
 // ---------- 统计卡展示 ----------
 
-/** 练习总次数 = 训练 + 考核（后端按报告表聚合；旧数据无该字段时回落 totalTrainingCount） */
-const practiceTotal = computed(() => {
-  const s = props.detail.stats
-  return s.totalPracticeCount ?? s.totalTrainingCount ?? 0
-})
+/** 练习总次数 / 平均分 / 训考一体判定统一走 studentModeDisplay（与学员列表同一口径） */
+const practiceTotal = computed(() =>
+  modePracticeCount({
+    themeMode: props.detail.themeMode,
+    trainingCount: props.detail.stats.trainingCount,
+    examCount: props.detail.stats.examCount,
+    totalPracticeCount: props.detail.stats.totalPracticeCount,
+    totalTrainingCount: props.detail.stats.totalTrainingCount
+  })
+)
+
+/** 训考一体：平均得分/练习次数需要同时呈现训练与考核两套口径 */
+const isDualMode = computed(() => modeIsDual(props.detail.themeMode))
+
+/** 大号平均分：训考一体取合计均值，单模式取该模式均分（无样本回落合计均值） */
+const averageMain = computed(() =>
+  modeAverage({
+    themeMode: props.detail.themeMode,
+    averageScore: props.detail.stats.avgScore,
+    trainingAverage: props.detail.stats.trainingAverage,
+    examAverage: props.detail.stats.examAverage
+  })
+)
 
 /** 均分：无样本时后端给 null，展示 -- 而不是 0 分 */
 const formatAverage = (value: number | null | undefined) =>

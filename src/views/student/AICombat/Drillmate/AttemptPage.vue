@@ -78,8 +78,8 @@
           <div class="dm-prepare__role dm-prepare__role--me">
             <h3>你的角色</h3>
             <div class="dm-prepare__role-head">
-              <span class="dm-prepare__avatar">{{ userRoleName ? userRoleName.slice(0, 1) : '我' }}</span>
-              <span class="dm-prepare__role-name">{{ userRoleName || '我' }}</span>
+              <span class="dm-prepare__avatar">{{ userInitial }}</span>
+              <span class="dm-prepare__role-name">{{ userRoleName || '学员' }}</span>
             </div>
             <p class="dm-prepare__role-desc">{{ userRoleDesc || '本次练习中的你' }}</p>
           </div>
@@ -141,22 +141,109 @@
           <div class="dm-run__tools">
             <div class="dm-run__timer">⏱ {{ clock }}</div>
             <div class="dm-run__progress">{{ targetProgress }}%</div>
-            <div class="dm-run__mode" @click="toggleAside">混合 ⌄</div>
-            <button type="button" title="资料栏" @click="toggleAside">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <!--
+              R10-1 录音识别语言：语义是「这段录音交给语音识别按哪个语种听」，
+              与 AI 演员说什么话无关（不要理解成切换 AI 回复语言）。
+              原平台默认「混合」，点开可切中文/英文。
+            -->
+            <div ref="langBox" class="dm-run__lang">
+              <div
+                class="dm-run__mode"
+                :class="{ 'is-open': langMenuOpen }"
+                role="button"
+                tabindex="0"
+                :aria-label="`录音识别语言：${asrLangLabel}`"
+                aria-haspopup="menu"
+                :aria-expanded="langMenuOpen"
+                @click="toggleLangMenu"
+                @keydown.enter.prevent="toggleLangMenu"
+                @keydown.space.prevent="toggleLangMenu"
+              >
+                <svg
+                  class="dm-run__mode-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />
+                  <path
+                    d="M3.2 12h17.6M12 3c2.4 2.4 3.7 5.6 3.7 9s-1.3 6.6-3.7 9M12 3c-2.4 2.4-3.7 5.6-3.7 9s1.3 6.6 3.7 9"
+                    stroke="currentColor"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <span>{{ asrLangLabel }}</span>
+                <span class="dm-run__mode-caret" aria-hidden="true">⌄</span>
+              </div>
+              <div
+                v-show="langMenuOpen"
+                class="dm-run__lang-menu"
+                role="menu"
+                aria-label="录音识别语言"
+              >
+                <button
+                  v-for="item in ASR_LANG_OPTIONS"
+                  :key="item.key"
+                  type="button"
+                  role="menuitemradio"
+                  class="dm-run__lang-option"
+                  :class="{ 'is-active': item.key === asrLang }"
+                  :aria-checked="item.key === asrLang ? 'true' : 'false'"
+                  @click="selectAsrLang(item.key)"
+                >
+                  <span class="dm-run__lang-option-label">{{ item.label }}</span>
+                  <span class="dm-run__lang-option-hint">{{ item.hint }}</span>
+                  <span
+                    v-if="item.key === asrLang"
+                    class="dm-run__lang-option-check"
+                    aria-hidden="true"
+                    >✓</span
+                  >
+                </button>
+              </div>
+              <!-- 首次进运行态提示一次：只解释识别语种，不涉及 AI 回复语言 -->
+              <div v-if="langTipOpen" class="dm-run__lang-tip" role="note">
+                <p>已默认「{{ asrLangLabel }}」识别，中英粤都能听懂，点此可切换语种。</p>
+                <button type="button" class="dm-run__lang-tip-btn" @click="langTipOpen = false">
+                  我知道了
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="dm-run__tools-btn"
+              :class="{ 'is-active': asideView === 'chat' }"
+              aria-label="聊天记录"
+              title="聊天记录"
+              :aria-pressed="asideView === 'chat' ? 'true' : 'false'"
+              @click="showChat"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
-                  d="M4 6h16M4 12h16M4 18h10"
+                  d="M4 5.5h16v10H9l-4 3v-3H4z"
                   stroke="currentColor"
-                  stroke-width="2"
+                  stroke-width="1.8"
                   stroke-linecap="round"
+                  stroke-linejoin="round"
                 />
               </svg>
             </button>
-            <button type="button" title="帮助" @click="showHelp">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <button
+              type="button"
+              class="dm-run__tools-btn"
+              :class="{ 'is-active': asideView === 'intro' }"
+              aria-label="场景介绍"
+              title="场景介绍"
+              :aria-pressed="asideView === 'intro' ? 'true' : 'false'"
+              @click="showIntro"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
                 <path
-                  d="M9.5 9.5a2.5 2.5 0 113.4 2.3c-.6.3-.9.8-.9 1.4v.6"
+                  d="M12 7.6v5.2"
                   stroke="currentColor"
                   stroke-width="1.8"
                   stroke-linecap="round"
@@ -253,11 +340,22 @@
         </div>
       </div>
 
+      <!--
+        R6-4/R6-5/R6-6：右侧 aside 是「聊天记录 / 场景介绍」共用的同一个面板。
+        asideView 决定渲染哪一屏，两个工具条按钮各自打开对应视图；
+        关闭只隐藏面板（asideOpen=false），不丢当前视图，再次点开保持原位。
+      -->
       <aside v-show="asideOpen" class="dm-run__aside">
         <div class="dm-run__aside-head">
-          <span class="dm-run__aside-title">背景介绍</span>
-          <button type="button" class="dm-run__aside-close" @click="asideOpen = false">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <span class="dm-run__aside-title">{{ asideTitle }}</span>
+          <button
+            type="button"
+            class="dm-run__aside-close"
+            aria-label="收起右侧面板"
+            title="收起"
+            @click="asideOpen = false"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d="M6 6l12 12M18 6L6 18"
                 stroke="currentColor"
@@ -267,7 +365,41 @@
             </svg>
           </button>
         </div>
-        <div class="dm-run__aside-body">
+
+        <!-- ===== 聊天记录（R6-5）：完整对话历史，不止当前可见的 40 条 ===== -->
+        <div v-if="asideView === 'chat'" class="dm-run__aside-body dm-run__aside-body--chat">
+          <div class="dm-run__chat-meta">
+            <span>共 {{ chatTranscript.length }} 条 · 对话 {{ currentRound }} 轮</span>
+            <button
+              v-if="chatTranscript.length"
+              type="button"
+              class="dm-run__chat-copy"
+              aria-label="复制聊天记录"
+              title="复制聊天记录"
+              @click="copyTranscript"
+            >
+              复制
+            </button>
+          </div>
+          <div v-if="!chatTranscript.length" class="dm-run__chat-empty">
+            本轮练习还没有对话内容。AI 演员开口后，这里会按时间顺序列出完整记录。
+          </div>
+          <div
+            v-for="item in chatTranscript"
+            :key="item.key"
+            class="dm-run__chat-row"
+            :class="`is-${item.role}`"
+          >
+            <div class="dm-run__chat-row-head">
+              <span class="dm-run__chat-who">{{ item.who }}</span>
+              <span v-if="item.role === 'coach'" class="dm-run__chat-tag">教练点评</span>
+            </div>
+            <div class="dm-run__chat-text">{{ item.text }}</div>
+          </div>
+        </div>
+
+        <!-- ===== 场景介绍 = 背景介绍（R6-1/R6-6，与练习准备页同源） ===== -->
+        <div v-else class="dm-run__aside-body">
           <h2 class="dm-run__aside-scenario">{{ scenarioName || '本次练习场景' }}</h2>
 
           <section class="dm-run__aside-section">
@@ -275,19 +407,50 @@
               <span class="dm-run__aside-badge">1</span>
               <span>角色介绍</span>
             </div>
+            <!-- R6-1：原平台角色介绍比"姓名（身份）"更细，需要身份/年龄段/描述分行展示 -->
             <div class="dm-run__role-card">
               <span class="dm-run__role-tag">你的角色</span>
               <div class="dm-run__role-line">
                 <span class="dm-run__role-avatar">{{ userInitial }}</span>
-                <span>{{ userRoleName || '我' }}<template v-if="userRoleDesc">（{{ userRoleDesc }}）</template></span>
+                <span class="dm-run__role-name">{{ userRoleName || '学员' }}</span>
               </div>
+              <dl class="dm-run__role-fields">
+                <div v-if="userRoleIdentity" class="dm-run__role-field">
+                  <dt>身份</dt>
+                  <dd>{{ userRoleIdentity }}</dd>
+                </div>
+                <div v-if="userRoleAge" class="dm-run__role-field">
+                  <dt>年龄段</dt>
+                  <dd>{{ userRoleAge }}</dd>
+                </div>
+                <div v-if="userRoleProfile" class="dm-run__role-field dm-run__role-field--block">
+                  <dd>{{ userRoleProfile }}</dd>
+                </div>
+              </dl>
             </div>
             <div class="dm-run__role-card">
               <span class="dm-run__role-tag">AI扮演角色</span>
               <div class="dm-run__role-line">
                 <span class="dm-run__role-avatar dm-run__role-avatar--ai">{{ actorInitial }}</span>
-                <span>{{ actorName || '对练对象' }}<template v-if="actorDesc">（{{ actorDesc }}）</template></span>
+                <span class="dm-run__role-name">{{ actorName || '对练对象' }}</span>
               </div>
+              <dl class="dm-run__role-fields">
+                <div v-if="actorIdentity" class="dm-run__role-field">
+                  <dt>身份</dt>
+                  <dd>{{ actorIdentity }}</dd>
+                </div>
+                <div v-if="actorCompany" class="dm-run__role-field">
+                  <dt>公司</dt>
+                  <dd>{{ actorCompany }}</dd>
+                </div>
+                <div v-if="actorPersonality" class="dm-run__role-field">
+                  <dt>性格</dt>
+                  <dd>{{ actorPersonality }}</dd>
+                </div>
+                <div v-if="actorProfile" class="dm-run__role-field dm-run__role-field--block">
+                  <dd>{{ actorProfile }}</dd>
+                </div>
+              </dl>
             </div>
           </section>
 
@@ -387,12 +550,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  finishAttempt,
-  getAttempt,
-  startAttempt,
-  type AttemptResp,
-} from '@/api/actStudent'
+import { finishAttempt, getAttempt, startAttempt, type AttemptResp } from '@/api/actStudent'
 import { useDrillSocket } from '@/composables/useDrillSocket'
 import { useAntiCheat } from '@/composables/useAntiCheat'
 import request from '@/api/request'
@@ -410,6 +568,41 @@ const fatalError = ref('')
 const remainingSeconds = ref(0)
 const bubbleBox = ref<HTMLElement | null>(null)
 const asideOpen = ref(true)
+/** 右侧 aside 内容视图：场景介绍（背景介绍）与聊天记录共用同一块面板（R6-5/R6-6） */
+const asideView = ref<'intro' | 'chat'>('intro')
+/** 录音识别语言下拉开关（R10-1） */
+const langMenuOpen = ref(false)
+const langBox = ref<HTMLElement | null>(null)
+/** 首次进入运行态时的语种说明气泡（原平台默认展开一次，点「我知道了」关闭） */
+const langTipOpen = ref(true)
+
+type AsrLang = 'mixed' | 'zh' | 'en' | 'yue'
+
+/**
+ * 录音识别语言候选（R10-1）。
+ * 后端口径：SpeechTraining 的 ASR 是豆包单模型多语种，language 只做日志比对/质检，
+ * 传 'mandarin' 与 'mixed' 识别结果一致；这里给用户的是「识别语种」而非 AI 回复语言。
+ */
+const ASR_LANG_OPTIONS: Array<{
+  key: AsrLang
+  label: string
+  hint: string
+  apiValue: string | null
+}> = [
+  { key: 'mixed', label: '混合', hint: '中英粤都能听懂（默认）', apiValue: null },
+  { key: 'zh', label: '中文', hint: '普通话为主', apiValue: 'mandarin' },
+  { key: 'yue', label: '粤语', hint: '粤语为主', apiValue: 'cantonese' },
+  { key: 'en', label: '英文', hint: '英文为主', apiValue: 'en' },
+]
+const asrLang = ref<AsrLang>('mixed')
+
+// ==== 下拉面板的点击外部收起（不额外接管 Esc，避免与输入框快捷键冲突） ====
+function onDocPointerDown(event: MouseEvent) {
+  if (!langMenuOpen.value) return
+  const box = langBox.value
+  if (box && event.target instanceof Node && box.contains(event.target)) return
+  langMenuOpen.value = false
+}
 
 let pollTimer: number | null = null
 let clockTimer: number | null = null
@@ -424,7 +617,9 @@ const actorName = computed(() => attempt.value?.actorName ?? '')
 const actorDesc = computed(() => attempt.value?.actorDesc ?? '')
 const userRoleName = computed(() => attempt.value?.userRoleName ?? '')
 const userRoleDesc = computed(() => attempt.value?.userRoleDesc ?? '')
-const guidanceList = computed(() => (attempt.value?.behaviorGuidance ?? []).filter(Boolean).slice(0, 8))
+const guidanceList = computed(() =>
+  (attempt.value?.behaviorGuidance ?? []).filter(Boolean).slice(0, 8),
+)
 const dimensions = computed(() => attempt.value?.dimensions ?? [])
 const passScore = computed(() => attempt.value?.passScore ?? null)
 const targetProgress = computed(() => attempt.value?.targetProgress ?? 0)
@@ -432,9 +627,56 @@ const currentRound = computed(() => attempt.value?.currentRound ?? 0)
 const totalDuration = computed(() => attempt.value?.maxDurationSeconds || 1200)
 const durationMinutes = computed(() => Math.round(totalDuration.value / 60))
 const actorInitial = computed(() => (actorName.value ? actorName.value.slice(0, 1) : 'AI'))
-const userInitial = computed(() => (userRoleName.value ? userRoleName.value.slice(0, 1) : '我'))
+const userInitial = computed(() => (userRoleName.value ? userRoleName.value.slice(0, 1) : '学'))
 /** 只显示对话内容，教练点评单独呈现（气泡样式不同） */
 const visibleMessages = computed(() => messages.value.slice(-40))
+
+// ==== R6-1 背景介绍「角色介绍」细化 ====
+/*
+ * 原平台角色卡是「姓名 + 身份 + 年龄段 + 描述」，AI 侧还有「公司 + 性格 + 详细背景长文」。
+ * 后端 AttemptResp 现在只下发两个摘要串（userRoleDesc = 身份，actorDesc = 身份＋沟通风格），
+ * 所以这里分两层取值：
+ *   1. 若后端扩了细分字段（下面 RoleDetail 的可选字段），优先用结构化值；
+ *   2. 否则从摘要串按中文顿号/逗号拆出「身份」「性格」，拆不出就整块不渲染，
+ *      不猜内容、不把 businessBackground 顶替成人物背景（那会让两个分区重复同一段话）。
+ * 缺的年龄段/公司/长文在交付说明里标为「需后端 AttemptResp 扩字段」，前端不做补写。
+ */
+type RoleDetail = AttemptResp & {
+  userRoleIdentity?: string | null
+  userRoleAge?: string | null
+  userRoleBackground?: string | null
+  actorIdentity?: string | null
+  actorAge?: string | null
+  actorCompany?: string | null
+  actorPersonality?: string | null
+  actorBackground?: string | null
+}
+
+const detail = computed<RoleDetail | null>(() => attempt.value as RoleDetail | null)
+
+/** 摘要串按中文逗号/顿号/分号拆段（后端 actorDesc 的拼法是「身份，沟通风格」） */
+function splitSummary(text: string): string[] {
+  return text
+    .split(/[，,、；;]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+const actorParts = computed(() => splitSummary(actorDesc.value))
+const userParts = computed(() => splitSummary(userRoleDesc.value))
+
+const userRoleIdentity = computed(() => detail.value?.userRoleIdentity || userParts.value[0] || '')
+const userRoleAge = computed(() => detail.value?.userRoleAge || '')
+const userRoleProfile = computed(
+  () => detail.value?.userRoleBackground || userParts.value.slice(1).join('，'),
+)
+
+const actorIdentity = computed(() => detail.value?.actorIdentity || actorParts.value[0] || '')
+const actorCompany = computed(() => detail.value?.actorCompany || '')
+const actorPersonality = computed(
+  () => detail.value?.actorPersonality || actorParts.value.slice(1).join('，'),
+)
+const actorProfile = computed(() => detail.value?.actorBackground || '')
 
 const percent = computed(() => attempt.value?.preparationPercent ?? 3)
 
@@ -508,6 +750,80 @@ const totalClock = computed(() => {
 const pushMessage = (role: string, text: string) => {
   messages.value.push({ key: `${role}-${messages.value.length}-${text.slice(0, 8)}`, role, text })
   nextTick(() => bubbleBox.value?.scrollTo({ top: bubbleBox.value.scrollHeight }))
+}
+
+// ==== R6-4 / R6-5 / R6-6：右侧面板视图切换 ====
+const asideTitle = computed(() => (asideView.value === 'chat' ? '聊天记录' : '背景介绍'))
+
+/** 打开聊天记录视图（已在该视图时再点一次 = 收起面板，交互与原平台工具条一致） */
+function showChat() {
+  if (asideOpen.value && asideView.value === 'chat') {
+    asideOpen.value = false
+    return
+  }
+  asideView.value = 'chat'
+  asideOpen.value = true
+}
+
+/** 打开场景介绍视图（与 R6-1 同源，就是背景介绍面板本身） */
+function showIntro() {
+  if (asideOpen.value && asideView.value === 'intro') {
+    asideOpen.value = false
+    return
+  }
+  asideView.value = 'intro'
+  asideOpen.value = true
+}
+
+const chatWho = (role: string) => {
+  if (role === 'user') return userRoleName.value || '学员'
+  if (role === 'coach') return '教练'
+  return actorName.value || 'AI 演员'
+}
+
+/**
+ * 聊天记录面板数据（R6-5）。
+ * 不截断：气泡区为了性能只留最近 40 条（visibleMessages），
+ * 聊天记录要能回溯整轮，所以直接用 messages 全量。
+ */
+const chatTranscript = computed(() =>
+  messages.value.map((item) => ({
+    key: `chat-${item.key}`,
+    role: item.role,
+    who: chatWho(item.role),
+    text: item.text,
+  })),
+)
+
+/** 复制完整对话（剪贴板不可用时不静默失败，给一次提示） */
+async function copyTranscript() {
+  const text = chatTranscript.value.map((item) => `${item.who}：${item.text}`).join('\n')
+  try {
+    await navigator.clipboard.writeText(text)
+    ElMessage.success('聊天记录已复制')
+  } catch {
+    ElMessage.warning('浏览器不允许访问剪贴板，请手动选择文本复制')
+  }
+}
+
+// ==== R10-1：录音识别语言 ====
+const asrLangLabel = computed(
+  () => ASR_LANG_OPTIONS.find((item) => item.key === asrLang.value)?.label ?? '混合',
+)
+/** 提交给 ASR 接口的 language 参数：混合不传（豆包多语种单模型，缺省即覆盖中英粤） */
+const asrLangParam = computed(
+  () => ASR_LANG_OPTIONS.find((item) => item.key === asrLang.value)?.apiValue ?? null,
+)
+
+function toggleLangMenu() {
+  langMenuOpen.value = !langMenuOpen.value
+  // 用户主动点了语种入口，说明已经理解提示，顺手收起教学气泡
+  langTipOpen.value = false
+}
+
+function selectAsrLang(key: AsrLang) {
+  asrLang.value = key
+  langMenuOpen.value = false
 }
 
 const socket = useDrillSocket(attemptId.value, (event, _seq, data) => {
@@ -610,11 +926,15 @@ async function send() {
 
 async function finish() {
   try {
-    await ElMessageBox.confirm('结束后本轮练习将生成报告，且成绩按未通过计算。确定结束？', '结束练习', {
-      confirmButtonText: '结束练习',
-      cancelButtonText: '继续练习',
-      type: 'warning',
-    })
+    await ElMessageBox.confirm(
+      '结束后本轮练习将生成报告，且成绩按未通过计算。确定结束？',
+      '结束练习',
+      {
+        confirmButtonText: '结束练习',
+        cancelButtonText: '继续练习',
+        type: 'warning',
+      },
+    )
   } catch {
     return
   }
@@ -627,9 +947,6 @@ async function finish() {
 }
 
 const goBack = () => router.push('/sparring/web/drillmate')
-const toggleAside = () => (asideOpen.value = !asideOpen.value)
-const showHelp = () =>
-  ElMessage.info('按 Enter 发送，Shift+Enter 换行；随时可点左上角返回结束练习')
 
 /** 语音转写（AC-10）：上传录音 → ASR 文本回填输入框（不自动发送，契约 02 §5.6） */
 const transcribing = ref(false)
@@ -641,9 +958,12 @@ async function transcribeVoice(event: Event) {
   try {
     const form = new FormData()
     form.append('audio', file)
+    // R10-1：把当前选中的识别语种带给 ASR；混合时不传，走后端缺省的多语种识别
+    const lang = asrLangParam.value
     const result = await request.post<unknown, { text: string }>(
       `/act/student/attempts/${attemptId.value}/voice/transcribe`,
       form,
+      lang ? { params: { language: lang } } : undefined,
     )
     if (result.text) draft.value = (draft.value ? draft.value + ' ' : '') + result.text
   } finally {
@@ -653,6 +973,7 @@ async function transcribeVoice(event: Event) {
 }
 
 onMounted(async () => {
+  document.addEventListener('pointerdown', onDocPointerDown)
   try {
     attempt.value = await getAttempt(attemptId.value)
   } catch (error) {
@@ -688,6 +1009,7 @@ function computeRemaining(value: AttemptResp): number {
 }
 
 onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDocPointerDown)
   if (pollTimer) window.clearInterval(pollTimer)
   if (clockTimer) window.clearInterval(clockTimer)
   socket.close()
@@ -1212,17 +1534,150 @@ $run-panel: rgba(13, 17, 30, 0.82);
     border: 1px solid rgba(255, 255, 255, 0.14);
   }
 
+  /* 录音识别语言胶囊：原平台与「对话模式」同尺寸同外形（宽 88 / 高 34 / 圆角 10） */
+  &__lang {
+    position: relative;
+  }
+
   &__mode {
+    gap: 4px;
     min-width: 88px;
     font-weight: 400;
     background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid rgba(139, 92, 246, 0.9);
+      outline-offset: 2px;
+    }
+
+    &.is-open {
+      background: rgba(10, 14, 26, 0.6);
+    }
+  }
+
+  &__mode-icon {
+    flex: none;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  &__mode-caret {
+    font-size: 12px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  /* 语种菜单：深色卡片，浮在工具条下方 */
+  &__lang-menu {
+    position: absolute;
+    right: 0;
+    top: 42px;
+    z-index: 6;
+    width: 208px;
+    padding: 6px;
+    border-radius: 12px;
+    background: rgba(16, 20, 34, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  &__lang-option {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 10px 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &.is-active {
+      background: rgba(99, 102, 241, 0.22);
+    }
+  }
+
+  &__lang-option-label {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 20px;
+  }
+
+  &__lang-option-hint {
+    font-size: 11px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  &__lang-option-check {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 12px;
+    color: #a78bfa;
+  }
+
+  /* 首次进入的说明气泡（原平台同位置的气泡文案：挂在语种胶囊下方并带小尖角） */
+  &__lang-tip {
+    position: absolute;
+    left: -8px;
+    top: 44px;
+    z-index: 5;
+    width: 236px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+
+    /* 指向胶囊的小菱形尖角（纯装饰，读屏忽略） */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 48px;
+      top: -5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: #7c3aed;
+      transform: rotate(45deg);
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 20px;
+      color: #fff;
+    }
+  }
+
+  &__lang-tip-btn {
+    display: block;
+    margin: 8px 0 0 auto;
+    padding: 4px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #3b2c9b;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
   }
 
-  &__tools > button {
+  /* 工具条图标按钮：待机半透明，激活时原平台用紫色填充（聊天记录/场景介绍） */
+  &__tools-btn {
     width: 34px;
     height: 34px;
-    border: 0;
+    border: 1px solid transparent;
     border-radius: 10px;
     background: rgba(10, 14, 26, 0.6);
     color: rgba(255, 255, 255, 0.9);
@@ -1230,6 +1685,17 @@ $run-panel: rgba(13, 17, 30, 0.82);
     align-items: center;
     justify-content: center;
     cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid rgba(139, 92, 246, 0.9);
+      outline-offset: 2px;
+    }
+
+    &.is-active {
+      background: #6366f1;
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
   }
 
   &__overlay {
@@ -1542,6 +2008,149 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
   &__role-avatar--ai {
     background: #7e22ce;
+  }
+
+  &__role-name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 22px;
+    color: #1d2129;
+  }
+
+  /* R6-1：角色卡的细分字段（身份/公司/年龄段/性格/描述） */
+  &__role-fields {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__role-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+
+    dt {
+      flex: none;
+      width: 52px;
+      font-size: 12px;
+      line-height: 20px;
+      color: #86909c;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 13px;
+      line-height: 20px;
+      color: #4e5969;
+    }
+  }
+
+  /* 长文描述不缩进，整行给正文；原平台这段是没有标签的灰字长文 */
+  &__role-field--block {
+    dt {
+      display: none;
+    }
+
+    dd {
+      font-size: 13px;
+      line-height: 21px;
+      color: #4e5969;
+    }
+  }
+
+  /* ===== 聊天记录面板（R6-5） ===== */
+  &__aside-body--chat {
+    gap: 12px;
+  }
+
+  &__chat-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+    line-height: 18px;
+    color: #86909c;
+  }
+
+  &__chat-copy {
+    flex: none;
+    padding: 2px 10px;
+    border: 1px solid #d9dce1;
+    border-radius: 6px;
+    background: #fff;
+    color: #4e5969;
+    font-size: 12px;
+    line-height: 18px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: #436bff;
+      color: #436bff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(67, 107, 255, 0.6);
+      outline-offset: 1px;
+    }
+  }
+
+  &__chat-empty {
+    padding: 16px 12px;
+    border-radius: 12px;
+    background: #f7f8fa;
+    font-size: 13px;
+    line-height: 21px;
+    color: #86909c;
+  }
+
+  &__chat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f7f8fa;
+
+    &.is-user {
+      background: #f0f6ff;
+    }
+
+    &.is-coach {
+      background: #fff7e6;
+      border: 1px solid #ffe7ba;
+    }
+  }
+
+  &__chat-row-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__chat-who {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    color: #4e5969;
+  }
+
+  &__chat-tag {
+    padding: 0 6px;
+    border-radius: 4px;
+    background: #ffe7ba;
+    color: #ad6800;
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  &__chat-text {
+    font-size: 13px;
+    line-height: 21px;
+    color: #1d2129;
+    white-space: pre-wrap;
   }
 
   &__progress-row {

@@ -14,7 +14,8 @@
     "format": "prettier --write --experimental-cli src/",
     "visual:capture": "node scripts/visual-capture.mjs",
     "visual:audit": "node scripts/visual-audit.mjs",
-    "visual:check": "node scripts/visual-audit.mjs"
+    "visual:selftest": "node scripts/visual-contract-selftest.mjs",
+    "visual:check": "node scripts/visual-contract-selftest.mjs && node scripts/visual-audit.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",

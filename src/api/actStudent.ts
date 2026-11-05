@@ -144,6 +144,99 @@ export interface StudentScenario {
   examAction?: { enabled: boolean; reason: string | null }
 }
 
+/** 动作可用性（训练/考核）：不可用时带中文原因（契约 04 §API-S04 / S05 同口径） */
+export interface StudentScenarioAction {
+  enabled: boolean
+  reason: string | null
+}
+
+/** 评估维度（含三档评分标准，F09 弹窗"评估标准"分区） */
+export interface StudentScenarioDimension {
+  id: string
+  name: string
+  weight: number | null
+  description: string | null
+  excellentStandard: string | null
+  goodStandard: string | null
+  improveStandard: string | null
+  sortOrder: number | null
+}
+
+/** 实战案例卡（F09 弹窗案例区；开场白为原话，前端不得截断重写） */
+export interface StudentScenarioCase {
+  caseId: string
+  drillScriptId: string | null
+  scriptName: string | null
+  difficulty: number | null
+  difficultyStars: number | null
+  actorName: string | null
+  actorPosition: string | null
+  actorCompany: string | null
+  actorType: string | null
+  actorPersonality: string | null
+  actorCommunicationStyle: string | null
+  scriptBackground: string | null
+  scriptOpening: string | null
+}
+
+/** 涉及产品档案（弹窗里以标签展示名称，点击打开档案详情） */
+export interface StudentScenarioProductProfile {
+  profileId: string
+  profileKey: string | null
+  name: string
+  category: string | null
+  description: string | null
+}
+
+/**
+ * 场景准备详情（GET /api/act/student/themes/{themeId}/scenarios/{scenarioId}，契约 04 §API-S05）
+ * <p>
+ * F09 弹窗九类信息的唯一数据源：服务端一次给全，前端不拼装、不造占位数据；
+ * 任一数据源缺失时后端返回空数组/空值，前端据此显示空态。
+ */
+export interface StudentScenarioDetail {
+  themeId: string
+  themeName: string | null
+  scenarioId: string
+  sortOrder: number | null
+  name: string
+  /** passed / in_progress / not_started */
+  status: string
+  statusText: string
+  /** 适用人群完整列表（弹窗按需取前两个） */
+  audience: string[]
+  timeLimitMinutes: number | null
+  maxDurationSeconds: number | null
+  passScore: number | null
+  attemptCount: number
+  myTrainingCount: number
+  myExamCount: number
+  myHighestScore: number | null
+  myHighestExamScore: number | null
+  difficulty: number | null
+  difficultyText: string | null
+  startable: boolean
+  stopReason: string | null
+  trainingAction: StudentScenarioAction | null
+  examAction: StudentScenarioAction | null
+  /** 已开启的练习方式子集：case / random / custom */
+  practiceMethods: string[]
+  /** 三种练习方式全部不可用的原因（可用时为 null，前端直接展示） */
+  unavailableReason: string | null
+  businessGoal: string | null
+  businessImpact: string | null
+  failureCost: string | null
+  coreConflict: string | null
+  behaviorGoals: string[]
+  icebergElements: string[]
+  commonFailureModes: string[]
+  difficulties: string[]
+  forbiddenBehaviors: string[]
+  dimensions: StudentScenarioDimension[]
+  cases: StudentScenarioCase[]
+  productProfiles: StudentScenarioProductProfile[]
+}
+
 export interface StudentMaterial {
   materialId: string
   name: string
@@ -356,6 +449,18 @@ export function getStudentThemeDetail(themeId: string) {
   return request.get<unknown, StudentThemeDetail>(`/act/student/themes/${themeId}`)
 }
 
+/**
+ * 场景准备详情（契约 04 §API-S05 / 01 §F09）：F09 弹窗九类信息。
+ * <p>
+ * 只在弹窗打开时调用一次；服务端一次给全（案例、档案、维度、可用练习方式），
+ * 前端不做"多个接口拼装"，避免字段口径漂移。
+ */
+export function getStudentScenarioDetail(themeId: string, scenarioId: string) {
+  return request.get<unknown, StudentScenarioDetail>(
+    `/act/student/themes/${themeId}/scenarios/${scenarioId}`,
+  )
+}
+
 /** 练习历程（attempt 分页 + 报告摘要） */
 export function getStudentHistory(params: {
   themeId?: string
@@ -452,4 +557,3 @@ export function getMaterialViewerContext(materialId: string) {
 export function getStudentProductProfile(profileId: string) {
   return request.get<unknown, StudentProductProfile>(`/act/student/product-profiles/${profileId}`)
 }
-

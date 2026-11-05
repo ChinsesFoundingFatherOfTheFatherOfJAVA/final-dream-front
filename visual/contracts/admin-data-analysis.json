@@ -6,65 +6,426 @@
   "reference": "visual/reference/admin-data-analysis.original.png",
   "capturedFrom": "https://train.chinajack.com/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b（切到「数据分析」Tab）",
   "probes": [
-    { "id": "panel-wrap", "selector": ".data-analysis", "desc": "数据分析面板", "required": true },
-    { "id": "layout", "selector": ".data-analysis .analysis-layout", "desc": "场景导航与主内容布局", "required": true },
-    { "id": "nav-holder", "selector": ".data-analysis .unit-nav-holder", "desc": "左侧导航占位", "required": true },
-    { "id": "nav", "selector": ".data-analysis .unit-menu", "desc": "场景单元导航", "required": true },
-    { "id": "nav-title", "selector": ".data-analysis .menu-title", "desc": "场景单元标题；限定组件作用域，避免匹配页面外同名标题", "required": true, "text": true },
-    { "id": "nav-list", "selector": ".data-analysis .unit-nav-list", "desc": "场景单元列表", "required": true },
-    { "id": "nav-item-active", "selector": ".data-analysis .menu-item.active", "desc": "当前场景单元；名称文本由真实场景数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "nav-no-active", "selector": ".data-analysis .menu-item.active .unit-idx", "desc": "当前场景序号", "required": true, "text": true },
-    { "id": "nav-name-active", "selector": ".data-analysis .menu-item.active .unit-name", "desc": "当前场景名称；名称由真实场景数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "nav-item", "selector": ".data-analysis .menu-item:not(.active)", "desc": "未选中场景单元；数量由真实场景单元数据决定", "required": true, "countIgnore": true },
-    { "id": "nav-no", "selector": ".data-analysis .menu-item:not(.active) .unit-idx", "desc": "未选中场景序号；数量由真实场景单元数据决定", "required": true, "countIgnore": true },
-    { "id": "main", "selector": ".data-analysis .analysis-content", "desc": "分析主内容", "required": true },
-    { "id": "modebar", "selector": ".data-analysis .modebar", "desc": "训练/考核数据切换栏", "required": true },
-    { "id": "modetab-active", "selector": ".data-analysis .mode-tab.active", "desc": "训练数据选中态", "required": true, "text": true },
-    { "id": "modetab", "selector": ".data-analysis .mode-tab:not(.active)", "desc": "考核数据未选中态", "required": true, "text": true },
-    { "id": "section", "selector": ".data-analysis .section-title", "desc": "总体概览标题", "required": true, "text": true },
-    { "id": "stats", "selector": ".data-analysis .overview-cards", "desc": "总体概览统计卡网格", "required": true },
-    { "id": "stat", "selector": ".data-analysis .overview-card", "desc": "总体概览统计卡", "required": true },
-    { "id": "stat-val", "selector": ".data-analysis .ov-value", "desc": "统计数值", "required": true },
-    { "id": "stat-val-unit", "selector": ".data-analysis .ov-value > i", "desc": "统计数值单位", "required": true },
-    { "id": "stat-label", "selector": ".data-analysis .ov-label", "desc": "统计标签", "required": true, "text": true },
-    { "id": "scope", "selector": ".data-analysis .scope-row", "desc": "统计范围行", "required": true },
-    { "id": "scope-label", "selector": ".data-analysis .scope-label", "desc": "统计范围标签", "required": true, "text": true },
-    { "id": "scope-select", "selector": ".data-analysis .scope-select .el-select__wrapper", "desc": "统计范围下拉容器", "required": true },
-    { "id": "scope-input", "selector": ".data-analysis .scope-select .el-select__wrapper", "desc": "Element Plus 使用 inset box-shadow 描边，故 borderColor 不参与比对", "required": true, "skipProps": ["borderColor"] },
-    { "id": "panel", "selector": ".data-analysis .analysis-content > .panel", "desc": "分析图表面板", "required": true },
-    { "id": "panel-hd", "selector": ".data-analysis .panel-title-row", "desc": "面板标题行", "required": true },
-    { "id": "panel-title", "selector": ".data-analysis .panel-title", "desc": "面板标题", "required": true, "text": true },
-    { "id": "panel-extra", "selector": ".data-analysis .avg-tag", "desc": "总分分布均分；数值由真实分析数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "panel-extra-val", "selector": ".data-analysis .avg-tag > b", "desc": "均分数值；由真实分析数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "bin", "selector": ".data-analysis .dist-row", "desc": "总分分布行", "required": true },
-    { "id": "bin-label", "selector": ".data-analysis .dist-range", "desc": "分数区间", "required": true, "text": true },
-    { "id": "bin-track", "selector": ".data-analysis .dist-bar-track", "desc": "分布条轨道", "required": true },
-    { "id": "bin-in", "selector": ".data-analysis .dist-bar", "desc": "分布条填充", "required": true },
-    { "id": "bin-num", "selector": ".data-analysis .dist-value", "desc": "分布人数；人数文本由真实分析数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "panel-sub", "selector": ".data-analysis .panel-sub", "desc": "维度掌握人数摘要", "required": true, "text": true },
-    { "id": "dim", "selector": ".data-analysis .mastery-row", "desc": "维度掌握行", "required": true },
-    { "id": "dim-hd", "selector": ".data-analysis .mastery-head", "desc": "维度名称与均分行", "required": true },
-    { "id": "dim-name", "selector": ".data-analysis .mastery-name", "desc": "维度名称；由真实维度数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "dim-avg", "selector": ".data-analysis .mastery-avg", "desc": "维度均分；由真实维度数据决定", "required": true, "skipProps": ["text"] },
-    { "id": "distbar", "selector": ".data-analysis .mastery-bar", "desc": "维度分布条；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "seg", "selector": ".data-analysis .mastery-bar .seg", "desc": "非零维度分段；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "seg-weak", "selector": ".data-analysis .mastery-bar .seg.is-weak", "desc": "弱项分段；零值或当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "seg-mid", "selector": ".data-analysis .mastery-bar .seg.is-mid", "desc": "中等维度分段；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "seg-good", "selector": ".data-analysis .mastery-bar .seg.is-good", "desc": "优秀维度分段；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "bandnote", "selector": ".data-analysis .mastery-foot", "desc": "维度分段说明行；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "band", "selector": ".data-analysis .mastery-band", "desc": "维度分段说明项；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "band-dot", "selector": ".data-analysis .band-dot", "desc": "分段色点；当前真实单元无掌握分布数据时不渲染", "optional": true },
-    { "id": "band-range", "selector": ".data-analysis .band-range", "desc": "分段范围；当前真实单元无掌握分布数据时不渲染", "optional": true, "text": true },
-    { "id": "band-val", "selector": ".data-analysis .band-val", "desc": "分段人数；当前真实单元无掌握分布数据时不渲染，人数文本由数据决定", "optional": true, "skipProps": ["text"] },
-    { "id": "cv-endpoint", "selector": ".data-analysis .cv-endpoint", "desc": "首次与最近对比端点", "required": true },
-    { "id": "cv-head", "selector": ".data-analysis .change-head", "desc": "维度变化表头", "required": true },
-    { "id": "cv-name-head", "selector": ".data-analysis .change-head .change-name", "desc": "维度列表头", "required": true, "text": true },
-    { "id": "cv-nums-head", "selector": ".data-analysis .change-head .change-nums", "desc": "首次最近列表头", "required": true, "text": true },
-    { "id": "cv-track-head", "selector": ".data-analysis .change-head .change-track-head", "desc": "变化幅度列表头", "required": true, "text": true },
-    { "id": "cv-row", "selector": ".data-analysis .change-row", "desc": "维度变化行", "required": true },
-    { "id": "cv-name", "selector": ".data-analysis .change-row .change-name", "desc": "变化维度名称", "required": true },
-    { "id": "cv-nums", "selector": ".data-analysis .change-row .change-nums", "desc": "首次与最近分数", "required": true },
-    { "id": "cv-track", "selector": ".data-analysis .change-row .change-track", "desc": "变化幅度轨道", "required": true },
-    { "id": "cv-delta", "selector": ".data-analysis .change-row .change-delta", "desc": "变化幅度数值", "required": true }
+    {
+      "id": "bin",
+      "selector": ".data-analysis .dist-row",
+      "desc": "总分分布行（等待锚点：只在 /analysis 返回后渲染，放首位可避免在接口未返回时量到加载态而误报整块缺失）",
+      "required": true
+    },
+    {
+      "id": "panel-wrap",
+      "selector": ".data-analysis",
+      "desc": "数据分析面板",
+      "required": true
+    },
+    {
+      "id": "layout",
+      "selector": ".data-analysis .analysis-layout",
+      "desc": "场景导航与主内容布局",
+      "required": true
+    },
+    {
+      "id": "nav-holder",
+      "selector": ".data-analysis .unit-nav-holder",
+      "desc": "左侧导航占位",
+      "required": true
+    },
+    {
+      "id": "nav",
+      "selector": ".data-analysis .unit-menu",
+      "desc": "场景单元导航",
+      "required": true
+    },
+    {
+      "id": "nav-title",
+      "selector": ".data-analysis .menu-title",
+      "desc": "场景单元标题；限定组件作用域，避免匹配页面外同名标题",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "nav-list",
+      "selector": ".data-analysis .unit-nav-list",
+      "desc": "场景单元列表",
+      "required": true
+    },
+    {
+      "id": "nav-item-active",
+      "selector": ".data-analysis .menu-item.active",
+      "desc": "当前场景单元；名称文本由真实场景数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "nav-no-active",
+      "selector": ".data-analysis .menu-item.active .unit-idx",
+      "desc": "当前场景序号",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "nav-name-active",
+      "selector": ".data-analysis .menu-item.active .unit-name",
+      "desc": "当前场景名称；名称由真实场景数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "nav-item",
+      "selector": ".data-analysis .menu-item:not(.active)",
+      "desc": "未选中场景单元；数量由真实场景单元数据决定",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "nav-no",
+      "selector": ".data-analysis .menu-item:not(.active) .unit-idx",
+      "desc": "未选中场景序号；数量由真实场景单元数据决定",
+      "required": true,
+      "countIgnore": true
+    },
+    {
+      "id": "main",
+      "selector": ".data-analysis .analysis-content",
+      "desc": "分析主内容",
+      "required": true
+    },
+    {
+      "id": "modebar",
+      "selector": ".data-analysis .modebar",
+      "desc": "训练/考核数据切换栏",
+      "required": true
+    },
+    {
+      "id": "modetab-active",
+      "selector": ".data-analysis .mode-tab.active",
+      "desc": "训练数据选中态",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "modetab",
+      "selector": ".data-analysis .mode-tab:not(.active)",
+      "desc": "考核数据未选中态",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "section",
+      "selector": ".data-analysis .section-title",
+      "desc": "总体概览标题",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "stats",
+      "selector": ".data-analysis .overview-cards",
+      "desc": "总体概览统计卡网格",
+      "required": true
+    },
+    {
+      "id": "stat",
+      "selector": ".data-analysis .overview-card",
+      "desc": "总体概览统计卡",
+      "required": true
+    },
+    {
+      "id": "stat-val",
+      "selector": ".data-analysis .ov-value",
+      "desc": "统计数值",
+      "required": true
+    },
+    {
+      "id": "stat-val-unit",
+      "selector": ".data-analysis .ov-value > i",
+      "desc": "统计数值单位",
+      "required": true
+    },
+    {
+      "id": "stat-label",
+      "selector": ".data-analysis .ov-label",
+      "desc": "统计标签",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "scope",
+      "selector": ".data-analysis .scope-row",
+      "desc": "统计范围行",
+      "required": true
+    },
+    {
+      "id": "scope-label",
+      "selector": ".data-analysis .scope-row .scope-label",
+      "desc": "统计范围标签。原平台 .fs-insight-scope-label 被「统计范围」与「对比终点」共用（count=2），采集端已收窄到 .fs-insight-scope 作用域，这里同样限定到 .scope-row，不与对比终点同名标签混淆",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "scope-select",
+      "selector": ".data-analysis .scope-select .el-select__wrapper",
+      "desc": "统计范围下拉容器 140x32；原平台 .fs-insight-scope-sel 同样被对比终点复用，已按作用域收窄",
+      "required": true
+    },
+    {
+      "id": "scope-input",
+      "selector": ".data-analysis .scope-select .el-select__wrapper",
+      "desc": "统计范围下拉外壳。Element Plus 使用 inset box-shadow 描边，故 borderColor 不参与比对；padding/字号/圆角仍逐项比对",
+      "required": true,
+      "skipProps": [
+        "borderColor"
+      ]
+    },
+    {
+      "id": "panel",
+      "selector": ".data-analysis .analysis-content > .panel",
+      "desc": "分析图表面板",
+      "required": true
+    },
+    {
+      "id": "panel-hd",
+      "selector": ".data-analysis .panel-title-row",
+      "desc": "面板标题行",
+      "required": true
+    },
+    {
+      "id": "panel-title",
+      "selector": ".data-analysis .panel-title",
+      "desc": "面板标题",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "panel-extra",
+      "selector": ".data-analysis .avg-tag",
+      "desc": "总分分布均分；数值由真实分析数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "panel-extra-val",
+      "selector": ".data-analysis .avg-tag > b",
+      "desc": "均分数值；由真实分析数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "bin-label",
+      "selector": ".data-analysis .dist-range",
+      "desc": "分数区间",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "bin-track",
+      "selector": ".data-analysis .dist-bar-track",
+      "desc": "分布条轨道",
+      "required": true
+    },
+    {
+      "id": "bin-in",
+      "selector": ".data-analysis .dist-bar",
+      "desc": "分布条填充",
+      "required": true
+    },
+    {
+      "id": "bin-num",
+      "selector": ".data-analysis .dist-value",
+      "desc": "分布人数；人数文本由真实分析数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "panel-sub",
+      "selector": ".data-analysis .panel-sub",
+      "desc": "维度掌握人数摘要",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "dim",
+      "selector": ".data-analysis .mastery-row",
+      "desc": "维度掌握行",
+      "required": true
+    },
+    {
+      "id": "dim-hd",
+      "selector": ".data-analysis .mastery-head",
+      "desc": "维度名称与均分行",
+      "required": true
+    },
+    {
+      "id": "dim-name",
+      "selector": ".data-analysis .mastery-name",
+      "desc": "维度名称；由真实维度数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "dim-avg",
+      "selector": ".data-analysis .mastery-avg",
+      "desc": "维度均分；由真实维度数据决定",
+      "required": true,
+      "skipProps": [
+        "text"
+      ]
+    },
+    {
+      "id": "distbar",
+      "selector": ".data-analysis .mastery-bar",
+      "desc": "维度分布条；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "seg",
+      "selector": ".data-analysis .mastery-bar .seg",
+      "desc": "非零维度分段；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "seg-weak",
+      "selector": ".data-analysis .mastery-bar .seg.is-weak",
+      "desc": "弱项分段；零值或当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "seg-mid",
+      "selector": ".data-analysis .mastery-bar .seg.is-mid",
+      "desc": "中等维度分段；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "seg-good",
+      "selector": ".data-analysis .mastery-bar .seg.is-good",
+      "desc": "优秀维度分段；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "bandnote",
+      "selector": ".data-analysis .mastery-foot",
+      "desc": "维度分段说明行；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "band",
+      "selector": ".data-analysis .mastery-band",
+      "desc": "维度分段说明项；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "band-dot",
+      "selector": ".data-analysis .band-dot",
+      "desc": "分段色点；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "countIgnore": true
+    },
+    {
+      "id": "band-range",
+      "selector": ".data-analysis .band-range",
+      "desc": "分段范围；当前真实单元无掌握分布数据时不渲染",
+      "optional": true,
+      "text": true,
+      "countIgnore": true
+    },
+    {
+      "id": "band-val",
+      "selector": ".data-analysis .band-val",
+      "desc": "分段人数；当前真实单元无掌握分布数据时不渲染，人数文本由数据决定",
+      "optional": true,
+      "skipProps": [
+        "text"
+      ],
+      "countIgnore": true
+    },
+    {
+      "id": "cv-endpoint",
+      "selector": ".data-analysis .cv-endpoint",
+      "desc": "维度掌握变化的「对比终点」控件。它与「统计范围」是两个独立控件（原平台各有 .fs-insight-scope / .fs-insight-cv-endpoint 容器），只是复用了 .fs-insight-scope-label / .fs-insight-scope-sel 两个类名——这正是此前 count=2 误判的根因",
+      "required": true
+    },
+    {
+      "id": "cv-endpoint-label",
+      "selector": ".data-analysis .cv-endpoint .cv-endpoint__label",
+      "desc": "对比终点标签（与统计范围标签同字号同字重，但属于另一个控件）",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "cv-head",
+      "selector": ".data-analysis .change-head",
+      "desc": "维度变化表头",
+      "required": true
+    },
+    {
+      "id": "cv-name-head",
+      "selector": ".data-analysis .change-head .change-name",
+      "desc": "维度列表头",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "cv-nums-head",
+      "selector": ".data-analysis .change-head .change-nums",
+      "desc": "首次最近列表头",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "cv-track-head",
+      "selector": ".data-analysis .change-head .change-track-head",
+      "desc": "变化幅度列表头",
+      "required": true,
+      "text": true
+    },
+    {
+      "id": "cv-row",
+      "selector": ".data-analysis .change-row",
+      "desc": "维度变化行",
+      "required": true
+    },
+    {
+      "id": "cv-name",
+      "selector": ".data-analysis .change-row .change-name",
+      "desc": "变化维度名称",
+      "required": true
+    },
+    {
+      "id": "cv-nums",
+      "selector": ".data-analysis .change-row .change-nums",
+      "desc": "首次与最近分数",
+      "required": true
+    },
+    {
+      "id": "cv-track",
+      "selector": ".data-analysis .change-row .change-track",
+      "desc": "变化幅度轨道",
+      "required": true
+    },
+    {
+      "id": "cv-delta",
+      "selector": ".data-analysis .change-row .change-delta",
+      "desc": "变化幅度数值",
+      "required": true,
+      "countIgnore": true
+    }
   ]
 }

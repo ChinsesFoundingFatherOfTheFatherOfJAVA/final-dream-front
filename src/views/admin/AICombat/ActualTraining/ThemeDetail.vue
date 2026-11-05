@@ -32,7 +32,7 @@
 
       <div class="dm-tab-panel">
         <ScenarioUnitList v-if="activeTab === 'scenario'" :units="units" :theme-id="detail.id" />
-        <StudentPanel v-else-if="activeTab === 'students'" :theme-id="detail.id" />
+        <StudentPanel v-else-if="activeTab === 'students'" :theme-id="detail.id" :theme-mode="detail.themeMode" />
         <ThemeSettings
           v-else-if="activeTab === 'settings'"
           :theme-id="detail.id"
@@ -40,7 +40,7 @@
           @saved="refreshAll"
         />
         <VersionHistory v-else-if="activeTab === 'versions'" :theme-id="detail.id" @rolled-back="refreshAll" />
-        <DataAnalysis v-else-if="activeTab === 'analysis'" :units="units" />
+        <DataAnalysis v-else-if="activeTab === 'analysis'" :theme-id="detail.id" :units="units" />
       </div>
     </template>
   </div>

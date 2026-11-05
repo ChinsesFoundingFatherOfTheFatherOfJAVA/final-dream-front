@@ -6,72 +6,191 @@
     "width": 1524,
     "height": 727
   },
+  "capturedFrom": "学员端 → AI实战训练场 → 主题详情 → 点场景行「开始练习」打开场景准备弹窗（F09）",
+  "note": "原平台 F09 是 .dm-scene-dialog（800x824，含实战案例/产品档案/业务四段/失败三组/评估标准九类信息）。此前本文件量的是 .dm-check-dialog（480x571）——那是点案例卡「开始练习」后弹出的 F10 模式选择弹窗，只有两张说明卡。量错对象导致 79 项数值全对、却完全测不出 F09 九类信息缺失，这正是「假通过」根因。原平台大量使用 Tailwind 工具类（无稳定语义类名），故探针以 .dm-case-btn / .dm-modal / section / yxt-dialog__footer 等结构锚点为主。",
   "steps": [
-    { "click": ".dm-scene-btn", "wait": 1500 },
-    { "click": ".dm-scene-dialog .dm-case-btn", "wait": 1500 }
+    {
+      "click": ".dm-scene-btn",
+      "wait": 2500
+    }
   ],
   "probes": [
     {
       "id": "dialog",
-      "selector": ".dm-check-dialog",
-      "props": ["width", "height", "x", "y", "radius", "background", "display"]
+      "selector": ".dm-scene-dialog",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "background",
+        "display"
+      ]
     },
     {
-      "id": "header",
-      "selector": ".dm-check-dialog .yxt-dialog__header",
-      "props": ["width", "height", "padding", "background"]
-    },
-    {
-      "id": "title",
-      "selector": ".dm-check-dialog .yxt-dialog__title > div > div:nth-child(2)",
-      "props": ["height", "marginTop", "fontSize", "fontWeight", "lineHeight", "color"],
+      "id": "head",
+      "selector": ".dm-scene-dialog .dm-modal > div:nth-child(1)",
+      "props": [
+        "width",
+        "height",
+        "paddingX"
+      ],
       "text": true
     },
     {
-      "id": "duration",
-      "selector": ".dm-check-dialog .yxt-dialog__title > div > div:nth-child(3)",
-      "props": ["height", "marginTop", "fontSize", "lineHeight", "color"],
+      "id": "head-main",
+      "selector": ".dm-scene-dialog .dm-modal > div > div.flex-1",
+      "props": [
+        "width"
+      ],
+      "text": true
+    },
+    {
+      "id": "title",
+      "selector": ".dm-scene-dialog .dm-modal > div:nth-child(1) > div.flex-1 > div:nth-child(1)",
+      "props": [
+        "height",
+        "fontSize",
+        "fontWeight",
+        "lineHeight",
+        "color"
+      ],
+      "text": true
+    },
+    {
+      "id": "head-stats",
+      "selector": ".dm-scene-dialog .dm-modal > div:nth-child(1) > div:nth-child(2)",
+      "props": [
+        "width",
+        "gap"
+      ],
       "text": true
     },
     {
       "id": "body",
-      "selector": ".dm-check-dialog .yxt-dialog__body",
-      "props": ["width", "height", "padding", "background"]
+      "selector": ".dm-scene-dialog .dm-modal-body",
+      "props": [
+        "width",
+        "padding",
+        "paddingX",
+        "display"
+      ]
     },
     {
-      "id": "body-content",
-      "selector": ".dm-check-dialog .dm-modal",
-      "props": ["width", "height", "padding", "display"]
+      "id": "case-section",
+      "selector": ".dm-scene-dialog .dm-modal-body > section:first-child",
+      "props": [
+        "width",
+        "marginTop"
+      ],
+      "text": true
     },
     {
-      "id": "mode-card",
-      "selector": ".dm-check-dialog .dm-modal > div > div",
-      "props": ["width", "radius", "padding", "background", "borderColor"],
-      "count": 2
+      "id": "case-start-btn",
+      "selector": ".dm-scene-dialog .dm-case-btn",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize",
+        "color",
+        "background"
+      ],
+      "text": true
     },
     {
-      "id": "mode-title",
-      "selector": ".dm-check-dialog .dm-modal > div > div > div:first-child > span",
-      "props": ["fontSize", "fontWeight", "lineHeight", "color"],
-      "text": true,
-      "count": 2
+      "id": "product-profile-block",
+      "selector": ".dm-scene-dialog .dm-modal-body > div:nth-of-type(1)",
+      "props": [
+        "width",
+        "padding",
+        "paddingX",
+        "paddingY",
+        "radius",
+        "background"
+      ],
+      "text": true
+    },
+    {
+      "id": "desc-blocks",
+      "selector": ".dm-scene-dialog .dm-modal-body > div.flex.flex-col",
+      "props": [
+        "width",
+        "gap",
+        "display"
+      ],
+      "text": true
+    },
+    {
+      "id": "criteria-section",
+      "selector": ".dm-scene-dialog .dm-modal-body > section:last-child",
+      "props": [
+        "width"
+      ],
+      "text": true
     },
     {
       "id": "footer",
-      "selector": ".dm-check-dialog .yxt-dialog__footer",
-      "props": ["width", "height", "padding", "background"]
+      "selector": ".dm-scene-dialog .yxt-dialog__footer > div",
+      "props": [
+        "width",
+        "height",
+        "padding",
+        "paddingX",
+        "display"
+      ]
+    },
+    {
+      "id": "footer-duration",
+      "selector": ".dm-scene-dialog .yxt-dialog__footer > div > div > div:nth-child(1) > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap"
+      ],
+      "text": true
     },
     {
       "id": "footer-actions",
-      "selector": ".dm-check-dialog .yxt-dialog__footer > div",
-      "props": ["width", "height", "padding", "paddingX", "paddingBottom", "gap", "display"]
+      "selector": ".dm-scene-dialog .yxt-dialog__footer > div > div > div:nth-child(2)",
+      "props": [
+        "width",
+        "gap",
+        "display"
+      ]
     },
     {
-      "id": "action-button",
-      "selector": ".dm-check-dialog .dm-check-btn",
-      "props": ["width", "height", "radius", "fontSize", "fontWeight", "color", "background", "borderColor"],
-      "text": true,
-      "count": 2
+      "id": "action-cancel",
+      "selector": ".dm-scene-dialog .yxt-dialog__footer button.yxt-button--default",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize"
+      ],
+      "text": true
+    },
+    {
+      "id": "action-random",
+      "selector": ".dm-scene-dialog .yxt-dialog__footer button.yxt-button--primary.is-plain",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize"
+      ],
+      "text": true
+    },
+    {
+      "id": "action-custom",
+      "selector": ".dm-scene-dialog .yxt-dialog__footer button.yxt-button--primary:not(.is-plain)",
+      "props": [
+        "width",
+        "height",
+        "radius",
+        "fontSize",
+        "color",
+        "background"
+      ],
+      "text": true
     }
   ]
 }

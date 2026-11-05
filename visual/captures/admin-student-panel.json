@@ -1,0 +1,111 @@
+{
+  "page": "admin-student-panel",
+  "origin": "https://train.chinajack.com",
+  "path": "/sparring/#/freesimulate/theme/4fa7a1e92ac94429ad9cfaba38b0e45b",
+  "viewport": {
+    "width": 1509,
+    "height": 887
+  },
+  "capturedFrom": "管理端 → 训练主题 → 主题详情 → 切到「学员管理」Tab",
+  "note": "旧版本全是 any-input / any-th / any-tr / any-button 这类模糊探针，且一律 optional——它们量到的是页面上任意一个 input/th/tr/button（含页头导航与其它表格），既定位不到学员面板，又因 optional 永不报错，属于台账点名的「假通过」。本版改成精确锚点：学员面板容器 .theme-detail-comp-learner、工具栏、搜索框、表头单元格、表体行、勾选框、分页条，全部 required。",
+  "steps": [
+    {
+      "click": ".fs-tab:nth-child(2)",
+      "wait": 2000
+    }
+  ],
+  "probes": [
+    {
+      "id": "tabbar",
+      "selector": ".fs-tab",
+      "props": [
+        "height",
+        "fontSize"
+      ],
+      "desc": "Tab 栏（等待锚点：学员面板只有切到第 2 个 Tab 才挂载，故用切 Tab 前就存在的元素做首探针）"
+    },
+    {
+      "id": "learner",
+      "selector": ".theme-detail-comp-learner",
+      "props": [
+        "width",
+        "display"
+      ],
+      "desc": "学员管理面板容器（存在性探针：整块区域漏做时这一条就会红）"
+    },
+    {
+      "id": "learner-toolbar",
+      "selector": ".theme-detail-comp-learner > div:nth-child(1)",
+      "props": [
+        "height",
+        "gap",
+        "display"
+      ],
+      "desc": "工具栏（左侧动作组 + 右侧筛选区）"
+    },
+    {
+      "id": "learner-search-input",
+      "selector": ".theme-detail-comp-learner input[placeholder]",
+      "props": [
+        "width",
+        "height",
+        "fontSize",
+        "radius",
+        "paddingX"
+      ],
+      "desc": "搜索框 256x32 / r4 / 左内边距 32（图标位）。面板内带 placeholder 的 input 有 4 个（搜索/部门/状态/分页），数量随筛选控件增减，故数量不比对"
+    },
+    {
+      "id": "learner-th",
+      "selector": ".theme-detail-comp-learner .yxt-table__header th:nth-child(3)",
+      "props": [
+        "height",
+        "fontSize",
+        "fontWeight",
+        "color",
+        "background"
+      ],
+      "text": true,
+      "desc": "表头单元格（取第 3 列「学员姓名」，避开前两列勾选/序号占位）：50 高 / 14px 700 / #f9fafb。原平台表头与表体是两张 table，故 count=2"
+    },
+    {
+      "id": "learner-td",
+      "selector": ".theme-detail-comp-learner .yxt-table__body tbody tr td",
+      "props": [
+        "height",
+        "fontSize",
+        "color"
+      ],
+      "desc": "表体单元格 72 高 / 14px / #262626；列数随训考一体模式变化"
+    },
+    {
+      "id": "learner-tr",
+      "selector": ".theme-detail-comp-learner .yxt-table__body tbody tr",
+      "props": [
+        "height"
+      ],
+      "desc": "表体行 72 高；行数由真实学员数据决定"
+    },
+    {
+      "id": "learner-checkbox",
+      "selector": ".theme-detail-comp-learner .yxt-checkbox__inner",
+      "props": [
+        "width",
+        "height",
+        "radius"
+      ],
+      "desc": "多选框 16x16 / r2（台账 #2：表头全选 + 行选，这里量勾选框本体）"
+    },
+    {
+      "id": "learner-pager",
+      "selector": ".theme-detail-comp-learner .yxt-pagination",
+      "props": [
+        "height",
+        "padding",
+        "fontSize",
+        "color"
+      ],
+      "desc": "分页条 60 高 / 16 内边距 / 14px #595959"
+    }
+  ]
+}

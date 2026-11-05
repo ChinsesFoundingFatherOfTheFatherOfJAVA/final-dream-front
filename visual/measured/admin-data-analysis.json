@@ -7,7 +7,7 @@
     "height": 887
   },
   "reference": "visual/reference/admin-data-analysis.original.png",
-  "capturedAt": "2026-11-02T06:08:24.284Z",
+  "capturedAt": "2026-11-04T08:49:32.751Z",
   "probes": {
     "panel-wrap": {
       "exists": true,
@@ -94,7 +94,7 @@
     },
     "nav-item": {
       "exists": true,
-      "count": 2,
+      "count": 3,
       "gap": 10,
       "radius": 8,
       "padding": 8,
@@ -107,7 +107,7 @@
     },
     "nav-no": {
       "exists": true,
-      "count": 2,
+      "count": 3,
       "width": 13,
       "fontSize": 12,
       "fontWeight": 600,
@@ -220,7 +220,7 @@
     },
     "scope-label": {
       "exists": true,
-      "count": 2,
+      "count": 1,
       "height": 22,
       "fontSize": 14,
       "fontWeight": 600,
@@ -230,13 +230,13 @@
     },
     "scope-select": {
       "exists": true,
-      "count": 2,
+      "count": 1,
       "width": 140,
       "height": 32
     },
     "scope-input": {
       "exists": true,
-      "count": 2,
+      "count": 1,
       "width": 140,
       "height": 32,
       "radius": 4,
@@ -284,7 +284,7 @@
       "fontSize": 14,
       "lineHeight": 22,
       "color": "#595959",
-      "text": "均分 86.3 分"
+      "text": "均分 0 分 较首次 -86.3"
     },
     "panel-extra-val": {
       "exists": true,
@@ -293,7 +293,7 @@
       "fontWeight": 600,
       "lineHeight": 22,
       "color": "#262626",
-      "text": "86.3"
+      "text": "0"
     },
     "bin": {
       "exists": true,
@@ -337,7 +337,7 @@
       "fontSize": 14,
       "lineHeight": 22,
       "color": "#757575",
-      "text": "0 人"
+      "text": "1 人 +1"
     },
     "panel-sub": {
       "exists": true,
@@ -377,7 +377,7 @@
       "fontSize": 14,
       "lineHeight": 22,
       "color": "#757575",
-      "text": "均分 92"
+      "text": "均分 0"
     },
     "distbar": {
       "exists": true,
@@ -395,32 +395,27 @@
       "fontWeight": 700,
       "lineHeight": 22,
       "color": "#ffffff",
-      "background": "#059669"
+      "background": "#f43f5e"
     },
     "seg-weak": {
-      "exists": false,
-      "count": 0,
-      "selector": ".fs-insight-seg.is-weak"
+      "exists": true,
+      "count": 3,
+      "height": 18,
+      "fontSize": 12,
+      "fontWeight": 700,
+      "lineHeight": 22,
+      "color": "#ffffff",
+      "background": "#f43f5e"
     },
     "seg-mid": {
-      "exists": true,
-      "count": 1,
-      "height": 18,
-      "fontSize": 12,
-      "fontWeight": 700,
-      "lineHeight": 22,
-      "color": "#ffffff",
-      "background": "#436bff"
+      "exists": false,
+      "count": 0,
+      "selector": ".fs-insight-seg.is-mid"
     },
     "seg-good": {
-      "exists": true,
-      "count": 2,
-      "height": 18,
-      "fontSize": 12,
-      "fontWeight": 700,
-      "lineHeight": 22,
-      "color": "#ffffff",
-      "background": "#059669"
+      "exists": false,
+      "count": 0,
+      "selector": ".fs-insight-seg.is-good"
     },
     "bandnote": {
       "exists": true,
@@ -459,7 +454,7 @@
       "fontSize": 14,
       "fontWeight": 700,
       "color": "#262626",
-      "text": "0 人"
+      "text": "1 人"
     },
     "cv-endpoint": {
       "exists": true,
@@ -467,6 +462,16 @@
       "height": 32,
       "gap": 12,
       "display": "flex"
+    },
+    "cv-endpoint-label": {
+      "exists": true,
+      "count": 1,
+      "height": 22,
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeight": 22,
+      "color": "#262626",
+      "text": "对比终点"
     },
     "cv-head": {
       "exists": true,
@@ -545,11 +550,11 @@
     "cv-delta": {
       "exists": true,
       "count": 3,
-      "width": 72,
+      "width": 64,
       "height": 22,
       "fontSize": 14,
       "lineHeight": 22,
-      "color": "#bfbfbf"
+      "color": "#f43f5e"
     }
   }
 }

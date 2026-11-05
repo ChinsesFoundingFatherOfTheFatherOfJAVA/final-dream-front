@@ -135,19 +135,22 @@
     },
     {
       "id": "scope-label",
-      "selector": ".fs-insight-scope-label",
+      "selector": ".fs-insight-scope .fs-insight-scope-label",
       "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
-      "text": true
+      "text": true,
+      "desc": "「统计范围」标签。原平台把 .fs-insight-scope-label 同时复用在「对比终点」上（两处 count=2），必须作用域限定到 .fs-insight-scope，否则量到的第二个元素属于另一个控件"
     },
     {
       "id": "scope-select",
-      "selector": ".fs-insight-scope-sel",
-      "props": ["width", "height"]
+      "selector": ".fs-insight-scope .fs-insight-scope-sel",
+      "props": ["width", "height"],
+      "desc": "统计范围下拉。同上，.fs-insight-scope-sel 也被「对比终点」复用，需作用域限定"
     },
     {
       "id": "scope-input",
-      "selector": ".fs-insight-scope-sel input",
-      "props": ["width", "height", "padding", "paddingX", "radius", "fontSize", "lineHeight", "color", "background", "borderColor"]
+      "selector": ".fs-insight-scope .fs-insight-scope-sel input",
+      "props": ["width", "height", "padding", "paddingX", "radius", "fontSize", "lineHeight", "color", "background", "borderColor"],
+      "desc": "统计范围下拉的原生 input（EP 外壳的 padding 在 wrapper 上，量内层才能拿到真实内边距）"
     },
     {
       "id": "panel",
@@ -257,7 +260,9 @@
     {
       "id": "seg-good",
       "selector": ".fs-insight-seg.is-good",
-      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"]
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color", "background"],
+      "optional": true,
+      "desc": "优秀维度分段（90-100）。因真实数据不足标 optional：该分段只在某维度存在 90 分以上报告时渲染，抓取时原平台该主题的维度分段全部落在低/中档，is-good 命中 0 个。结构本身由 seg（.fs-insight-seg）这一必填探针兜住，不删检查项"
     },
     {
       "id": "bandnote",
@@ -289,7 +294,15 @@
     {
       "id": "cv-endpoint",
       "selector": ".fs-insight-cv-endpoint",
-      "props": ["height", "gap", "display"]
+      "props": ["height", "gap", "display"],
+      "desc": "维度掌握变化的「对比终点」控件。它是独立控件（不是统计范围的副本），所以有自己的 .fs-insight-cv-endpoint 容器，但复用了 .fs-insight-scope-label / .fs-insight-scope-sel 两个类名"
+    },
+    {
+      "id": "cv-endpoint-label",
+      "selector": ".fs-insight-cv-endpoint .fs-insight-scope-label",
+      "props": ["height", "fontSize", "fontWeight", "lineHeight", "color"],
+      "text": true,
+      "desc": "「对比终点」标签。收窄到 .fs-insight-cv-endpoint 作用域后与 scope-label 互不重叠，两个控件都能各自精确比对"
     },
     {
       "id": "cv-head",

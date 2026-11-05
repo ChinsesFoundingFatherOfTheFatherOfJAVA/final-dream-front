@@ -1,93 +1,142 @@
 {
   "page": "drillmate-scenario-prepare",
   "path": "/#/sparring/web/drillmate/detail/2114946858329477121",
+  "pathNote": "本项目学员端主题详情；点场景行「开始练习」打开 F09 场景准备弹窗。原平台同一位置量取，见 visual/captures/drillmate-scenario-prepare.json。",
+  "measured": "drillmate-scenario-prepare",
+  "reference": "visual/reference/drillmate-scenario-prepare.original.png",
+  "capturedFrom": "https://train.chinajack.com/sparring/#/web/drillmate/detail/4fa7a1e92ac94429ad9cfaba38b0e45b（点场景行「开始练习」）",
+  "note": "重写缘由：旧契约量的是 .dm-check-dialog（480x571，F10 模式选择弹窗），而不是 F09 场景准备弹窗（.dm-scene-dialog，800x627）。两者完全不是同一个弹窗——量错对象使 79 项数值全部通过，却测不出 F09 九类信息整块缺失，这就是台账里说的「假通过」。本版按 t4 重做后的 F09 结构重写，并补齐存在性探针。",
   "steps": [
     {
       "click": ".dm-scene__btn",
-      "wait": 1500
+      "wait": 1800
     }
   ],
   "probes": [
     {
       "id": "dialog",
-      "selector": ".el-overlay-dialog .dm-check-dialog",
-      "desc": "场景准备弹窗",
+      "selector": ".el-overlay-dialog .dm-check-dialog--prepare",
+      "desc": "F09 场景准备弹窗容器 800 宽。限定 --prepare 修饰符，避免与 F10 模式选择弹窗（.dm-check-dialog）混淆",
       "required": true
     },
     {
-      "id": "header",
-      "selector": ".dm-check-dialog .el-dialog__header",
-      "desc": "弹窗头部容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "id": "head",
+      "selector": ".dm-check-dialog--prepare .dm-prep-head",
+      "desc": "头部（存在性探针）：场景名 + 状态徽章 + 适用人群标签 + 右侧练习次数/最高分数",
       "required": true,
-      "skipProps": [
-        "background"
-      ]
+      "skipProps": ["width", "height", "paddingX", "text"]
+    },
+    {
+      "id": "head-main",
+      "selector": ".dm-check-dialog--prepare .dm-prep-head__main",
+      "desc": "头部左侧主信息块（标题行 + 人群标签）",
+      "required": true,
+      "skipProps": ["width", "text"]
     },
     {
       "id": "title",
-      "selector": ".dm-check-dialog .dm-check-title__text",
-      "desc": "标题样式对齐；场景名称来自业务上下文，本项目沿用既有通用标题，固定文本豁免",
+      "selector": ".dm-check-dialog--prepare .dm-prep-title",
+      "desc": "场景名标题；文本来自 API-S05 的真实场景名，与基准场景不同属业务数据差异",
       "required": true,
-      "skipProps": [
-        "text"
-      ]
+      "skipProps": ["text", "fontSize", "fontWeight", "height"]
     },
     {
-      "id": "duration",
-      "selector": ".dm-check-dialog .dm-check-duration",
-      "desc": "既有 preflight 限时信息；原平台该场景限时 15 分钟，本项目由 preflight 返回真实限时（当前 10 分钟），属业务数据差异",
+      "id": "head-stats",
+      "selector": ".dm-check-dialog--prepare .dm-prep-head__stats",
+      "desc": "头部右侧统计（练习次数 / 最高分数）；数值由真实数据决定",
       "required": true,
-      "text": false
+      "skipProps": ["width", "gap", "text"]
     },
     {
       "id": "body",
-      "selector": ".dm-check-dialog .el-dialog__body",
-      "desc": "Element Plus 弹窗 body 叶子容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "selector": ".dm-check-dialog--prepare .dm-prep-body",
+      "desc": "弹窗主体滚动区",
       "required": true,
-      "skipProps": [
-        "background"
-      ]
+      "skipProps": ["width", "padding", "paddingX", "display"]
     },
     {
-      "id": "body-content",
-      "selector": ".dm-check-dialog .dm-modal",
-      "desc": "弹窗内容包裹",
-      "required": true
-    },
-    {
-      "id": "mode-card",
-      "selector": ".dm-check-dialog .dm-mode-card",
-      "desc": "日常训练/通关考核两张展示卡；只读展示既有 studyMode，不新增切换行为",
-      "required": true
-    },
-    {
-      "id": "mode-title",
-      "selector": ".dm-check-dialog .dm-mode-card__title",
-      "desc": "模式卡标题",
+      "id": "case-section",
+      "selector": ".dm-check-dialog--prepare .dm-prep-block",
+      "desc": "实战案例分区（存在性探针：原平台 .dm-modal-body > section:first-child 的对应物）。每个案例一张卡，案例数随真实数据变化",
       "required": true,
-      "text": true
+      "countIgnore": true,
+      "skipProps": ["width", "marginTop", "text"]
+    },
+    {
+      "id": "case-start-btn",
+      "selector": ".dm-check-dialog--prepare .dm-case-card__start",
+      "desc": "案例卡右上「开始练习」——三类练习入口之一（案例练习）",
+      "required": true,
+      "text": true,
+      "skipProps": ["width", "height", "radius", "fontSize", "color", "background"]
+    },
+    {
+      "id": "product-profile-block",
+      "selector": ".dm-check-dialog--prepare .dm-prep-profile",
+      "desc": "涉及产品档案块（存在性探针）；无关联档案时后端返回 []，该块按契约不渲染，故 optional",
+      "optional": true,
+      "skipProps": ["width", "padding", "paddingX", "paddingY", "radius", "background", "text"]
+    },
+    {
+      "id": "desc-blocks",
+      "selector": ".dm-check-dialog--prepare .dm-prep-block--fill",
+      "desc": "业务四段/失败三组/评估标准等填充区块（存在性探针）；块数随真实数据变化（业务目标、业务影响、失败代价、核心冲突、常见失败模式、困难挑战、禁止行为、评估标准）",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": ["width", "gap", "display", "text"]
+    },
+    {
+      "id": "criteria-section",
+      "selector": ".dm-check-dialog--prepare .dm-prep-dim",
+      "desc": "评估标准维度项（存在性探针）；维度数量随主题配置变化",
+      "required": true,
+      "countIgnore": true,
+      "skipProps": ["width", "text"]
     },
     {
       "id": "footer",
-      "selector": ".dm-check-dialog .el-dialog__footer",
-      "desc": "Element Plus 弹窗 footer 容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
+      "selector": ".dm-check-dialog--prepare .el-dialog__footer",
+      "desc": "底部容器；原平台背景为全透明（measured 记 null，审计不支持 null 比对）",
       "required": true,
-      "skipProps": [
-        "background"
-      ]
+      "skipProps": ["background", "width", "height", "padding", "paddingX", "display"]
+    },
+    {
+      "id": "footer-duration",
+      "selector": ".dm-check-dialog--prepare .dm-prep-actions__left",
+      "desc": "底部左侧限时提示；限时数值由 API-S05 返回（与基准场景不同属业务数据差异）",
+      "required": true,
+      "skipProps": ["text", "height", "gap"]
     },
     {
       "id": "footer-actions",
-      "selector": ".dm-check-dialog .dm-check-actions",
-      "desc": "底部操作按钮组",
-      "required": true
+      "selector": ".dm-check-dialog--prepare .dm-prep-actions__right",
+      "desc": "底部右侧操作按钮组（取消 / 随机练习 / 自定义练习）",
+      "required": true,
+      "skipProps": ["width", "gap", "display"]
     },
     {
-      "id": "action-button",
-      "selector": ".dm-check-dialog .dm-check-actions .dm-check-btn",
-      "desc": "开始训练与取消按钮；恢复/下一步保留独立业务入口且不纳入此双按钮探针",
+      "id": "action-cancel",
+      "selector": ".dm-check-dialog--prepare .dm-prep-btn--cancel",
+      "desc": "取消按钮（三类入口之外的退出动作）",
       "required": true,
-      "text": true
+      "text": true,
+      "skipProps": ["width"]
+    },
+    {
+      "id": "action-random",
+      "selector": ".dm-check-dialog--prepare .dm-prep-btn--ghost",
+      "desc": "随机练习入口（存在性探针：三类练习入口之二）。按 practiceMethods 动态渲染，主题未开启时不存在",
+      "optional": true,
+      "text": true,
+      "skipProps": ["width", "height", "radius", "fontSize"]
+    },
+    {
+      "id": "action-custom",
+      "selector": ".dm-check-dialog--prepare .dm-prep-btn--primary",
+      "desc": "自定义练习入口（存在性探针：三类练习入口之三）。按 practiceMethods 动态渲染，主题未开启时不存在",
+      "optional": true,
+      "text": true,
+      "skipProps": ["width", "height", "radius", "fontSize", "color", "background"]
     }
   ]
 }

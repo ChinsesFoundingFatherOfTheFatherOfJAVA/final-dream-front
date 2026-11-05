@@ -88,9 +88,16 @@
           @keydown.enter.prevent="goToDetail(theme.id)"
           @click="goToDetail(theme.id)"
         >
-          <!-- 卡片操作区：绝对定位在右下角，避免与底部信息行挤在一起 -->
+          <!-- 卡片操作区：绝对定位在右下角，避免与底部信息行挤在一起。
+               原平台（台账 R1-1）操作按钮是悬浮出现，不是常驻；键盘聚焦到卡片内按钮时也显示，
+               否则 Tab 键会停在一个看不见的按钮上。 -->
           <div class="card-actions">
-            <button type="button" class="action-btn" @click.stop="copyTheme(theme.themeName)">复制</button>
+            <button
+              type="button"
+              class="action-btn"
+              :aria-label="`复制主题「${theme.themeName}」`"
+              @click.stop="copyTheme(theme.themeName)"
+            >复制</button>
           </div>
           <div class="card-header">
             <h3 class="card-title">{{ theme.themeName }}</h3>
@@ -558,12 +565,23 @@ function formatUpdatedAt(time: string | null): string {
   }
 }
 
+/* 台账 R1-1：操作区默认隐藏，鼠标悬浮卡片（或键盘进入卡片内的按钮）才出现。
+   用 opacity 而不是 display，保证按钮仍在无障碍树与 Tab 序列里，只是视觉隐藏。 */
 .card-actions {
   position: absolute;
   right: 20px;
   bottom: 20px;
   display: flex;
   gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+
+  .project-card:hover &,
+  .project-card:focus-within & {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .action-btn {

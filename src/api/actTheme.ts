@@ -18,9 +18,12 @@ import {
   mockSaveThemeSettings
 } from '@/views/admin/AICombat/ActualTraining/mock/actThemeMock'
 import type {
+  ActCompareEnd,
+  ActAnalysisScope,
   ActPageResult,
   ActRollbackResp,
   ActScenarioUnit,
+  ActThemeAnalysis,
   ActThemeCard,
   ActThemeDetail,
   ActThemeListReq,
@@ -76,8 +79,25 @@ export function getScenarioUnits(id: string): Promise<ActScenarioUnit[]> {
   return request.get(`/act/admin/theme/${id}/scenario-units`)
 }
 
-/** FP-13~17 读取主题设置（当前版本五表单 + 内容概览） */
-export function getThemeSettings(id: string): Promise<ActThemeSettings> {
+/**
+ * FP-20 数据分析（真实统计）。
+ * <p>sceneUnitId 不传 = 当前版本全部场景单元合并；scope 四档缺省 last；
+ * compareEnd 两档缺省 last；studyMode 1 训练 / 2 考核 / 不传不限。
+ * <p>响应只包含「当前 scope」的一套分布与掌握，切换下拉必须重新请求（服务端按 scope 选报告集合）。
+ */
+export function getThemeAnalysis(
+  id: string,
+  params: {
+    sceneUnitId?: string
+    scope?: ActAnalysisScope
+    compareEnd?: ActCompareEnd
+    studyMode?: number
+  },
+): Promise<ActThemeAnalysis> {
+  return request.get(`/act/admin/theme/${id}/analysis`, { params })
+}
+
+/** FP-13~17 读取主题设置（当前版本五表单 + 内容概览） */export function getThemeSettings(id: string): Promise<ActThemeSettings> {
   if (ACT_USE_MOCK) return mockInvoke(() => mockGetThemeSettings(id))
   return request.get(`/act/admin/theme/${id}/settings`)
 }

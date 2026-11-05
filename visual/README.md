@@ -78,21 +78,120 @@ js("JSON.stringify(Object.fromEntries(Object.entries(localStorage)))")
 
 ## 现有契约
 
-| 页面 | 契约 | 探针 | 结果 |
-| --- | --- | --- | --- |
-| 学员端首页 | `contracts/drillmate-home.json` | 39 | 通过（179 项） |
-| 主题详情 | `contracts/drillmate-theme-detail.json` | 27 | 通过（115 项） |
-| 练习历程 | `contracts/drillmate-history.json` | 24 | 通过（110 项） |
-| 训练报告 | `contracts/drillmate-report.json` | 61 | 通过（309 项） |
-| 对练运行时 | `contracts/drillmate-runtime.json` | 32 | 通过（157 项） |
-| 管理端主题详情 | `contracts/admin-theme-detail.json` | 40 | 通过（231 项） |
-| 管理端场景单元管理 | `contracts/admin-scenario-units.json` | 15 | 通过（88 项） |
-| 管理端训练主题列表 | `contracts/admin-topic-list.json` | 32 | 通过（196 项） |
-| 管理端主题设置 | `contracts/admin-theme-settings.json` | 87 | 通过（483 项） |
-| 管理端版本历史 | `contracts/admin-version-history.json` | 18 | 通过（99 项） |
-| 管理端数据分析 | `contracts/admin-data-analysis.json` | 60 | 通过（359 项） |
-| 学员端材料查看 | `contracts/drillmate-file-viewer.json` | 4 | 通过（7 项） |
-| 学员端场景准备弹窗 | `contracts/drillmate-scenario-prepare.json` | 11 | 通过（79 项） |
+> 「结果」列是**最近一次真实审计**的落盘结果（`visual/reports/<page>.json` 的 `passed` 与 `rows.length`），
+> 不是手抄的乐观值。
+>
+> **2026-11-05 全量重跑：14 / 14 全部通过，0 非绿。** 这是 MySQL 恢复后的最终验收轮
+> （11-04 那轮因 `10.100.26.200` 不可达、`/api/sm/auth/login` 500 而未能执行）。
+> 本轮同时修复了 4 个此前不绿/未验证的页面，逐条原因见下方各节。
+
+| 页面 | 契约 | 探针 | 结果 | 备注 |
+| --- | --- | --- | --- | --- |
+| 学员端首页 | `contracts/drillmate-home.json` | 39 | 通过（179 项，11-05） | |
+| 主题详情 | `contracts/drillmate-theme-detail.json` | 26 | 通过（115 项，11-05） | |
+| 练习历程 | `contracts/drillmate-history.json` | 25 | 通过（110 项，11-05） | 已补等待步（异步取数，原契约零等待会量到 loading 态） |
+| 训练报告 | `contracts/drillmate-report.json` | 61 | 通过（309 项，11-05） | |
+| 对练运行时 | `contracts/drillmate-runtime.json` | 32 | 通过（157 项，11-05） | 需活练习：建 `in_progress` attempt 后**立刻**跑（15 分钟自动结束） |
+| 管理端主题详情 | `contracts/admin-theme-detail.json` | 40 | 通过（231 项，11-05） | |
+| 管理端场景单元管理 | `contracts/admin-scenario-units.json` | 15 | 通过（88 项，11-05） | |
+| 管理端训练主题列表 | `contracts/admin-topic-list.json` | 32 | 通过（196 项，11-05） | |
+| 管理端主题设置 | `contracts/admin-theme-settings.json` | 87 | 通过（483 项，11-05） | |
+| 管理端版本历史 | `contracts/admin-version-history.json` | 18 | 通过（99 项，11-05） | |
+| 管理端数据分析 | `contracts/admin-data-analysis.json` | 61 | 通过（399 项，11-05） | 见下「数据分析：count 与一处真实样式偏差」 |
+| 管理端学员面板 | `contracts/admin-student-panel.json` | 9 | 通过（33 项，11-05） | **首次出报告**，见下「学员面板首次验证」 |
+| 学员端材料查看 | `contracts/drillmate-file-viewer.json` | 4 | 通过（7 项，11-05） | |
+| 学员端场景准备弹窗 | `contracts/drillmate-scenario-prepare.json` | 17 | 通过（44 项，11-05） | 见下「场景准备弹窗曾量错对象」 |
+
+### 学员面板首次验证（11-05，最高风险页）
+
+t7 在 11-04 把该页从「8 个 optional 的 `any-*`（量任意元素含页头导航，永不报错）」收紧为
+9 个 required 精确锚点，但**一次都没跑过**。本轮首次跑出报告，结果：
+
+- 9 个锚点中 **8 个直接命中**（`.dm-learner` / `__toolbar` / `__table th|td|tbody tr|.el-checkbox` / `__pager`）
+- 唯一失败项 `learner-search-input.count`：期望 4、实际 1
+
+**判因：契约写法错误，不是实现缺陷。** 证据链：
+1. 契约原写 `skipProps: ["count"]`，但审计脚本的 `skip` 集合**本就默认含 `count`**，
+   数量比对只认 `countIgnore` → 该写法**无效**，导致作者"不比对数量"的意图没生效；
+2. 原始 capture 文件作者自述：「面板内带 placeholder 的 input 有 4 个（搜索/部门/状态/分页），
+   **数量随筛选控件增减，故数量不比对**」；
+3. 本项目把部门/状态收敛成下拉、分页用 `el-pagination`，所以只剩 1 个原生搜索框——
+   这是**布局实现差异**，不是结构缺失（容器 `.dm-learner__search` 与 input 都存在）。
+
+**处置**：把无效的 `"count"` 移出 `skipProps`，改用它本意的 `countIgnore: true`，并在 `desc` 写明原因。
+未降低其他断言（`width` 仍跳过是因为原平台 256 是含图标的容器宽，本项目 input 本体宽不同）。
+
+### 数据分析：count 与一处真实样式偏差
+
+11-04 该页 FAIL（295 项）。本轮修复两类：
+
+**① 11 个 count 差异 = 数据形态差异，不是结构缺失。**
+`distbar`(期望3/实际1)、`seg`/`seg-weak`/`bandnote`(期望3/实际1)、`band*`(期望9/实际3)。
+接口实测（带 token）`/analysis` **返回 code=0 且数据完整**，只是本主题真实数据里
+**4 个维度只有 1 个有掌握分布**（其余 3 个 `empty=true`），所以非零分段只有 1 段。
+契约 `desc` 本就写着「当前真实单元无掌握分布数据时不渲染」，但没写 `countIgnore` —— 与学员面板同性质
+的写法遗漏。已给这 11 个探针补 `countIgnore: true`。
+
+**② `cv-delta.width` 64→72 是真实样式偏差，修了实现。**
+`DataAnalysis.vue` 的 `.change-delta` 写死 72px，原平台实测 64px。已改为 64px（含注释说明依据）。
+**没有**用"改契约迁就实现"的方式绕过。
+
+### 练习历程：异步取数需要等待步
+
+11-05 首跑时 8 项全红（`row`/`cell-*` 全缺失）。截图显示页面停在 **loading 转圈**、
+统计卡全是「0 次 / 0h / 0 个」——即审计在 `practice-records` 请求返回前就量了。
+
+契约原本 `steps: []`（零等待）。已加 `steps: [{ wait: 4000 }]` 等首屏请求返回。
+**注意**：审计脚本的 `steps` 只识别 `click`（每步后统一 `await wait(step.wait)`），
+不识别 `waitFor` 之类的字段，所以写纯 `wait` 步即可。
+
+### 场景准备弹窗曾量错对象（台账点名的假通过，已修）
+
+旧契约量的是 `.dm-check-dialog`(480×571)——那是 **F10 模式选择弹窗**；F09 场景准备弹窗实际是
+`.dm-check-dialog--prepare`（`.el-overlay-dialog .dm-check-dialog--prepare`，**800×627**）。
+旧 `steps` 第二步「点案例卡开始练习」把 F09 关掉、打开了 F10，
+于是 79 项数值全过，却测不出 F09 九类信息整块缺失。
+
+新契约只点场景按钮直量 F09（`.dm-scene__btn` → `.dm-check-dialog--prepare`），
+17 个探针 ⇄ measured 17 个一一对应。本轮（11-05）复验通过 44 项，
+其中 5 项样式偏差是**真实实现问题、已修**：
+
+| 探针 | 属性 | 原平台 | 本项目(修前) | 处置 |
+|---|---|---|---|---|
+| `dialog` | radius | 14 | 16 | 改 `.dm-check-dialog--prepare` 圆角为 14 |
+| `title` | lineHeight / color | 21 / #595959 | 28 / #262626 | `.dm-prep-title` 按基准改（原按"大标题"写成 20px/700） |
+| `action-cancel` | height / radius | 32 / r4 | 36 / r6 | `.dm-prep-btn` 改为 32 高、r4 |
+
+**没有**通过改契约来迁就这 5 项。
+
+契约补齐的存在性探针：三类练习入口
+（`dm-case-card__start`/`dm-prep-btn--ghost`/`dm-prep-btn--primary`）、案例卡、产品档案块、
+评估标准块、业务填充块。
+
+**因数据不足标 `optional`（写明理由，未删检查项）**：
+- `product-profile-block`：该主题未关联产品档案
+- `action-random` / `action-custom`：按 `practiceMethods` 动态渲染
+
+### 数据分析的选择器收窄（`count=2` 误判已坐实）
+
+`.fs-insight-scope-label` 实地命中 2 个，第二个的父节点是 `.fs-insight-cv-endpoint`（对比终点）——
+**是类名复用，不是两个统计范围**；`.fs-insight-scope-sel` 同样被共用。
+
+处理：capture 收窄到作用域后四个选择器各自 `count=1`；契约 `scope-label` 收紧到
+`.scope-row .scope-label`，并新增 `cv-endpoint-label` 探针，两个控件各自独立可比。
+
+顺带修掉真实偏差：`.cv-endpoint__label` 原 400/#595959 → 原平台实测 **600/#262626**。
+
+> 该页 11-05 已通过（399 项）。此前 FAIL 的两类原因（count 基于 mock 形态 + 一处 64/72 宽度偏差）
+> 已分别处置，见上文「数据分析：count 与一处真实样式偏差」。
+
+### 学员面板契约已精确化
+
+旧版 8 个 `any-input`/`any-th`/`any-tr`/`any-button` **全部 optional**——量的是页面上任意元素
+（含页头导航），既定位不到学员面板又永不报错，性质同假通过。
+
+重写为精确锚点：`.theme-detail-comp-learner` / `.yxt-table__header th:nth-child(3)` /
+`.yxt-table__body tbody tr` / `.yxt-checkbox__inner` / `.yxt-pagination` 等，**全部 required**，实测已采（9 探针）。
 
 ## 需要交互才渲染的页面
 
