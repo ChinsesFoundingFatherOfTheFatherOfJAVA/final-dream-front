@@ -86,9 +86,12 @@
           <div class="dm-prepare__role dm-prepare__role--ai">
             <h3>AI 演员角色</h3>
             <div class="dm-prepare__role-head">
-              <span class="dm-prepare__avatar dm-prepare__avatar--ai">{{
-                actorName ? actorName.slice(0, 1) : 'AI'
-              }}</span>
+              <!-- U2（设计 §9.1）：AI 演员形象，无图 / 加载失败时组件内部自动回退首字圆形占位 -->
+              <ActorAvatar
+                class="dm-prepare__avatar dm-prepare__avatar--ai"
+                :src="actorAvatarSrc"
+                :name="actorName"
+              />
               <span class="dm-prepare__role-name">{{ actorName || '对练对象' }}</span>
             </div>
             <p class="dm-prepare__role-desc">{{ actorDesc || 'AI 扮演的对话对象' }}</p>
@@ -125,7 +128,11 @@
       <div class="dm-run__main">
         <div class="dm-run__video">
           <div class="dm-run__actor">
-            <span>{{ actorName ? actorName.slice(0, 1) : 'AI' }}</span>
+            <!--
+              U1（设计 §9.1）：运行时主区形象。有图 → 168px 圆形 cover 裁切；无图或加载失败
+              （404 / URL 过期）→ 组件内部回退「角色名首字」，绝不出现破图图标。
+            -->
+            <ActorAvatar :src="actorAvatarSrc" :name="actorName" />
           </div>
           <button class="dm-run__back" type="button" title="结束练习" @click="finish">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -431,7 +438,11 @@
             <div class="dm-run__role-card">
               <span class="dm-run__role-tag">AI扮演角色</span>
               <div class="dm-run__role-line">
-                <span class="dm-run__role-avatar dm-run__role-avatar--ai">{{ actorInitial }}</span>
+                <ActorAvatar
+                  class="dm-run__role-avatar dm-run__role-avatar--ai"
+                  :src="actorAvatarSrc"
+                  :name="actorName"
+                />
                 <span class="dm-run__role-name">{{ actorName || '对练对象' }}</span>
               </div>
               <dl class="dm-run__role-fields">
@@ -553,7 +564,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { finishAttempt, getAttempt, startAttempt, type AttemptResp } from '@/api/actStudent'
 import { useDrillSocket } from '@/composables/useDrillSocket'
 import { useAntiCheat } from '@/composables/useAntiCheat'
-import request from '@/api/request'
+import request, { resolveAssetUrl } from '@/api/request'
+import ActorAvatar from './components/ActorAvatar.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -627,6 +639,11 @@ const currentRound = computed(() => attempt.value?.currentRound ?? 0)
 const totalDuration = computed(() => attempt.value?.maxDurationSeconds || 1200)
 const durationMinutes = computed(() => Math.round(totalDuration.value / 60))
 const actorInitial = computed(() => (actorName.value ? actorName.value.slice(0, 1) : 'AI'))
+/**
+ * AI 演员形象图地址（设计 §9.1 数据通路）：后端下发 `/avatar/m-A3-04.webp` 这类相对路径，
+ * 必须经 resolveAssetUrl 补 `/api` 前缀才能过网关；空值统一成空串，交给 ActorAvatar 走首字兜底。
+ */
+const actorAvatarSrc = computed(() => resolveAssetUrl(attempt.value?.actorAvatarUrl))
 const userInitial = computed(() => (userRoleName.value ? userRoleName.value.slice(0, 1) : '学'))
 /** 只显示对话内容，教练点评单独呈现（气泡样式不同） */
 const visibleMessages = computed(() => messages.value.slice(-40))
@@ -1333,6 +1350,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     color: #fff;
     font-size: 16px;
     font-weight: 700;
+    /* AI 侧换成形象图时同样 40px 圆、cover 裁切（U2）；用户侧仍是首字 */
+    object-fit: cover;
   }
 
   &__avatar--ai {
@@ -1468,7 +1487,9 @@ $run-panel: rgba(13, 17, 30, 0.82);
     align-items: center;
     justify-content: center;
 
-    span {
+    /* 首字占位与形象图共用同一尺寸/圆框，保证「有图/无图」不改变布局 */
+    span,
+    img {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1479,6 +1500,11 @@ $run-panel: rgba(13, 17, 30, 0.82);
       color: rgba(255, 255, 255, 0.72);
       font-size: 64px;
       font-weight: 700;
+    }
+
+    /* 1024×1024 方图铺进圆框：cover 裁圆，不拉伸变形（U1） */
+    img {
+      object-fit: cover;
     }
   }
 
@@ -2004,6 +2030,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     color: #fff;
     font-size: 13px;
     font-weight: 700;
+    /* AI 侧换成形象图时同样 32px 圆、cover 裁切（U3）；用户侧仍是首字 */
+    object-fit: cover;
   }
 
   &__role-avatar--ai {

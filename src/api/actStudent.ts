@@ -319,6 +319,8 @@ export interface AttemptResp {
   businessGoal?: string | null
   actorName?: string | null
   actorDesc?: string | null
+  /** AI 演员形象图（后端发布期按角色属性定图；老主题/降级全不命中时为 null） */
+  actorAvatarUrl?: string | null
   userRoleName?: string | null
   userRoleDesc?: string | null
   behaviorGuidance?: string[] | null

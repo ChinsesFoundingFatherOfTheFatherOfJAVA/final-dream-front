@@ -143,7 +143,25 @@
           <div v-for="(c, ci) in unit.cases" :key="ci" class="case-card">
             <div class="case-head">
               <span class="case-name">{{ c.scriptName || '案例待命名' }}</span>
-              <span class="case-difficulty">{{ difficultyText(c.difficulty) }}</span>
+              <div class="case-head-right">
+                <span class="case-difficulty">{{ difficultyText(c.difficulty) }}</span>
+                <!--
+                  换形象入口（L0 上传覆盖的写入侧，2026-11-05）：有图显示 24px 圆形缩略图，
+                  无图显示首字占位，卡片其余布局不变（按钮与难度标签同一行右侧）。
+                -->
+                <button
+                  type="button"
+                  class="case-avatar-btn"
+                  :class="{ 'has-image': avatarOf(c) }"
+                  :aria-label="`换形象：${c.scriptName || '案例'}`"
+                  :title="avatarOf(c) ? '更换角色形象' : '设置角色形象'"
+                  @click="openAvatar(unit, c)"
+                >
+                  <img v-if="avatarOf(c)" :src="avatarOf(c)" :alt="`${c.actorName || '角色'}的形象`" />
+                  <span v-else aria-hidden="true">{{ (c.actorName || '?').slice(0, 1) }}</span>
+                  <em class="case-avatar-text">换形象</em>
+                </button>
+              </div>
             </div>
             <div class="case-actor">
               <span class="actor-label">角色</span>
@@ -164,15 +182,27 @@
         </div>
       </div>
     </div>
+
+    <!-- 换形象弹窗：复用 AvatarGenField（AI 生成 / 本地上传 / 移除），保存后刷新 artifact -->
+    <CaseAvatarDialog
+      v-model="avatarDialogVisible"
+      :theme-id="store.themeId"
+      :script-name="avatarTarget.scriptName"
+      :scenario-name="avatarTarget.scenarioName"
+      :current-url="avatarTarget.currentUrl"
+      @saved="onAvatarSaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ArrowDown, CaretTop } from '@element-plus/icons-vue'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { ACT_DIFFICULTY_TEXT } from '@/types/actTheme'
 import { normalizeCriteria, useAssistantStore } from '../../composables/useAssistantStore'
 import type { ArtifactDimension, ArtifactScenario } from '@/types/assistant'
+import CaseAvatarDialog from './CaseAvatarDialog.vue'
+import { avatarPreviewUrl, type CaseAvatarField } from './caseAvatar'
 
 const store = useAssistantStore()
 const scenarios = computed<ArtifactScenario[]>(() => store.artifactContent?.scenarios ?? [])
@@ -222,6 +252,40 @@ function icebergPills(unit: ArtifactScenario): string[] {
 
 function difficultyText(difficulty: number): string {
   return ACT_DIFFICULTY_TEXT[difficulty] ?? '正常'
+}
+
+// ==== 换形象（L0 上传覆盖，2026-11-05）====
+/**
+ * 案例形象地址（可直接给 img 的完整路径）。
+ * artifact 里存的是 `/avatar/x.webp` 这种不带 `/api` 的相对路径，必须经 avatarPreviewUrl
+ * 补前缀，否则图片 404（`/avatar` 只在后端应用内注册，浏览器要走网关的 `/api/avatar`）。
+ */
+function avatarOf(c: unknown): string {
+  return avatarPreviewUrl((c as CaseAvatarField).actorAvatarUrl)
+}
+
+const avatarDialogVisible = ref(false)
+const avatarTarget = reactive({
+  scriptName: '',
+  scenarioName: '',
+  currentUrl: null as string | null,
+})
+
+/** 打开某案例的换形象弹窗：定位键是 scriptName（行 ID 每次确认都会重建） */
+function openAvatar(unit: ArtifactScenario, c: unknown): void {
+  const item = c as { scriptName?: string } & CaseAvatarField
+  avatarTarget.scriptName = item.scriptName ?? ''
+  avatarTarget.scenarioName = unit.name ?? ''
+  avatarTarget.currentUrl = item.actorAvatarUrl ?? null
+  avatarDialogVisible.value = true
+}
+
+/**
+ * 保存后刷新产物：后端把值写进 artifact（权威源），前端必须重新拉一次，
+ * 否则卡片缩略图还是旧值（store 里的 artifactContent 是快照，不会自动变）。
+ */
+async function onAvatarSaved(): Promise<void> {
+  await store.refreshArtifact()
 }
 </script>
 
@@ -466,6 +530,60 @@ function difficultyText(difficulty: number): string {
       padding: 1px 8px;
       white-space: nowrap;
     }
+  }
+
+  .case-head-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /**
+   * 换形象入口：24px 圆形缩略图 + 13px 文字，与难度标签同一行右侧。
+   * 高度控制在 24px，不改变案例卡原有行高/内边距（任务约束：不改变布局密度）。
+   */
+  .case-avatar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 6px 0 0;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #6b5ce7;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover { background: #f0edff; }
+
+    &:focus-visible {
+      outline: 2px solid #6b5ce7;
+      outline-offset: 1px;
+    }
+
+    img,
+    span {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #f0edff;
+      color: #6b5ce7;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+
+    img { object-fit: cover; display: block; }
+
+    &.has-image { color: #3b5bdb; }
+
+    .case-avatar-text { font-style: normal; }
   }
 
   .case-actor {
