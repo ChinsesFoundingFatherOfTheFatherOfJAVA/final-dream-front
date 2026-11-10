@@ -664,7 +664,8 @@ const toSaveReq = (draft: AiGenDraft, pointId: string) => {
     content: stem,
     summary,
     explainText: draft.analysis || '',
-    noOrderMark: draft.type === 1 ? 1 : 0,
+    // 仅填空需要「多空答案不分先后」；此前误按多选题（type 1）赋值
+    noOrderMark: draft.type === 3 ? (draft.noOrderMark ?? 0) : 0,
     points: pointId ? [{ pointId, orderIndex: 1 }] : [],
   }
 

@@ -118,6 +118,8 @@ const emptyBody = (withOptions = true): QuesBodyDraft => ({
   judgeAnswer: 0,
   answerContent: '',
   keywords: [],
+  noOrderMark: 0,
+  blankScoreMark: 0,
   explainText: ''
 })
 
@@ -157,7 +159,9 @@ const bodyFields = (body: QuesBodyDraft, type: number): Partial<QuesSubReq> => {
     return {
       answerContent: body.answerContent,
       answerKeywords: body.keywords.filter(k => k.keyword.trim())
-        .map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio }))
+        .map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio })),
+      // 按空得分开关只对填空有意义；具体每空分值属于试卷级配置，不在这里存
+      blankScoreMark: type === 3 ? (body.blankScoreMark ?? 0) : 0
     }
   }
   return {}
@@ -181,6 +185,8 @@ const load = async () => {
     form.body.judgeWrong = detail.judgeWrongOptionContent || ''
     form.body.judgeAnswer = detail.judgeAnswer ?? 0
     form.body.answerContent = detail.answerContent || ''
+    form.body.noOrderMark = detail.noOrderMark ?? 0
+    form.body.blankScoreMark = detail.blankScoreMark ?? 0
     form.body.keywords = (detail.answerKeywords || []).map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio }))
     form.pointIds = (detail.points || []).map(p => p.pointId)
     subQuestions.value = (detail.subQuestions || []).map(sub => ({
@@ -223,7 +229,9 @@ const buildReq = (): QuesSaveReq => {
     content: body.content,
     summary: stripHtml(body.content),
     explainText: body.explainText,
-    noOrderMark: type === 1 ? 1 : 0,
+    // noOrderMark 是填空题「多个空之间答案不分先后」，不是多选题的标记；
+    // 此前写成 type === 1（多选）导致填空永远拿不到该字段
+    noOrderMark: type === 3 ? (body.noOrderMark ?? 0) : 0,
     points: form.pointIds.map((pid, index) => ({ pointId: pid, orderIndex: index + 1 })),
     ...bodyFields(body, type)
   }
@@ -234,7 +242,7 @@ const buildReq = (): QuesSaveReq => {
       content: sub.body.content,
       summary: stripHtml(sub.body.content),
       explainText: sub.body.explainText,
-      noOrderMark: sub.type === 1 ? 1 : 0,
+      noOrderMark: sub.type === 3 ? (sub.body.noOrderMark ?? 0) : 0,
       ...bodyFields(sub.body, sub.type)
     }))
   }

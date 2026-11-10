@@ -206,6 +206,22 @@ export interface PaperQuesCard {
   subQuestions?: PaperSubQues[]
   /** 组合题：各小题分值（与 subQuestions 同序） */
   subScores?: PaperSubScore[]
+  /** 填空题每空分值（仅开启按空得分时有值） */
+  blankScores?: PaperBlankScore[]
+  /** 多选题各选项分值（仅 missScoreType=3 时有值） */
+  optionScores?: PaperOptionScore[]
+}
+
+/** 填空题每空分值：blankIndex 从 1 开始对应题干 _(n)_。 */
+export interface PaperBlankScore {
+  blankIndex: number
+  score: number
+}
+
+/** 多选题每个选项的分值（自定义各选项得分）：option 为选项字母。 */
+export interface PaperOptionScore {
+  option: string
+  score: number
 }
 
 /** 组合题小题。 */
@@ -286,6 +302,10 @@ export function addPaperQuestion(paperId: string, data: {
   missScore?: number
   missScoreType?: number
   subScores?: PaperSubScore[]
+  /** 填空题按空得分：各空之和须等于 score（后端校验） */
+  blankScores?: PaperBlankScore[]
+  /** 多选题自定义各选项得分：仅 missScoreType=3 时提交 */
+  optionScores?: PaperOptionScore[]
   libId: string
   question: unknown
 }) {

@@ -59,11 +59,64 @@
       </div>
     </div>
 
-    <!-- 填空题 -->
+    <!-- 填空题：答案是按空位顺序的列表，另可勾选「空之间答案不分先后」 -->
     <div v-else-if="type === 3" class="block">
       <label class="block-label required">填空答案</label>
-      <el-input v-model.trim="body.answerContent" :rows="4"
-                placeholder="每行一个空的答案，与题干中 _(1)_ _(2)_ 顺序对应" type="textarea" />
+      <p class="block-hint">题干用 _(1)_ _(2)_ 标出空位，下面第 N 行对应第 N 个空的答案。</p>
+      <div v-for="(_, index) in fillAnswers" :key="index" class="option-row">
+        <span class="fill-index">第 {{ index + 1 }} 空</span>
+        <el-input
+          :model-value="fillAnswers[index]"
+          :placeholder="`第 ${index + 1} 个空的答案`"
+          @update:model-value="(v: string) => updateFillAnswer(index, v)"
+        />
+        <!-- 按空得分：勾选后每行后面出现分值框（对齐原平台，分值随该空计入该题得分） -->
+        <template v-if="blankScoreModel">
+          <el-input-number
+            :model-value="blankScoreAt(index)"
+            :min="0"
+            :step="0.5"
+            class="blank-score-input"
+            :controls="false"
+            @update:model-value="(v: number | undefined) => setBlankScore(index, v)"
+          />
+          <span class="percent">分</span>
+        </template>
+        <el-button
+          class="icon-btn danger"
+          :disabled="fillAnswers.length <= 1"
+          @click="removeFillAnswer(index)"
+        >
+          <el-icon><Close /></el-icon>
+        </el-button>
+      </div>
+      <el-button class="btn" @click="addFillAnswer">+ 新增空</el-button>
+
+      <div class="block-check">
+        <el-checkbox v-model="noOrderModel">多个空之间的答案不分先后</el-checkbox>
+      </div>
+      <div class="block-check">
+        <el-checkbox v-model="blankScoreModel">按空得分，可自定义每空得分</el-checkbox>
+        <!--
+          这个开关只决定「每空分值由谁定」，不改变判分宽严：两种情况都是每空独立给分。
+          不写清楚，老师会以为不勾就得全对才给分，从而误开开关并手工填一堆分值。
+        -->
+        <el-tooltip placement="right" :show-after="150">
+          <template #content>
+            <div class="blank-score-tip">
+              <p><strong>不勾选（默认）</strong>：每题总分按空数自动均分，答对几个空就拿几份分。
+                例：10 分 3 个空 → 每空 3.3 分，最后一个空 3.4 分（保留一位小数），答对 1 个得 3.3 分。</p>
+              <p><strong>勾选</strong>：每个空后面出现分值框，由你决定每空分值，
+                各空之和必须等于该题总分；判分同样按空给分。
+                例：关键参数 8 分、修饰语 2 分，答对关键参数得 8 分。</p>
+              <p>两种情况都是<strong>部分答对也给分</strong>，勾选只用于区分各空的重要程度。</p>
+            </div>
+          </template>
+          <el-icon class="check-help" aria-label="按空得分说明" tabindex="0">
+            <QuestionFilled />
+          </el-icon>
+        </el-tooltip>
+      </div>
     </div>
 
     <!-- 问答题 -->
@@ -96,7 +149,7 @@
 import { computed, ref } from 'vue'
 import type { QuesBodyDraft } from '@/api/exam'
 import RichTextEditor from './RichTextEditor.vue'
-import { Top, Bottom, Close } from '@element-plus/icons-vue'
+import { Top, Bottom, Close, QuestionFilled } from '@element-plus/icons-vue'
 
 const props = defineProps<{ type: number; body: QuesBodyDraft }>()
 
@@ -112,6 +165,68 @@ const typeHint = computed(() => {
 })
 
 const dragIndex = ref<number | null>(null)
+
+/**
+ * 填空题答案列表。
+ *
+ * 原平台结构是「按空位顺序的答案列表 + 空之间答案是否不分先后」，
+ * 而库里 answerContent 以换行分隔存答案、noOrderMark 记是否乱序（1 乱序）。
+ * 这里把两者接起来：界面按行编辑，保存时仍是一行一个答案，不改库结构。
+ */
+const fillAnswers = computed<string[]>(() => {
+  const raw = props.body.answerContent ?? ''
+  const lines = raw.split('\n')
+  return lines.length ? lines : ['']
+})
+
+const updateFillAnswer = (index: number, value: string) => {
+  const next = [...fillAnswers.value]
+  next[index] = value
+  props.body.answerContent = next.join('\n')
+}
+
+const addFillAnswer = () => {
+  props.body.answerContent = [...fillAnswers.value, ''].join('\n')
+}
+
+const removeFillAnswer = (index: number) => {
+  const next = fillAnswers.value.filter((_, i) => i !== index)
+  props.body.answerContent = (next.length ? next : ['']).join('\n')
+  // 删空要同步删掉该空的分值，否则第 N 空的分值会错位到下一个空
+  const scores = [...(props.body.blankScoreValues ?? [])]
+  scores.splice(index, 1)
+  props.body.blankScoreValues = scores
+}
+
+/** 取第 index 个空的分值（未填按 0） */
+const blankScoreAt = (index: number) => props.body.blankScoreValues?.[index] ?? 0
+
+const setBlankScore = (index: number, value: number | undefined) => {
+  const scores = [...(props.body.blankScoreValues ?? [])]
+  while (scores.length < fillAnswers.value.length) scores.push(0)
+  scores[index] = value ?? 0
+  props.body.blankScoreValues = scores
+}
+
+/** noOrderMark：1 = 多个空之间答案不分先后，仅填空题有意义 */
+const noOrderModel = computed({
+  get: () => props.body.noOrderMark === 1,
+  set: (v: boolean) => {
+    props.body.noOrderMark = v ? 1 : 0
+  },
+})
+
+/**
+ * 按空得分开关：1 = 每个空可自定义分值（原平台新功能，契约后补）。
+ * 关闭时把每空分值清空，避免残留旧分值影响判分。
+ */
+const blankScoreModel = computed({
+  get: () => props.body.blankScoreMark === 1,
+  set: (v: boolean) => {
+    props.body.blankScoreMark = v ? 1 : 0
+    if (!v) props.body.blankScoreValues = []
+  },
+})
 
 /** 拖拽排序：把拖起的选项插到目标位置（↑↓ 按钮保留，便于键盘/精细调整）。 */
 const onDrop = (targetIndex: number) => {
@@ -220,6 +335,29 @@ const moveOption = (index: number, delta: number) => {
 
 .score-input { width: 90px; }
 .percent { font-size: 12px; color: #8a92a5; }
+.block-hint { margin: -4px 0 8px; font-size: 12px; color: #8a92a5; }
+.fill-index { flex: none; width: 62px; font-size: 13px; color: #5a6478; }
+.blank-score-input { flex: none; width: 88px; }
+.block-check { margin-top: 8px; }
+/* 开关旁的说明图标：可聚焦，键盘也能看到提示 */
+.check-help {
+  margin-left: 6px;
+  color: #8a92a5;
+  font-size: 14px;
+  vertical-align: middle;
+  cursor: help;
+}
+.check-help:focus-visible {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.blank-score-tip {
+  max-width: 380px;
+  line-height: 1.7;
+}
+.blank-score-tip p { margin: 0 0 8px; }
+.blank-score-tip p:last-child { margin-bottom: 0; }
 
 .btn {
   align-self: flex-start;

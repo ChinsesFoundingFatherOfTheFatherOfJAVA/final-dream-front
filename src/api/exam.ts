@@ -258,6 +258,8 @@ export interface QuesDetail {
   answerPlay: unknown
   answerKeywords: { keyword: string; scoreRatio: number }[]
   noOrderMark: number
+  /** 填空题按空得分开关：1=开启，每空可自定义分值 */
+  blankScoreMark: number
   points: { pointId: string; name: string; orderIndex: number }[]
   /** 组合题子题（仅 type=5 有值）。 */
   subQuestions: QuesDetail[]
@@ -284,6 +286,12 @@ export interface QuesBodyDraft {
   judgeAnswer: number
   answerContent: string
   keywords: QuesKeywordDraft[]
+  /** 填空题专用：1 = 多个空之间的答案不分先后（与库字段 no_order_mark 同义） */
+  noOrderMark?: number
+  /** 填空题专用：1 = 开启按空得分，每空可自定义分值（与库字段 blank_score_mark 同义） */
+  blankScoreMark?: number
+  /** 填空题每空分值，下标从 0 开始对应第 1、2… 个空；仅开启按空得分时有效 */
+  blankScoreValues?: number[]
   explainText: string
 }
 
@@ -308,6 +316,8 @@ export interface QuesSaveReq {
   answerPlay?: string | null
   answerKeywords?: { keyword: string; scoreRatio: number }[]
   noOrderMark?: number
+  /** 填空题按空得分开关：1=开启（仅填空有效） */
+  blankScoreMark?: number
   points?: { pointId: string; name?: string; orderIndex: number }[]
   /** 组合题（type=5）子题。 */
   subQuestions?: QuesSubReq[]
@@ -377,6 +387,8 @@ export interface AiGenDraft {
   options: string[]
   answer: string
   keywords: { keyword: string; scoreRatio: number }[]
+  /** 填空题：1 = 多个空之间的答案不分先后（AI 建题也可带） */
+  noOrderMark?: number
   analysis: string
 }
 

@@ -114,7 +114,9 @@
               <template v-if="editingSub.type === 1">
                 <MissScoreField
                   :miss-score="editingSub.missScore" :miss-type="editingSub.missScoreType"
-                  @miss="editingSub.missScore = $event" @miss-type="editingSub.missScoreType = $event" />
+                  :option-scores="editingSub.optionScores ?? []"
+                  @miss="editingSub.missScore = $event" @miss-type="editingSub.missScoreType = $event"
+                  @option-score="(p: { index: number; score: number }) => setSubOptionScore(p)" />
               </template>
             </div>
             <div class="card-actions">
@@ -172,9 +174,11 @@
               <span>考核点</span>
               <PointPicker v-model="selectedPointIds" :lib-id="libId" />
             </div>
-            <!-- 多选题：漏选得分策略 -->
+            <!-- 多选题：漏选得分策略（含自定义各选项得分） -->
             <MissScoreField v-if="type === 1" :miss-score="missScore" :miss-type="missScoreType"
-                            @miss="missScore = $event" @miss-type="missScoreType = $event" />
+                            :option-scores="optionScores"
+                            @miss="missScore = $event" @miss-type="missScoreType = $event"
+                            @option-score="onOptionScore" />
           </template>
         </div>
 
@@ -216,6 +220,8 @@ interface SubDraft {
   score: number
   missScore: number
   missScoreType: number
+  /** 多选题自定义各选项得分，仅 missScoreType=3 有意义 */
+  optionScores?: Array<{ option: string; score: number }>
 }
 
 const props = defineProps<{
@@ -311,6 +317,46 @@ const missScoreType = computed({
   set: (v: number) => { localMissType.value = v }
 })
 
+/**
+ * 多选题「自定义各选项得分」。
+ *
+ * 原平台新功能：给每个正确选项单独设分，学员选对哪几个就累加哪几个的分。
+ * 这里只维护分值，选项字母与正确性来自题目的选项列表，避免两处真相。
+ */
+const optionScores = ref<Array<{ option: string; score: number }>>([])
+const localOptionScores = ref<Array<{ option: string; score: number }>>([])
+
+/** 按当前正确选项重建分值表，保留已填的分（选项增删时不丢） */
+function syncOptionScores() {
+  const correct = body.value.options
+    .map((o, i) => ({ option: String.fromCharCode(65 + i), answer: o.answer }))
+    .filter(o => o.answer === 1)
+  // 已保存的分值优先于内存里的，避免回显后被空值覆盖
+  const prev = new Map(
+    [...localOptionScores.value, ...optionScores.value].map(s => [s.option, s.score])
+  )
+  optionScores.value = correct.map(o => ({ option: o.option, score: prev.get(o.option) ?? 0 }))
+}
+
+function onOptionScore(p: { index: number; score: number }) {
+  const next = [...optionScores.value]
+  const current = next[p.index]
+  if (current) {
+    next[p.index] = { option: current.option, score: p.score }
+    optionScores.value = next
+  }
+}
+
+function setSubOptionScore(p: { index: number; score: number }) {
+  if (!editingSub.value) return
+  const list = [...(editingSub.value.optionScores ?? [])]
+  const current = list[p.index]
+  if (current) {
+    list[p.index] = { option: current.option, score: p.score }
+    editingSub.value.optionScores = list
+  }
+}
+
 // ---- 组合题状态 ----
 /** 父题已落库（已有题卡或本次刚确定），才允许配置小题。 */
 const createdQuesId = ref('')
@@ -353,6 +399,16 @@ const displayOptions = computed(() => props.card?.questionItems || (props.draft 
 const answerText = computed(() =>
   props.card?.answerContent || (props.draft ? props.draft.body.answerContent : ''))
 
+/**
+ * 正确选项变了就重建分值表：只有正确答案才需要设分，
+ * 非正确选项既不出输入框也不参与判分，避免给错选项配了分却永远用不上。
+ */
+watch(
+  () => body.value.options.map(o => o.answer).join(','),
+  () => { if (props.type === 1) syncOptionScores() },
+  { immediate: true }
+)
+
 watch(() => props.card, (next) => {
   if (!next) return
   localBody.value = bodyFromCard(next)
@@ -361,6 +417,8 @@ watch(() => props.card, (next) => {
   localLib.value = next.libId || props.libId
   localMiss.value = Number(next.missScore ?? 0)
   localMissType.value = Number(next.missScoreType ?? 0)
+  // 回显已保存的各选项得分；选项表随后由上面的 watch 按当前正确项校准
+  localOptionScores.value = (next.optionScores ?? []).map(o => ({ option: o.option, score: Number(o.score ?? 0) }))
   selectedPointIds.value = (next.points || []).map(p => p.pointId)
   if (next.type === 5) initSubsFromCard(next)
 }, { immediate: true })
@@ -389,6 +447,20 @@ const cancel = () => {
 }
 
 /** 组装题库 03 §3.3 的请求体（考核点沿用题卡原有，避免编辑把考点清空）。 */
+/**
+ * 填空题每空分值 → 试卷关联的 blankScores（[{blankIndex, score}]）。
+ *
+ * 只有开启按空得分的填空才提交；空序号从 1 开始，与题干 _(n)_ 对应。
+ * 各空之和与整题分值的一致性由后端校验，避免脏配置流入判分。
+ */
+const blankScoresPayload = computed(() => {
+  if (props.type !== 3) return undefined
+  const b = body.value
+  if (b.blankScoreMark !== 1) return undefined
+  const values = b.blankScoreValues ?? []
+  return values.map((score, index) => ({ blankIndex: index + 1, score: score ?? 0 }))
+})
+
 const buildReq = (): QuesSaveReq => {
   const b = body.value
   const req: QuesSaveReq = {
@@ -398,7 +470,7 @@ const buildReq = (): QuesSaveReq => {
     content: b.content,
     summary: stripHtml(b.content),
     explainText: b.explainText,
-    noOrderMark: props.type === 1 ? 1 : 0,
+    noOrderMark: props.type === 3 ? (b.noOrderMark ?? 0) : 0,
     points: selectedPointIds.value.map((pointId, i) => ({ pointId, orderIndex: i + 1 }))
   }
   if (props.type === 0 || props.type === 1) {
@@ -413,6 +485,8 @@ const buildReq = (): QuesSaveReq => {
     req.answerContent = b.answerContent
     req.answerKeywords = b.keywords.filter(k => k.keyword.trim())
       .map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio }))
+    // 按空得分开关随题目回库；每空分值本身是试卷级配置，走 blankScores 提交
+    req.blankScoreMark = props.type === 3 ? (b.blankScoreMark ?? 0) : 0
   }
   return req
 }
@@ -426,7 +500,7 @@ const subReq = (sub: SubDraft) => {
     content: b.content,
     summary: stripHtml(b.content),
     explainText: b.explainText,
-    noOrderMark: sub.type === 1 ? 1 : 0
+    noOrderMark: sub.type === 3 ? (b.noOrderMark ?? 0) : 0
   }
   if (sub.type === 0 || sub.type === 1) {
     req.questionItems = b.options.filter(o => o.itemContent.trim())
@@ -439,6 +513,8 @@ const subReq = (sub: SubDraft) => {
     req.answerContent = b.answerContent
     req.answerKeywords = b.keywords.filter(k => k.keyword.trim())
       .map(k => ({ keyword: k.keyword, scoreRatio: k.scoreRatio }))
+    // 子题按空得分开关随题目回库；每空分值走 subScores 之外的试卷级配置
+    req.blankScoreMark = sub.type === 3 ? (b.blankScoreMark ?? 0) : 0
   }
   return req
 }
@@ -456,6 +532,20 @@ const validate = () => {
   if (!props.published && props.type !== 5 && Number(score.value) <= 0) {
     toast.warn('分数必须大于 0')
     return false
+  }
+  // 填空题按空得分：填了总分就必须等于各空之和（没填总分后端取求和结果）
+  if (props.type === 3 && body.value.blankScoreMark === 1) {
+    const values = body.value.blankScoreValues ?? []
+    if (!values.length) {
+      toast.warn('请至少填写一个空的答案与分值')
+      return false
+    }
+    const sum = values.reduce((acc, v) => acc + Number(v ?? 0), 0)
+    const total = Number(score.value)
+    if (total > 0 && sum !== total) {
+      toast.warn(`各空分值之和为 ${sum}，与本题分值 ${total} 不一致`)
+      return false
+    }
   }
   return true
 }
@@ -493,7 +583,8 @@ const saveParent = async () => {
 }
 
 const startSub = (type: number) => {
-  editingSub.value = { type, body: emptyBody(type), score: 2, missScore: 0, missScoreType: 0 }
+  editingSub.value = { type, body: emptyBody(type), score: 2, missScore: 0, missScoreType: 1,
+    optionScores: [] }
 }
 
 /** 确定小题：先入列，再把「全部已确认小题 + 各自分值」整份提交。 */
@@ -557,6 +648,8 @@ const save = async () => {
         score: Number(score.value),
         missScore: props.type === 1 ? Number(missScore.value) : undefined,
         missScoreType: props.type === 1 ? Number(missScoreType.value) : undefined,
+        optionScores: props.type === 1 && missScoreType.value === 3 ? optionScores.value : undefined,
+        blankScores: blankScoresPayload.value,
         libId: libId.value,
         question: buildReq()
       })
@@ -567,6 +660,9 @@ const save = async () => {
         levelType: props.published ? undefined : levelType.value,
         missScore: props.published || props.type !== 1 ? undefined : Number(missScore.value),
         missScoreType: props.published || props.type !== 1 ? undefined : Number(missScoreType.value),
+        optionScores: props.published || props.type !== 1 || missScoreType.value !== 3
+          ? undefined : optionScores.value,
+        blankScores: props.published ? undefined : blankScoresPayload.value,
         libId: libId.value,
         question: buildReq()
       })
@@ -583,30 +679,66 @@ const save = async () => {
 const MissScoreField = defineComponent({
   props: {
     missScore: { type: Number, required: true },
-    missType: { type: Number, required: true }
+    missType: { type: Number, required: true },
+    /** 各选项当前分值（自定义各选项得分时展示） */
+    optionScores: { type: Array, default: () => [] }
   },
-  emits: ['miss', 'miss-type'],
+  emits: ['miss', 'miss-type', 'option-score'],
   setup: (p, { emit }) => () => h('div', { class: 'miss-field' }, [
     h('p', { class: 'miss-title' }, '漏选得分'),
+    // 统一得分：漏选几个都拿这个分
     h('label', { class: 'miss-radio' }, [
       h('input', {
-        type: 'radio', checked: p.missType === 0, onChange: () => emit('miss-type', 0)
+        type: 'radio', checked: p.missType === 1, onChange: () => emit('miss-type', 1)
       }),
       h('span', {}, '统一得'),
       h('input', {
         type: 'number', min: 0, step: 0.5, class: 'miss-input', value: p.missScore,
         onChange: (e: Event) => emit('miss', Number((e.target as HTMLInputElement).value) || 0)
       }),
-      h('span', {}, '分')
+      h('span', {}, '分'),
+      helpIcon('无论漏选几个，都统一拿这里填的分数')
     ]),
+    // 按漏选数量均分：题分 ÷ 正确选项个数，保留一位小数
     h('label', { class: 'miss-radio' }, [
       h('input', {
         type: 'radio', checked: p.missType === 2, onChange: () => emit('miss-type', 2)
       }),
-      h('span', {}, '按漏选数量均分')
-    ])
+      h('span', {}, '按漏选数量均分'),
+      helpIcon('漏选得分 = 题目总分 ÷ 正确选项个数，保留一位小数；选对几个就累加几份')
+    ]),
+    // 自定义各选项得分：每个正确选项单独设分
+    h('label', { class: 'miss-radio' }, [
+      h('input', {
+        type: 'radio', checked: p.missType === 3, onChange: () => emit('miss-type', 3)
+      }),
+      h('span', {}, '自定义各选项得分'),
+      helpIcon('给每个正确选项单独设分，学员选对哪几个就累加哪几个的分')
+    ]),
+    // 只有正确选项才需要设分；非正确选项不出现输入框（由父组件按正确项构建列表）
+    p.missType === 3 && (p.optionScores as Array<{ option: string; score: number }>).length
+      ? h('div', { class: 'option-score-list' }, [
+          h('p', { class: 'option-score-tip' }, '仅正确选项需要设分，选对哪几个就累加哪几个的分'),
+          ...(p.optionScores as Array<{ option: string; score: number }>).map((item, index) =>
+            h('label', { class: 'option-score-row', key: item.option }, [
+              h('span', { class: 'option-key' }, item.option),
+              h('input', {
+                type: 'number', min: 0, step: 0.5, class: 'miss-input', value: item.score,
+                onChange: (e: Event) =>
+                  emit('option-score', { index, score: Number((e.target as HTMLInputElement).value) || 0 })
+              }),
+              h('span', {}, '分')
+            ])
+          )
+        ])
+      : null
   ])
 })
+
+/** 说明图标：与「按空得分」保持同一交互，悬停/聚焦都能看到解释 */
+function helpIcon(text: string) {
+  return h('span', { class: 'miss-help', title: text, tabindex: 0, 'aria-label': text }, '?')
+}
 </script>
 
 <style scoped lang="scss">
@@ -707,27 +839,28 @@ const MissScoreField = defineComponent({
 }
 
 .setting-row {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px;
+  /* 四组表单项按内容宽度紧凑排列，不用 flex:1 撑开：
+     撑开会让「考核点」独占整行、其余三项被推到两端，视觉上很散 */
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px;
   padding: 12px 0 4px; border-top: 1px dashed #eef1f6; margin-top: 8px;
 
   .setting-item {
     display: inline-flex; align-items: center; gap: 8px;
-    // 最小宽度保证题库/难度下拉不被 flex 压缩到看不见；放不下时整项换行
-    min-width: 200px; flex: 1 1 200px;
+    flex: 0 0 auto;
     font-size: 13px; color: #4a5368;
 
-    // 题库/难度下拉定宽
-    .el-select { width: 150px; }
+    // 题库/难度下拉统一定宽，三列视觉上才对得齐
+    .el-select { width: 180px; }
 
     // el-input-number 根只定宽：边框由 EP wrapper 提供，根上不再画边框（避免双层）
     .num { width: 84px; }
   }
 
-  /* 考核点选择器独占一行，给足宽度，否则下拉里名字被挤没了 */
+  /* 考核点跟其它项同一行、同一定宽，不再独占整行撑满 */
   .point-item {
-    flex: 1 1 100%;
+    flex: 0 0 auto;
     :deep(.point-picker),
-    :deep(.picker-field) { width: 100%; min-width: 240px; }
+    :deep(.picker-field) { width: 220px; min-width: 0; }
   }
 }
 
@@ -745,6 +878,29 @@ const MissScoreField = defineComponent({
       padding: 4px 6px; font-size: 12px; outline: none; margin-left: 4px;
     }
   }
+
+  /* 自定义各选项得分：逐个正确选项设分 */
+  .option-score-list {
+    margin-top: 8px; padding: 10px 12px; background: #fafbfc;
+    border: 1px dashed #e0e4ec; border-radius: 4px;
+  }
+  .option-score-tip { margin: 0 0 8px; font-size: 12px; color: #8a92a5; }
+  .option-score-row {
+    display: inline-flex; align-items: center; gap: 6px; margin: 0 16px 6px 0;
+    font-size: 12px; color: #4a5368;
+    .option-key { font-weight: 600; }
+    .miss-input {
+      width: 72px; border: 1px solid #d9d9d9; border-radius: 4px;
+      padding: 4px 6px; font-size: 12px; outline: none;
+    }
+  }
+  /* 说明图标：可聚焦，键盘也能看到解释 */
+  .miss-help {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; margin-left: 4px; border-radius: 50%;
+    background: #e8eaef; color: #8a92a5; font-size: 10px; cursor: help;
+  }
+  .miss-help:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
 }
 
 .card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }

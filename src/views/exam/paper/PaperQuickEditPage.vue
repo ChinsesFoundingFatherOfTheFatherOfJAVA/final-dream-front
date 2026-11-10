@@ -505,12 +505,16 @@ onMounted(async () => {
 
   .rail-tab {
     position: relative;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    /* el-button 自带行内间距，竖排时会让两个 tab 的图标基线错开；
+       显式撑满并把内边距归零，改为对称 padding，图标与文字才会垂直居中对齐 */
+    width: 100%;
+    margin: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
     padding: 10px 0; border: none; background: none; cursor: pointer;
-    color: #8a92a5; font-size: 12px;
+    color: #8a92a5; font-size: 12px; line-height: 1;
 
-    .rail-icon { font-size: 18px; line-height: 1; }
-    .rail-text { writing-mode: vertical-rl; letter-spacing: 2px; }
+    .rail-icon { font-size: 18px; line-height: 1; height: 18px; }
+    .rail-text { writing-mode: vertical-rl; letter-spacing: 2px; line-height: 1; }
 
     &.active { color: #1890ff; }
     &.active::before {
@@ -529,7 +533,13 @@ onMounted(async () => {
   .panel-title { margin: 0 0 4px; font-size: 14px; color: #303133; }
 
   .type-btn {
-    display: flex; align-items: center; gap: 8px;
+    /* el-button 默认按内容撑开：文字长短不同框宽就不同（"单选题"比"判断题"宽），
+       统一成 100% 宽度才对得上 */
+    width: 100%;
+    /* Element Plus 对 .el-button + .el-button 加了 12px 左边距：
+       不清掉的话第二个题型起会整体右移，和"单选题"及下方按钮对不齐 */
+    margin-left: 0;
+    display: flex; align-items: center; justify-content: flex-start; gap: 8px;
     padding: 11px 14px; border: 1px dashed #d9e1ec; border-radius: 6px;
     background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
 
@@ -543,6 +553,9 @@ onMounted(async () => {
   }
 
   .foot-btn {
+    /* 同 type-btn：三个底部按钮文字长度不同（AI出题 / 从题库选题 / 导入），必须等宽 */
+    width: 100%;
+    margin-left: 0;
     padding: 10px 14px; border: 1px solid #d9d9d9; border-radius: 6px;
     background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
 
