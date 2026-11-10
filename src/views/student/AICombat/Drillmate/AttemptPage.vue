@@ -110,7 +110,10 @@
           </p>
           <div v-for="dim in dimensions" :key="dim.name ?? ''" class="dm-prepare__dim">
             <span class="dm-prepare__dim-weight">{{ formatWeight(dim.weight) }}</span>
-            <span class="dm-prepare__dim-name">{{ dim.name }}</span>
+            <div class="dm-prepare__dim-body">
+              <span class="dm-prepare__dim-name">{{ dim.name }}</span>
+              <p v-if="dim.description" class="dm-prepare__dim-desc">{{ dim.description }}</p>
+            </div>
           </div>
         </section>
       </div>
@@ -129,12 +132,17 @@
         <div class="dm-run__video">
           <div class="dm-run__actor">
             <!--
-              U1（设计 §9.1）：运行时主区形象。有图 → 168px 圆形 cover 裁切；无图或加载失败
-              （404 / URL 过期）→ 组件内部回退「角色名首字」，绝不出现破图图标。
+              运行时主区是虚拟形象整张图铺满聊天背景，不是圆形头像。
+              无图或加载失败时留深色底，不在舞台中央放首字圆。
             -->
-            <ActorAvatar :src="actorAvatarSrc" :name="actorName" />
+            <img
+              v-if="actorAvatarSrc && !stageAvatarFailed"
+              :src="actorAvatarSrc"
+              :alt="`${actorName || 'AI 演员'}的形象`"
+              @error="stageAvatarFailed = true"
+            />
           </div>
-          <button class="dm-run__back" type="button" title="结束练习" @click="finish">
+          <button class="dm-run__back" type="button" title="结束或暂停练习" @click="openExitPanel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
                 d="M15 19l-7-7 7-7"
@@ -183,7 +191,7 @@
                   />
                 </svg>
                 <span>{{ asrLangLabel }}</span>
-                <span class="dm-run__mode-caret" aria-hidden="true">⌄</span>
+                <el-icon class="dm-run__mode-caret" aria-hidden="true"><ArrowDown /></el-icon>
               </div>
               <div
                 v-show="langMenuOpen"
@@ -271,13 +279,38 @@
                 class="dm-run__bubble-row"
                 :class="`is-${message.role}`"
               >
-                <span class="dm-run__bubble-avatar">{{
-                  message.role === 'user' ? userInitial : actorInitial
+                <span v-if="message.role === 'user'" class="dm-run__bubble-avatar">{{
+                  userInitial
                 }}</span>
-                <div class="dm-run__bubble">{{ message.text }}</div>
+                <ActorAvatar
+                  v-else
+                  class="dm-run__bubble-avatar dm-run__bubble-avatar--ai"
+                  :src="actorAvatarSrc"
+                  :name="actorName"
+                />
+                <div class="dm-run__bubble">
+                  {{ message.text }}
+                  <button
+                    v-if="message.role === 'assistant'"
+                    type="button"
+                    class="dm-run__speak"
+                    :aria-label="speakingKey === message.key ? '暂停虚拟训练者语音' : '播放虚拟训练者语音'"
+                    :disabled="synthesizingKey === message.key"
+                    @click="toggleSpeech(message)"
+                  >
+                    <el-icon aria-hidden="true">
+                      <VideoPause v-if="speakingKey === message.key" />
+                      <VideoPlay v-else />
+                    </el-icon>
+                  </button>
+                </div>
               </div>
               <div v-if="thinking" class="dm-run__bubble-row is-assistant">
-                <span class="dm-run__bubble-avatar">{{ actorInitial }}</span>
+                <ActorAvatar
+                  class="dm-run__bubble-avatar dm-run__bubble-avatar--ai"
+                  :src="actorAvatarSrc"
+                  :name="actorName"
+                />
                 <div class="dm-run__bubble is-thinking">对方正在输入…</div>
               </div>
             </div>
@@ -289,8 +322,8 @@
             <textarea
               v-model="draft"
               rows="1"
-              :disabled="thinking"
-              placeholder="AI 正在说话，说完即可作答"
+              :disabled="inputLocked"
+              :placeholder="inputLocked ? 'AI 正在说话，说完即可作答' : '请输入你的回应'"
               @keydown.enter.exact.prevent="send"
             />
             <div class="dm-run__input-actions">
@@ -300,17 +333,21 @@
                 </svg>
               </button>
               <div class="dm-run__input-pair">
-                <label
+                <!-- 原平台这里是录音键：点一次开始录，再点一次停止并转写（剩余秒数写在 title 上） -->
+                <button
+                  type="button"
                   class="dm-run__input-mic"
-                  :class="{ 'is-disabled': transcribing }"
-                  title="语音转写"
+                  :class="{ 'is-disabled': transcribing, 'is-recording': recording }"
+                  :title="
+                    recording
+                      ? `录音中，剩余 ${recordRemainSec} 秒，点击结束并转写`
+                      : '语音转写'
+                  "
+                  :aria-label="recording ? '结束录音并转写' : '开始录音'"
+                  :aria-pressed="recording"
+                  :disabled="transcribing || speakingKey !== ''"
+                  @click="toggleRecord"
                 >
-                  <input
-                    type="file"
-                    accept=".wav,audio/wav"
-                    :disabled="transcribing"
-                    @change="transcribeVoice"
-                  />
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <rect
                       x="9"
@@ -328,8 +365,14 @@
                       stroke-linecap="round"
                     />
                   </svg>
-                </label>
-                <button type="button" class="dm-run__input-mic" title="发送" @click="send">
+                </button>
+                <button
+                  type="button"
+                  class="dm-run__input-mic"
+                  title="发送"
+                  :disabled="speakingKey !== ''"
+                  @click="send"
+                >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path
                       d="M12 19V5m0 0l-6 6m6-6l6 6"
@@ -515,6 +558,45 @@
           </section>
         </div>
       </aside>
+
+      <!--
+        原平台的「结束本次练习？」面板：结束 / 暂停 / 继续 三选一，
+        同时显示本次练习目标与当前进度。考核模式不给暂停入口（后端也会拒绝）。
+      -->
+      <div v-if="exitPanelOpen" class="dm-exit" @click.self="exitPanelOpen = false">
+        <div class="dm-exit__card" role="dialog" aria-modal="true" aria-labelledby="dm-exit-title">
+          <h2 id="dm-exit-title" class="dm-exit__title">结束本次练习？</h2>
+          <p class="dm-exit__goal">
+            练习目标：{{ businessGoal || '本次练习未记录练习目标' }}
+          </p>
+          <div class="dm-exit__progress">当前完成进度 {{ targetProgress }}%</div>
+
+          <button type="button" class="dm-exit__btn dm-exit__btn--primary" @click="finish">
+            <span class="dm-exit__btn-main">结束练习</span>
+            <span class="dm-exit__btn-sub">结束并生成分析报告</span>
+          </button>
+
+          <button
+            v-if="attempt?.status === 'in_progress' && attempt?.studyMode !== 2"
+            type="button"
+            class="dm-exit__btn"
+            :disabled="pauseBusy"
+            @click="pausePractice"
+          >
+            <span class="dm-exit__btn-main">暂停练习</span>
+            <span class="dm-exit__btn-sub">进度保留，可从练习记录继续</span>
+          </button>
+
+          <button
+            v-if="attempt?.status === 'in_progress'"
+            type="button"
+            class="dm-exit__btn"
+            @click="exitPanelOpen = false"
+          >
+            <span class="dm-exit__btn-main">继续练习</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ===== 报告生成中 / 已结束 ===== -->
@@ -558,12 +640,22 @@
 <script setup lang="ts">
 // 对练运行时（契约 02 §5.5/§5.6，视觉契约 visual/contracts/drillmate-runtime.json）：
 // 状态分屏 + WS 一轮链路 + 本地倒计时平滑显示；DOM/样式对齐原平台实测值（1524x727）。
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { finishAttempt, getAttempt, startAttempt, type AttemptResp } from '@/api/actStudent'
+import { ArrowDown, VideoPause, VideoPlay } from '@element-plus/icons-vue'
+import {
+  finishAttempt,
+  getAttempt,
+  pauseAttempt,
+  resumeAttempt,
+  startAttempt,
+  synthesizeAttemptSpeech,
+  type AttemptResp,
+} from '@/api/actStudent'
 import { useDrillSocket } from '@/composables/useDrillSocket'
 import { useAntiCheat } from '@/composables/useAntiCheat'
+import { useRecorder } from '@/composables/useRecorder'
 import request, { resolveAssetUrl } from '@/api/request'
 import ActorAvatar from './components/ActorAvatar.vue'
 
@@ -644,6 +736,11 @@ const actorInitial = computed(() => (actorName.value ? actorName.value.slice(0, 
  * 必须经 resolveAssetUrl 补 `/api` 前缀才能过网关；空值统一成空串，交给 ActorAvatar 走首字兜底。
  */
 const actorAvatarSrc = computed(() => resolveAssetUrl(attempt.value?.actorAvatarUrl))
+/** 舞台背景图加载失败后不再重试，避免破图图标盖住聊天区；换形象时复位 */
+const stageAvatarFailed = ref(false)
+watch(actorAvatarSrc, () => {
+  stageAvatarFailed.value = false
+})
 const userInitial = computed(() => (userRoleName.value ? userRoleName.value.slice(0, 1) : '学'))
 /** 只显示对话内容，教练点评单独呈现（气泡样式不同） */
 const visibleMessages = computed(() => messages.value.slice(-40))
@@ -769,6 +866,106 @@ const pushMessage = (role: string, text: string) => {
   nextTick(() => bubbleBox.value?.scrollTo({ top: bubbleBox.value.scrollHeight }))
 }
 
+/** 同一条台词只合成一次；暂停后再点从当前位置继续，不重新请求 */
+const speechCache = new Map<string, string>()
+const speechAudio = new Audio()
+const speakingKey = ref('')
+const synthesizingKey = ref('')
+/**
+ * 自动播放开关：原平台对手台词是到了就播。
+ * 浏览器要求用户手势后才能出声，所以首次进入页面时由任意一次点击/按键解锁；
+ * 未解锁前只做静默尝试，失败就保留小喇叭，学员自己点。
+ */
+const speechUnlocked = ref(false)
+const autoSpeakPending = ref('')
+speechAudio.addEventListener('ended', () => {
+  speakingKey.value = ''
+})
+
+/**
+ * 合成并播放一条台词。
+ *
+ * @param message       要播放的消息
+ * @param silentFailure 自动播放时为 true：浏览器拦下播放或接口失败都不弹提示，
+ *                      只把控制权交回小喇叭，避免每句台词都糊学员一脸报错
+ */
+async function playSpeech(
+  message: { key: string; text: string },
+  silentFailure = false,
+): Promise<boolean> {
+  if (!attemptId.value || !message.text.trim()) return false
+  try {
+    let url = speechCache.get(message.key)
+    if (!url) {
+      synthesizingKey.value = message.key
+      const result = await synthesizeAttemptSpeech(attemptId.value, message.text)
+      url = resolveAssetUrl(result.audioUrl)
+      if (!url) throw new Error('没有可播放的音频')
+      speechCache.set(message.key, url)
+    }
+    if (speechAudio.src !== url) {
+      speechAudio.src = url
+    }
+    await speechAudio.play()
+    speakingKey.value = message.key
+    return true
+  } catch (error) {
+    if (!silentFailure) {
+      ElMessage.error(error instanceof Error ? error.message : '语音播放失败')
+    }
+    return false
+  } finally {
+    synthesizingKey.value = ''
+  }
+}
+
+async function toggleSpeech(message: { key: string; text: string }) {
+  if (speakingKey.value === message.key) {
+    speechAudio.pause()
+    speakingKey.value = ''
+    return
+  }
+  speechUnlocked.value = true
+  await playSpeech(message)
+}
+
+/**
+ * 对手台词到达后自动播放（原平台行为）。
+ *
+ * 浏览器只允许在用户手势之后出声：进页面后第一次点击或按键就把 audio 解锁，
+ * 之后每句台词直接播；解锁前到达的台词记在 autoSpeakPending，解锁时补播最近一句。
+ */
+async function autoPlayAssistant(message: { key: string; text: string }) {
+  if (!message.text.trim()) return
+  if (!speechUnlocked.value) {
+    autoSpeakPending.value = message.key
+    return
+  }
+  if (speakingKey.value === message.key) return
+  const ok = await playSpeech(message, true)
+  if (!ok) autoSpeakPending.value = message.key
+}
+
+/** 首次用户手势：解锁音频并补播等待中的那句 */
+async function unlockSpeech() {
+  if (speechUnlocked.value) return
+  speechUnlocked.value = true
+  const key = autoSpeakPending.value
+  if (!key) return
+  autoSpeakPending.value = ''
+  const target = messages.value.find((item) => item.key === key)
+  if (target) await playSpeech({ key: target.key, text: target.text }, true)
+}
+
+/**
+ * 输入框是否锁定。
+ *
+ * 原平台语义是「AI 说完才能作答」：等服务端回复（thinking）和正在播报对手语音
+ * （speakingKey 非空）期间都不该让学员抢先打字，否则「AI 正在说话」的提示就是空话。
+ * 语音播完（ended 事件清空 speakingKey）或暂停后自动解锁。
+ */
+const inputLocked = computed(() => thinking.value || speakingKey.value !== '')
+
 // ==== R6-4 / R6-5 / R6-6：右侧面板视图切换 ====
 const asideTitle = computed(() => (asideView.value === 'chat' ? '聊天记录' : '背景介绍'))
 
@@ -849,6 +1046,13 @@ const socket = useDrillSocket(attemptId.value, (event, _seq, data) => {
       thinking.value = false
       pushMessage('assistant', String(data.delta ?? ''))
       break
+    case 'assistant_end': {
+      thinking.value = false
+      // 对手这一轮话说完就播（原平台行为）；同一句只播一次
+      const last = messages.value[messages.value.length - 1]
+      if (last && last.role === 'assistant') autoPlayAssistant({ key: last.key, text: last.text })
+      break
+    }
     case 'coach_delta':
       if (attempt.value?.studyMode === 1) pushMessage('coach', String(data.delta ?? ''))
       break
@@ -933,7 +1137,8 @@ function startClock() {
 
 async function send() {
   const text = draft.value.trim()
-  if (!text || thinking.value) return
+  // inputLocked 覆盖「等回复」与「对手语音播报中」两种状态，和输入框禁用口径保持一致
+  if (!text || inputLocked.value) return
   draft.value = ''
   pushMessage('user', text)
   thinking.value = true
@@ -941,7 +1146,20 @@ async function send() {
   socket.sendChat(`${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, text)
 }
 
+/**
+ * 左上角返回：打开原平台那张「结束本次练习？」面板（结束 / 暂停 / 继续），
+ * 不是小喇叭的暂停语音。面板里同时给出练习目标和当前进度，学员不必退出去看。
+ */
+const exitPanelOpen = ref(false)
+/** 暂停/继续请求中，防连点造成状态来回切 */
+const pauseBusy = ref(false)
+
+function openExitPanel() {
+  exitPanelOpen.value = true
+}
+
 async function finish() {
+  exitPanelOpen.value = false
   try {
     await ElMessageBox.confirm(
       '结束后本轮练习将生成报告，且成绩按未通过计算。确定结束？',
@@ -963,18 +1181,57 @@ async function finish() {
   }
 }
 
+/**
+ * 暂停练习 = 暂停并退出。
+ *
+ * 产品语义不是「对话中途挂起」：点暂停后服务端停表并保留进度，页面直接退出回到练习记录，
+ * 记录仍显示「练习中」，学员从最近练习点「继续练习」再回到这里接着进行。
+ * 考核模式后端会拒绝，前端也不给入口。
+ */
+async function pausePractice() {
+  if (pauseBusy.value) return
+  pauseBusy.value = true
+  try {
+    speechAudio.pause()
+    speakingKey.value = ''
+    await pauseAttempt(attemptId.value)
+    exitPanelOpen.value = false
+    socket.close()
+    ElMessage.success('已暂停，进度已保留，可从练习记录继续')
+    // 退出对话页：暂停后不该继续停留在运行时页面
+    router.push('/sparring/web/drillmate/history')
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '暂停失败')
+  } finally {
+    pauseBusy.value = false
+  }
+}
+
 const goBack = () => router.push('/sparring/web/drillmate')
 
-/** 语音转写（AC-10）：上传录音 → ASR 文本回填输入框（不自动发送，契约 02 §5.6） */
+/**
+ * 语音转写（AC-10）：麦克风录音 → 上传 WAV → ASR 文本回填输入框（不自动发送，契约 02 §5.6）。
+ *
+ * 原平台这里是「录音」，不是「选文件」：早期实现用一个包着 type=file 的 label，
+ * 点一下只会弹出系统文件选择框，学员根本录不了音。现在改走 useRecorder（16kHz WAV）。
+ */
+const {
+  recording,
+  remainingMs,
+  start: startRecording,
+  stop: stopRecording,
+  setAutoStopHandler,
+} = useRecorder()
 const transcribing = ref(false)
-async function transcribeVoice(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
+/** 录音剩余秒数，按钮上做倒计时提示 */
+const recordRemainSec = computed(() => Math.ceil(remainingMs.value / 1000))
+
+/** 把录好的 WAV 交给 ASR，识别结果追加到输入框，等学员自己确认发送 */
+async function uploadRecording(blob: Blob) {
   transcribing.value = true
   try {
     const form = new FormData()
-    form.append('audio', file)
+    form.append('audio', blob, 'answer.wav')
     // R10-1：把当前选中的识别语种带给 ASR；混合时不传，走后端缺省的多语种识别
     const lang = asrLangParam.value
     const result = await request.post<unknown, { text: string }>(
@@ -983,14 +1240,39 @@ async function transcribeVoice(event: Event) {
       lang ? { params: { language: lang } } : undefined,
     )
     if (result.text) draft.value = (draft.value ? draft.value + ' ' : '') + result.text
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '语音识别失败')
   } finally {
     transcribing.value = false
-    input.value = ''
   }
 }
 
+/** 点麦克风：未录音则开始录，录制中再点一次停止并转写 */
+async function toggleRecord() {
+  if (transcribing.value) return
+  if (!recording.value) {
+    try {
+      await startRecording()
+    } catch {
+      // 权限被拒等已在 composable 里写入 error，这里给学员可读提示
+      ElMessage.error('无法使用麦克风，请检查浏览器录音权限')
+    }
+    return
+  }
+  const result = stopRecording()
+  if (result && result.blob.size > 0) await uploadRecording(result.blob)
+}
+
+// 录满 60 秒自动停止并转写，学员不会因为忘点停止而白录
+setAutoStopHandler((result) => {
+  if (result.blob.size > 0) uploadRecording(result.blob)
+})
+
 onMounted(async () => {
   document.addEventListener('pointerdown', onDocPointerDown)
+  // 捕获阶段监听：任何一次点击/按键都先解锁音频，之后对手台词才能自动出声
+  document.addEventListener('pointerdown', unlockSpeech, true)
+  document.addEventListener('keydown', unlockSpeech, true)
   try {
     attempt.value = await getAttempt(attemptId.value)
   } catch (error) {
@@ -1006,8 +1288,34 @@ onMounted(async () => {
     socket.connect()
   } else if (attempt.value.status === 'report_generating') {
     pollTimer = window.setInterval(pollOnce, 3000)
+  } else if (attempt.value.status === 'paused') {
+    // 从练习记录点「继续练习」回到这里：自动接着上次进行，不要求学员再点一次继续
+    await resumeOnEnter()
   }
 })
+
+/**
+ * 进入页面时发现处于暂停 → 自动恢复。
+ *
+ * 暂停的产品语义是「暂停并退出」，所以再次进入这个页面就代表学员要接着练：
+ * 先把状态恢复成进行中（服务端顺延 deadline），再按正常进行中的流程起表、连 WS。
+ * 恢复失败则退化为只读展示，不让整页报错。
+ */
+async function resumeOnEnter() {
+  try {
+    attempt.value = await resumeAttempt(attemptId.value)
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '恢复练习失败')
+    if (attempt.value) remainingSeconds.value = computeRemaining(attempt.value)
+    seedOpeningLine()
+    return
+  }
+  if (!attempt.value) return
+  remainingSeconds.value = computeRemaining(attempt.value)
+  seedOpeningLine()
+  startClock()
+  socket.connect()
+}
 
 /**
  * 进入运行态先呈现 AI 的开场白（脚本快照里的 scene.openingLine / scriptOpening）。
@@ -1016,7 +1324,10 @@ onMounted(async () => {
 function seedOpeningLine() {
   if (messages.value.length) return
   const opening = attempt.value?.openingLine
-  if (opening && opening.trim()) pushMessage('assistant', opening.trim())
+  if (!opening || !opening.trim()) return
+  pushMessage('assistant', opening.trim())
+  const last = messages.value[messages.value.length - 1]
+  if (last) autoPlayAssistant({ key: last.key, text: last.text })
 }
 
 function computeRemaining(value: AttemptResp): number {
@@ -1026,7 +1337,10 @@ function computeRemaining(value: AttemptResp): number {
 }
 
 onBeforeUnmount(() => {
+  speechAudio.pause()
   document.removeEventListener('pointerdown', onDocPointerDown)
+  document.removeEventListener('pointerdown', unlockSpeech, true)
+  document.removeEventListener('keydown', unlockSpeech, true)
   if (pollTimer) window.clearInterval(pollTimer)
   if (clockTimer) window.clearInterval(clockTimer)
   socket.close()
@@ -1392,9 +1706,20 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
   &__dim {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
     padding: 8px 0;
+  }
+
+  &__dim-body {
+    min-width: 0;
+  }
+
+  &__dim-desc {
+    margin: 4px 0 0;
+    color: #595959;
+    font-size: 13px;
+    line-height: 21px;
   }
 
   &__dim-weight {
@@ -1483,28 +1808,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__actor {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    /* 首字占位与形象图共用同一尺寸/圆框，保证「有图/无图」不改变布局 */
-    span,
+    /* 整张形象铺满聊天背景；object-position 偏上，避免头被裁出画面 */
     img {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 168px;
-      height: 168px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 64px;
-      font-weight: 700;
-    }
-
-    /* 1024×1024 方图铺进圆框：cover 裁圆，不拉伸变形（U1） */
-    img {
+      display: block;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      object-position: center 18%;
     }
   }
 
@@ -1590,9 +1901,15 @@ $run-panel: rgba(13, 17, 30, 0.82);
   }
 
   &__mode-caret {
+    margin-left: 2px;
     font-size: 12px;
-    line-height: 1;
     color: rgba(255, 255, 255, 0.72);
+    vertical-align: -2px;
+    transition: transform 0.16s ease;
+  }
+
+  &__mode.is-open &__mode-caret {
+    transform: rotate(180deg);
   }
 
   /* 语种菜单：深色卡片，浮在工具条下方 */
@@ -1785,10 +2102,47 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 34px;
     height: 34px;
     border-radius: 50%;
+    overflow: hidden;
     background: rgba(255, 255, 255, 0.14);
     color: rgba(255, 255, 255, 0.86);
     font-size: 13px;
     font-weight: 700;
+
+    /* AI 侧用圆形形象；没图时 ActorAvatar 自己回退首字 */
+    &--ai {
+      img,
+      span {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  &__speak {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-left: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    vertical-align: -5px;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: progress;
+      opacity: 0.5;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #8b5cf6;
+      outline-offset: 2px;
+    }
   }
 
   &__bubble {
@@ -1885,6 +2239,18 @@ $run-panel: rgba(13, 17, 30, 0.82);
     }
 
     &.is-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 录音中：红色脉冲，学员一眼能看出"正在录"而不是"已发送" */
+    &.is-recording {
+      background: #ff4d4f;
+      color: #fff;
+      animation: dm-rec-pulse 1.2s ease-in-out infinite;
+    }
+
+    &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -2281,6 +2647,100 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
   .dm-prepare__roles {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 结束/暂停/继续面板：对齐原平台白卡、紫主按钮 */
+.dm-exit {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+
+  &__card {
+    width: 420px;
+    max-width: calc(100vw - 32px);
+    padding: 24px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  }
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1d2129;
+  }
+
+  &__goal {
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 22px;
+    color: #4e5969;
+  }
+
+  &__progress {
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fff7e8;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fa8c16;
+  }
+
+  &__btn {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: #f2f3f5;
+    color: #1d2129;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &--primary {
+      background: #6f5ef9;
+      color: #fff;
+    }
+  }
+
+  &__btn-main {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  &__btn-sub {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+}
+
+/* 录音中的呼吸效果：只动 opacity/box-shadow，避免触发重排 */
+@keyframes dm-rec-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 77, 79, 0);
   }
 }
 </style>

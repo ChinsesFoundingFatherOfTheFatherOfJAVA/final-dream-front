@@ -6,7 +6,15 @@
  */
 
 export type AttemptStatus =
-  'preparing' | 'ready' | 'in_progress' | 'report_generating' | 'completed' | 'failed' | 'cancelled'
+  | 'preparing'
+  | 'ready'
+  | 'in_progress'
+  /** 训练模式暂停中：计时停住，deadline 在继续时顺延 */
+  | 'paused'
+  | 'report_generating'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
 
 export type StudyMode = 1 | 2
 export type PracticeType = 'case' | 'random' | 'custom'
@@ -325,7 +333,11 @@ export interface AttemptResp {
   userRoleDesc?: string | null
   behaviorGuidance?: string[] | null
   passScore?: number | null
-  dimensions?: Array<{ name: string | null; weight: number | null }> | null
+  dimensions?: Array<{
+    name: string | null
+    weight: number | null
+    description?: string | null
+  }> | null
 }
 
 /** 报告（GET /api/act/student/attempts/{id}/report） */
@@ -552,6 +564,34 @@ export function getAttemptReport(attemptId: string) {
 export function getMaterialViewerContext(materialId: string) {
   return request.get<unknown, MaterialViewerContext>(
     `/act/student/materials/${materialId}/viewer-context`,
+  )
+}
+
+/**
+ * 暂停练习（训练模式）。
+ *
+ * 考核模式后端会拒绝；前端也不应放出这个入口。
+ * 暂停期间服务端停表，继续时把暂停时长补回 deadline。
+ */
+export function pauseAttempt(attemptId: string) {
+  return request.post<unknown, AttemptResp>(`/act/student/attempts/${attemptId}/pause`)
+}
+
+/** 继续练习：累加暂停时长并顺延 deadline */
+export function resumeAttempt(attemptId: string) {
+  return request.post<unknown, AttemptResp>(`/act/student/attempts/${attemptId}/resume`)
+}
+
+/**
+ * 虚拟训练者台词合成（POST /student/attempts/{id}/tts），返回可播放地址。
+ *
+ * speed 是 0–60 的百分比刻度，30 = 正常语速（SpeechTraining 侧映射为 speech_rate 1.0）。
+ * 传 1 会合成出接近 1/30 速度的音频，几乎听不清，所以这里固定 30。
+ */
+export function synthesizeAttemptSpeech(attemptId: string, text: string) {
+  return request.post<unknown, { audioUrl?: string; durationMs?: number }>(
+    `/act/student/attempts/${attemptId}/tts`,
+    { text, speed: 30 },
   )
 }
 

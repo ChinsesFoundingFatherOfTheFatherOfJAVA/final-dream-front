@@ -288,6 +288,7 @@ function attemptStatusText(item: StudentHistoryItem): string {
     preparing: '准备中',
     ready: '待开始',
     in_progress: '进行中',
+    paused: '进行中',
     report_generating: '出报告中',
     completed: item.passed === 1 ? '已通过' : '未通过',
     failed: '异常',

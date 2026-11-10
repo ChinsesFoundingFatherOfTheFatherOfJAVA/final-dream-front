@@ -69,9 +69,9 @@ describe('caseAvatar · 保存请求体', () => {
     expect(caseAvatarBody({ scriptName: 'a', avatarUrl: 'blob:http://x/abc' }).avatarUrl).toBeNull()
   })
 
-  it('上传接口返回的 /api/exam/files/... 落库前脱前缀', () => {
+  it('上传接口返回的 /api/avatar/... 落库前脱前缀', () => {
     expect(
-      caseAvatarBody({ scriptName: 'a', avatarUrl: '/api/exam/files/2026/11/a.png' }).avatarUrl,
-    ).toBe('/exam/files/2026/11/a.png')
+      caseAvatarBody({ scriptName: 'a', avatarUrl: '/api/avatar/a.png' }).avatarUrl,
+    ).toBe('/avatar/a.png')
   })
 })

@@ -86,10 +86,13 @@
           <h3 class="dm-cust-content__title">还原场景</h3>
           <el-form label-position="top" class="dm-cust-form">
             <el-form-item label="发生时间" required>
-              <el-input
+              <el-date-picker
                 v-model="scene.time"
-                maxlength="40"
-                placeholder="如：10 月 12 日上午 10:30"
+                type="datetime"
+                value-format="YYYY-MM-DD HH:mm"
+                format="YYYY-MM-DD HH:mm"
+                placeholder="选择发生时间"
+                style="width: 100%"
               />
             </el-form-item>
             <el-form-item label="发生地点" required>
@@ -183,7 +186,14 @@
               @click="difficulty = level.value"
               @keydown.enter.prevent="difficulty = level.value"
             >
-              <div class="dm-cust-level__label">{{ level.label }}</div>
+              <div class="dm-cust-level__head">
+                <span class="dm-cust-level__stars" :aria-label="`${level.value} 星`">
+                  <el-icon v-for="star in 3" :key="star" :size="14">
+                    <StarFilled :color="star <= level.value ? '#fa8c16' : '#d9d9d9'" />
+                  </el-icon>
+                </span>
+                <span class="dm-cust-level__label">{{ level.label }}</span>
+              </div>
               <div class="dm-cust-level__desc">{{ level.desc }}</div>
             </div>
           </div>
@@ -254,6 +264,7 @@
  * 取消不创建 attempt（本组件只在点"开始练习"时把参数交给父组件）。
  */
 import { computed, reactive, ref, watch } from 'vue'
+import { StarFilled } from '@element-plus/icons-vue'
 import {
   preflightAttempt,
   type StudentScenarioProductProfile,
@@ -695,6 +706,17 @@ watch(
   &:focus-visible {
     outline: 2px solid #436bff;
     outline-offset: 2px;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__stars {
+    display: inline-flex;
+    gap: 2px;
   }
 
   &__label {

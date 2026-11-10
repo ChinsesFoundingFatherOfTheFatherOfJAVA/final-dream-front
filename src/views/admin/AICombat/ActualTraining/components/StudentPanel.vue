@@ -87,7 +87,7 @@
                 :indeterminate="pagePartiallySelected"
                 :disabled="!pageCards.length"
                 aria-label="全选当前页学员"
-                @change="toggleAll"
+                @update:model-value="toggleAll"
               />
             </th>
             <th>学员姓名</th>
@@ -112,7 +112,7 @@
               <el-checkbox
                 :model-value="selectedIds.includes(row.userId)"
                 :aria-label="`选择学员 ${row.name}`"
-                @change="toggleRow(row.userId, $event)"
+                @update:model-value="toggleRow(row.userId, $event)"
               />
             </td>
             <td>
@@ -166,8 +166,22 @@
     <p class="dm-learner__footnote">场景完成率 100% 的学员无法被催促</p>
 
     <!-- 添加学员抽屉：SM 名册选择（搜索 + 跨页已选保留） -->
-    <el-drawer v-model="pickerVisible" title="添加学员" size="520px" class="exam-drawer">
-      <StudentPickerDrawer :theme-id="themeId" @added="onAdded" @close="pickerVisible = false" />
+    <el-drawer
+      v-model="pickerVisible"
+      title="添加学员"
+      size="720px"
+      append-to-body
+      destroy-on-close
+      class="exam-drawer"
+      @opened="pickerReady = true"
+      @closed="pickerReady = false"
+    >
+      <StudentPickerDrawer
+        v-if="pickerReady"
+        :theme-id="themeId"
+        @added="onAdded"
+        @close="pickerVisible = false"
+      />
     </el-drawer>
 
     <!-- 学员详情抽屉（台账 #8）：560px 时表格与指标文字贴边，按内容实际放宽到 680 -->
@@ -365,6 +379,8 @@ const pageCards = computed(() => cards.value)
 const totalCount = computed(() => serverTotal.value)
 
 const pickerVisible = ref(false)
+// 等抽屉 opened 再挂选择器：动画中挂载会让 v-loading 蒙层量到 0 高，数据回来后转圈卸不掉
+const pickerReady = ref(false)
 const detailVisible = ref(false)
 const detailUser = ref('')
 const detailTitle = computed(() => `学员详情 · ${detailUser.value}`)

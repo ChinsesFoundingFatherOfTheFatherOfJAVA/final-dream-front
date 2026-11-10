@@ -6,27 +6,33 @@
         v-model="query.keyword"
         placeholder="姓名 / 账号 / 工号"
         clearable
+        aria-label="姓名、账号或工号"
         @keyup.enter="reload"
       >
-        <template #prefix><span aria-hidden="true">🔍</span></template>
+        <template #prefix><el-icon aria-hidden="true"><Search /></el-icon></template>
       </el-input>
       <el-button type="primary" @click="reload">查询</el-button>
     </div>
 
-    <el-table
-      v-loading="loading"
-      :data="users"
-      stripe
-      max-height="420"
-      @selection-change="onSelectionChange"
-      ref="tableRef"
-    >
+    <div class="table-wrap">
+      <el-table
+        v-loading="loading"
+        element-loading-background="rgba(255, 255, 255, 0.72)"
+        :data="users"
+        row-key="userId"
+        stripe
+        max-height="420"
+        empty-text="暂无人员"
+        @selection-change="onSelectionChange"
+        ref="tableRef"
+      >
       <el-table-column type="selection" width="44" :reserve-selection="true" />
       <el-table-column label="姓名" prop="name" min-width="90" />
       <el-table-column label="账号" prop="account" min-width="100" />
       <el-table-column label="部门" prop="deptName" min-width="130" show-overflow-tooltip />
       <el-table-column label="工号" prop="employeeNo" width="90" />
-    </el-table>
+      </el-table>
+    </div>
     <el-pagination
       class="pager"
       layout="prev, pager, next, total"
@@ -56,8 +62,9 @@
 <script setup lang="ts">
 // 学员选择抽屉（契约 02 §5.10）：从 SM 名册选人 → 批量添加为主题学员。
 // :reserve-selection 跨页保留已选；不复制考试模块带考试专用字段的组件。
-import { onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Search } from '@element-plus/icons-vue'
 import { getEnterpriseUsers, type EnterpriseUser } from '@/api/sm'
 import { addThemeStudents } from '@/api/actStudentAdmin'
 
@@ -69,6 +76,7 @@ const emit = defineEmits<{
 
 const loading = ref(false)
 const submitting = ref(false)
+let loadSeq = 0
 const users = ref<EnterpriseUser[]>([])
 const total = ref(0)
 const selectedUsers = ref<EnterpriseUser[]>([])
@@ -78,6 +86,7 @@ const tableRef = ref<{ clearSelection: () => void } | null>(null)
 const query = reactive({ keyword: '', page: 1, size: 20 })
 
 async function load() {
+  const seq = ++loadSeq
   loading.value = true
   try {
     const page = await getEnterpriseUsers({
@@ -86,10 +95,14 @@ async function load() {
       keyword: query.keyword || undefined,
       status: 1,
     })
+    if (seq !== loadSeq) return
     users.value = page.list ?? []
     total.value = page.total ?? 0
+  } catch {
+    // 拦截器已经提示；这里只保证转圈停掉，不让失败请求把后一次结果盖掉
+    if (seq !== loadSeq) return
   } finally {
-    loading.value = false
+    if (seq === loadSeq) loading.value = false
   }
 }
 
@@ -120,17 +133,37 @@ async function submit() {
   }
 }
 
-onMounted(load)
+// 抽屉打开动画期间表格高为 0，v-loading 蒙层会按 0 高定位并在结束后卸不掉。
+// 等一帧布局稳定再请求，蒙层才能跟着 loading 一起消失。
+onMounted(async () => {
+  await nextTick()
+  load()
+})
 </script>
 
 <style scoped lang="scss">
 .student-picker {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: auto;
   .search-row {
     display: flex;
     gap: 8px;
+    .el-input {
+      flex: 1;
+      min-width: 160px;
+    }
+  }
+  .table-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 240px;
   }
   .pager {
     justify-content: flex-end;

@@ -46,18 +46,13 @@ export interface UploadedImage {
 }
 
 /**
- * 图片上传（本地上传走后端已有的媒体上传接口）。
- *
- * 为什么用 ExamService 的 `/exam/file/upload`（跨模块）：
- * ACT 自己的 `/act/assistant/files` 白名单只收 ppt/doc/pdf/txt（材料解析用），公开出口里
- * **没有"图片 → URL"的接口**；而 exam 的这个接口正是为富文本图片准备的，网关已白名单
- * `/api/exam/files/**`（img 标签带不了 Authorization 头），实测 `200 image/png` 可直接显示。
- * 待 ACT 补齐专用头像上传接口后，这里换成那个端点即可（函数签名不变）。
+ * 换形象本地上传。走话术训练自己的形象目录，不再借用 ExamService。
+ * 返回 `/avatar/{uuid}.png`，网关已放行 `/api/avatar/**`，img 可直接显示。
  */
 export function uploadAvatarImage(file: File) {
   const form = new FormData()
   form.append('file', file)
-  return request.post<unknown, UploadedImage>('/exam/file/upload', form, {
+  return request.post<unknown, UploadedImage>('/admin/ai/avatar-upload', form, {
     // 不要手写 Content-Type：multipart 的 boundary 必须由浏览器补（见 api/assistant.ts 同源注释）
     timeout: 120_000,
   })

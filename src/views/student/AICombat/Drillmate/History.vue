@@ -195,7 +195,17 @@ const statCells = computed(() => [
   { label: '覆盖主题', value: `${stats.value.themeCount} 个` },
 ])
 
-const RUNNING: AttemptStatus[] = ['preparing', 'ready', 'in_progress', 'report_generating']
+/**
+ * 可继续的练习：暂停是「暂停并退出」，记录仍要留在「练习中」，
+ * 学员从最近练习点「继续练习」回到对话页接着进行。漏掉 paused 会导致暂停后无法再进入。
+ */
+const RUNNING: AttemptStatus[] = [
+  'preparing',
+  'ready',
+  'in_progress',
+  'paused',
+  'report_generating',
+]
 const isRunning = (row: StudentHistoryItem) => RUNNING.includes(row.status)
 const hasReport = (row: StudentHistoryItem) => row.status === 'completed' || row.totalScore != null
 
@@ -204,6 +214,8 @@ const statusText = (row: StudentHistoryItem) => {
     preparing: '准备中',
     ready: '待开始',
     in_progress: '练习中',
+    // 暂停即退出，但记录仍属「练习中」，不能显示成已暂停这类终结态
+    paused: '练习中',
     report_generating: '报告生成中',
     completed: row.passed === 1 ? '已通过' : '未通过',
     failed: '异常结束',
