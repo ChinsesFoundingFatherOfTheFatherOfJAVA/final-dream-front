@@ -11,12 +11,22 @@
   >
     <div class="drawer">
       <div class="drawer-header">
-        <span>列设置</span>
+        <span>请选择需要展示的列</span>
         <span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="emit('close')" @keydown.enter.prevent="emit('close')">×</span>
       </div>
 
       <div class="drawer-body">
         <p class="tip">账号、姓名、操作列为固定列，不可隐藏。</p>
+        <!-- 原平台面板首项是「全部」全选开关，下面才是具体列；保留列不受影响 -->
+        <div class="col-all">
+          <el-checkbox
+            :model-value="allVisible"
+            :indeterminate="someVisible"
+            @change="toggleAll(Boolean($event))"
+          >
+            全部
+          </el-checkbox>
+        </div>
         <ul class="col-list">
           <li v-for="(c, i) in columns" :key="c.key" class="col-item"
               :class="{ dragging: dragIndex === i, 'drag-over': overIndex === i && dragIndex !== i }"
@@ -31,14 +41,6 @@
                      @change="toggle(i, Boolean($event))" />
               <span :class="{ locked: isLocked(c.key) }">{{ labelOf(c.key) }}</span>
             </label>
-            <span class="col-actions">
-              <el-button class="mini" :disabled="i === 0" aria-label="上移" @click="move(i, -1)">
-                <el-icon><Top /></el-icon>
-              </el-button>
-              <el-button class="mini" :disabled="i === columns.length - 1" aria-label="下移" @click="move(i, 1)">
-                <el-icon><Bottom /></el-icon>
-              </el-button>
-            </span>
           </li>
         </ul>
       </div>
@@ -56,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Top, Bottom } from '@element-plus/icons-vue'
 import { toast } from '@/utils/toast'
 import {
@@ -74,6 +76,23 @@ const overIndex = ref(-1)
 
 const isLocked = (key: string) => LOCKED_STUDENT_COLUMNS.includes(key)
 const labelOf = (key: string) => STUDENT_COLUMN_LABELS[key] ?? key
+
+// 「全部」全选只作用于可隐藏列：保留列本来就恒为可见，不计入全选状态判断，
+// 否则永远不会出现「已全选」也无法取消。
+const toggleable = computed(() => columns.value.filter(c => !isLocked(c.key)))
+const allVisible = computed(() =>
+  toggleable.value.length > 0 && toggleable.value.every(c => c.visible))
+const someVisible = computed(() =>
+  toggleable.value.some(c => c.visible) && !allVisible.value)
+
+const toggleAll = (checked: boolean) => {
+  for (const col of columns.value) {
+    if (isLocked(col.key)) continue
+    col.visible = checked
+  }
+  // 就地改属性不会新增响应依赖，整体替换一份让模板重新求值
+  columns.value = [...columns.value]
+}
 
 const toggle = (index: number, checked: boolean) => {
   const col = columns.value[index]
@@ -141,10 +160,39 @@ const save = async () => {
   }
 }
 
+/**
+ * 打开抽屉时加载列设置，并**补齐库里没有的新列**（2026-11-13，用户批注）。
+ *
+ * <p>问题现象：抽屉里只显示「账号 / 姓名 / 部门 / 操作」4 项，
+ * 而这一版实际支持 26 列。原因是列设置持久化在库里，用户早期只保存过 4 条记录，
+ * 直接按它渲染就只剩 4 项 —— 用户根本看不到（也打不开）后面那 22 列。
+ *
+ * <p>处理与表格侧 `tableColumns` 保持一致：以库里的设置（顺序 + 显隐）为准，
+ * 把「库里没有、当前版本已支持」的列按默认顺序补在末尾、默认可见，
+ * 且「操作」列压尾。这样用户手动隐藏的列不会被翻出来，新列也不会凭空消失。
+ */
 onMounted(async () => {
+  const allKeys = Object.keys(STUDENT_COLUMN_LABELS)
   try {
     const res = await getStudentColumns()
-    columns.value = (res.columns || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    const saved = (res.columns || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    if (!saved.length) {
+      resetDefault()
+      return
+    }
+    const savedKeys = new Set(saved.map((c) => c.key))
+    const missing = allKeys.filter((k) => !savedKeys.has(k))
+    const merged: ArrangeColumnSetting[] = [
+      ...saved,
+      ...missing.map((key, i) => ({ key, visible: true, order: saved.length + i + 1 }))
+    ]
+    // 「操作」压尾，与表格侧一致
+    const opIdx = merged.findIndex((c) => c.key === 'operation')
+    if (opIdx >= 0) {
+      const [op] = merged.splice(opIdx, 1)
+      if (op) merged.push(op)
+    }
+    columns.value = merged
   } catch {
     resetDefault()
   }
@@ -156,6 +204,8 @@ onMounted(async () => {
 .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .tip { margin: 0 0 12px; font-size: 12px; color: #a0a7b8; }
+// 原平台面板首项是「全部」全选开关，与列表之间用细分割线隔开
+.col-all { padding: 2px 4px 10px; border-bottom: 1px solid #f2f4f5; margin-bottom: 4px; :deep(.el-checkbox__label) { font-size: 13px; font-weight: 500; color: #4a5368; } }
 .col-list { margin: 0; padding: 0; list-style: none; }
 .col-item {
   display: flex; align-items: center; gap: 8px; padding: 9px 4px; border-bottom: 1px dashed #f0f2f5;

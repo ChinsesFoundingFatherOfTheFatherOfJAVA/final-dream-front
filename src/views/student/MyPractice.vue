@@ -52,29 +52,43 @@
 
       <!-- 主内容区 -->
       <main class="main-content">
-        <div class="content-header">
-          <div class="header-left">
-            <h2 class="page-title">待学习</h2>
-            <span class="task-count">学习任务 <strong>{{ tasks.length }}</strong></span>
-          </div>
-          <div class="header-right">
-            <el-select model-value="all" class="filter-select"><el-option label="全部分类" value="all" /></el-select>
-            <el-select model-value="all" class="filter-select"><el-option label="全部状态" value="all" /></el-select>
-            <el-select model-value="priority" class="filter-select"><el-option label="优先级从高到低" value="priority" /></el-select>
-            <el-select model-value="all" class="filter-select"><el-option label="全部时间" value="all" /></el-select>
-          </div>
-        </div>
-
-        <div class="task-list">
-          <div v-if="!tasks.length && !loading" class="task-empty">暂无学习任务</div>
-          <div v-for="task in tasks" :key="task.id" class="task-card" title="敬请期待">
-            <div class="task-tags">
-              <span v-for="tag in task.tags" :key="tag" class="tag" :class="getTagClass(tag)">{{ tag }}</span>
+        <!--
+          「待学习 / 教学任务」两 tab（契约 01 §M4）。
+          分 tab 而不是并列两个区块：待学习是「我要做的事」，教学任务是「我要批的卷」，
+          两种身份的操作混在一屏会让批阅人翻很久才找到自己的待办。
+        -->
+        <el-tabs v-model="activeTab" class="practice-tabs" @tab-change="onTabChange">
+          <el-tab-pane label="待学习" name="learning">
+            <div class="content-header">
+              <div class="header-left">
+                <h2 class="page-title">待学习</h2>
+                <span class="task-count">学习任务 <strong>{{ tasks.length }}</strong></span>
+              </div>
+              <div class="header-right">
+                <el-select model-value="all" class="filter-select"><el-option label="全部分类" value="all" /></el-select>
+                <el-select model-value="all" class="filter-select"><el-option label="全部状态" value="all" /></el-select>
+                <el-select model-value="priority" class="filter-select"><el-option label="优先级从高到低" value="priority" /></el-select>
+                <el-select model-value="all" class="filter-select"><el-option label="全部时间" value="all" /></el-select>
+              </div>
             </div>
-            <h4 class="task-title">{{ task.title }}</h4>
-            <p class="task-time">{{ task.startTime }} ~ {{ task.endTime }}</p>
-          </div>
-        </div>
+
+            <div class="task-list">
+              <div v-if="!tasks.length && !loading" class="task-empty">暂无学习任务</div>
+              <div v-for="task in tasks" :key="task.id" class="task-card" title="敬请期待">
+                <div class="task-tags">
+                  <span v-for="tag in task.tags" :key="tag" class="tag" :class="getTagClass(tag)">{{ tag }}</span>
+                </div>
+                <h4 class="task-title">{{ task.title }}</h4>
+                <p class="task-time">{{ task.startTime }} ~ {{ task.endTime }}</p>
+              </div>
+            </div>
+          </el-tab-pane>
+
+          <!-- 教学任务：批阅人视角的待批阅队列（契约 01 §M4） -->
+          <el-tab-pane label="教学任务" name="teaching">
+            <MarkTodoList v-if="activeTab === 'teaching'" />
+          </el-tab-pane>
+        </el-tabs>
       </main>
     </div>
   </div>
@@ -85,8 +99,25 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { getStudentProjects } from '@/api/student'
 import { useAuthStore } from '@/stores/auth'
+import MarkTodoList from './components/MarkTodoList.vue'
 
 const authStore = useAuthStore()
+
+/**
+ * 当前 tab。默认「待学习」——学员身份远多于批阅人，
+ * 少数批阅人切一次 tab 的成本，低于让所有学员先看到空的任务列表。
+ */
+const activeTab = ref<'learning' | 'teaching'>('learning')
+
+/**
+ * 切 tab 时按需加载。
+ *
+ * <p>`MarkTodoList` 用 `v-if` 挂载而不是 `v-show`：待批阅数据带权限、且批阅完就该消失，
+ * 提前预加载会在每次进「我的陪练」时白打一次接口；用 `v-if` 让它只在真正切过去时才请求。
+ */
+const onTabChange = (name: string | number) => {
+  activeTab.value = name === 'teaching' ? 'teaching' : 'learning'
+}
 
 interface TaskItem {
   id: string

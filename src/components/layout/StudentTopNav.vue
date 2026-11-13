@@ -35,6 +35,16 @@
         >
           AI实战训练场
         </router-link>
+        <!-- 契约 02 §8B.1：学员考试入口紧跟「AI实战训练场」右侧。
+             用 startsWith 而不是 === ：入考场后还有 /entry、/attempts/:id 等子页面，
+             只判等会让进入考场时顶部导航失去激活态。 -->
+        <router-link
+          to="/exam/student/exams"
+          class="nav-item"
+          :class="{ active: currentRoute.startsWith('/exam/student') }"
+        >
+          考试
+        </router-link>
         <span class="nav-item disabled" title="敬请期待">陪练看板</span>
         <el-dropdown trigger="hover">
           <span class="nav-item"

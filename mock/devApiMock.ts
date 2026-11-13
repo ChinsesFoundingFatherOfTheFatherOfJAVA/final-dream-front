@@ -16,6 +16,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
+import { studentExamMockRoutes } from './studentExamMock.ts'
 
 /** 统一成功信封 */
 const ok = (data: unknown) => ({ code: 0, message: 'ok', data })
@@ -177,7 +178,11 @@ const stProjects = [
 
 // ==================== 路由表：具体接口优先，未命中走兜底 ====================
 
-type MockHandler = (body: Record<string, unknown>, path: string) => unknown
+type MockHandler = (
+  body: Record<string, unknown>,
+  path: string,
+  query?: Record<string, string>
+) => unknown
 const routes: Array<[string, RegExp, MockHandler]> = [
   // ---- 认证 ----
   ['POST', /^\/sm\/auth\/login$/, () => ok({
@@ -325,7 +330,10 @@ const routes: Array<[string, RegExp, MockHandler]> = [
 
   // ---- 统计类：给最小可渲染数据，图表允许为空 ----
   ['GET', /^\/admin\/projects\/[^/]+\/statistics\/(summary|active)$/, () => ok({})],
-  ['GET', /^\/admin\/projects\/[^/]+\/statistics\/(radar|times-averages)$/, () => ok([])]
+  ['GET', /^\/admin\/projects\/[^/]+\/statistics\/(radar|times-averages)$/, () => ok([])],
+
+  // ---- 学员端考试 / 批阅：拆在 studentExamMock.ts，多人并行施工互不冲突 ----
+  ...studentExamMockRoutes
 ]
 
 /** 占位封面/头像（SVG），避免离线时图片区域破图 */
@@ -336,8 +344,15 @@ const placeholderSvg = (label: string) =>
 async function handleApi(req: IncomingMessage, res: ServerResponse) {
   await wait()
   const method = (req.method || 'GET').toUpperCase()
-  const rawUrl = (req.url || '/').split('?')[0]
+  const [rawUrl, rawQuery = ''] = (req.url || '/').split('?')
   const path = decodeURIComponent(rawUrl).replace(/\/+$/, '') || '/'
+  /**
+   * GET 的筛选参数在 query string 里，不在 body 里。
+   * 以前只解析 body，导致所有「按状态筛选」的 GET 接口在 mock 下恒返回全量，
+   * 走查时看不出筛选是否生效。这里把 query 也解析出来，作为 handler 的第三个参数。
+   */
+  const query: Record<string, string> = {}
+  for (const [key, value] of new URLSearchParams(rawQuery)) query[key] = value
   // 收集请求体（JSON），供创建类路由使用（如新建试卷写入 mock 列表）
   const body: Record<string, unknown> = await new Promise((resolve) => {
     let raw = ''
@@ -358,7 +373,7 @@ async function handleApi(req: IncomingMessage, res: ServerResponse) {
 
   for (const [m, re, handler] of routes) {
     if (m === method && re.test(path)) {
-      reply(res, (handler as (body: Record<string, unknown>, path: string) => unknown)(body, path))
+      reply(res, (handler as (body: Record<string, unknown>, path: string, query: Record<string, string>) => unknown)(body, path, query))
       return
     }
   }

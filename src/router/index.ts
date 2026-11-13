@@ -112,29 +112,30 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '考试详情', permission: 'exam:manage' },
       },
       {
-        // 考试批阅：原平台「考试管理 > 考试批阅」的并列项，本轮未建设
-        path: 'exam-review',
-        name: 'ExamReview',
-        component: () => import('@/views/exam/PlaceholderPage.vue'),
+        // 考试批阅（契约 01 §M1–M3）：原平台「考试管理 > 考试批阅」，管理端页面
+        path: 'mark',
+        name: 'ExamMarkList',
+        component: () => import('@/views/exam/mark/MarkListPage.vue'),
         meta: { title: '考试批阅', permission: 'exam:manage' },
+      },
+      {
+        path: 'mark/:arrangeId/users',
+        name: 'ExamMarkUsers',
+        component: () => import('@/views/exam/mark/MarkUserListPage.vue'),
+        meta: { title: '批阅答卷列表', permission: 'exam:manage' },
+      },
+      {
+        // 批阅答卷页：复用 AnswerPaperBody 的 grading 模式（DER-14）
+        path: 'mark/paper/:attemptId',
+        name: 'ExamMarkPaper',
+        component: () => import('@/views/exam/mark/MarkPaperPage.vue'),
+        meta: { title: '批阅答卷', permission: 'exam:manage' },
       },
       {
         path: 'practice',
         name: 'ExamPractice',
         component: () => import('@/views/exam/PlaceholderPage.vue'),
         meta: { title: '练习管理', permission: 'exam:manage' },
-      },
-      {
-        path: 'feedback',
-        name: 'ExamFeedback',
-        component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '题目反馈', permission: 'exam:manage' },
-      },
-      {
-        path: 'field',
-        name: 'ExamField',
-        component: () => import('@/views/exam/PlaceholderPage.vue'),
-        meta: { title: '字段设置', permission: 'exam:manage' },
       },
     ],
   },
@@ -506,6 +507,56 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '资料查看', requiresAuth: true },
       },
     ],
+  },
+  // ===== 学员端考试（契约 02 §8B.1）=====
+  // 挂 StudentLayout：与 /study、/sparring/web 同一套学员端顶部导航，
+  // 因为「考试」入口本来就在那条导航里，跳过去不能把导航换掉。
+  // 只要求登录（requiresAuth），不设 requiresAdmin/permission：
+  // 试卷可见性由后端按 exam_arrange_student 判定，前端不做前置拦截，
+  // 否则「有考试安排但没有 exam:manage 权限」的学员会被 403 挡住。
+  {
+    path: '/exam/student',
+    component: () => import('@/components/layout/StudentLayout.vue'),
+    redirect: '/exam/student/exams',
+    meta: { title: '考试', requiresAuth: true },
+    children: [
+      {
+        path: 'exams',
+        name: 'StudentExamList',
+        component: () => import('@/views/exam/student/ExamListPage.vue'),
+        meta: { title: '我的考试', activeMenu: 'student-exam-list' },
+      },
+      {
+        // 入场页：声明/签名/人脸核验后进答题页（契约 01 §S2/§S3）
+        path: 'exams/:arrangeId/entry',
+        name: 'StudentExamEntry',
+        component: () => import('@/views/exam/student/ExamEntryPage.vue'),
+        meta: { title: '考试入场', activeMenu: 'student-exam-list' },
+      },
+      {
+        // 结果页（契约 01 §S6）。交卷后落到这里，也是「我的考试」里已考过记录的详情入口。
+        path: 'attempts/:attemptId/result',
+        name: 'StudentExamResult',
+        component: () => import('@/views/exam/student/ResultPage.vue'),
+        meta: { title: '考试结果', activeMenu: 'student-exam-list' },
+      },
+      {
+        // 答卷详情（契约 01 §S7）：学员只读；批阅页走 /exam/mark/paper/:attemptId 另一条路由。
+        path: 'attempts/:attemptId/paper',
+        name: 'StudentAnswerPaper',
+        component: () => import('@/views/exam/student/AnswerPaperPage.vue'),
+        meta: { title: '查看答卷', activeMenu: 'student-exam-list' },
+      },
+    ],
+  },
+  // ===== 答题页：全屏独立页，不挂 StudentLayout（契约 02 §8B.1）=====
+  // 原平台答题页顶部只有「退出」+ 考试信息，没有学员端导航；挂 StudentLayout 会多出一条
+  // 导航栏，且退出时容易误触离开考试。故与 Drillmate 运行时同样处理：独立全屏。
+  {
+    path: '/exam/student/attempts/:attemptId',
+    name: 'StudentExamAttempt',
+    component: () => import('@/views/exam/student/AttemptPage.vue'),
+    meta: { title: '答题中', requiresAuth: true },
   },
   // ===== 对练运行时与报告：独立全屏页，不挂 StudentLayout（契约 02 §3.1）=====
   {

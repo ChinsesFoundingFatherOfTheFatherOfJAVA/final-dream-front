@@ -264,11 +264,6 @@
             <p class="group-title">常规设置</p>
             <div class="switch-list">
               <div class="switch-line">
-                <ToggleSwitch v-model="advanced.allowQuestionFeedback" />
-                <span>允许学员提交题目反馈</span>
-                <i class="help" title="学员可在考试结束后反馈题目问题">?</i>
-              </div>
-              <div class="switch-line">
                 <ToggleSwitch v-model="advanced.scheduledPublish" />
                 <span>定时发布考试</span>
                 <i class="help" title="到点自动发布，未发布前仍可修改配置">?</i>
@@ -562,7 +557,6 @@ const NOTIFY_ITEMS = [
   { key: 'cancelNotice', label: '发送考试安排取消通知', tip: '取消安排时通知考生' },
   { key: 'paperGradeNotice', label: '发送试卷批阅通知', tip: '试卷批阅完成后通知考生' },
   { key: 'scoreNotice', label: '成绩下发通知', tip: '成绩下发后通知考生' },
-  { key: 'feedbackNotice', label: '题目反馈通知', tip: '学员提交题目反馈后通知负责人' },
   { key: 'scheduledMessage', label: '定时消息设置', tip: '按设定时间向考生发送提醒' }
 ] as const
 type NotifyKey = (typeof NOTIFY_ITEMS)[number]['key']
@@ -619,7 +613,6 @@ const notify = reactive<Record<NotifyKey, number>>({
   cancelNotice: 0,
   paperGradeNotice: 0,
   scoreNotice: 1,
-  feedbackNotice: 0,
   scheduledMessage: 0
 })
 
@@ -646,7 +639,6 @@ const DEF_ANTI_CHEAT = {
 }
 
 const advanced = reactive<any>({
-  allowQuestionFeedback: 0,
   scheduledPublish: 0,
   scheduledPublishAt: '',
   scheduledEnd: 0,

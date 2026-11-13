@@ -42,6 +42,9 @@
       </div>
     </section>
 
+    <!-- 学习任务：考试 / 话术训练 / 实战训练 三 tab（契约 02 §8B.5，DER-09 只展示不派发） -->
+    <LearningTaskCard />
+
     <!-- 学习统计 -->
     <section class="learning-stats">
       <h2 class="section-title">学习统计</h2>
@@ -75,6 +78,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import LearningTaskCard from './components/LearningTaskCard.vue'
 
 const router = useRouter()
 

@@ -39,13 +39,12 @@
             <span>考试管理</span>
           </router-link>
           <router-link
-            to="/exam/exam-review"
-            class="menu-item pending"
-            :class="{ active: route.path === '/exam/exam-review' }"
+            to="/exam/mark"
+            class="menu-item"
+            :class="{ active: route.path.startsWith('/exam/mark') }"
           >
             <span class="menu-icon" aria-hidden="true">✎</span>
             <span>考试批阅</span>
-            <span class="pending-arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </router-link>
         </div>
         <router-link
@@ -74,11 +73,16 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-/** 未建设菜单（点击 PlaceholderPage"功能建设中"，01 §2） */
+/**
+ * 未建设菜单（点击 PlaceholderPage「功能建设中」，01 §2）。
+ *
+ * <p>2026-11-13：按用户要求移除「题目反馈」与「字段设置」两个入口——
+ * 它们不在复刻范围内，留着只会让人点进去看到占位页。
+ * DER-10 早已把「题目反馈」定为本期不做，这次把入口一并撤掉，
+ * 让菜单与实现范围保持一致。
+ */
 const pendingMenus = [
   { path: '/exam/practice', label: '练习管理', icon: '▤' },
-  { path: '/exam/feedback', label: '题目反馈', icon: '✎' },
-  { path: '/exam/field', label: '字段设置', icon: '⚙' }
 ]
 </script>
 
@@ -175,11 +179,24 @@ const pendingMenus = [
 
 .pending-arrow { margin-left: auto; color: #c2c8d4; font-size: 12px; }
 
+/*
+ * 内容区（2026-11-13 改为整页滚动）。
+ *
+ * **原先的问题**：`.exam-layout` 锁 `height: 100vh`、`.exam-content` 又
+ * `overflow: hidden`，把内容死死困在视口内。于是页面内部各区块只能二选一：
+ * 要么被压扁（考生表格一度只剩 108px，只能看到半个表头），
+ * 要么自己开一个内层滚动条（滚起来很别扭，且分页条会被推出视野）。
+ *
+ * **现在**：内容区允许纵向滚动，页面整体滚动，外层不再裁切。
+ * 各业务页可以按自然高度铺开，表格按「每页条数 × 行高」定高即可，
+ * 长内容由这个滚动条统一承载 —— 与原平台的行为一致。
+ */
 .exam-content {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>

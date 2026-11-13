@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>人脸活体诊断</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; margin: 24px; background: #f5f5f5; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .sub { color: #8c8c8c; font-size: 13px; margin-bottom: 16px; }
+    .row { display: flex; gap: 16px; align-items: flex-start; }
+    .cam { background: #000; border-radius: 6px; overflow: hidden; width: 480px; height: 360px; }
+    video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .panel { flex: 1; background: #fff; border-radius: 6px; padding: 16px; }
+    .metric { font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.9; }
+    .metric b { display: inline-block; min-width: 92px; color: #595959; font-weight: 400; }
+    .val { font-weight: 600; }
+    .ok { color: #52c41a; }
+    .bad { color: #f5222d; }
+    .warn { color: #fa8c16; }
+    .log { margin-top: 12px; max-height: 220px; overflow: auto; background: #fafafa;
+           border-radius: 4px; padding: 8px; font-family: ui-monospace, monospace; font-size: 12px; }
+    button { margin-top: 12px; padding: 6px 16px; border-radius: 4px; border: 1px solid #d9d9d9;
+             background: #fff; cursor: pointer; }
+    button.primary { background: #436bff; border-color: #436bff; color: #fff; }
+    .hint { margin-top: 12px; font-size: 12px; color: #8c8c8c; line-height: 1.7; }
+    .verdict { margin-top: 12px; padding: 10px 12px; border-radius: 4px; font-size: 13px; }
+    .verdict.pass { background: #f6ffed; color: #237804; }
+    .verdict.fail { background: #fff1f0; color: #a8071a; }
+    .verdict.wait { background: #fffbe6; color: #ad6800; }
+  </style>
+</head>
+<body>
+  <h1>人脸活体诊断页</h1>
+  <p class="sub">用于确认 human 模型是否真的在检测、openLeft 的真实取值范围。<b>不写入任何数据</b>，纯本地。</p>
+
+  <div class="row">
+    <div class="cam"><video id="v" autoplay playsinline muted></video></div>
+
+    <div class="panel">
+      <div class="metric">
+        <div><b>状态</b><span id="status" class="val">初始化…</span></div>
+        <div><b>faceCount</b><span id="fc" class="val">-</span></div>
+        <div><b>openLeft</b><span id="ol" class="val">-</span></div>
+        <div><b>openRight</b><span id="or" class="val">-</span></div>
+        <div><b>yaw</b><span id="yaw" class="val">-</span></div>
+        <div><b>眨眼判据</b><span id="blink" class="val">-</span></div>
+        <div><b>有效帧数</b><span id="n" class="val">0</span></div>
+        <div style="margin-top:10px;border-top:1px dashed #e8e8e8;padding-top:10px">
+          <b>睁眼段均值</b><span id="openAvg" class="val">-</span>
+        </div>
+        <div><b>闭眼段最低</b><span id="closedMin" class="val">-</span></div>
+        <div><b>眨眼次数</b><span id="blinkCount" class="val">0</span></div>
+        <div><b>全局最低值</b><span id="globalMin" class="val">-</span></div>
+      </div>
+
+      <div id="verdict" class="verdict wait">等待检测…</div>
+
+      <button id="start" class="primary">开始检测</button>
+      <button id="reset">重置统计</button>
+
+      <div class="log" id="log"></div>
+
+      <p class="hint">
+        判据（**已根据 2026-11-12 真机数据标定**）：<b>闭眼 openLeft ≤ 0.2</b>，<b>睁眼 openLeft ≥ 0.24</b>（中间为滞回带）。<br />
+        旧值 0.35 是按 human 内置样例（0.41）拍的，真机只有 0.301，眨眼永远判不出——已修。<br />
+        换机器/换光线后若睁眼值又跑出 0.24 之外，把这组数报给开发重调。
+      </p>
+    </div>
+  </div>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const log = (msg) => {
+  const box = $('log');
+  const line = document.createElement('div');
+  const t = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+  line.textContent = `[${t}] ${msg}`;
+  box.appendChild(line);
+  box.scrollTop = box.scrollHeight;
+};
+
+let human = null, stream = null, timer = null;
+/**
+ * 统计两组分布：睁眼段与闭眼段。
+ *
+ * <p>只有“睁眼均值”无法定阈值——必须知道闭眼能掉多低，否则把闭眼下限设得太低
+ * 就永远触发不了。眨眼计数的口径：从「睁」跨到「闭」再回「睁」算一次。
+ */
+let stats = {
+  n: 0,
+  openSum: 0, openCount: 0,
+  closedMin: 1, blinkCount: 0, globalMin: 1,
+  wasClosed: false
+};
+
+function resetStats() {
+  stats = { n: 0, openSum: 0, openCount: 0, closedMin: 1, blinkCount: 0, globalMin: 1, wasClosed: false };
+  $('n').textContent = '0';
+  $('openAvg').textContent = '-';
+  $('closedMin').textContent = '-';
+  $('blinkCount').textContent = '0';
+  $('globalMin').textContent = '-';
+}
+
+async function initHuman() {
+  $('status').textContent = '加载 human 模块…';
+  const mod = await import('/src/views/exam/student/faceLiveness.ts');
+  $('status').textContent = '加载模型（约 2MB）…';
+  human = await mod.loadHuman();
+  $('status').textContent = '模型就绪，请求摄像头…';
+  return mod;
+}
+
+async function initCamera() {
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { width: 640, height: 480, facingMode: 'user' }, audio: false
+  });
+  $('v').srcObject = stream;
+  await $('v').play();
+  $('status').textContent = '摄像头就绪';
+}
+
+async function loop() {
+  const mod = await initHumanOnce;
+  if (!human) return;
+  timer = setInterval(async () => {
+    try {
+      const frame = await mod.detectOnce($('v'));
+      stats.n++;
+      $('n').textContent = String(stats.n);
+      $('fc').textContent = String(frame.faceCount);
+
+      if (frame.error) {
+        $('status').textContent = '帧异常：' + frame.error;
+        $('status').className = 'val bad';
+        log('frame.error=' + frame.error);
+        return;
+      }
+
+      const ol = frame.openLeft, or = frame.openRight;
+      const fmt = (x) => Number.isFinite(x) ? x.toFixed(3) : 'NaN';
+      $('ol').textContent = fmt(ol);
+      $('or').textContent = fmt(or);
+      $('yaw').textContent = fmt(frame.yaw);
+
+      if (frame.faceCount === 1 && Number.isFinite(ol)) {
+        stats.globalMin = Math.min(stats.globalMin, ol);
+        $('globalMin').textContent = stats.globalMin.toFixed(3);
+
+        // 分段统计：按实测均值 0.284 将“明显睁开”划为 >=0.25，低于 0.25 视为闭眼候选
+        const OPEN_LINE = 0.25;
+        const isOpenSeg = ol >= OPEN_LINE;
+        if (isOpenSeg) {
+          stats.openSum += ol;
+          stats.openCount++;
+          $('openAvg').textContent = (stats.openSum / stats.openCount).toFixed(3) +
+            '（' + stats.openCount + '帧）';
+          // 从闭回睁 = 完成一次眨眼
+          if (stats.wasClosed) {
+            stats.blinkCount++;
+            $('blinkCount').textContent = String(stats.blinkCount);
+            stats.wasClosed = false;
+          }
+        } else {
+          stats.closedMin = Math.min(stats.closedMin, ol);
+          $('closedMin').textContent = stats.closedMin.toFixed(3);
+          stats.wasClosed = true;
+        }
+
+        const closed = ol <= 0.2;
+        const open = ol >= 0.24;
+        $('blink').textContent = closed ? '闭眼' : (open ? '睁眼' : '滞回带内');
+        $('blink').className = 'val ' + (closed ? 'warn' : (open ? 'ok' : ''));
+
+        // 判定：基于实测的睁眼/闭眼两段分布给建议
+        const v = $('verdict');
+        if (stats.openCount >= 15) {
+          const avg = stats.openSum / stats.openCount;
+          const cm = stats.closedMin < 1 ? stats.closedMin : null;
+          if (cm !== null && cm < avg * 0.6) {
+            // 两段能拉开，给具体阈值建议
+            const lo = +(cm + (avg - cm) * 0.15).toFixed(2);
+            const hi = +(cm + (avg - cm) * 0.55).toFixed(2);
+            v.className = 'verdict pass';
+            v.textContent = `✅ 两段能拉开：睁眼均值 ${avg.toFixed(3)}、闭眼最低 ${cm.toFixed(3)}。` +
+              `建议 BLINK_CLOSED_ENTER=${lo}、BLINK_OPEN_ENTER=${hi}（眨眼 ${stats.blinkCount} 次）`;
+          } else {
+            v.className = 'verdict wait';
+            v.textContent = `⚠️ 睁眼均值 ${avg.toFixed(3)}，闭眼最低 ${cm === null ? '尚未测到' : cm.toFixed(3)}。` +
+              `请多眨几次眼，让闭眼段样本足够再下结论`;
+          }
+        }
+      }
+    } catch (e) {
+      log('detect 抛错: ' + (e && e.message));
+    }
+  }, 250);
+}
+
+const initHumanOnce = initHuman();
+
+$('start').addEventListener('click', async () => {
+  $('start').disabled = true;
+  try {
+    const mod = await initHumanOnce;
+    await initCamera();
+    const f = await mod.detectOnce($('v'));
+    log('首帧: faceCount=' + f.faceCount + ' openLeft=' + f.openLeft + ' err=' + (f.error || '-'));
+    resetStats();
+    loop();
+    $('start').textContent = '检测中…';
+  } catch (e) {
+    $('status').textContent = '失败：' + (e && e.message);
+    $('status').className = 'val bad';
+    log('启动失败: ' + (e && e.message));
+    $('start').disabled = false;
+  }
+});
+
+$('reset').addEventListener('click', () => { resetStats(); log('统计已重置'); });
+
+window.addEventListener('beforeunload', () => {
+  if (timer) clearInterval(timer);
+  if (stream) stream.getTracks().forEach((t) => t.stop());
+});
+</script>
+</body>
+</html>

@@ -309,6 +309,8 @@ export interface ArrangeStudentItem {
   positionId: string
   positionName: string
   joinType: number
+  /** 加入来源：原站 joinMethod，1 手动添加 */
+  joinSource: number | null
   examStatus: number
   passStatus: number
   startAt: string | null
@@ -322,6 +324,20 @@ export interface ArrangeStudentItem {
   attemptQty: number
   screenSwitchCount: number
   submitType: number | null
+  /** 排名：同分同名次；null/0 未上榜 */
+  rankNo: number | null
+  /** 补考成绩；null 未补考 */
+  retakeScore: number | null
+  /** 补考通过状态；null 无补考 */
+  retakePassStatus: number | null
+  /** 参考设备：原站 deviceType */
+  referDevice: number | null
+  /** 参考次数：原站 attendCount */
+  referCount: number | null
+  /** 是否一次通过：1 是 */
+  oncePassed: number | null
+  /** 是否有补考：1 是 */
+  hasRetake: number | null
   retakeUsed: number
   currentAttemptId: string | null
   canRetake: boolean
@@ -334,6 +350,14 @@ export interface ArrangeStudentQuery {
   accountStatus: number
   deptIds?: string[]
   positionIds?: string[]
+  /** 岗位筛选走名称：平台没有岗位 ID（SysUserDTO 无 positionId） */
+  positionNames?: string[]
+  /** 加入方式：不传/0 表示全部；1 指派 2 链接 3 导入 */
+  joinType?: number
+  /** 开考时间起（含），yyyy-MM-dd 或 yyyy-MM-dd HH:mm:ss */
+  examStartBegin?: string
+  /** 开考时间止（含），格式同上 */
+  examStartEnd?: string
 }
 
 export interface ArrangeCandidateItem {
@@ -421,6 +445,17 @@ export function getArrangeDepartments() {
   )
 }
 
+/**
+ * API-49 岗位候选（考生筛选的「选择岗位」）。
+ *
+ * <p>岗位在本平台只有名称没有 ID（`SysUserDTO` 无 `positionId`），
+ * 所以选项值与后端筛选参数都是岗位名 `position_name`。
+ */
+export function getArrangePositions(keyword = '', current = 1, limit = 200) {
+  return request.get<unknown, { list: { key: string; count: number }[]; total: number }>(
+    '/exam/arrange/options/positions', { params: { keyword, current, limit } }
+  )
+}
 /** 考生状态文案：0 未开始 / 1 考试中 / 2 批阅中 / 3 已完成 / 4 重新考试。 */
 export const STUDENT_STATUS_TEXT: Record<number, string> = {
   0: '未开始',
@@ -435,6 +470,64 @@ export const STUDENT_PASS_TEXT: Record<number, string> = {
   0: '不通过',
   1: '通过',
   2: '未知'
+}
+
+/**
+ * 账号状态：1 已启用 / 2 已禁用 / 3 已删除。
+ *
+ * <p>取值来自 `exam_arrange_student.account_status` 的建表注释（`1已启用 2已禁用 3已删除`），
+ * 原平台列表实测只出现「已启用」。
+ */
+export const STUDENT_ACCOUNT_STATUS_TEXT: Record<number, string> = {
+  1: '已启用',
+  2: '已禁用',
+  3: '已删除'
+}
+
+/**
+ * 加入方式：1 指派 / 2 链接 / 3 导入。
+ *
+ * <p>取值来自 `exam_arrange_student.join_type` 的建表注释；
+ * 「指派加入」的文案是原平台列表截图实读（非推测）。
+ */
+export const STUDENT_JOIN_TYPE_TEXT: Record<number, string> = {
+  1: '指派加入',
+  2: '链接加入',
+  3: '导入加入'
+}
+
+/**
+ * 加入来源（原站 `joinMethod`）：1 手动添加。
+ *
+ * <p>只有 1 是原平台截图实读（「手动添加」）；当前后端 `applyUser` 固定写 1，
+ * 其他值后端从不下发，所以这里不做猜测枚举，未知值直接回退成原始数字。
+ */
+export const STUDENT_JOIN_SOURCE_TEXT: Record<number, string> = {
+  1: '手动添加'
+}
+
+/**
+ * 提交方式：1 主动 / 2 超时自动 / 3 管理员。
+ *
+ * <p>取值来自 04 接口文档 `submitType`（交卷接口）与 `exam_arrange_student.submit_type`
+ * 的建表注释（`1主动 2自动 3管理员`），两处一致。
+ */
+export const STUDENT_SUBMIT_TYPE_TEXT: Record<number, string> = {
+  1: '主动提交',
+  2: '超时自动',
+  3: '管理员强制'
+}
+
+/**
+ * 参考设备（原站 `deviceType`）：0 未知 / 1 PC / 2 移动。
+ *
+ * <p>**未经验证**：原平台抓包里 `deviceType` 只有 0（未知）一个样本，
+ * 1/2 的语义是按字段名与业务常识定的，接入真数据后需校对。
+ */
+export const STUDENT_REFER_DEVICE_TEXT: Record<number, string> = {
+  0: '未知',
+  1: 'PC',
+  2: '移动端'
 }
 // ---- 试题分析与统计（04 §6 API-32~38）----
 
@@ -654,18 +747,39 @@ export function saveStudentColumns(columns: ArrangeColumnSetting[]) {
   return request.put<unknown, null>('/exam/setting/student-columns', { columns })
 }
 
-/** 列显示名（列设置抽屉与表格表头共用）。 */
+/**
+ * 列显示名（列设置抽屉与表格表头共用）。
+ *
+ * <p>键与顺序对齐原平台「列设置」面板（2026-11-13 实机 26 项截图人工核对）：
+ * 面板标题「请选择需要展示的列」，首项是全选「全部」，下面才是具体列。
+ * `highestAttemptNo` 对应原平台「最高分第几次考」——列名确实叫这个，不是写错。
+ */
 export const STUDENT_COLUMN_LABELS: Record<string, string> = {
   account: '账号',
   fullname: '姓名',
+  accountStatus: '账号状态',
   deptName: '部门',
   positionName: '岗位',
+  joinType: '加入方式',
+  joinSource: '加入来源',
   examStatus: '考试状态',
-  passStatus: '通过',
-  score: '成绩',
-  highestScore: '最高分',
-  attemptQty: '次数',
+  startAt: '开考时间',
   submitAt: '交卷时间',
+  firstJoinAt: '加入考试时间',
+  ip: 'IP地址',
+  durationSec: '答题时长',
+  score: '成绩',
+  highestAttemptNo: '最高分第几次考',
+  screenSwitchCount: '切屏次数',
+  submitType: '提交方式',
+  rankNo: '排名',
+  passStatus: '通过状态',
+  retakeScore: '补考成绩',
+  retakePassStatus: '补考通过状态',
+  referDevice: '参考设备',
+  referCount: '参考次数',
+  oncePassed: '是否一次通过',
+  hasRetake: '是否有补考',
   operation: '操作'
 }
 

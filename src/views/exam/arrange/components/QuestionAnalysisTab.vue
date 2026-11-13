@@ -70,40 +70,73 @@
       </div>
         </el-drawer>
 
-    <!-- 答题详情（F13） -->
-        <el-drawer
+    <!--
+      答题详情抽屉（2026-11-13 按原平台重排，台账 1a0f）
+
+      原平台实测（截图见 观察素材/施工比对/原平台-答题详情抽屉.png）：
+      - 宽约 474px，**没有标题栏**，打开后第一行直接是题干
+      - 选项是「radio 圆圈 + A. 文字」，进度条在文字下方，比例人数与进度条同行
+      - 正确答案靠「圆心实心 + 进度条变蓝」标识，**没有**额外的文字标签
+      - 底部是蓝底小标签（答案/难度/正确率/解析）四行左对齐
+      我方原先带标题栏、顶部 meta、字母前缀、文字标签、纯文本解析行，全部按上面改掉。
+
+      关闭方式：去掉标题栏后靠「点遮罩」+ 右下角 × 按钮，两者都保留，
+      否则学员/管理端会找不到怎么关。
+    -->
+    <el-drawer
       v-if="answer"
       :model-value="true"
-      size="640px"
+      size="474px"
       :with-header="false"
       append-to-body
       destroy-on-close
-      class="exam-drawer"
+      class="exam-drawer answer-detail-drawer"
       @close="answer = null"
     >
-      <div class="drawer">
-        <div class="drawer-header"><span>答题详情</span><span class="close-btn" role="button" tabindex="0" aria-label="关闭" @click="answer = null" @keydown.enter.prevent="answer = null">×</span></div>
-        <div class="drawer-body">
-          <p class="q-meta">{{ TYPE_LABELS[answer.type] }} · {{ LEVEL_LABELS[answer.levelType] }} · 正确率 {{ formatRate(answer.correctRate) }}（{{ answer.correctQty }}/{{ answer.submitQty }}）</p>
-          <p class="q-label">题干</p>
-          <div class="q-content" v-html="answer.content || answer.summary"></div>
-          <p class="q-label">各选项选择情况</p>
-          <div v-for="(o, i) in answer.options" :key="i" class="opt-stat">
-            <span class="opt-key">{{ String.fromCharCode(65 + i) }}</span>
-            <span class="opt-text">{{ o.itemContent }}</span>
-            <span class="opt-bar"><i :style="{ width: barWidth(o.answerPercent) }"></i></span>
-            <span class="opt-num">{{ o.answerQty }} 人 · {{ formatRate(o.answerPercent) }}</span>
-            <span v-if="o.answer === 1" class="opt-correct">正确答案</span>
+      <div class="drawer answer-detail">
+        <!-- 题干：无「题干」标签，直接是题目文字 -->
+        <div class="ad-stem" v-html="answer.content || answer.summary"></div>
+
+        <!-- 选项：radio 圆圈 + 字母. 文字；进度条在下、比例人数同行 -->
+        <div
+          v-for="(o, i) in answer.options"
+          :key="i"
+          class="ad-opt"
+          :class="{ 'is-correct': o.answer === 1 }"
+        >
+          <span class="ad-radio" aria-hidden="true"></span>
+          <div class="ad-opt-main">
+            <span class="ad-opt-label">{{ String.fromCharCode(65 + i) }}. {{ o.itemContent }}</span>
+            <div class="ad-opt-bar-row">
+              <span class="ad-bar"><i :style="{ width: barWidth(o.answerPercent) }"></i></span>
+              <span class="ad-opt-num">{{ formatRate(o.answerPercent) }}（{{ o.answerQty }}人）</span>
+            </div>
           </div>
-          <p v-if="answer.explainText" class="q-label-row"><b>解析：</b><span v-html="answer.explainText"></span></p>
         </div>
+
+        <!-- 底部信息：蓝底小标签 + 值，四行 -->
+        <dl class="ad-meta">
+          <dt>答案</dt>
+          <dd>{{ correctAnswerText }}</dd>
+          <dt>难度</dt>
+          <dd>{{ LEVEL_LABELS[answer.levelType] }}</dd>
+          <dt>正确率</dt>
+          <dd>{{ formatRate(answer.correctRate) }}</dd>
+          <template v-if="answer.explainText">
+            <dt>解析</dt>
+            <dd v-html="answer.explainText"></dd>
+          </template>
+        </dl>
+
+        <!-- 无标题栏后的关闭出口 -->
+        <button class="ad-close" type="button" aria-label="关闭" @click="answer = null">×</button>
       </div>
-        </el-drawer>
+    </el-drawer>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import {
   exportArrangeQuestions, getArrangeAnswerDetail, getArrangeQuestionStats, getArrangeQuestionView,
@@ -125,6 +158,25 @@ const query = reactive({ type: -1, levelType: -1, keyword: '' })
 
 const formatRate = (r: number) => `${(((r ?? 0) * 100)).toFixed(2)}%`
 const barWidth = (r: number) => `${Math.min(100, Math.round((r ?? 0) * 100))}%`
+
+/**
+ * 正确答案的展示文本（2026-11-13）。
+ *
+ * <p>原平台底部「答案」行显示的是选项字母（如 `B`、`A、B、C`），
+ * 而接口给的是每个 option 的 `answer` 标记（1 = 正确）。这里从标记反推字母，
+ * 顺序与选项一致，多选时用顿号连接。
+ *
+ * <p>为什么不在模板里直接算：模板里写 `filter` + `map` + `join` 会把
+ * 「正确答案」这个语义埋进表达式，改起来容易漏；抽成 computed 后
+ * 单测和肉眼都能一眼看懂它是什么。
+ */
+const correctAnswerText = computed(() => {
+  const opts = answer.value?.options ?? []
+  const letters = opts
+    .map((o, i) => (o.answer === 1 ? String.fromCharCode(65 + i) : ''))
+    .filter(Boolean)
+  return letters.length ? letters.join('、') : '--'
+})
 
 const reload = async (next?: number) => {
   if (next) pageNo.value = next
@@ -194,4 +246,142 @@ tr:hover td { background: #fafbfe; }
 .opt-num { min-width: 120px; color: #8a92a5; font-size: 12px; }
 .opt-correct { color: #52c41a; font-size: 12px; }
 .btn { padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } }
+
+/* ===== 答题详情抽屉（2026-11-13，对齐原平台，台账 1a0f） ===== */
+
+/*
+ * 抽屉本体：474px 宽、无标题栏，内容直接从题干开始。
+ * 原平台实测宽 474px（截图逐像素量得），比原先的 640px 窄一圈，
+ * 目的是让抽屉不遮挡左侧试题列表——批阅人要边看列表边看详情。
+ */
+.answer-detail-drawer {
+  :deep(.el-drawer__body) { padding: 0; }
+}
+
+.answer-detail {
+  position: relative;
+  padding: 20px 24px 32px;
+}
+
+/* 题干：无「题干」标签，稍大字号以充当原来的标题位 */
+.ad-stem {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1f2533;
+}
+
+/* 选项行：radio 圆圈 + 文字/进度条两行 */
+.ad-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+/*
+ * radio 圆圈：未选中是空心灰圈；正确答案（.is-correct）是实心蓝点。
+ * 原平台就是靠这个 + 进度条变蓝来标识正确答案，**没有**额外的文字标签，
+ * 所以这里不再渲染「正确答案」四个字。
+ */
+.ad-radio {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  border: 1px solid #c9ced9;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.is-correct .ad-radio {
+  border-color: #1890ff;
+  background: #1890ff;
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.ad-opt-main { flex: 1; min-width: 0; }
+
+.ad-opt-label {
+  display: block;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1f2533;
+}
+
+.ad-opt-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.ad-bar {
+  flex: 1;
+  height: 6px;
+  background: #f0f2f5;
+  border-radius: 3px;
+  overflow: hidden;
+
+  i {
+    display: block;
+    height: 100%;
+    background: #c9ced9;
+  }
+}
+
+/* 正确答案的进度条变蓝，与圆圈呼应 */
+.is-correct .ad-bar i { background: #1890ff; }
+
+.ad-opt-num {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #8a92a5;
+}
+
+/* 底部信息：蓝底小标签 + 值，两列对齐 */
+.ad-meta {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 8px 12px;
+  margin: 20px 0 0;
+  font-size: 13px;
+
+  dt {
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 2px;
+    background: #ecf0ff;
+    color: #436bff;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  dd {
+    margin: 0;
+    line-height: 22px;
+    color: #1f2533;
+    word-break: break-word;
+  }
+}
+
+/* 无标题栏后的关闭按钮：贴右上角，点遮罩也能关 */
+.ad-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #8a92a5;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  &:hover { background: #f0f2f5; color: #1f2533; }
+}
 </style>
+

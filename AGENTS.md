@@ -67,3 +67,91 @@
 1. 代码实施过程中出现技术或逻辑修改，要及时将技术方案文档同步修改。
 2. 关键类、方法、代码行要加上标准的描述功能或步骤的注释（中文，说明"为什么"，不是复述代码）。
 3. 出现信息缺失或认为实现方案不合理的情况一定要和用户沟通确认！！！
+
+## 7. 改 .vue 必须跑 SFC 检查（2026-11-13 血泪）
+
+`vue-tsc` **不编译模板**，`vitest` 也只测逻辑。两者全绿而页面白屏的事在这个项目里发生了 **4 次**：
+
+| 事故 | 破坏点 | 表现 |
+|---|---|---|
+| 1 | 模板多一个 `</template>` | Vite 500「Element is missing end tag」 |
+| 2 | 模板缺闭合标签 | 同上 |
+| 3 | `<style lang="scss">` 多一个 `}` | Vite 500「unmatched "}"」 |
+| 4 | 删代码时把文件末尾的 `</style>` 一起删了 | 整页白屏 |
+
+**改完任何 `.vue` 都要跑**：
+
+```bash
+node scripts/check-sfc.mjs src/views/<改的文件>.vue
+# 或全量
+find src -name "*.vue" | xargs node scripts/check-sfc.mjs
+```
+
+该脚本用 Vue 官方编译器同时校验**模板 + SCSS**，与 Vite 同一编译路径。
+第 4 次事故后补上了 SCSS 校验——只查模板是不够的。
+
+## 8. el-table 三个高频坑（2026-11-13 实测）
+
+### 8.1 高度：用 `max-height`，不要自己算
+
+错误做法（我试过三种，全错）：`min-height: 0`（被挤成一条缝）、写死 `380px`（行数一变就不对）、
+`min-height: calc(表头 + 行高 × 每页条数)`（**选 100 条/页但只有 8 条数据时撑出 5000px 空白**）。
+
+正确做法：`<el-table max-height="calc(100vh - 320px)">`。
+EP 原生行为就是「内容超了才滚、表头固定；数据少就按实际行数收起」，不需要自己算。
+
+### 8.2 单元格 nowrap 必须挂 `.cell` 且加 `:deep()`
+
+```scss
+// 无效：被 EP 自己的 `.el-table .cell { white-space: normal }` 覆盖
+.el-table__cell { white-space: nowrap; }
+
+// 有效
+:deep(.el-table .cell) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+```
+
+不修的表现：长姓名（`ABDURAXMONOV AKMALJON`）在 110px 列里被折成 3~4 行，行高 63/86/63 参差不齐。
+
+### 8.3 列宽按内容分配，不要一刀切
+
+26 列全设 110px 时，`A Michael Dsouza`、`外籍大客户经理`、`2026-11-11 16:27:10` 全被截。
+按类型给：短数字 110 / 姓名·岗位 140 / 部门 160 / 时间 150 / 操作 150。
+
+## 9. 整页滚动 vs 内层滚动（2026-11-13）
+
+`.exam-layout` 曾锁 `height: 100vh` 且 `.exam-content` 是 `overflow: hidden`，
+把内容困在视口内，导致下层只能「压扁」或「自己开滚动条」（滚起来别扭、分页条被推出视野）。
+
+现在 `.exam-content` 是 `overflow-y: auto`，**业务页按自然高度铺开、整页滚动**。
+新增页面不要再给根容器设 `height: 100%` + `min-height: 0`，那会重新制造「压扁」问题。
+
+## 10. 详情页路由参数：必须 computed + watch（2026-11-13，同类错误犯了两次）
+
+**症状**：在同一个详情页里切换 id（点考试历史、翻批阅队列），URL 变了但页面还是旧数据。
+
+**两个必须同时做到**：
+
+```ts
+// ① 参数必须是 computed，不能写死成常量
+const attemptId = computed(() => String(route.params.attemptId ?? ''))
+// 所有用到的地方都要 .value：load()、提交接口、跳转拼串
+
+// ② 必须有 watch，参数变化时重取（组件会被复用，onMounted 不会再跑）
+watch(() => route.params.attemptId, (next, prev) => {
+  if (!next || next === prev) return
+  result.value = null        // 先清空，否则 loading 期间会闪上一份的数据
+  void load()
+})
+```
+
+**已经犯过的两处**：
+- `MarkPaperPage.vue`（批阅页，2026-11-13 修）
+- `ResultPage.vue`（结果页，2026-11-13 修）
+
+**新增任何 `:id` 详情页时，默认就要写这两条**，不要等出问题再补。
+
+### 排查提醒：先怀疑 Vite 模块缓存
+
+改完代码页面没反应时，**先 `location.reload(true)` 硬刷新再排查代码**。
+`curl` 查 dev server 会返回新代码（假阳性），只有页面内 `await import(...)` 才是运行时真值。
+2026-11-13 我为这个问题多花了 3~4 轮去查模板、setupState、vnode，实际只是缓存。

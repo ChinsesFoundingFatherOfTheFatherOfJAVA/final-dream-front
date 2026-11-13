@@ -51,3 +51,6 @@ playwright-report/
 # 视觉审计用的 Chrome 配置目录（各成员/端口独立，不入库）
 visual/.chrome-profile*
 visual/.chrome-profile-*
+
+# IDE 目录
+.openidea
