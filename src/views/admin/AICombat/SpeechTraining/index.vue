@@ -7,7 +7,7 @@
         <div class="menu-list">
           <div class="menu-group expanded">
             <div class="menu-group-title" role="button" tabindex="0" @keydown.enter.prevent="toggleGroup('speechNew')" @click="toggleGroup('speechNew')">
-              <span class="group-icon" aria-hidden="true">🔄</span>
+              <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
               <span>话术训练(新)</span>
               <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
@@ -18,17 +18,17 @@
           </div>
           <!-- 占位菜单：暂无功能，去掉可点暗示 -->
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">🔄</span>
+            <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
             <span>话术训练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">👥</span>
+            <el-icon class="group-icon" aria-hidden="true"><User /></el-icon>
             <span>演讲训练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">⚔️</span>
+            <el-icon class="group-icon" aria-hidden="true"><Trophy /></el-icon>
             <span>实战演练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown, CaretRight } from '@element-plus/icons-vue'
+import { ArrowDown, CaretRight, Refresh, User, Trophy } from '@element-plus/icons-vue'
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getProjectList } from '@/api/project'
@@ -180,22 +180,22 @@ const goToConsole = (id: number) => {
 .layout {
   display: flex;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .side-menu {
   width: 200px;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid var(--color-rule);
 
   .menu-title {
     padding: 16px 20px;
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--color-rule);
   }
 }
 
@@ -206,11 +206,11 @@ const goToConsole = (id: number) => {
     gap: 8px;
     padding: 10px 20px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     cursor: pointer;
 
-    &:hover { background: #f5f5f5; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+    &:hover { background: var(--color-paper-2); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
     .arrow { font-size: 10px; margin-left: auto; }
   }
 }
@@ -221,14 +221,14 @@ const goToConsole = (id: number) => {
   gap: 8px;
   padding: 10px 20px 10px 40px;
   font-size: 14px;
-  color: #666;
+  color: var(--color-muted);
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   text-decoration: none;
 
-  &:hover { background: #f5f5f5; color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
-  &.active { background: #e6f7ff; color: #1890ff; border-right: 3px solid #1890ff; }
+  &:hover { background: var(--color-paper-2); color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  &.active { background: var(--color-accent-wash); color: var(--color-accent); border-right: 3px solid var(--color-accent); }
   &.collapsed {
     padding-left: 20px;
     /* 占位入口：暂无功能，不做可点暗示 */
@@ -260,10 +260,10 @@ const goToConsole = (id: number) => {
   font-size: 14px;
   cursor: pointer;
   transition: opacity 0.2s;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
-  &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
-  &.btn-default { background: #fff; color: #333; }
+  &.btn-primary { background: var(--color-accent); color: var(--color-paper); border-color: var(--color-accent); }
+  &.btn-default { background: var(--color-paper); color: var(--color-ink); }
   &:hover { opacity: 0.85; }
   .arrow { font-size: 10px; margin-left: 4px; }
 }
@@ -273,7 +273,7 @@ const goToConsole = (id: number) => {
 .filter-select, .filter-input {
   border-radius: 4px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-ink);
 
   :deep(.el-select__wrapper),
   :deep(.el-input__wrapper) {
@@ -295,16 +295,16 @@ const goToConsole = (id: number) => {
 .project-card {
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   cursor: pointer;
   transition: box-shadow 0.3s, transform 0.3s;
 
-  &:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); transform: translateY(-2px); }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  &:hover { box-shadow: 0 4px 16px color-mix(in oklab, var(--color-graphite) 15%, transparent); transform: translateY(-2px); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
   .card-cover {
     height: 160px;
-    background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -324,30 +324,30 @@ const goToConsole = (id: number) => {
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 12px;
-      color: #fff;
+      color: var(--color-paper);
       position: relative;
       z-index: 1;
 
-      &.tag-project { background: #1890ff; }
-      &.tag-single { background: #faad14; }
+      &.tag-project { background: var(--color-accent); }
+      &.tag-single { background: var(--color-warning); }
     }
 
     .cover-status {
       align-self: flex-start;
-      color: #fff;
+      color: var(--color-paper);
       font-size: 14px;
       font-weight: 500;
       position: relative;
       z-index: 1;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+      text-shadow: 0 1px 3px color-mix(in oklab, var(--color-graphite) 35%, transparent);
     }
   }
 
   .card-content {
     padding: 16px;
     .card-tags { display: flex; gap: 8px; margin-bottom: 8px; }
-    .card-title { font-size: 14px; font-weight: 500; color: #333; margin: 0 0 8px 0; }
-    .card-time { font-size: 12px; color: #999; margin: 0; }
+    .card-title { font-size: 14px; font-weight: 500; color: var(--color-ink); margin: 0 0 8px 0; }
+    .card-time { font-size: 12px; color: var(--color-muted); margin: 0; }
   }
 }
 
@@ -359,10 +359,10 @@ const goToConsole = (id: number) => {
   text-align: center;
   line-height: 20px;
   font-size: 12px;
-  color: #fff;
+  color: var(--color-paper);
 
-  &.tag-train { background: #1890ff; }
-  &.tag-examine { background: #faad14; }
+  &.tag-train { background: var(--color-accent); }
+  &.tag-examine { background: var(--color-warning); }
 }
 
 .pagination {
@@ -371,7 +371,7 @@ const goToConsole = (id: number) => {
   align-items: center;
   gap: 16px;
 
-  .total { font-size: 14px; color: #666; }
+  .total { font-size: 14px; color: var(--color-muted); }
 }
 
 @media (max-width: 760px) {

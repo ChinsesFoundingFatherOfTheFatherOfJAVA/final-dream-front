@@ -78,8 +78,8 @@ watch(
 }
 
 .round-block {
-  background: #fafbfd;
-  border: 1px solid #eef0f5;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
   border-radius: 10px;
   padding: 14px 16px;
   margin-bottom: 12px;
@@ -91,7 +91,7 @@ watch(
   .round-title {
     font-size: 13px;
     font-weight: 600;
-    color: #2e7cf6;
+    color: var(--color-accent);
     margin-bottom: 8px;
   }
 
@@ -103,12 +103,12 @@ watch(
     margin-bottom: 4px;
 
     .role-label {
-      color: #999;
+      color: var(--color-muted);
       flex-shrink: 0;
     }
 
     .role-text {
-      color: #444;
+      color: var(--color-ink-2);
     }
   }
 
@@ -124,13 +124,13 @@ watch(
       font-size: 12px;
 
       &.hit {
-        background: #eafaf0;
-        color: #38b25c;
+        background: color-mix(in oklab, var(--color-success) 10%, var(--color-paper));
+        color: var(--color-success);
       }
 
       &.miss {
-        background: #fff1f0;
-        color: #e54545;
+        background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+        color: var(--color-error);
       }
     }
   }
@@ -138,7 +138,7 @@ watch(
 
 .state-hint {
   text-align: center;
-  color: #999;
+  color: var(--color-muted);
   font-size: 14px;
   padding: 30px 0;
 }

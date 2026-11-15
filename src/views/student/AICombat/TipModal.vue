@@ -58,31 +58,31 @@ const close = () => emit('close')
     top: 12px;
     right: 16px;
     font-size: 20px;
-    color: #bbb;
+    color: var(--color-rule-2);
     cursor: pointer;
     line-height: 1;
 
     &:hover {
-      color: #666;
+      color: var(--color-muted);
     }
 
     // 图标关闭按钮：补键盘焦点环
     &:focus-visible {
-      outline: 2px solid #7a6cf0;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
 
   .tip-text {
     font-size: 15px;
-    color: #333;
+    color: var(--color-ink);
     line-height: 1.7;
     margin: 0 0 16px;
     text-align: left;
   }
 
   .points-box {
-    background: #fff1f0;
+    background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
     border-radius: 10px;
     padding: 14px 18px;
     text-align: left;
@@ -90,7 +90,7 @@ const close = () => emit('close')
 
     .point-item {
       font-size: 14px;
-      color: #333;
+      color: var(--color-ink);
       line-height: 1.9;
       margin: 0;
     }
@@ -101,8 +101,8 @@ const close = () => emit('close')
     height: 42px;
     border: none;
     border-radius: 21px;
-    background: linear-gradient(90deg, #7a6cf0 0%, #4a7dff 100%);
-    color: #fff;
+    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 100%);
+    color: var(--color-paper);
     font-size: 15px;
     cursor: pointer;
     transition: opacity 0.2s;

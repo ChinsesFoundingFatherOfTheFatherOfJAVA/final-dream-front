@@ -171,8 +171,8 @@ watch(() => props.visible, async visible => {
 h4 {
   margin: 0;
   padding-left: 9px;
-  border-left: 3px solid #2e7cf6;
-  color: #30384a;
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-ink);
   font-size: 15px;
 }
 
@@ -199,30 +199,30 @@ h4 {
   align-items: center;
   gap: 4px;
   border-radius: 6px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   /* 自定义可点分类行：键盘可达，补可见焦点环（不占布局空间） */
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
   &:hover {
-    background: #f5f8fc;
+    background: var(--color-paper-2);
   }
 
   &.selected {
-    background: #eaf2ff;
-    color: #1f6fe8;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-weight: 600;
   }
 }
 
 .root-row {
   margin-bottom: 4px;
-  border-bottom: 1px solid #edf0f5;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .expand-btn,
@@ -235,27 +235,27 @@ h4 {
   height: 26px;
   border: none;
   background: transparent;
-  color: #7b8496;
+  color: var(--color-muted);
   cursor: pointer;
 }
 
 .btn {
   height: 36px;
   padding: 0 20px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 
     &:disabled {
-      border-color: #cbd3df;
-      background: #cbd3df;
+      border-color: var(--color-rule-2);
+      background: var(--color-rule-2);
       cursor: not-allowed;
     }
   }

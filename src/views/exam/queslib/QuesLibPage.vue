@@ -31,14 +31,14 @@
             :aria-label="expandedKeys.has(node.id) ? '收起子分类' : '展开子分类'"
             @click.stop="toggleExpand(node.id)"
             @keydown.enter.prevent="toggleExpand(node.id)"
-          >›</span>
+          ><el-icon><ArrowRight /></el-icon></span>
           <span v-else class="expand-placeholder"></span>
           <span class="node-name" :title="node.name">{{ node.name }}</span>
           <!-- 齿轮菜单（悬浮子分类显示，截图05） -->
           <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作" aria-label="分类操作"
                 role="button" tabindex="0"
                 @click.stop="openGearMenu(node, $event)"
-                @keydown.enter.prevent="openGearMenu(node, $event as unknown as MouseEvent)">⚙</span>
+                @keydown.enter.prevent="openGearMenu(node, $event as unknown as MouseEvent)"><el-icon><MoreFilled /></el-icon></span>
         </div>
       </div>
     </aside>
@@ -231,7 +231,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowRight, MoreFilled } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
@@ -584,8 +584,8 @@ onMounted(() => {
 .catalog-panel {
   width: 240px;
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e6eaf1;
+  background: var(--color-paper);
+  border-right: var(--rule-hair) solid var(--color-rule);
   display: flex;
   flex-direction: column;
 
@@ -594,16 +594,6 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    input {
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 12px;
-      outline: none;
-
-      &:focus { border-color: #1890ff; }
-    }
   }
 }
 
@@ -614,27 +604,35 @@ onMounted(() => {
   padding-bottom: 12px;
 }
 
+/* 树节点：横向窄行（敢做档）hover 只动字色/图标色，激活 accent-wash 底 + accent-deep 字 */
 .tree-node {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 7px 12px 7px 12px;
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
   position: relative;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+
+  &:hover { color: var(--color-accent-deep); }
 
   .expand-arrow {
     width: 16px;
-    text-align: center;
-    color: #a0a7b8;
-    transition: transform 0.15s;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    transition: transform var(--dur-micro) var(--ease-out);
     flex-shrink: 0;
     cursor: pointer;
 
-    &.expanded { transform: rotate(90deg); }
+    .el-icon { font-size: 12px; transition: transform var(--dur-micro) var(--ease-out); }
+    &.expanded .el-icon { transform: rotate(90deg); }
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 2px; }
   }
 
   .expand-placeholder { width: 16px; flex-shrink: 0; }
@@ -649,28 +647,28 @@ onMounted(() => {
 
   .gear-btn {
     display: none;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
     padding: 0 2px;
     cursor: pointer;
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 2px; }
   }
 
   &:hover .gear-btn { display: inline; }
   // 键盘 Tab 聚焦时同步显示齿轮按钮（原本仅 hover 显示）
   &:focus-within .gear-btn { display: inline; }
 
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 
   &.active {
-    background: #e8f1ff;
-    color: #1890ff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-weight: 500;
   }
 
   &.disabled {
-    .node-name { color: #b0b7c3; text-decoration: line-through; }
+    .node-name { color: var(--color-rule-2); text-decoration: line-through; }
   }
 }
 
@@ -690,31 +688,7 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
 
-  .batch-label { font-size: 13px; color: #8a92a5; }
-}
-
-.btn-primary {
-  padding: 7px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #1890ff;
-  color: #fff;
-  font-size: 13px;
-  cursor: pointer;
-
-  &:hover { opacity: 0.9; }
-}
-
-.btn-outline {
-  padding: 7px 14px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-  color: #4a5368;
-  font-size: 13px;
-  cursor: pointer;
-
-  &:hover { border-color: #1890ff; color: #1890ff; }
+  .batch-label { font-size: 13px; color: var(--color-muted); }
 }
 
 .filter-row {
@@ -730,7 +704,7 @@ onMounted(() => {
     // el-select 根为块级 div，在 flex 行内无宽度约束时会挤压相邻搜索框，固定宽度
     width: 130px;
     font-size: 12px;
-    color: #4a5368;
+    color: var(--color-ink-2);
   }
 
   .keyword-input {
@@ -740,52 +714,37 @@ onMounted(() => {
     max-width: 260px;
     font-size: 12px;
   }
+}
 
-  .search-btn {
-    padding: 6px 16px;
-    border: none;
-    border-radius: 4px;
-    background: #1890ff;
-    color: #fff;
-    font-size: 12px;
-    cursor: pointer;
+/* 表格（敢做档表格套件）：paper-2 表头 + hairline 行分隔 + 44px 行高 + hover wash；
+ * 单元格 nowrap 必须挂 :deep(.el-table .cell)（EP 默认 white-space: normal 会盖掉裸 .el-table__cell）。
+ */
+.table-wrap {
+  background: var(--color-paper);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-input);
+  overflow: auto;
+  position: relative;
+
+  :deep(.el-table) {
+    // 表头：paper-2 灰底 + 500 字重
+    --el-table-header-bg-color: var(--color-paper-2);
+    --el-table-header-text-color: var(--color-ink);
+    --el-table-border-color: var(--color-rule);
+    --el-table-row-hover-bg-color: var(--color-accent-wash);
+
+    th.el-table__cell { font-weight: 500; }
+
+    // 行分隔用 hairline，行高靠 cell 上下 padding 控到 44px 左右
+    td.el-table__cell { padding: 10px 0; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+
+    // 单元格 nowrap + 溢出省略（AGENTS.md 8.2：不挂 .cell 会被 EP 覆盖）
+    .cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 }
 
-.table-wrap {
-  background: #fff;
-  border: 1px solid #e6eaf1;
-  border-radius: 6px;
-  overflow: auto;
-  position: relative;
-}
-
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-
-th, td {
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 1px solid #f2f4f8;
-  white-space: nowrap;
-}
-
-th {
-  background: #fafbfd;
-  color: #667;
-  font-weight: 500;
-  font-size: 12px;
-
-
-}
-
-tr:hover td { background: #fafbfe; }
-tr.checked td { background: #f0f7ff; }
-
-.check-col { width: 36px; }
-.empty-cell { text-align: center; color: #999; padding: 32px 0; }
-
 .lib-name {
-  color: #1890ff;
+  color: var(--color-accent-deep);
   cursor: pointer;
   max-width: 260px;
   display: inline-block;
@@ -796,82 +755,68 @@ tr.checked td { background: #f0f7ff; }
   &:hover { text-decoration: underline; }
 }
 
+/* 保密标签：功能警示用暖区功能色 token（ Cobalt 唯一保留的暖区信号位） */
 .secrecy-tag {
   display: inline-block;
   margin-left: 6px;
   padding: 0 6px;
   border-radius: 3px;
-  background: #fff3e8;
-  border: 1px solid #ffd6b0;
-  color: #e8730c;
+  background: color-mix(in oklab, var(--color-warning) 18%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 60%, var(--color-ink));
   font-size: 11px;
 }
 
-.account-no { color: #8a92a5; font-size: 12px; margin-left: 2px; }
+.account-no { color: var(--color-muted); font-size: 12px; margin-left: 2px; }
 
+/* 启用状态点：success/error 功能色 token，灰点走 rule-2 */
 .enable-cell {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   cursor: pointer;
   font-size: 12px;
-  color: #52c41a;
+  color: var(--color-success);
 
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; }
+  &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
 
   .enable-dot {
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #52c41a;
+    background: var(--color-success);
 
-    &.off { background: #b0b7c3; }
+    &.off { background: var(--color-rule-2); }
   }
 
-  &.disabled .enable-cell { color: #b0b7c3; }
+  &.disabled .enable-cell { color: var(--color-rule-2); }
 }
 
-td:nth-child(7) .enable-cell { color: #4a5368; }
+td:nth-child(7) .enable-cell { color: var(--color-ink-2); }
 
-.op-col {
-  .op-link {
-    color: #1890ff;
-    cursor: pointer;
-    margin-right: 12px;
-    font-size: 13px;
-
-    &.more .more-arrow { font-size: 10px; margin-left: 2px; }
-    &:hover { text-decoration: underline; }
-  }
+/* 行内数值（试题数/考核点）走 mono 等宽（机器值 JetBrains Mono 口径） */
+:deep(.el-table) .fig-cell {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
 }
 
-.table-loading {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.7);
+.action-list {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #8a92a5;
+  gap: 8px;
+
+  // el-dropdown 会给触发项注入 line-height:1，不锁行高就会和「管理」错开
+  :deep(.el-button) { line-height: 20px; }
+  :deep(.el-dropdown) { display: flex; align-items: center; }
 }
+.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 
 .pagination {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #667;
+  color: var(--color-muted);
 
-  button {
-    padding: 4px 10px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    background: #fff;
-    cursor: pointer;
-
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-  }
-
-  select { border: 1px solid #d9d9d9; border-radius: 4px; padding: 3px 6px; }
   .total-count { margin-left: auto; }
 }
 
@@ -885,41 +830,31 @@ td:nth-child(7) .enable-cell { color: #4a5368; }
 .dropdown-menu {
   position: fixed;
   min-width: 120px;
-  background: #fff;
-  border: 1px solid #e6eaf1;
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  background: var(--color-paper);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-input);
+  box-shadow: var(--shadow-card);
   padding: 4px 0;
   z-index: 101;
 
   .dropdown-item {
     padding: 8px 16px;
     font-size: 13px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
+    transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 
-    &:hover { background: #f2f6ff; color: #1890ff; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
-    &.disabled { color: #c2c8d4; cursor: not-allowed; &:hover { background: none; color: #c2c8d4; } }
+    &:hover { background: var(--color-accent-wash); color: var(--color-accent-deep); }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+    &.disabled { color: var(--color-rule-2); cursor: not-allowed; &:hover { background: none; color: var(--color-rule-2); } }
   }
 }
-
-.action-list {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  // el-dropdown 会给触发项注入 line-height:1，不锁行高就会和「管理」错开
-  :deep(.el-button) { line-height: 20px; }
-  :deep(.el-dropdown) { display: flex; align-items: center; }
-}
-.more-trigger .caret { margin-left: 2px; font-size: 12px; }
 </style>
 
 <style lang="scss">
 .more-popper {
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   padding: 6px;
 
   .el-dropdown-menu { padding: 0; }
@@ -928,7 +863,7 @@ td:nth-child(7) .enable-cell { color: #4a5368; }
     padding: 7px 12px;
     line-height: 1.4;
 
-    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+    &:not(.is-disabled):hover { background: var(--color-accent-wash); color: var(--color-accent-deep); }
   }
 }
 </style>

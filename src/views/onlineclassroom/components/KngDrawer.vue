@@ -50,7 +50,7 @@ const handleVisibleChange = (visible: boolean) => {
   :deep(.el-drawer__header) {
     margin-bottom: 0;
     padding: 18px 22px 14px;
-    border-bottom: 1px solid #e9edf4;
+    border-bottom: var(--rule-hair) solid var(--color-rule);
   }
 
   :deep(.el-drawer__body) {
@@ -60,7 +60,7 @@ const handleVisibleChange = (visible: boolean) => {
 
   :deep(.el-drawer__footer) {
     padding: 14px 22px;
-    border-top: 1px solid #e9edf4;
+    border-top: var(--rule-hair) solid var(--color-rule);
   }
 }
 
@@ -71,13 +71,14 @@ const handleVisibleChange = (visible: boolean) => {
 .drawer-header {
   h3 {
     margin: 0;
-    color: #253047;
+    color: var(--color-ink);
+    font-family: var(--font-display);
     font-size: 16px;
   }
 
   p {
     margin: 5px 0 0;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
   }
 

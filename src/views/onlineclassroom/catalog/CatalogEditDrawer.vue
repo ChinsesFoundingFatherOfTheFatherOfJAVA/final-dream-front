@@ -344,7 +344,7 @@ watch(
   grid-template-columns: 110px 1fr auto;
   align-items: center;
   gap: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-input__wrapper),
@@ -355,17 +355,17 @@ watch(
   }
 
   small {
-    color: #98a1b2;
+    color: var(--color-muted);
   }
 
   &.invalid :deep(.el-input__wrapper) {
-    box-shadow: 0 0 0 1px #e54545 inset;
+    box-shadow: 0 0 0 1px var(--color-error) inset;
   }
 }
 
 .error-text {
   margin: -8px 0 0 120px;
-  color: #e54545;
+  color: var(--color-error);
   font-size: 12px;
 }
 
@@ -412,7 +412,7 @@ watch(
 .inherit-section {
   margin-top: 22px;
   padding-top: 18px;
-  border-top: 1px solid #e9edf4;
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .permission-section header {
@@ -429,7 +429,7 @@ watch(
 
   p {
     margin: 5px 0 0;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
   }
 }
@@ -437,13 +437,13 @@ watch(
 .add-subject {
   border: none;
   background: transparent;
-  color: #e75487;
+  color: var(--color-accent);
   cursor: pointer;
 }
 
 .permission-table {
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
   overflow: hidden;
 
   &.readonly {
@@ -460,8 +460,8 @@ watch(
     28px;
   align-items: center;
   min-height: 42px;
-  border-bottom: 1px solid #edf0f5;
-  color: #4d5568;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 12px;
 
   &:last-child {
@@ -483,15 +483,15 @@ watch(
 }
 
 .header-row {
-  background: #f8fafc;
-  color: #667085;
-  font-weight: 600;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
+  font-weight: 500;
 }
 
 .remove-row {
   border: none;
   background: transparent;
-  color: #d94a4a;
+  color: var(--color-error);
   cursor: pointer;
 }
 
@@ -502,12 +502,12 @@ watch(
 }
 
 .check-line {
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   line-height: 1.5;
 
   :deep(.el-checkbox__label) {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
     line-height: 1.5;
     white-space: normal;
@@ -518,13 +518,13 @@ watch(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-button) {
     height: 32px;
-    border-color: #e75487;
-    color: #e75487;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -535,15 +535,15 @@ watch(
   cursor: pointer;
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #e75487;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

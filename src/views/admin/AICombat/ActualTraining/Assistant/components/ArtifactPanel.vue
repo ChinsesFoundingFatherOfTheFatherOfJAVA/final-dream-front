@@ -211,8 +211,8 @@ const goDetail = () => {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  background: #fbfbfc;
-  border-left: 1px solid #eceef2;
+  background: var(--color-paper);
+  border-left: 1px solid var(--color-rule);
 }
 
 .panel-header {
@@ -220,8 +220,8 @@ const goDetail = () => {
   align-items: flex-start;
   gap: 14px;
   padding: 14px 18px;
-  background: #fff;
-  border-bottom: 1px solid #eceef2;
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
 
   .title-block {
     flex: 1;
@@ -231,7 +231,7 @@ const goDetail = () => {
   .panel-title {
     font-size: 17px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -245,7 +245,7 @@ const goDetail = () => {
 
     .version {
       font-size: 12px;
-      color: #8a8f98;
+      color: var(--color-muted);
     }
 
     .status-badge {
@@ -254,12 +254,12 @@ const goDetail = () => {
       padding: 1px 8px;
 
       &.status-working {
-        color: #e8940c;
-        background: #fff7e6;
+        color: var(--color-warning);
+        background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
       }
       &.status-confirmed {
-        color: #52c41a;
-        background: #f0fbe8;
+        color: var(--color-success);
+        background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper));
       }
     }
 
@@ -268,7 +268,7 @@ const goDetail = () => {
       border: none;
       padding: 0;
       font-size: 12px;
-      color: #1890ff;
+      color: var(--color-accent);
       cursor: pointer;
 
       &:hover {
@@ -281,9 +281,9 @@ const goDetail = () => {
   .confirm-btn {
     flex-shrink: 0;
     padding: 8px 20px;
-    background: #6b5ce7;
-    border: 1px solid #6b5ce7;
-    color: #fff;
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    color: var(--color-paper);
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
@@ -297,8 +297,8 @@ const goDetail = () => {
     }
 
     &:disabled {
-      background: #d6d2f2;
-      border-color: #d6d2f2;
+      background: var(--color-accent-wash);
+      border-color: var(--color-accent-wash);
       cursor: not-allowed;
     }
   }
@@ -308,8 +308,8 @@ const goDetail = () => {
   display: flex;
   gap: 4px;
   padding: 0 14px;
-  background: #fff;
-  border-bottom: 1px solid #eceef2;
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
   overflow-x: auto;
 
   .panel-tab {
@@ -318,31 +318,31 @@ const goDetail = () => {
     background: none;
     border: none;
     font-size: 14px;
-    color: #646a73;
+    color: var(--color-ink-2);
     cursor: pointer;
     white-space: nowrap;
     transition: color 0.2s;
 
     .tab-badge {
       font-size: 11px;
-      color: #8a8f98;
-      background: #f2f3f5;
+      color: var(--color-muted);
+      background: var(--color-paper-2);
       border-radius: 8px;
       padding: 0 6px;
       margin-left: 3px;
     }
 
     &:hover {
-      color: #6b5ce7;
+      color: var(--color-accent);
     }
 
     &.active {
-      color: #6b5ce7;
+      color: var(--color-accent);
       font-weight: 500;
 
       .tab-badge {
-        color: #6b5ce7;
-        background: #f0edff;
+        color: var(--color-accent);
+        background: var(--color-accent-wash);
       }
 
       &::after {
@@ -352,7 +352,7 @@ const goDetail = () => {
         right: 6px;
         bottom: -1px;
         height: 2px;
-        background: #6b5ce7;
+        background: var(--color-accent);
         border-radius: 1px;
       }
     }
@@ -376,7 +376,7 @@ const goDetail = () => {
   }
   .empty-text {
     font-size: 14px;
-    color: #999;
+    color: var(--color-muted);
     margin: 0;
   }
 }

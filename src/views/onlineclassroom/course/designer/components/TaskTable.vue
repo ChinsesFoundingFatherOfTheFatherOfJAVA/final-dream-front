@@ -45,7 +45,7 @@
         <el-table-column label="类型" width="72">
           <template #default="{ row }">
               <span class="type-icon" :style="{ background: typeColor(row.coursewareType) }" aria-hidden="true">
-                {{ typeGlyph(row.coursewareType) }}
+                <el-icon aria-hidden="true"><component :is="typeGlyph(row.coursewareType)" /></el-icon>
               </span>
           </template>
         </el-table-column>
@@ -94,7 +94,9 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Box, Collection, Document, Headset, Link, MagicStick, Monitor, UploadFilled, VideoPlay } from '@element-plus/icons-vue'
+import { markRaw } from 'vue'
+import type { Component } from 'vue'
 import { computed, ref, watch } from 'vue'
 import {
   TASK_TYPE_ITEMS,
@@ -156,9 +158,20 @@ function statusText(status: number) {
   return coursewareStatusText(status)
 }
 
+// t21：类型 → EP 图标组件映射（glyph 字段已废弃）
+const TYPE_ICONS: Record<number, Component> = {
+  1: markRaw(Document),
+  2: markRaw(VideoPlay),
+  3: markRaw(Headset),
+  4: markRaw(Box),
+  6: markRaw(Collection),
+  7: markRaw(Monitor),
+  8: markRaw(Link),
+  0: markRaw(UploadFilled),
+  5: markRaw(MagicStick)
+}
 function typeGlyph(type: number) {
-  const found = TASK_TYPE_ITEMS.find(item => item.type === type)
-  return found ? found.glyph : 'P'
+  return TYPE_ICONS[type] ?? Document
 }
 
 function typeColor(type: number) {
@@ -192,26 +205,26 @@ function typeColor(type: number) {
 .batch-btn {
   height: 30px;
   padding: 0 14px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
 .batch-tip {
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
 .task-count {
-  color: #a2a9b7;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -226,29 +239,29 @@ function typeColor(type: number) {
 
   :deep(.el-table__header th) {
     height: 46px;
-    background: #f8fafc;
-    color: #667085;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 13px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 46px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
 
 /* 隐藏任务行置灰（独立双标记，可取消隐藏恢复） */
 .task-data-table :deep(.row-hidden) {
-  background: #fafbfc;
+  background: var(--color-paper-2);
 
   td {
-    color: #b3bac7;
+    color: var(--color-rule-2);
   }
 
   .name-text {
-    color: #9aa2b1;
+    color: var(--color-muted);
   }
 }
 
@@ -258,7 +271,7 @@ function typeColor(type: number) {
   width: 25px;
   height: 25px;
   border-radius: 6px;
-  color: #fff;
+  color: var(--color-accent-ink);
   font-size: 11px;
   font-weight: 700;
 }
@@ -273,7 +286,7 @@ function typeColor(type: number) {
 .name-text {
   min-width: 0;
   overflow: hidden;
-  color: #253047;
+  color: var(--color-ink);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -281,10 +294,10 @@ function typeColor(type: number) {
 .hidden-tag {
   flex-shrink: 0;
   padding: 1px 7px;
-  border: 1px solid #f0b25e;
+  border: 1px solid color-mix(in oklab, var(--color-warning) 55%, var(--color-paper));
   border-radius: 4px;
-  background: #fdf6ec;
-  color: #d98a1f;
+  background: color-mix(in oklab, var(--color-warning) 14%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
   font-size: 11px;
   white-space: nowrap;
 }
@@ -299,17 +312,17 @@ function typeColor(type: number) {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #98a1b2;
+    background: var(--color-muted);
   }
 }
 
 /* 绿点=已发布；发布中橙点；未发布/已下架灰点（取课件状态口径） */
 .status-2 i {
-  background: #35b56a;
+  background: var(--color-success);
 }
 
 .status-1 i {
-  background: #f0a13b;
+  background: var(--color-warning);
 }
 
 .action-cell {
@@ -325,13 +338,13 @@ function typeColor(type: number) {
   button {
     border: none;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
     font-size: 13px;
     cursor: pointer;
   }
 
   .more-trigger {
-    color: #667085;
+    color: var(--color-muted);
   }
 }
 

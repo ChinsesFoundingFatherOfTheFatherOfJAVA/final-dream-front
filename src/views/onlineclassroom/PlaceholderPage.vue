@@ -21,19 +21,20 @@ defineProps<{ title: string }>()
 .placeholder-card {
   min-width: 280px;
   padding: 42px;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
   text-align: center;
 
   strong {
-    color: #253047;
+    color: var(--color-ink);
+    font-family: var(--font-display);
     font-size: 18px;
   }
 
   p {
     margin: 10px 0 0;
-    color: #98a1b2;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }

@@ -274,13 +274,13 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 720px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
+  padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
@@ -301,49 +301,49 @@ onMounted(async () => {
     top: 24px;
     bottom: 2px;
     width: 1px;
-    background: #e6eaf1;
+    background: var(--color-rule);
   }
 
   .step-no {
     position: relative; z-index: 1;
     flex: 0 0 19px; width: 19px; height: 19px; border-radius: 50%;
-    border: 1px solid #c7d0de; background: #fff;
-    color: #667; font-size: 11px; text-align: center; line-height: 17px;
+    border: 1px solid var(--color-rule-2); background: var(--color-paper);
+    color: var(--color-muted); font-size: 11px; text-align: center; line-height: 17px;
   }
 
   .step-main { flex: 1; min-width: 0; }
-  .step-title { margin: 0 0 8px; font-size: 13px; color: #1f2937; line-height: 1.7; }
-  .step-hint { margin: 0 0 8px; font-size: 12px; color: #8a92a5; line-height: 1.7; }
-  .step-warn { margin: 0 0 10px; font-size: 12px; color: #f5222d; line-height: 1.7; }
+  .step-title { margin: 0 0 8px; font-size: 13px; color: var(--color-ink); line-height: 1.7; }
+  .step-hint { margin: 0 0 8px; font-size: 12px; color: var(--color-muted); line-height: 1.7; }
+  .step-warn { margin: 0 0 10px; font-size: 12px; color: var(--color-error); line-height: 1.7; }
 }
 
 .field {
-  width: 100%; border: 1px solid #d9d9d9; border-radius: 4px;
+  width: 100%; border: 1px solid var(--color-rule-2); border-radius: 4px;
   padding: 8px 10px; font-size: 13px; outline: none;
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
 }
 
 .catalog-select {
   position: relative;
   display: flex; align-items: center; justify-content: space-between;
-  border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px 10px;
+  border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 8px 10px;
   font-size: 13px; cursor: pointer; margin-bottom: 10px;
 
-  &:hover { border-color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
-  .placeholder { color: #b0b7c3; }
-  .select-arrow { color: #8a92a5; font-size: 11px; }
+  &:hover { border-color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .placeholder { color: var(--color-rule-2); }
+  .select-arrow { color: var(--color-muted); font-size: 11px; }
 
   .catalog-dropdown {
     position: absolute; top: calc(100% + 4px); left: 0; right: 0;
     max-height: 240px; overflow-y: auto;
-    background: #fff; border: 1px solid #e6eaf1; border-radius: 6px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .12); z-index: 10; padding: 4px 0;
+    background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: 6px;
+    box-shadow: 0 4px 14px var(--shadow-card); z-index: 10; padding: 4px 0;
 
     .dropdown-node {
-      padding: 7px 12px; font-size: 12px; color: #4a5368; cursor: pointer;
-      &:hover { background: #f2f6ff; color: #1890ff; }
-      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+      padding: 7px 12px; font-size: 12px; color: var(--color-ink-2); cursor: pointer;
+      &:hover { background: var(--color-accent-wash); color: var(--color-accent); }
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
     }
   }
 }
@@ -352,7 +352,7 @@ onMounted(async () => {
 .inline-field {
   display: flex; align-items: center; gap: 14px; margin-bottom: 12px;
 
-  .inline-label { flex: 0 0 auto; font-size: 13px; color: #4a5368; }
+  .inline-label { flex: 0 0 auto; font-size: 13px; color: var(--color-ink-2); }
   .catalog-select { flex: 1; margin-bottom: 0; }
 }
 
@@ -361,34 +361,34 @@ onMounted(async () => {
 /* 原图里保密是普通单选 + 行内注释 */
 .radio-item {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; color: #4a5368; cursor: pointer;
+  font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  input { margin: 0; accent-color: #1890ff; }
+  input { margin: 0; accent-color: var(--color-accent); }
 }
 
-.note-inline { font-style: normal; font-size: 12px; color: #a0a7b8; }
+.note-inline { font-style: normal; font-size: 12px; color: var(--color-rule-2); }
 
 .drop-zone {
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--color-rule-2);
   border-radius: 6px;
   padding: 40px 16px;
   text-align: center;
   cursor: pointer;
 
-  &:hover, &.over { border-color: #1890ff; background: #f5f9ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:hover, &.over { border-color: var(--color-accent); background: var(--color-accent-wash); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
-  .drop-tip { margin: 0; font-size: 13px; color: #4a5368; line-height: 2.1; em { color: #1890ff; font-style: normal; } }
-  .hint { font-size: 11px; color: #b0b7c3; }
+  .drop-tip { margin: 0; font-size: 13px; color: var(--color-ink-2); line-height: 2.1; em { color: var(--color-accent); font-style: normal; } }
+  .hint { font-size: 11px; color: var(--color-rule-2); }
   .drop-file {
-    margin: 0; font-size: 13px; color: #1f2937;
-    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer;
-      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
+    margin: 0; font-size: 13px; color: var(--color-ink);
+    i { margin-left: 8px; font-style: normal; color: var(--color-error); cursor: pointer;
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; } }
   }
 
   .drop-icon {
     display: block; width: 48px; height: 48px; margin: 0 auto 12px;
-    fill: none; stroke: #c2c8d4; stroke-width: 2.5;
+    fill: none; stroke: var(--color-rule-2); stroke-width: 2.5;
     stroke-linecap: round; stroke-linejoin: round;
   }
 }
@@ -397,36 +397,36 @@ onMounted(async () => {
 
 .import-btn { margin-top: 14px; }
 
-.need-tip { margin-left: 10px; font-size: 12px; color: #f5222d; }
+.need-tip { margin-left: 10px; font-size: 12px; color: var(--color-error); }
 
 .result {
-  border-top: 1px solid #eef1f6;
+  border-top: 1px solid var(--color-rule);
   padding-top: 12px;
 
-  .result-title { margin: 0 0 8px; font-size: 13px; color: #4a5368; b { font-weight: 600; } .ok { color: #52c41a; } .bad { color: #f5222d; } }
+  .result-title { margin: 0 0 8px; font-size: 13px; color: var(--color-ink-2); b { font-weight: 600; } .ok { color: var(--color-success); } .bad { color: var(--color-error); } }
 }
 
 .error-list {
   max-height: 220px;
   overflow-y: auto;
   padding: 8px 10px;
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
+  background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-error) 35%, var(--color-paper));
   border-radius: 4px;
 
-  p { margin: 0 0 3px; font-size: 12px; color: #cf1322; line-height: 1.7; }
+  p { margin: 0 0 3px; font-size: 12px; color: var(--color-error); line-height: 1.7; }
 }
 
 .drawer-footer {
   display: flex; justify-content: flex-end; gap: 10px;
-  padding: 14px 20px; border-top: 1px solid #eee;
+  padding: 14px 20px; border-top: 1px solid var(--color-rule);
 }
 
 .btn {
-  padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 7px 18px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

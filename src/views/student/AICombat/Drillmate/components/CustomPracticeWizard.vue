@@ -63,7 +63,7 @@
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#fa8c16"
+                  stroke="var(--color-warning)"
                   stroke-width="2"
                 >
                   <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" />
@@ -189,7 +189,7 @@
               <div class="dm-cust-level__head">
                 <span class="dm-cust-level__stars" :aria-label="`${level.value} 星`">
                   <el-icon v-for="star in 3" :key="star" :size="14">
-                    <StarFilled :color="star <= level.value ? '#fa8c16' : '#d9d9d9'" />
+                    <StarFilled :color="star <= level.value ? 'var(--color-warning)' : 'var(--color-rule-2)'" />
                   </el-icon>
                 </span>
                 <span class="dm-cust-level__label">{{ level.label }}</span>
@@ -489,15 +489,15 @@ watch(
     flex: none;
     padding: 2px 8px;
     border-radius: 4px;
-    color: #fa8c16;
-    background: #fff7e6;
+    color: var(--color-warning);
+    background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
     font-size: 12px;
     line-height: 20px;
   }
 
   &__title {
     overflow: hidden;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 18px;
     font-weight: 700;
     line-height: 26px;
@@ -507,7 +507,7 @@ watch(
 
   &__sub {
     margin: 8px 0 0;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
@@ -524,7 +524,7 @@ watch(
   flex: none;
   width: 160px;
   padding: 16px 8px 16px 24px;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid var(--color-paper-2);
   box-sizing: border-box;
 }
 
@@ -542,14 +542,14 @@ watch(
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #f0f0f0;
-    color: #8c8c8c;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 22px;
   }
 
   &__title {
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 13px;
     font-weight: 500;
     line-height: 18px;
@@ -557,24 +557,24 @@ watch(
 
   &__desc {
     margin-top: 2px;
-    color: #bfbfbf;
+    color: var(--color-rule-2);
     font-size: 11px;
     line-height: 16px;
   }
 
   &.is-active &__index,
   &.is-done &__index {
-    background: #436bff;
-    color: #ffffff;
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 
   &.is-active &__title,
   &.is-done &__title {
-    color: #262626;
+    color: var(--color-ink);
   }
 
   &.is-active &__desc {
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -586,14 +586,14 @@ watch(
 
   &__title {
     margin: 0 0 16px;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 15px;
     font-weight: 700;
     line-height: 23px;
   }
 
   &__optional {
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     font-weight: 400;
   }
@@ -610,25 +610,25 @@ watch(
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-paper);
   cursor: pointer;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
 
   &.is-active {
-    border-color: #436bff;
-    background: #f7f9ff;
+    border-color: var(--color-accent);
+    background: var(--color-paper-2);
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   &__name {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 13px;
     font-weight: 500;
     line-height: 20px;
@@ -636,7 +636,7 @@ watch(
 
   &__desc {
     margin-top: 4px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 19px;
   }
@@ -648,7 +648,7 @@ watch(
   }
 
   :deep(.el-form-item__label) {
-    color: #595959;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -661,10 +661,10 @@ watch(
 
 .dm-cust-shortcut {
   padding: 4px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 14px;
-  background: #ffffff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 20px;
   cursor: pointer;
@@ -673,12 +673,12 @@ watch(
     color 0.2s ease;
 
   &.is-active {
-    border-color: #436bff;
-    color: #436bff;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 }
@@ -691,20 +691,20 @@ watch(
 
 .dm-cust-level {
   padding: 14px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-paper);
   cursor: pointer;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
 
   &.is-active {
-    border-color: #436bff;
-    background: #f7f9ff;
+    border-color: var(--color-accent);
+    background: var(--color-paper-2);
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -720,7 +720,7 @@ watch(
   }
 
   &__label {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
@@ -728,7 +728,7 @@ watch(
 
   &__desc {
     margin-top: 6px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
@@ -737,12 +737,12 @@ watch(
 .dm-cust-preview {
   p {
     margin: 0 0 8px;
-    color: #595959;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 21px;
 
     strong {
-      color: #262626;
+      color: var(--color-ink);
     }
   }
 }
@@ -753,11 +753,11 @@ watch(
   justify-content: space-between;
   width: 100%;
   padding: 16px 24px 24px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-paper-2);
   box-sizing: border-box;
 
   &__progress {
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 20px;
   }
@@ -777,15 +777,15 @@ watch(
   font-weight: 500;
 
   &--cancel {
-    border-color: #d9d9d9;
-    background: #ffffff;
-    color: #595959;
+    border-color: var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-muted);
   }
 
   &--primary {
-    border-color: #436bff;
-    background: #436bff;
-    color: #ffffff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 }
 </style>
@@ -800,7 +800,7 @@ watch(
   margin: calc((100vh - 760px) / 2) auto 0;
   padding: 0;
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   .el-dialog__header {
     display: flex;

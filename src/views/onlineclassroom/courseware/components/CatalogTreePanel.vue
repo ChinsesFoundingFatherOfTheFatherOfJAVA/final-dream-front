@@ -9,7 +9,7 @@
       >
         <template #prefix><span aria-hidden="true"><el-icon><Search /></el-icon></span></template>
       </el-input>
-      <el-button class="collapse-btn" aria-label="收起分类树" title="收起分类树" @click="emit('collapse')">≡</el-button>
+      <el-button class="collapse-btn" aria-label="收起分类树" title="收起分类树" @click="emit('collapse')"><el-icon><Fold /></el-icon></el-button>
     </div>
 
     <div class="tree-body">
@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search } from '@element-plus/icons-vue'
+import { Fold, Search } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 import type { KngTreeNode } from '@/api/kng'
 
@@ -197,8 +197,8 @@ watch(() => props.tree, tree => {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #e7ebf2;
-  background: #fff;
+  border-right: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper);
 }
 
 .tree-toolbar {
@@ -216,19 +216,19 @@ watch(() => props.tree, tree => {
   align-items: center;
   gap: 7px;
   border-radius: 6px;
-  color: #9aa3b2;
+  color: var(--color-muted);
 
   input {
     min-width: 0;
     flex: 1;
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
   /* 原生 input 的 outline 已去掉：焦点时在包裹层补可见焦点环（无尺寸位移） */
   &:focus-within {
-    border-color: #2e7cf6;
-    box-shadow: 0 0 0 2px rgba(46, 124, 246, 0.18);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 18%, transparent);
   }
 }
 
@@ -237,7 +237,7 @@ watch(() => props.tree, tree => {
   height: 28px;
   border: none;
   background: transparent;
-  color: #7b8496;
+  color: var(--color-muted);
   font-size: 20px;
   cursor: pointer;
 }
@@ -255,23 +255,23 @@ watch(() => props.tree, tree => {
   align-items: center;
   padding-right: 8px;
   border-radius: 6px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   /* 自定义可点分类行：键盘可达，补可见焦点环（不占布局空间） */
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
   &:hover {
-    background: #f4f7fb;
+    background: var(--color-paper-2);
   }
 
   &.selected {
-    background: #eaf2ff;
-    color: #1f6fe8;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-weight: 600;
   }
 }
@@ -296,7 +296,7 @@ watch(() => props.tree, tree => {
     height: 0;
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
-    border-left: 6px solid #919bad;
+    border-left: 6px solid var(--color-muted);
     transition: transform 0.15s ease;
   }
 
@@ -319,7 +319,7 @@ watch(() => props.tree, tree => {
 
 .empty-tip {
   padding: 36px 12px;
-  color: #98a1b2;
+  color: var(--color-muted);
   text-align: center;
   font-size: 13px;
 }
@@ -327,8 +327,8 @@ watch(() => props.tree, tree => {
 .tree-footer {
   flex-shrink: 0;
   padding: 14px 16px 16px;
-  border-top: 1px solid #edf0f5;
-  color: #667085;
+  border-top: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -345,12 +345,12 @@ watch(() => props.tree, tree => {
   }
 
   input {
-    accent-color: #2e7cf6;
+    accent-color: var(--color-accent);
   }
 }
 
 .tree-total {
   margin-top: 14px;
-  color: #8a93a5;
+  color: var(--color-muted);
 }
 </style>

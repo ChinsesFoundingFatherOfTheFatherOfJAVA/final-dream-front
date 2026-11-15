@@ -337,19 +337,19 @@ onMounted(() => { load() })
 
   .back-btn {
     width: 28px; height: 28px;
-    border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-    font-size: 18px; line-height: 1; color: #4a5368; cursor: pointer;
-    &:hover { border-color: #1890ff; color: #1890ff; }
+    border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper);
+    font-size: 18px; line-height: 1; color: var(--color-ink-2); cursor: pointer;
+    &:hover { border-color: var(--color-accent); color: var(--color-accent); }
   }
 
-  h1 { flex: 1; margin: 0; font-size: 17px; font-weight: 600; color: #1f2937; }
+  h1 { flex: 1; margin: 0; font-size: 17px; font-weight: 600; color: var(--color-ink); }
   .header-actions { display: flex; gap: 8px; }
 }
 
 .card {
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -368,18 +368,18 @@ onMounted(() => { load() })
   gap: 10px;
   font-size: 13px;
 
-  > span { flex: 0 0 64px; color: #8a92a5; padding-top: 7px; }
+  > span { flex: 0 0 64px; color: var(--color-muted); padding-top: 7px; }
 
   input, select {
     flex: 1;
     min-width: 0;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
     padding: 7px 10px;
     font-size: 13px;
     outline: none;
-    &:focus { border-color: #1890ff; }
-    &:disabled { background: #f5f7fa; color: #8a92a5; }
+    &:focus { border-color: var(--color-focus); }
+    &:disabled { background: var(--color-paper-2); color: var(--color-muted); }
   }
 }
 
@@ -390,16 +390,16 @@ onMounted(() => { load() })
   align-items: center;
   justify-content: space-between;
   padding-top: 6px;
-  border-top: 1px solid #f2f4f8;
+  border-top: 1px solid var(--color-paper-3);
 
-  .sub-title { font-size: 13px; font-weight: 600; color: #4a5368; }
+  .sub-title { font-size: 13px; font-weight: 600; color: var(--color-ink-2); }
 }
 
 .sub-card {
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
   padding: 12px 14px;
-  background: #fcfdff;
+  background: var(--color-paper-2);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -410,9 +410,9 @@ onMounted(() => { load() })
   align-items: center;
   gap: 10px;
 
-  .sub-index { font-size: 12px; font-weight: 600; color: #2f54eb; }
+  .sub-index { font-size: 12px; font-weight: 600; color: var(--color-accent-deep); }
   .sub-type {
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 12px;
@@ -423,35 +423,35 @@ onMounted(() => { load() })
 
 .pending {
   margin: 0; padding: 12px 14px;
-  background: #fafbfd; border: 1px dashed #dfe4ec; border-radius: 6px;
-  font-size: 12px; color: #8a92a5; line-height: 1.8;
+  background: var(--color-paper-2); border: 1px dashed var(--color-rule-2); border-radius: 6px;
+  font-size: 12px; color: var(--color-muted); line-height: 1.8;
 }
 
 // 幽灵图标按钮：常态无边框融入行内，悬停才浮现底色（与 QuesBodyForm 口径一致）
 .icon-btn {
   width: 26px; height: 26px; padding: 0;
   border: none; border-radius: 4px; background: transparent;
-  cursor: pointer; color: #8a92a5;
+  cursor: pointer; color: var(--color-muted);
   .el-icon { font-size: 15px; }
-  &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; }
-  &:disabled { color: #d5dae3; cursor: not-allowed; }
+  &:hover:not(:disabled) { color: var(--color-accent-deep); background: var(--color-accent-wash); }
+  &:disabled { color: var(--color-rule-2); cursor: not-allowed; }
   &.danger {
-    color: #b0b7c3;
-    &:hover:not(:disabled) { color: #f5222d; background: #fff1f0; }
+    color: var(--color-rule-2);
+    &:hover:not(:disabled) { color: var(--color-error); background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper)); }
   }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
+  &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; }
 }
 
 .btn {
   padding: 7px 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

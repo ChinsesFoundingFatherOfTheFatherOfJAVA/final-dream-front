@@ -3,7 +3,9 @@
     <!-- 顶部导航 -->
     <div class="header">
       <div class="header-left">
-        <span class="back-btn" role="button" tabindex="0" @keydown.enter.prevent="goBack" @click="goBack">← 返回</span>
+      <el-button class="back-btn" text @click="goBack">
+        <el-icon style="margin-right: 4px"><ArrowLeft /></el-icon>返回
+      </el-button>
         <h1 class="page-title">{{ isTrain ? '创建日常训练' : '创建通关考试' }}</h1>
       </div>
     </div>
@@ -81,7 +83,7 @@
                 <span class="placeholder-text">点击上传封面<br/><span class="placeholder-hint">不上传则使用默认封面</span></span>
               </div>
               <div class="cover-actions" v-if="!form.coverImage">
-                <el-button class="btn-link" @click="triggerCoverUpload"><span aria-hidden="true">📁</span> 上传图片</el-button>
+                <el-button class="btn-link" @click="triggerCoverUpload">上传图片</el-button>
               </div>
             </div>
           </div>
@@ -333,7 +335,7 @@
       <div class="preview-area">
         <div class="preview-card">
           <div class="preview-cover">
-            <span class="preview-icon" aria-hidden="true">📚</span>
+            <span class="preview-icon" aria-hidden="true"><el-icon><Collection /></el-icon></span>
           </div>
           <div class="preview-content">
             <h3 class="preview-title">{{ form.name || '项目名称' }}</h3>
@@ -362,6 +364,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { ArrowLeft, Collection } from '@element-plus/icons-vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import AvatarGenField from '@/components/business/AvatarGenField.vue'
 import { createProject, createProjectWithFile, updateProject, updateProjectWithFile, getProjectDetail } from '@/api/project'
@@ -886,13 +889,13 @@ const handleSubmit = async () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
 }
 
 .header {
-  background: #fff;
+  background: var(--color-paper);
   padding: 16px 24px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--color-rule);
   display: flex;
   align-items: center;
 
@@ -902,19 +905,16 @@ const handleSubmit = async () => {
     gap: 16px;
   }
 
+// 批注12：返回键改 EP is-text 口径（字色/焦点环由 element-theme 统一），这里只管布局
+  // 批注12：返回键改 EP is-text 口径（字色/焦点环由 element-theme 统一），这里只管布局
   .back-btn {
-    font-size: 16px;
-    color: #1890ff;
-    cursor: pointer;
-
-    &:hover { text-decoration: underline; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+    padding: 0;
   }
 
   .page-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0;
   }
 }
@@ -927,9 +927,9 @@ const handleSubmit = async () => {
 
 .steps-sidebar {
   width: 200px;
-  background: #fff;
+  background: var(--color-paper);
   padding: 24px;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid var(--color-rule);
 
   .step {
     display: flex;
@@ -937,28 +937,28 @@ const handleSubmit = async () => {
     gap: 12px;
     padding: 12px 0;
     cursor: pointer;
-    color: #999;
+    color: var(--color-muted);
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+      &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 
     &.active {
-      color: #1890ff;
+      color: var(--color-accent-deep);
       font-weight: 500;
     }
 
     &.completed {
-      color: #52c41a;
+      color: var(--color-success);
     }
 
     .step-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #d9d9d9;
+      background: var(--color-rule-2);
     }
 
-    &.active .step-dot { background: #1890ff; }
-    &.completed .step-dot { background: #52c41a; }
+      &.active .step-dot { background: var(--color-accent); }
+      &.completed .step-dot { background: var(--color-success); }
   }
 }
 
@@ -969,7 +969,7 @@ const handleSubmit = async () => {
 }
 
 .form-section {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   padding: 24px;
   margin-bottom: 24px;
@@ -977,10 +977,10 @@ const handleSubmit = async () => {
   .section-title {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0 0 24px 0;
     padding-left: 12px;
-    border-left: 3px solid #1890ff;
+    border-left: 3px solid var(--color-accent);
   }
 }
 
@@ -990,12 +990,12 @@ const handleSubmit = async () => {
   .form-label {
     display: block;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     margin-bottom: 8px;
 
     &.required::after {
       content: ' *';
-      color: #f5222d;
+      color: var(--color-error);
     }
   }
 }
@@ -1005,7 +1005,7 @@ const handleSubmit = async () => {
   border-radius: 4px;
   font-size: 14px;
 
-  &:focus { border-color: #1890ff; }
+    &:focus { border-color: var(--color-accent); }
 }
 
 .form-textarea {
@@ -1017,7 +1017,7 @@ const handleSubmit = async () => {
   display: block;
   text-align: right;
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
   margin-top: 4px;
 }
 
@@ -1027,7 +1027,7 @@ const handleSubmit = async () => {
   gap: 12px;
 
   > * { flex: 1; }
-  .date-separator { color: #999; flex: 0 0 auto; }
+  .date-separator { color: var(--color-muted); flex: 0 0 auto; }
 }
 
 .input-with-unit {
@@ -1036,7 +1036,7 @@ const handleSubmit = async () => {
   gap: 8px;
 
   .form-input { width: 100px; }
-  .unit { color: #666; }
+  .unit { color: var(--color-muted); }
 }
 
 .cover-uploader {
@@ -1051,7 +1051,7 @@ const handleSubmit = async () => {
   height: 130px;
   border-radius: 4px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
 
   img { width: 100%; height: 100%; object-fit: cover; display: block; }
 }
@@ -1064,20 +1064,20 @@ const handleSubmit = async () => {
   height: 22px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
+  background: color-mix(in oklab, var(--color-graphite) 55%, transparent);
+  color: var(--color-accent-ink);
   cursor: pointer;
   font-size: 14px;
   line-height: 18px;
-  &:hover { background: rgba(255, 0, 0, 0.65); }
+  &:hover { background: var(--color-error); }
 }
 
 .cover-placeholder {
   width: 200px;
   height: 130px;
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--color-rule-2);
   border-radius: 4px;
-  background: #fafafa;
+  background: var(--color-paper-2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1086,24 +1086,24 @@ const handleSubmit = async () => {
   cursor: pointer;
   transition: border-color 0.2s;
 
-  &:hover { border-color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+      &:hover { border-color: var(--color-accent); }
+      &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
   .placeholder-icon {
     font-size: 24px;
-    color: #999;
+    color: var(--color-muted);
     line-height: 1;
   }
 
   .placeholder-text {
     font-size: 12px;
-    color: #666;
+    color: var(--color-muted);
     text-align: center;
     line-height: 1.5;
   }
 
   .placeholder-hint {
-    color: #bbb;
+    color: var(--color-muted);
     font-size: 11px;
   }
 }
@@ -1111,16 +1111,23 @@ const handleSubmit = async () => {
 .cover-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-
+  // 批注9：btn-link 改 EP is-text link 口径：accent-deep 字 / hover accent-2 + 下划线，不洗底
   .btn-link {
     background: none;
     border: none;
-    color: #1890ff;
+    color: var(--color-accent-deep);
     cursor: pointer;
     font-size: 13px;
     padding: 4px;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      color: var(--color-accent-2);
+      text-decoration: underline;
+    }
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--color-accent-wash);
+      border-radius: var(--radius-input);
+    }
   }
 }
 
@@ -1136,26 +1143,33 @@ const handleSubmit = async () => {
   }
 }
 
-// 评分维度表格
+// 批注19：t14 改造时误删的外框与表头按 master 对照恢复（Cobalt token 口径），行高 44px 保留
 .scoring-table {
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
   margin-bottom: 16px;
 
   .table-header {
     display: flex;
-    background: #fafafa;
-    padding: 12px;
+    background: var(--color-paper-2);
+    padding: 12px 16px;
     font-weight: 500;
     font-size: 14px;
-    border-bottom: 1px solid #e8e8e8;
+    color: var(--color-ink);
+    border-bottom: 1px solid var(--color-rule);
   }
 
   .table-row {
     display: flex;
-    padding: 12px;
-    border-bottom: 1px solid #e8e8e8;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-rule);
     align-items: flex-start;
+    // 批注11：行高 ≥44px，长文本列自适应
+    min-height: 44px;
+    // 批注19：hover 微亮 wash，与全站表格行口径统一
+    transition: background-color var(--dur-micro) var(--ease-out);
+
+    &:hover { background: var(--color-accent-wash); }
 
     &:last-child { border-bottom: none; }
   }
@@ -1177,7 +1191,7 @@ const handleSubmit = async () => {
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #555;
+    color: var(--color-ink-2);
     cursor: pointer;
     padding: 4px 8px;
     border: 1px solid transparent;
@@ -1186,16 +1200,16 @@ const handleSubmit = async () => {
     input { margin: 0; cursor: pointer; }
 
     &.active {
-      border-color: #1890ff;
-      background: #f0f8ff;
-      color: #1890ff;
+      border-color: var(--color-accent);
+      background: var(--color-accent-wash);
+      color: var(--color-accent-deep);
     }
   }
 
   .consistency-tip {
     margin: 2px 0 0;
     font-size: 11px;
-    color: #999;
+    color: var(--color-muted);
     line-height: 1.6;
   }
 }
@@ -1211,13 +1225,13 @@ const handleSubmit = async () => {
   gap: 2px;
   font-size: 13px;
   line-height: 1.55;
-  color: #666;
+  color: var(--color-muted);
   word-break: break-word;
 }
 
 .rule-level {
   flex-shrink: 0;
-  color: #1890ff;
+  color: var(--color-accent-deep);
   font-weight: 600;
 }
 
@@ -1231,7 +1245,7 @@ const handleSubmit = async () => {
 
 .evidence-fixed {
   min-width: 72px;
-  color: #333;
+  color: var(--color-ink);
   font-size: 13px;
   line-height: 32px;
 }
@@ -1245,7 +1259,7 @@ const handleSubmit = async () => {
 
 .metric-params {
   font-size: 12px;
-  color: #666;
+  color: var(--color-muted);
 }
 
 .metric-param-input {
@@ -1253,11 +1267,11 @@ const handleSubmit = async () => {
 
   :deep(.el-input__wrapper) {
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 0 0 1px #1890ff inset;
+    box-shadow: 0 0 0 1px var(--color-accent) inset;
   }
 }
 
@@ -1267,7 +1281,7 @@ const handleSubmit = async () => {
 
 .table-hint {
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
   line-height: 1.7;
   margin: -6px 0 14px;
 }
@@ -1277,11 +1291,11 @@ const handleSubmit = async () => {
 
   :deep(.el-input__wrapper) {
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 0 0 1px #1890ff inset;
+    box-shadow: 0 0 0 1px var(--color-accent) inset;
   }
 }
 
@@ -1291,10 +1305,10 @@ const handleSubmit = async () => {
 
 .weight-total {
   font-size: 14px;
-  color: #999;
+  color: var(--color-muted);
   margin-bottom: 12px;
 
-  &.valid { color: #52c41a; }
+    &.valid { color: var(--color-success); }
 }
 
 .btn {
@@ -1303,23 +1317,23 @@ const handleSubmit = async () => {
   font-size: 14px;
   cursor: pointer;
   transition: opacity 0.2s;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
-  &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
-  &.btn-default { background: #fff; color: #333; }
-  &.btn-link { background: none; border: none; color: #1890ff; padding: 0; }
+    &.btn-primary { background: var(--color-accent); color: var(--color-accent-ink); border-color: var(--color-accent-edge); }
+    &.btn-default { background: var(--color-paper); color: var(--color-ink); }
+    &.btn-link { background: none; border: none; color: var(--color-accent-deep); padding: 0; }
   &:hover { opacity: 0.85; }
 }
 
 .consistency-section {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--color-rule);
 
   .sub-title {
     font-size: 14px;
     font-weight: 500;
-    color: #333;
+    color: var(--color-ink);
     margin: 0 0 16px 0;
   }
 }
@@ -1337,7 +1351,7 @@ const handleSubmit = async () => {
   gap: 12px;
 
   .form-slider { flex: 1; }
-  .slider-value { color: #666; }
+  .slider-value { color: var(--color-muted); }
 }
 
 .form-actions {
@@ -1345,25 +1359,25 @@ const handleSubmit = async () => {
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 0;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--color-rule);
   margin-top: 24px;
 }
 
 .preview-area {
   width: 300px;
-  background: #fff;
-  border-left: 1px solid #e8e8e8;
+  background: var(--color-paper);
+  border-left: 1px solid var(--color-rule);
   padding: 24px;
 }
 
 .preview-card {
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   overflow: hidden;
 
   .preview-cover {
     height: 150px;
-    background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+    background: var(--color-accent-wash);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1377,13 +1391,13 @@ const handleSubmit = async () => {
     .preview-title {
       font-size: 14px;
       font-weight: 500;
-      color: #333;
+      color: var(--color-ink);
       margin: 0 0 8px 0;
     }
 
     .preview-desc {
       font-size: 12px;
-      color: #999;
+      color: var(--color-muted);
       margin: 0 0 12px 0;
       line-height: 1.6;
     }
@@ -1395,8 +1409,8 @@ const handleSubmit = async () => {
         font-size: 12px;
         margin-bottom: 4px;
 
-        .rule-label { color: #999; }
-        .rule-value { color: #333; }
+        .rule-label { color: var(--color-muted); }
+        .rule-value { color: var(--color-ink); }
       }
     }
   }

@@ -532,8 +532,9 @@ onMounted(async () => {
 <style scoped lang="scss">
 /*
  * 尺寸全部来自对 `原平台-入场页-已考过.png` 的逐像素实测（该图 1:1 CSS px）：
- * 底灰 #f5f5f5、卡片 x343..1542（宽 1200）、内容左边界 x443（内边距 100）、
+ * 底灰、卡片 x343..1542（宽 1200）、内容左边界 x443（内边距 100）、
  * 网格 1000×250、行距 58、结果条高 88、主按钮 112×40。
+ * 颜色 2026-11-14 改走 Cobalt token（Hallmark 重构，#436bff 系弃用）。
  */
 .exam-entry-page {
   max-width: 1200px;
@@ -546,42 +547,43 @@ onMounted(async () => {
   font-size: 14px;
 }
 
-/* 面包屑：非当前项 #8c8c8c、当前项 #262626（实测） */
+/* 面包屑：非当前项 muted、当前项 ink（实测结构保留） */
 :deep(.el-breadcrumb__inner) {
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-weight: 400;
 }
 
 :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner) {
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .entry-card {
   padding: 40px 100px 56px;
-  background: #ffffff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .entry-alert {
   padding: 24px;
 }
 
-/* 标题 20px（实测 ink 高 23 → 20px 字号）、居中、#262626 */
+/* 标题 20px（实测 ink 高 23 → 20px 字号）、居中 */
 .entry-title {
   margin: 0;
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: #262626;
+  font-family: var(--font-display);
+  color: var(--color-ink);
   text-align: center;
 }
 
-/* 入场时间行：14px / #595959 / 居中共（实测 ink y232..246，距标题盒底 16） */
+/* 入场时间行：14px / 次要灰 / 居中共（实测 ink y232..246，距标题盒底 16） */
 .entry-time {
   margin: 16px 0 0;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-ink-2);
   text-align: center;
 }
 
@@ -595,7 +597,7 @@ onMounted(async () => {
   gap: 24px 0;
   margin-top: 28px;
   padding: 21px 0;
-  background: #fafafa;
+  background: var(--color-paper-2);
   border-radius: 4px;
 
   &::before {
@@ -605,7 +607,7 @@ onMounted(async () => {
     bottom: 0;
     left: 50%;
     width: 1px;
-    background: #f0f0f0;
+    background: var(--color-rule);
   }
 }
 
@@ -624,18 +626,18 @@ onMounted(async () => {
   padding-left: 87px;
 }
 
-/* 图标 20×20、#8c8c8c，与标签同高不抢视线 */
+/* 图标 20×20、muted，与标签同高不抢视线 */
 .info-icon {
   display: inline-flex;
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 /* 标签灰、值深，且标签不设固定宽度（实测两列各自紧排，不做对齐） */
 .info-label {
-  color: #8c8c8c;
+  color: var(--color-muted);
   white-space: nowrap;
 
   &::after {
@@ -644,7 +646,7 @@ onMounted(async () => {
 }
 
 .info-value {
-  color: #262626;
+  color: var(--color-ink);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -652,7 +654,7 @@ onMounted(async () => {
 }
 
 /*
- * 小标题 14px / #262626。
+ * 小标题 14px / ink。
  *
  * 上下间距由实测 ink 位置反推（14px 字在 22px 行盒里上下各留 ~3.5px 空白）：
  * 网格底 528 →「考试结果」ink 554 ⇒ 间距 ~22；结果条底 669 →「答卷须知」ink 695 ⇒ 同样是 22。
@@ -664,10 +666,10 @@ onMounted(async () => {
   font-size: 14px;
   line-height: 22px;
   font-weight: 400;
-  color: #262626;
+  color: var(--color-ink);
 }
 
-/* 结果条：高 88、底 #fff8f6、圆角 4，左右内边距 24 */
+/* 结果条：高 88、warning 浅底、圆角 4，左右内边距 24 */
 .result-strip {
   display: flex;
   align-items: center;
@@ -675,13 +677,12 @@ onMounted(async () => {
   gap: 16px;
   min-height: 88px;
   padding: 16px 24px;
-  background: #fff8f6;
+  background: color-mix(in oklab, var(--color-error) 6%, var(--color-paper));
   border-radius: 4px;
 
-  /* 已通过走绿色系（原平台仅实测到未通过态，通过态按同结构推导，
-     与文档 §5「先用 #52C41A」的口径一致） */
+  /* 已通过走 success 系（原平台仅实测到未通过态，通过态按同结构推导） */
   &.is-passed {
-    background: #f6ffed;
+    background: color-mix(in oklab, var(--color-success) 10%, var(--color-paper));
   }
 }
 
@@ -692,16 +693,16 @@ onMounted(async () => {
   min-width: 0;
 }
 
-/* 图标 #F5222D（未通过）/ #52C41A（通过） */
+/* 图标 error（未通过）/ success（通过） */
 .result-icon {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
   margin-top: 1px;
-  color: #f5222d;
+  color: var(--color-error);
 
   .is-passed & {
-    color: #52c41a;
+    color: var(--color-success);
   }
 }
 
@@ -712,7 +713,7 @@ onMounted(async () => {
 .result-status {
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .result-his {
@@ -722,33 +723,31 @@ onMounted(async () => {
 }
 
 .his-label {
-  color: #8c8c8c;
+  color: var(--color-muted);
   margin-right: 6px;
 }
 
 .his-value {
-  color: #262626;
+  color: var(--color-ink);
 }
 
-/* 查看详情按钮：实测 96×32、边框 #d9d9d9 */
+/* 查看详情按钮：实测 96×32；描边态由主题层提供 */
 .result-detail-btn {
   flex-shrink: 0;
   height: 32px;
   padding: 0 16px;
-  border-color: #d9d9d9;
-  color: #595959;
 }
 
 .result-detail-disabled {
   display: inline-flex;
 }
 
-/* 须知正文：14px / #595959 / 行高 26（实测两行 y720..737、y747..759） */
+/* 须知正文：14px / 次要灰 / 行高 26（实测两行 y720..737、y747..759） */
 .notice-text {
   margin: 0;
   font-size: 14px;
   line-height: 26px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 /* 正文里嵌的「标记」小图标，与文字基线对齐 */
@@ -757,17 +756,17 @@ onMounted(async () => {
   align-items: center;
   vertical-align: -2px;
   margin: 0 2px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .block-reason {
   margin: 16px 0 0;
   font-size: 14px;
   line-height: 22px;
-  color: #fa8c16;
+  color: var(--color-warning);
 }
 
-/* 主按钮 112×40、底色 #436bff（实测 rgb(67,107,255)），居中 */
+/* 主按钮 112×40，键帽化与 hover 提亮由主题层承担 */
 .entry-actions {
   margin-top: 44px;
   text-align: center;
@@ -777,26 +776,12 @@ onMounted(async () => {
   width: 112px;
   height: 40px;
   font-size: 14px;
-  background: #436bff;
-  border-color: #436bff;
-
-  &:hover,
-  &:focus {
-    background: #5c7fff;
-    border-color: #5c7fff;
-  }
-
-  &.is-disabled,
-  &.is-disabled:hover {
-    background: #a9b8ff;
-    border-color: #a9b8ff;
-  }
 }
 
 .declare-text {
   margin: 0 0 16px;
   font-size: 14px;
   line-height: 24px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 </style>

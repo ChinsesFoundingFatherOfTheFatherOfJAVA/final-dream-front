@@ -1,11 +1,17 @@
 <template>
   <div class="login-page">
-    <div class="login-panel">
+    <!-- 石墨舞台：透视地平线 + 粒子连线。卡片仍是纸面，保证表单可读。 -->
+    <canvas ref="stageEl" class="login-stage" aria-hidden="true"></canvas>
+    <div class="login-copy">
+      <h1>JACK</h1>
+      <p class="login-lede">AI 话术训练平台<br />真实场景。反复对练。上场能用。</p>
+    </div>
+    <div class="login-panel cut">
       <div class="brand-block">
-        <div class="brand-mark">J</div>
+        <CourseIcon class="brand-icon" :size="22" />
         <div>
-          <h1>JACK 杰克</h1>
-          <p>AI话术训练平台</p>
+          <h2>登录</h2>
+          <p>杰克</p>
         </div>
       </div>
 
@@ -45,8 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import CourseIcon from '@/components/icons/CourseIcon.vue'
+import { mountLoginStage } from '@/assets/styles/login-stage'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
@@ -57,6 +65,7 @@ const account = ref('')
 const password = ref('')
 const submitting = ref(false)
 const errorMsg = ref('')
+const stageEl = ref<HTMLCanvasElement | null>(null)
 const redirect = computed(() => (typeof route.query.redirect === 'string' ? route.query.redirect : ''))
 
 const targetAfterLogin = () => {
@@ -83,110 +92,184 @@ const submit = async () => {
   }
 }
 
+let stopStage: (() => void) | null = null
 onMounted(() => {
   if (auth.isAuthenticated) {
     void router.replace(targetAfterLogin())
+    return
   }
+  if (stageEl.value) stopStage = mountLoginStage(stageEl.value)
+})
+
+onUnmounted(() => {
+  stopStage?.()
+  stopStage = null
 })
 </script>
 
 <style scoped lang="scss">
+/* 入口是全站唯一整页石墨舞台：内容页保持纸面，这里用纵深把人推进去。 */
 .login-page {
+  position: relative;
   min-height: 100vh;
   display: grid;
-  place-items: center;
-  padding: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  align-items: center;
+  gap: 32px;
+  padding: 48px clamp(24px, 6vw, 88px);
   box-sizing: border-box;
-  background:
-    linear-gradient(135deg, rgba(74, 124, 255, 0.08), transparent 42%),
-    linear-gradient(315deg, rgba(46, 197, 182, 0.08), transparent 38%),
-    #f5f7fb;
+  overflow: hidden;
+  background: var(--color-graphite);
+  color: var(--color-graphite-ink);
+  font-family: var(--font-display);
+}
+
+.login-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-base);
+  pointer-events: none;
+}
+
+.login-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 36% 42%,
+    transparent 0%,
+    color-mix(in oklab, var(--color-graphite) 72%, transparent) 72%
+  );
+}
+
+.login-copy {
+  position: relative;
+  z-index: var(--z-raised);
+  max-width: 640px;
+}
+
+.login-copy h1 {
+  margin: 0;
+  color: var(--color-graphite-ink);
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-size: clamp(84px, 13vw, 164px);
+  line-height: 0.84;
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.login-lede {
+  margin: 24px 0 0;
+  max-width: 16em;
+  color: var(--color-graphite-muted);
+  font-size: 18px;
+  line-height: 1.45;
 }
 
 .login-panel {
-  width: 420px;
-  max-width: 100%;
-  background: #fff;
-  border: 1px solid #e7ebf3;
-  border-radius: 16px;
-  padding: 38px 40px 42px;
-  box-shadow: 0 18px 48px rgba(31, 45, 76, 0.12);
-  box-sizing: border-box;
+  position: relative;
+  z-index: var(--z-raised);
+  width: 100%;
+  padding: 36px 32px 32px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 1px solid var(--color-rule);
+  box-shadow: var(--shadow-key);
 }
 
 .brand-block {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 34px;
+  gap: 12px;
+  margin-bottom: 28px;
+  color: var(--color-accent);
+}
 
-  .brand-mark {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: #2e7cf6;
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-size: 24px;
-    font-weight: 700;
-  }
+.brand-icon {
+  flex: none;
+}
 
-  h1 {
-    margin: 0 0 3px;
-    color: #1e2638;
-    font-size: 22px;
-    line-height: 1.2;
-  }
+.brand-block h2 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
+  text-wrap: balance;
+}
 
-  p {
-    margin: 0;
-    color: #8a92a5;
-    font-size: 13px;
-  }
+.brand-block p {
+  margin: 2px 0 0;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
 }
 
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   :deep(.el-form-item__label) {
     padding-bottom: 8px;
-    color: #4d5568;
-    font-size: 13px;
+    color: var(--color-muted);
+    font-size: var(--text-xs);
     font-weight: 500;
     line-height: 1.2;
   }
 
   :deep(.el-input__wrapper) {
     min-height: 44px;
-    padding: 0 14px;
-    border-radius: 8px;
-    box-shadow: 0 0 0 1px #d9deea inset;
+    padding: 0 16px;
+    border-radius: var(--radius-input);
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 0 0 1px #1890ff inset, 0 0 0 3px rgba(24, 144, 255, 0.12);
+    box-shadow:
+      0 0 0 1px var(--color-focus) inset,
+      0 0 0 3px color-mix(in oklab, var(--color-focus) 18%, transparent);
   }
 
   :deep(.el-alert) {
-    margin: -4px 0 4px;
+    margin: 0 0 4px;
   }
 }
 
 .login-btn {
   width: 100%;
   height: 46px;
-  margin-top: 18px;
-  border-radius: 8px;
+  margin-top: 16px;
+  border-radius: var(--radius-input);
   font-size: 15px;
   font-weight: 600;
 }
 
-@media (max-width: 520px) {
-  .login-panel {
-    padding: 30px 24px 34px;
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    align-content: end;
+    padding: 28px 20px 24px;
+  }
+
+  .login-copy h1 {
+    font-size: 72px;
+  }
+
+  .login-lede {
+    margin-bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-stage {
+    opacity: 0.72;
   }
 }
 </style>

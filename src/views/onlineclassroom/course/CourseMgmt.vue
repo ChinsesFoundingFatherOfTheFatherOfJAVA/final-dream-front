@@ -19,7 +19,7 @@
         title="展开分类树"
         @click="treeCollapsed = false"
       >
-        ≡
+        <el-icon><Menu /></el-icon>
       </el-button>
 
       <header class="top-actions">
@@ -188,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown, Filter, Search } from '@element-plus/icons-vue'
+import { ArrowDown, Filter, Menu, Search } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
@@ -487,9 +487,9 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   min-height: 620px;
   display: flex;
   overflow: hidden;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .course-content {
@@ -509,10 +509,10 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   z-index: 2;
   width: 30px;
   height: 30px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  background: #fff;
-  color: #6f788a;
+  border: 1px solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 18px;
   cursor: pointer;
 }
@@ -535,24 +535,24 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 .ghost-btn {
   height: 36px;
   padding: 0 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-input);
   font-size: 13px;
   cursor: pointer;
 }
 
 .primary-btn {
   border: none;
-  background: #2e7cf6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 .ghost-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
 
   &:disabled {
-    color: #b3bac7;
+    color: var(--color-rule-2);
     cursor: not-allowed;
   }
 }
@@ -573,8 +573,8 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 .filter-select,
 .keyword-box {
   height: 36px;
-  border-radius: 6px;
-  color: #4d5568;
+  border-radius: var(--radius-input);
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -585,7 +585,7 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 
 .filter-icon {
   margin-right: 7px;
-  color: #667085;
+  color: var(--color-muted);
 }
 
 .filter-select {
@@ -617,15 +617,15 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 
   :deep(.el-table__header th) {
     height: 43px;
-    background: #f8fafc;
-    color: #667085;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row td) {
-    height: 48px;
-    color: #4d5568;
+    height: 44px;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
@@ -633,16 +633,16 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 
 /* 增补A 同款语义：隐藏行置灰 */
 .course-table :deep(.row-hidden) {
-  background: #fafbfc;
+  background: var(--color-paper-2);
 
   td {
-    color: #b3bac7;
+    color: var(--color-rule-2);
   }
 
 }
 
 .course-table :deep(.row-hidden .title-link) {
-  color: #9aa2b1;
+  color: var(--color-muted);
 }
 
 .title-cell {
@@ -660,14 +660,14 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   padding-left: 0;
   border: none;
   background: transparent;
-  color: #253047;
+  color: var(--color-ink);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
 
   &:hover {
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 }
 
@@ -678,9 +678,9 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   display: grid;
   place-items: center;
   overflow: hidden;
-  border-radius: 4px;
-  background: #eef2f7;
-  color: #98a1b2;
+  border-radius: var(--radius-input);
+  background: var(--color-paper-3);
+  color: var(--color-muted);
   font-size: 12px;
 
   img {
@@ -693,10 +693,10 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 .hidden-tag {
   flex-shrink: 0;
   padding: 1px 7px;
-  border: 1px solid #f0b25e;
-  border-radius: 4px;
-  background: #fdf6ec;
-  color: #d98a1f;
+  border: 1px solid color-mix(in oklab, var(--color-warning) 55%, var(--color-paper));
+  border-radius: var(--radius-input);
+  background: color-mix(in oklab, var(--color-warning) 14%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
   font-size: 11px;
   white-space: nowrap;
 }
@@ -711,17 +711,17 @@ function handleMoreCommand(command: string, row: CourseListItem) {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #98a1b2;
+    background: var(--color-muted);
   }
 }
 
 /* 状态点：0 未发布灰点、1 发布中橙点、2 已发布绿点、3 已下架灰点 */
 .status-1 i {
-  background: #f0a13b;
+  background: var(--color-warning);
 }
 
 .status-2 i {
-  background: #35b56a;
+  background: var(--color-success);
 }
 
 .action-cell {
@@ -736,14 +736,14 @@ function handleMoreCommand(command: string, row: CourseListItem) {
   button {
     border: none;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
     font-size: 13px;
     cursor: pointer;
   }
 }
 
 .more-trigger {
-  color: #667085 !important;
+  color: var(--color-muted) !important;
 }
 
 @media (max-width: 1100px) {

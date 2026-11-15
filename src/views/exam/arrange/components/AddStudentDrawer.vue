@@ -128,12 +128,13 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 760px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
+.drawer { width: 760px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer;
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; }
+  padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600;
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer;
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; }
   }
 }
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
@@ -142,19 +143,19 @@ onMounted(async () => {
   .filter-select { width: 220px; font-size: 13px; }
   .el-input { flex: 1; min-width: 160px; font-size: 13px; }
 }
-.table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 6px; }
+.table-wrap { flex: 1; min-height: 0; overflow: auto; border: var(--rule-hair) solid var(--color-rule); border-radius: 6px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #f2f4f8; }
-th { background: #fafbfd; color: #667; font-weight: 500; white-space: nowrap; }
-tr.added td { color: #b0b7c3; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+th { background: var(--color-paper-2); color: var(--color-ink); font-weight: 500; white-space: nowrap; }
+tr.added td { color: var(--color-rule-2); }
 .check-col { width: 40px; text-align: center; }
 .col-sm { width: 100px; }
-.empty-cell { text-align: center; color: #999; padding: 40px 0; }
-.picked-tip { margin: 0; font-size: 12px; color: #8a92a5; }
-.drawer-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 40px 0; }
+.picked-tip { margin: 0; font-size: 12px; color: var(--color-muted); }
+.drawer-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: var(--rule-hair) solid var(--color-rule); }
 .btn {
-  padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer;
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 7px 18px; border-radius: 4px; font-size: 13px; cursor: pointer;
+  /* 手绘描边/主色底清零：plain 与 primary 态由 EP 主题层统一承担 */
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

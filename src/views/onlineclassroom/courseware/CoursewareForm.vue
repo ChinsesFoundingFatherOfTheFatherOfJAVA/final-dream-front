@@ -20,7 +20,7 @@
           :multiple="variant === 'file'"
           @change="onFilesSelected"
         />
-        <span class="upload-cloud" aria-hidden="true">⇧</span>
+        <span class="upload-cloud" aria-hidden="true"><el-icon><UploadFilled /></el-icon></span>
         <strong>拖拽或点击此处选择文件</strong>
         <small>{{ uploadHint }}</small>
       </label>
@@ -28,7 +28,7 @@
       <div v-if="uploadRows.length" class="upload-list">
         <div v-for="row in uploadRows" :key="row.key" class="upload-row">
           <div class="upload-file">
-            <span aria-hidden="true">{{ fileGlyph(row.fileName) }}</span>
+            <span aria-hidden="true"><el-icon><component :is="fileGlyph(row.fileName)" /></el-icon></span>
             <strong>{{ row.fileName }}</strong>
           </div>
           <div class="progress-track">
@@ -116,7 +116,7 @@
                 <span>操作</span>
               </div>
               <div v-for="(file, index) in form.files" :key="file.storagePath" class="table-row">
-                <span class="file-name"><i aria-hidden="true">☷</i>{{ file.fileName }}</span>
+                <span class="file-name"><el-icon aria-hidden="true"><Document /></el-icon>{{ file.fileName }}</span>
                 <span>--</span>
                 <span>{{ languageLabel(file.language) }}</span>
                 <div class="row-actions">
@@ -251,7 +251,7 @@
                   :accept="attachmentAccept"
                   @change="onAttachmentsSelected"
                 />
-                ⇧ 上传附件
+                <el-icon aria-hidden="true" style="vertical-align: -2px; margin-right: 4px;"><UploadFilled /></el-icon>上传附件
               </label>
               <small class="field-help">最多上传 50 个，学员可下载附件，支持类型：视频/音频/文档/图片/压缩包</small>
               <div v-if="form.attachmentPaths.length" class="attachment-list">
@@ -383,6 +383,8 @@ import {
   type MediaMeta
 } from '@/api/courseware'
 import { resolveAssetUrl } from '@/api/request'
+import { Box, Document, Headset, UploadFilled, VideoPlay } from '@element-plus/icons-vue'
+import { markRaw } from 'vue'
 import { uploadFile } from '@/utils/chunkUploader'
 import { useAuthStore } from '@/stores/auth'
 import { toast } from '@/utils/toast'
@@ -539,12 +541,19 @@ function languageLabel(language: string | null) {
   return languages.find(item => item.value === language)?.label || '--'
 }
 
+// t21：扩展名 → EP 图标组件（gate30a 口径）
+const EXT_GLYPHS = {
+  video: markRaw(VideoPlay),
+  audio: markRaw(Headset),
+  zip: markRaw(Box),
+  doc: markRaw(Document)
+}
 function fileGlyph(fileName: string) {
   const ext = fileName.split('.').pop()?.toLowerCase()
-  if (['mp4', 'mov', 'avi', 'mkv'].includes(ext || '')) return '▶'
-  if (['mp3', 'wav', 'm4a'].includes(ext || '')) return '♫'
-  if (['zip', 'rar'].includes(ext || '')) return '▣'
-  return 'P'
+  if (['mp4', 'mov', 'avi', 'mkv'].includes(ext || '')) return EXT_GLYPHS.video
+  if (['mp3', 'wav', 'm4a'].includes(ext || '')) return EXT_GLYPHS.audio
+  if (['zip', 'rar'].includes(ext || '')) return EXT_GLYPHS.zip
+  return EXT_GLYPHS.doc
 }
 
 function inferType(fileName: string) {
@@ -862,7 +871,7 @@ onMounted(load)
   min-height: calc(100vh - 104px);
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .form-header {
@@ -872,11 +881,11 @@ onMounted(load)
   align-items: center;
   gap: 14px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   h1 {
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 18px;
   }
 }
@@ -886,7 +895,7 @@ onMounted(load)
   height: 32px;
   border: none;
   background: transparent;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 30px;
   line-height: 1;
   cursor: pointer;
@@ -897,7 +906,7 @@ onMounted(load)
   display: flex;
   flex-direction: column;
   padding: 54px 24px 30px;
-  background: #f7f9fc;
+  background: var(--color-paper-2);
 }
 
 .drop-zone {
@@ -909,15 +918,15 @@ onMounted(load)
   flex-direction: column;
   gap: 9px;
   margin: 0 auto;
-  border: 1px dashed #d4d9e2;
+  border: 1px dashed var(--color-rule-2);
   border-radius: 2px;
-  background: #f9fbfd;
-  color: #6d7687;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   cursor: pointer;
 
   &.dragging {
-    border-color: #2e7cf6;
-    background: #f2f7ff;
+    border-color: var(--color-accent);
+    background: var(--color-accent-wash);
   }
 
   input {
@@ -925,12 +934,12 @@ onMounted(load)
   }
 
   strong {
-    color: #596274;
+    color: var(--color-ink-2);
     font-size: 16px;
   }
 
   small {
-    color: #98a1b2;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -941,8 +950,8 @@ onMounted(load)
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #7c8799;
-  color: #fff;
+  background: var(--color-muted);
+  color: var(--color-accent-ink);
   font-size: 24px;
 }
 
@@ -958,8 +967,8 @@ onMounted(load)
   align-items: center;
   gap: 14px;
   padding: 0 16px;
-  border-bottom: 1px solid #eef1f6;
-  background: #fff;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper);
   font-size: 13px;
 }
 
@@ -980,25 +989,25 @@ onMounted(load)
   height: 6px;
   overflow: hidden;
   border-radius: 4px;
-  background: #e8edf5;
+  background: var(--color-paper-3);
 
   i {
     display: block;
     height: 100%;
-    background: #2e7cf6;
+    background: var(--color-accent);
     transition: width 0.2s ease;
   }
 }
 
 .upload-row em {
-  color: #667085;
+  color: var(--color-muted);
   font-style: normal;
 }
 
 .upload-row button {
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   cursor: pointer;
 }
 
@@ -1008,13 +1017,13 @@ onMounted(load)
 
   h3 {
     margin: 20px 0 8px;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 15px;
   }
 
   p {
     margin: 7px 0;
-    color: #667085;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -1023,14 +1032,14 @@ onMounted(load)
   min-height: 0;
   flex: 1;
   display: flex;
-  background: #f5f7fb;
+  background: var(--color-paper-2);
 }
 
 .form-loading {
   min-height: 420px;
   display: grid;
   place-items: center;
-  color: #7b8496;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -1038,8 +1047,8 @@ onMounted(load)
   width: 160px;
   flex-shrink: 0;
   padding: 22px 12px;
-  border-right: 1px solid #e7ebf2;
-  background: #fff;
+  border-right: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper);
 
   button {
     width: 100%;
@@ -1048,14 +1057,14 @@ onMounted(load)
     border: none;
     border-radius: 5px;
     background: transparent;
-    color: #667085;
+    color: var(--color-muted);
     text-align: left;
     font-size: 13px;
     cursor: pointer;
 
     &.active {
-      background: #f2f7ff;
-      color: #2e7cf6;
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
     }
   }
 }
@@ -1071,20 +1080,20 @@ onMounted(load)
   margin: 12px;
   padding: 20px 24px 26px;
   border-radius: 3px;
-  background: #fff;
+  background: var(--color-paper);
 
   h2 {
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 0 0 22px;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 15px;
 
     i {
       width: 3px;
       height: 16px;
-      background: #2e7cf6;
+      background: var(--color-accent);
     }
   }
 }
@@ -1105,12 +1114,12 @@ onMounted(load)
   gap: 8px;
 
   > span {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
 
     em {
       margin-left: 3px;
-      color: #f04438;
+      color: var(--color-error);
       font-style: normal;
     }
   }
@@ -1120,15 +1129,15 @@ onMounted(load)
   select,
   textarea {
     width: 100%;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule-2);
     border-radius: 5px;
-    background: #fff;
-    color: #394253;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     font-size: 13px;
     outline: none;
 
     &:focus {
-      border-color: #2e7cf6;
+      border-color: var(--color-accent);
     }
   }
 
@@ -1154,7 +1163,7 @@ onMounted(load)
     position: absolute;
     right: 10px;
     bottom: 8px;
-    color: #98a1b2;
+    color: var(--color-muted);
     font-size: 11px;
   }
 }
@@ -1170,9 +1179,9 @@ onMounted(load)
     flex: 1;
     height: 38px;
     padding: 0 10px;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule-2);
     border-radius: 5px;
-    background: #fff;
+    background: var(--color-paper);
   }
 }
 
@@ -1185,10 +1194,10 @@ onMounted(load)
   height: 36px;
   flex-shrink: 0;
   padding: 0 14px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 5px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 }
@@ -1196,18 +1205,18 @@ onMounted(load)
 .field-error,
 .orange-tip {
   margin: 0;
-  color: #f04438;
+  color: var(--color-error);
   font-size: 12px;
 }
 
 .orange-tip {
-  color: #f2994a;
+  color: var(--color-warning);
 }
 
 .field-help,
 .plain-note {
   margin: 0;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -1218,10 +1227,10 @@ onMounted(load)
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 5px;
-  background: #f8fafc;
-  color: #667085;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   cursor: pointer;
 
   input {
@@ -1250,14 +1259,14 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 13px;
 
   input {
     width: 88px;
     height: 38px;
     padding: 0 10px;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule-2);
     border-radius: 5px;
   }
 }
@@ -1278,18 +1287,18 @@ onMounted(load)
     display: flex;
     align-items: center;
     gap: 7px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
     cursor: pointer;
 
     &.disabled {
-      color: #a7aeba;
+      color: var(--color-muted);
       cursor: not-allowed;
     }
   }
 
   input {
-    accent-color: #2e7cf6;
+    accent-color: var(--color-accent);
   }
 
   span {
@@ -1301,12 +1310,12 @@ onMounted(load)
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   line-height: 1.5;
 
   &.disabled {
-    color: #a7aeba;
+    color: var(--color-muted);
   }
 }
 
@@ -1314,19 +1323,19 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 13px;
 
   select {
     width: 90px;
     height: 36px;
     padding: 0 8px;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule-2);
     border-radius: 5px;
   }
 
   strong {
-    color: #4d5568;
+    color: var(--color-ink-2);
   }
 }
 
@@ -1341,15 +1350,15 @@ onMounted(load)
     justify-content: space-between;
     padding: 8px 10px;
     border-radius: 5px;
-    background: #f8fafc;
-    color: #4d5568;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 12px;
   }
 
   button {
     border: none;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
     cursor: pointer;
   }
 }
@@ -1361,21 +1370,21 @@ onMounted(load)
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 5px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   button {
     border: none;
     background: transparent;
-    color: #98a1b2;
+    color: var(--color-muted);
     cursor: pointer;
   }
 
   i {
     margin-left: auto;
-    color: #98a1b2;
+    color: var(--color-muted);
     font-style: normal;
   }
 }
@@ -1391,12 +1400,12 @@ onMounted(load)
   display: grid;
   grid-template-columns: 120px 1fr;
   gap: 20px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   > p {
     margin: 0;
-    color: #98a1b2;
+    color: var(--color-muted);
   }
 }
 
@@ -1414,8 +1423,8 @@ onMounted(load)
   align-items: center;
   min-height: 42px;
   padding: 0 12px;
-  border-bottom: 1px solid #edf0f5;
-  color: #4d5568;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -1431,8 +1440,8 @@ onMounted(load)
 
 .table-head {
   min-height: 38px;
-  background: #f5f7fb;
-  color: #667085;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
 }
 
 .file-name {
@@ -1442,20 +1451,20 @@ onMounted(load)
   min-width: 0;
 
   i {
-    color: #98a1b2;
+    color: var(--color-muted);
     font-style: normal;
   }
 }
 
 .drag-handle {
-  color: #98a1b2;
+  color: var(--color-muted);
 }
 
 .table-row input {
   min-width: 0;
   height: 34px;
   padding: 0 8px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 5px;
 }
 
@@ -1466,7 +1475,7 @@ onMounted(load)
   button {
     border: none;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
     cursor: pointer;
   }
 }
@@ -1476,7 +1485,7 @@ onMounted(load)
   padding: 0;
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
   cursor: pointer;
 }
@@ -1488,8 +1497,8 @@ onMounted(load)
   align-items: center;
   justify-content: center;
   gap: 14px;
-  border-top: 1px solid #e7ebf2;
-  background: #fff;
+  border-top: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper);
 }
 
 .publish-btn {
@@ -1497,18 +1506,18 @@ onMounted(load)
   min-width: 84px;
   border: none;
   border-radius: 5px;
-  background: #2e7cf6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
   cursor: pointer;
 
   &:disabled {
-    background: #a8c5f8;
+    background: color-mix(in oklab, var(--color-accent) 45%, var(--color-paper));
     cursor: not-allowed;
   }
 }
 
 .form-error {
-  color: #f04438;
+  color: var(--color-error);
   font-size: 12px;
 }
 
@@ -1518,18 +1527,18 @@ onMounted(load)
   z-index: 5200;
   display: grid;
   place-items: center;
-  background: rgba(15, 23, 42, 0.35);
+  background: oklch(21% 0.028 262 / 0.35);
 }
 
 .language-dialog {
   width: 360px;
   padding: 22px;
   border-radius: 6px;
-  background: #fff;
+  background: var(--color-paper);
 
   h3 {
     margin: 0 0 18px;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 16px;
   }
 
@@ -1538,12 +1547,12 @@ onMounted(load)
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
   input {
-    accent-color: #2e7cf6;
+    accent-color: var(--color-accent);
   }
 
   footer {
@@ -1555,16 +1564,16 @@ onMounted(load)
     button {
       height: 34px;
       padding: 0 16px;
-      border: 1px solid #d9deea;
+      border: 1px solid var(--color-rule-2);
       border-radius: 5px;
-      background: #fff;
-      color: #4d5568;
+      background: var(--color-paper);
+      color: var(--color-ink-2);
       cursor: pointer;
 
       &.primary {
-        border-color: #2e7cf6;
-        background: #2e7cf6;
-        color: #fff;
+        border-color: var(--color-accent);
+        background: var(--color-accent);
+        color: var(--color-accent-ink);
       }
     }
   }

@@ -188,12 +188,12 @@ function confirm() {
   .label {
     display: block;
     margin-bottom: 7px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
 
     em {
       margin-left: 2px;
-      color: #f45b69;
+      color: var(--color-accent-deep);
       font-style: normal;
     }
   }
@@ -216,10 +216,10 @@ function confirm() {
   min-width: 0;
   overflow: hidden;
   padding: 8px 10px;
-  border: 1px solid #e9edf4;
+  border: var(--rule-hair) solid var(--color-rule);
   border-radius: 6px;
-  background: #fafbfd;
-  color: #30384a;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -229,16 +229,16 @@ function confirm() {
   flex-shrink: 0;
   min-width: 40px;
   height: 32px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 14px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -246,14 +246,14 @@ function confirm() {
   display: flex;
   align-items: center;
   gap: 18px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
 .link-btn {
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
   cursor: pointer;
 
@@ -265,16 +265,16 @@ function confirm() {
 .btn {
   height: 34px;
   padding: 0 18px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

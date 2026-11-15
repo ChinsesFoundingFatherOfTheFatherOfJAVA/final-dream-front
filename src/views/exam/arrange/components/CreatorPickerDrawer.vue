@@ -189,57 +189,58 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 980px; max-width: 96vw; height: 100%; background: #fff; display: flex; flex-direction: column; }
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
+.drawer { width: 980px; max-width: 96vw; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center; flex: none;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600;
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; } }
 }
 .drawer-body { flex: 1; min-height: 0; display: flex; }
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 16px 20px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .f-select, .f-input {
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-focus); }
 }
 .f-select.dept { width: 160px; }
 .f-select.field { width: 96px; }
 .f-input { flex: 1; min-width: 160px; }
-.part-time { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #8a92a5; white-space: nowrap; }
-.table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 4px; }
+.part-time { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-muted); white-space: nowrap; }
+.table-wrap { flex: 1; min-height: 0; overflow: auto; border: var(--rule-hair) solid var(--color-rule); border-radius: 4px; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f2f4f8; white-space: nowrap; }
-th { background: #fafbfd; color: #667; font-weight: 500; }
-tr.picked td { background: #f5f9ff; }
+th, td { padding: 9px 10px; text-align: left; border-bottom: var(--rule-hair) solid var(--color-paper-3); white-space: nowrap; }
+th { background: var(--color-paper-2); color: var(--color-ink); font-weight: 500; }
+tr.picked td { background: var(--color-accent-wash); }
 .check-col { width: 40px; text-align: center; }
 .ellipsis { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
-.empty-cell { text-align: center; color: #999; padding: 36px 0; }
-.table-loading { text-align: center; color: #999; font-size: 12px; padding: 12px 0; }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 36px 0; }
+.table-loading { text-align: center; color: var(--color-muted); font-size: 12px; padding: 12px 0; }
 .pagination {
-  display: flex; align-items: center; gap: 6px; padding-top: 10px; font-size: 12px; color: #667;
+  display: flex; align-items: center; gap: 6px; padding-top: 10px; font-size: 12px; color: var(--color-muted);
   span { margin-right: 4px; }
   button {
-    min-width: 28px; padding: 3px 6px; border: 1px solid #d9d9d9; border-radius: 4px;
-    background: #fff; cursor: pointer; font-size: 12px;
-    &.active { border-color: #1890ff; color: #1890ff; }
+    min-width: 28px; padding: 3px 6px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+    background: var(--color-paper); cursor: pointer; font-size: 12px;
+    &.active { border-color: var(--color-accent); color: var(--color-accent-deep); }
     &:disabled { opacity: .45; cursor: not-allowed; }
   }
 }
-.selected { width: 240px; flex: none; border-left: 1px solid #eee; padding: 16px; display: flex; flex-direction: column; background: #fafbfd; }
-.selected-title { margin: 0 0 10px; font-size: 13px; color: #4a5368; b { color: #1890ff; } }
+.selected { width: 240px; flex: none; border-left: var(--rule-hair) solid var(--color-rule); padding: 16px; display: flex; flex-direction: column; background: var(--color-paper-2); }
+.selected-title { margin: 0 0 10px; font-size: 13px; color: var(--color-ink-2); b { color: var(--color-accent-deep); } }
 .selected-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-.selected-empty { font-size: 12px; color: #b0b7c3; }
+.selected-empty { font-size: 12px; color: var(--color-rule-2); }
 .selected-tag {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 6px;
-  padding: 4px 8px; border-radius: 4px; background: #fff; border: 1px solid #e5e8ef; font-size: 12px; color: #4a5368;
-  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  padding: 4px 8px; border-radius: 4px; background: var(--color-paper); border: 1px solid var(--color-rule); font-size: 12px; color: var(--color-ink-2);
+  i { font-style: normal; color: var(--color-muted); cursor: pointer; &:hover { color: var(--color-error); }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 2px; }
   }
 }
-.clear-btn { margin-top: 10px; border: none; background: none; color: #1890ff; font-size: 12px; cursor: pointer; text-align: left; }
-.drawer-footer { flex: none; display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }
+.clear-btn { margin-top: 10px; border: none; background: none; color: var(--color-accent-deep); font-size: 12px; cursor: pointer; text-align: left; }
+.drawer-footer { flex: none; display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: var(--rule-hair) solid var(--color-rule); }
 .btn {
-  padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  font-size: 13px; color: #4a5368; cursor: pointer;
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 7px 18px; border-radius: 4px;
+  font-size: 13px; cursor: pointer;
+  /* plain/primary 态由 EP 主题层统一映射 */
 }
 </style>

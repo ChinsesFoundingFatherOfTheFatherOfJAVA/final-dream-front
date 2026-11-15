@@ -338,9 +338,9 @@ onMounted(reload)
 .catalog-card {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .toolbar {
@@ -349,7 +349,7 @@ onMounted(reload)
   justify-content: space-between;
   gap: 16px;
   padding: 16px 18px;
-  border-bottom: 1px solid #e9edf4;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .toolbar-left,
@@ -370,18 +370,18 @@ onMounted(reload)
 
 .primary-btn {
   border: none;
-  background: #2e7cf6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
 
   &:hover {
-    background: #1f6fe5;
+    background: var(--color-accent-deep);
   }
 }
 
 .ghost-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #596274;
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-key-face);
+  color: var(--color-ink-2);
 }
 
 .search-box {
@@ -392,7 +392,7 @@ onMounted(reload)
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 12px;
 
   :deep(.el-select) {
@@ -403,21 +403,28 @@ onMounted(reload)
 .catalog-table {
   width: 100%;
 
+  /* t21 表格规范：paper-2 灰表头 500 字、hairline 分隔、行 hover wash */
   :deep(.el-table__header th) {
-    height: 42px;
-    background: #f8fafc;
-    color: #667085;
+    height: 44px;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row) {
     cursor: pointer;
   }
 
-  :deep(.el-table__row:hover),
-  :deep(.selected-row) {
-    background: #e8f4ff;
+  :deep(.el-table__row:hover > td),
+  :deep(.selected-row > td) {
+    background: var(--color-accent-wash);
+  }
+
+  :deep(.el-table .cell) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -434,12 +441,12 @@ onMounted(reload)
   width: 18px;
   height: 20px;
   flex: 0 0 18px;
-  color: #7a8396;
+  color: var(--color-muted);
   cursor: pointer;
 
   /* 自定义可点展开图标：键盘可达，补可见焦点环（不占布局空间） */
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-focus);
     outline-offset: 1px;
   }
 
@@ -486,8 +493,8 @@ onMounted(reload)
 <style lang="scss">
 /* 更多菜单弹层（teleport 到 body，需非 scoped）：圆角/阴影/条目悬浮态精修 */
 .more-popper {
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(31, 45, 76, 0.14);
+  border-radius: var(--radius-card);
+  box-shadow: 0 6px 20px oklch(21% 0.028 262 / 0.14);
   padding: 6px;
 
   .el-dropdown-menu { padding: 0; }
@@ -496,7 +503,7 @@ onMounted(reload)
     padding: 7px 12px;
     line-height: 1.4;
 
-    &:not(.is-disabled):hover { background: #f0f7ff; color: #1890ff; }
+    &:not(.is-disabled):hover { background: var(--color-accent-wash); color: var(--color-accent); }
   }
 }
 

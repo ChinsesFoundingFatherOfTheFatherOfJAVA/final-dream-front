@@ -5,22 +5,22 @@
       <h3 class="menu-title">AI实战训练场</h3>
       <nav class="menu-list">
         <router-link to="/sparring/freesimulate/topic" class="menu-item active-item">
-          <span class="menu-icon" aria-hidden="true">🎯</span>
+          <el-icon class="menu-icon" aria-hidden="true"><Aim /></el-icon>
           <span class="menu-text">训练主题</span>
         </router-link>
         <!-- 占位菜单：仍可聚焦触发提示，保证键盘可达 -->
         <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
-          <span class="menu-icon" aria-hidden="true">📊</span>
+          <el-icon class="menu-icon" aria-hidden="true"><DataAnalysis /></el-icon>
           <span class="menu-text">数据分析</span>
           <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
         <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
-          <span class="menu-icon" aria-hidden="true">🗂️</span>
+          <el-icon class="menu-icon" aria-hidden="true"><Folder /></el-icon>
           <span class="menu-text">素材库</span>
           <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
         <div class="menu-item" role="button" tabindex="0" @keydown.enter.prevent="comingSoon('功能建设中')" @click="comingSoon('功能建设中')">
-          <span class="menu-icon" aria-hidden="true">⚙️</span>
+          <el-icon class="menu-icon" aria-hidden="true"><Setting /></el-icon>
           <span class="menu-text">设置</span>
           <span class="chevron" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
         </div>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Aim, DataAnalysis, Folder, Setting } from '@element-plus/icons-vue'
 import { comingSoon } from './components/ui'
 </script>
 
@@ -47,7 +47,7 @@ import { comingSoon } from './components/ui'
   display: flex;
   flex: 1;
   min-height: 0;
-  background: #fff;
+  background: var(--color-paper);
   overflow: hidden;
 }
 
@@ -57,15 +57,15 @@ import { comingSoon } from './components/ui'
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid var(--color-rule);
 
   .menu-title {
     padding: 16px 20px;
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--color-rule);
   }
 
   .menu-list {
@@ -75,19 +75,19 @@ import { comingSoon } from './components/ui'
 
   .menu-footer {
     padding: 12px 16px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--color-paper-2);
 
     .collapse-btn {
       width: 32px;
       height: 32px;
-      border: 1px solid #e8e8e8;
+      border: 1px solid var(--color-rule);
       border-radius: 4px;
-      background: #fff;
-      color: #999;
+      background: var(--color-paper);
+      color: var(--color-muted);
       cursor: pointer;
       font-size: 15px;
 
-      &:hover { color: #1890ff; border-color: #1890ff; }
+      &:hover { color: var(--color-accent); border-color: var(--color-accent); }
     }
   }
 }
@@ -98,23 +98,23 @@ import { comingSoon } from './components/ui'
   gap: 10px;
   padding: 11px 20px;
   font-size: 15px;
-  color: #666;
+  color: var(--color-muted);
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
 
   .menu-icon { font-size: 18px; }
-  .chevron { font-size: 11px; margin-left: auto; color: #bbb; }
+  .chevron { font-size: 11px; margin-left: auto; color: var(--color-rule-2); }
 
-  &:hover { background: #f5f5f5; color: #1890ff; }
+  &:hover { background: var(--color-paper-2); color: var(--color-accent); }
 
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
   &.active-item,
   &.router-link-active {
-    background: #e6f7ff;
-    color: #1890ff;
-    border-right: 3px solid #1890ff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent);
+    border-right: 3px solid var(--color-accent);
   }
 }
 
@@ -123,6 +123,6 @@ import { comingSoon } from './components/ui'
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  background: #f5f6f8;
+  background: var(--color-paper-2);
 }
 </style>

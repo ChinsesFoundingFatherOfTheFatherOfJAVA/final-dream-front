@@ -288,7 +288,7 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-/* 尺寸基线：内容区 1320px 居中（与 Drillmate 学员端一致），左栏 280px + 主区 1fr */
+/* 尺寸基线：内容区 1320px 居中（与 Drillmate 学员端一致），左栏 280px + 主区 1fr；颜色 2026-11-14 改走 Cobalt token */
 .exam-list-page {
   max-width: 1320px;
   margin: 0 auto;
@@ -307,12 +307,12 @@ onMounted(load)
 
 /* 面包屑配色照原平台：当前页深色、上级浅灰 */
 :deep(.el-breadcrumb__inner) {
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-weight: 400;
 }
 
 :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner) {
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .layout {
@@ -325,8 +325,8 @@ onMounted(load)
 
 .col-left {
   padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .user-block {
@@ -340,8 +340,8 @@ onMounted(load)
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #436bff;
-  color: #ffffff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
   font-size: 28.8px;
   line-height: 72px;
   text-align: center;
@@ -356,7 +356,7 @@ onMounted(load)
   font-size: 18px;
   line-height: 26px;
   font-weight: 700;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 /* 三项统计纵向排列：每行「数字 + 名称」，左侧对齐比居中更容易扫读 */
@@ -366,27 +366,42 @@ onMounted(load)
   gap: 8px;
 }
 
+/* 记分牌行：paper-2 底 + 左侧 2px 族标色条（敢做档 dashboard 三件套的列表化落地） */
 .stat-cell {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   padding: 12px 16px;
   border-radius: 8px;
-  background: #f7f8fa;
+  background: var(--color-paper-2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-accent);
+  }
 }
 
 .stat-value {
+  font-family: var(--font-display);
   font-size: 20px;
   line-height: 1;
-  font-weight: 700;
-  color: #262626;
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .stat-label {
   font-size: 13px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .col-main {
@@ -406,14 +421,16 @@ onMounted(load)
 .group-title {
   font-size: 16px;
   line-height: 24px;
-  font-weight: 700;
-  color: #262626;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--color-ink);
 }
 
 .group-count {
   font-size: 13px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 卡片网格：原平台「待学习」为横向平铺卡片（301px 宽），这里用自适应三列 */
@@ -426,24 +443,32 @@ onMounted(load)
   list-style: none;
 }
 
+/* 可点卡片（敢做档）：hover wash + 抬升、active 键帽凹陷 */
 .exam-card {
   display: flex;
   flex-direction: column;
   min-height: 132px;
   padding: 12px;
-  background: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border: var(--rule-hair) solid transparent;
+  border-radius: var(--radius-card);
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 
   &:hover {
-    border-color: #436bff;
-    box-shadow: 0 2px 8px rgba(67, 107, 255, 0.12);
+    background: var(--color-accent-wash);
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-key-press);
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -458,14 +483,14 @@ onMounted(load)
 .card-tag {
   padding: 0 8px;
   border-radius: 2px;
-  background: #f5f5f5;
-  color: #595959;
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-size: 12px;
   line-height: 20px;
 
   &.is-important {
-    background: #fff1f0;
-    color: #f5222d;
+    background: color-mix(in oklab, var(--color-error) 12%, var(--color-paper));
+    color: var(--color-error);
   }
 }
 
@@ -475,7 +500,7 @@ onMounted(load)
   margin-top: 8px;
   font-size: 14px;
   line-height: 24px;
-  color: #262626;
+  color: var(--color-ink);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -490,7 +515,7 @@ onMounted(load)
   margin-top: 12px;
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .card-validity {
@@ -502,7 +527,8 @@ onMounted(load)
 
 .card-score {
   flex-shrink: 0;
-  color: #436bff;
+  color: var(--color-accent-deep);
+  font-family: var(--font-outlier);
   font-variant-numeric: tabular-nums;
 }
 

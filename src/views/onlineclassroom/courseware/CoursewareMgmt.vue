@@ -18,7 +18,7 @@
         title="展开分类树"
         @click="treeCollapsed = false"
       >
-        ≡
+        <el-icon><Menu /></el-icon>
       </el-button>
 
       <header class="top-actions">
@@ -125,7 +125,7 @@
           <el-table-column label="名称" min-width="320">
             <template #default="{ row }">
               <div class="title-cell">
-                <span class="type-icon" :class="`type-${row.type}`" aria-hidden="true">{{ typeBadge(row.type) }}</span>
+                <span class="type-icon" :class="`type-${row.type}`" aria-hidden="true"><el-icon><component :is="typeGlyph(row.type)" /></el-icon></span>
                 <el-button link class="title-link" @click="openDetail(row.id)">{{ row.title }}</el-button>
                 <span v-if="row.type === 8" class="external-icon" aria-hidden="true" title="外链课">↗</span>
                 <span v-if="row.hidden" class="hidden-tag">已隐藏</span>
@@ -225,7 +225,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown, Filter, Search } from '@element-plus/icons-vue'
+import { ArrowDown, Box, Document, DocumentChecked, Filter, Headset, Link, Menu, Monitor, Search, VideoPlay } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { useRouter } from 'vue-router'
@@ -325,8 +325,15 @@ const someChecked = computed(() =>
 )
 const coursewareRowClass = ({ row }: { row: CoursewareListItem }) => row.hidden ? 'row-hidden' : ''
 
-function typeBadge(type: number) {
-  return type === 2 ? '▶' : type === 3 ? '♫' : type === 4 ? '▣' : type === 6 ? 'SC' : type === 7 ? '<>' : type === 8 ? '↗' : 'P'
+// t21：emoji 图标改 EP 图标组件（gate30a 口径，同一图标库一处维护）
+function typeGlyph(type: number) {
+  return type === 2 ? VideoPlay
+    : type === 3 ? Headset
+    : type === 4 ? Box
+    : type === 6 ? DocumentChecked
+    : type === 7 ? Monitor
+    : type === 8 ? Link
+    : Document
 }
 
 function queryBody(): CoursewareListQuery {
@@ -564,9 +571,9 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   min-height: 620px;
   display: flex;
   overflow: hidden;
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .courseware-content {
@@ -586,10 +593,10 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   z-index: 2;
   width: 30px;
   height: 30px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  background: #fff;
-  color: #6f788a;
+  border: 1px solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 18px;
   cursor: pointer;
 }
@@ -620,17 +627,17 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
 
 .primary-btn {
   border: none;
-  background: #2e7cf6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 .ghost-btn {
-  border: 1px solid #d9deea;
-  background: #fff;
-  color: #4d5568;
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-key-face);
+  color: var(--color-ink-2);
 
   &:disabled {
-    color: #b3bac7;
+    color: var(--color-rule-2);
     cursor: not-allowed;
   }
 }
@@ -643,7 +650,7 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
 .right-links button {
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
   cursor: pointer;
 }
@@ -659,8 +666,8 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
 .filter-select,
 .keyword-box {
   height: 36px;
-  border-radius: 6px;
-  color: #4d5568;
+  border-radius: var(--radius-input);
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -671,7 +678,7 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
 
 .filter-icon {
   margin-right: 7px;
-  color: #667085;
+  color: var(--color-muted);
 }
 
 .filter-select {
@@ -701,43 +708,55 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
 .courseware-table {
   width: 100%;
 
+  /* t21 表格规范：paper-2 灰表头 500 字、hairline 分隔、行 hover wash、单元格 nowrap */
   :deep(.el-table__header th) {
-    height: 43px;
-    background: #f8fafc;
-    color: #667085;
+    height: 44px;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row td) {
-    height: 48px;
-    color: #4d5568;
+    height: 44px;
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+    color: var(--color-ink-2);
     font-size: 13px;
+  }
+
+  :deep(.el-table__row:hover > td) {
+    background: var(--color-accent-wash) !important;
+  }
+
+  :deep(.el-table .cell) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
 
 /* 增补A：隐藏课件行置灰（独立于下架，可取消隐藏恢复） */
 .courseware-table :deep(.row-hidden) {
-  background: #fafbfc;
+  background: var(--color-paper-2);
 
   td {
-    color: #b3bac7;
+    color: var(--color-rule-2);
   }
 
 }
 
 .courseware-table :deep(.row-hidden .title-link) {
-  color: #9aa2b1;
+  color: var(--color-muted);
 }
 
 .hidden-tag {
   flex-shrink: 0;
   padding: 1px 7px;
-  border: 1px solid #f0b25e;
-  border-radius: 4px;
-  background: #fdf6ec;
-  color: #d98a1f;
+  border: 1px solid color-mix(in oklab, var(--color-warning) 55%, var(--color-paper));
+  border-radius: var(--radius-input);
+  background: color-mix(in oklab, var(--color-warning) 14%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
   font-size: 11px;
   white-space: nowrap;
 }
@@ -755,14 +774,14 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   overflow: hidden;
   border: none;
   background: transparent;
-  color: #253047;
+  color: var(--color-ink);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
 
   &:hover {
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 }
 
@@ -772,36 +791,35 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   flex: 0 0 25px;
   display: grid;
   place-items: center;
-  border-radius: 6px;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: var(--radius-input);
+  color: var(--color-accent-ink);
+  font-size: 12px;
 }
 
 .type-1 {
-  background: #f45b69;
+  background: var(--color-accent-deep);
 }
 
 .type-2 {
-  background: #6b7cff;
+  background: var(--color-accent);
 }
 
 .type-3 {
-  background: #27b788;
+  background: color-mix(in oklab, var(--color-accent) 62%, var(--color-graphite));
 }
 
 .type-4,
 .type-6,
 .type-7 {
-  background: #8b95a7;
+  background: color-mix(in oklab, var(--color-accent) 34%, var(--color-graphite));
 }
 
 .type-8 {
-  background: #2e7cf6;
+  background: var(--color-graphite);
 }
 
 .external-icon {
-  color: #7b8496;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -815,20 +833,20 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #98a1b2;
+    background: var(--color-muted);
   }
 }
 
 .status-1 i {
-  background: #f0a13b;
+  background: var(--color-warning);
 }
 
 .status-2 i {
-  background: #35b56a;
+  background: var(--color-success);
 }
 
 .status-3 i {
-  background: #98a1b2;
+  background: var(--color-muted);
 }
 
 .action-cell {
@@ -843,14 +861,14 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   button {
     border: none;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
     font-size: 13px;
     cursor: pointer;
   }
 }
 
 .more-trigger {
-  color: #667085 !important;
+  color: var(--color-muted) !important;
 }
 
 @media (max-width: 1100px) {

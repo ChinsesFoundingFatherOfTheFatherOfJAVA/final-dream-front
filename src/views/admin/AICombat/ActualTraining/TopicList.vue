@@ -307,7 +307,7 @@ function formatUpdatedAt(time: string | null): string {
   box-sizing: border-box;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .page-header {
@@ -321,14 +321,14 @@ function formatUpdatedAt(time: string | null): string {
     font-size: 24px;
     font-weight: 700;
     line-height: 32px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .page-desc {
     margin: 0;
     font-size: 14px;
     line-height: 20px;
-    color: #757575;
+    color: var(--color-muted);
   }
 
   /* 三个按钮按行内块排布：原平台容器宽 344 = 84 + 16 + 110 + 12 + 122，
@@ -346,17 +346,17 @@ function formatUpdatedAt(time: string | null): string {
     height: 32px;
     padding: 4px 19px;
     box-sizing: border-box;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
-    background: #ffffff;
-    color: #1f2329;
+    background: var(--color-paper);
+    color: var(--color-ink);
     font-family: inherit;
     font-size: 14px;
     line-height: 22px;
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid #436bff;
+      outline: 2px solid var(--color-accent);
       outline-offset: 1px;
     }
   }
@@ -371,14 +371,14 @@ function formatUpdatedAt(time: string | null): string {
     border: 0;
     border-radius: 4px;
     background: transparent;
-    color: #436bff;
+    color: var(--color-accent);
     font-family: inherit;
     font-size: 14px;
     line-height: 22px;
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid #436bff;
+      outline: 2px solid var(--color-accent);
       outline-offset: 1px;
     }
   }
@@ -389,9 +389,9 @@ function formatUpdatedAt(time: string | null): string {
 
   .btn-create {
     margin-left: 12px;
-    background: #436bff;
-    border-color: #436bff;
-    color: #ffffff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-paper);
   }
 }
 
@@ -408,25 +408,25 @@ function formatUpdatedAt(time: string | null): string {
   height: 100%;
   padding: 4px 32px 4px 12px;
   box-sizing: border-box;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #ffffff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-muted);
   font-family: inherit;
   font-size: 14px;
   line-height: 22px;
   outline: none;
 
   &::placeholder {
-    color: #bfbfbf;
+    color: var(--color-rule-2);
   }
 
   &.is-placeholder {
-    color: #bfbfbf;
+    color: var(--color-rule-2);
   }
 
   &:focus-visible {
-    border-color: #436bff;
+    border-color: var(--color-accent);
   }
 }
 
@@ -442,7 +442,7 @@ function formatUpdatedAt(time: string | null): string {
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 1px;
   }
 }
@@ -463,8 +463,8 @@ function formatUpdatedAt(time: string | null): string {
 .yxt-input__arrow {
   width: 6px;
   height: 6px;
-  border-right: 1px solid #8c8c8c;
-  border-bottom: 1px solid #8c8c8c;
+  border-right: 1px solid var(--color-muted);
+  border-bottom: 1px solid var(--color-muted);
   transform: translateY(-2px) rotate(45deg);
 }
 
@@ -475,25 +475,25 @@ function formatUpdatedAt(time: string | null): string {
   z-index: 20;
   min-width: 100%;
   padding: 4px 0;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 4px;
-  background: #ffffff;
-  box-shadow: 0 6px 16px rgb(0 0 0 / 8%);
+  background: var(--color-paper);
+  box-shadow: 0 6px 16px color-mix(in oklab, var(--color-graphite) 8%, transparent);
 }
 
 .yxt-select__option {
   padding: 0 12px;
-  color: #262626;
+  color: var(--color-ink);
   font-size: 14px;
   line-height: 30px;
   white-space: nowrap;
 
   &:hover {
-    background: #f5f6f8;
+    background: var(--color-paper-2);
   }
 
   &.is-selected {
-    color: #436bff;
+    color: var(--color-accent);
     font-weight: 500;
   }
 }
@@ -504,7 +504,7 @@ function formatUpdatedAt(time: string | null): string {
   width: 240px;
   height: 32px;
   flex: none;
-  border: 0 solid #e5e7eb;
+  border: 0 solid var(--color-rule);
 
   .yxt-input__inner {
     padding: 4px 12px 4px 32px;
@@ -529,7 +529,7 @@ function formatUpdatedAt(time: string | null): string {
   justify-content: center;
   width: 24px;
   height: 32px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 /* 负外边距把网格对齐回 1253 的内容列宽（原平台 .page-container 同款处理） */
@@ -550,18 +550,18 @@ function formatUpdatedAt(time: string | null): string {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--color-paper);
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   &:hover {
-    border-color: #c7d2fe;
+    border-color: var(--color-accent-wash);
   }
 }
 
@@ -592,18 +592,18 @@ function formatUpdatedAt(time: string | null): string {
   height: 32px;
   padding: 4px 16px;
   box-sizing: border-box;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #ffffff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-muted);
   font-family: inherit;
   font-size: 14px;
   line-height: 22px;
   cursor: pointer;
 
   &:hover {
-    border-color: #436bff;
-    color: #436bff;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -619,7 +619,7 @@ function formatUpdatedAt(time: string | null): string {
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  color: #262626;
+  color: var(--color-ink);
   font-size: 16px;
   font-weight: 700;
   line-height: 22px;
@@ -634,10 +634,10 @@ function formatUpdatedAt(time: string | null): string {
   height: 24px;
   padding: 0 6px;
   box-sizing: border-box;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #f5f5f5;
-  color: #595959;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   font-size: 12px;
   font-weight: 500;
   line-height: 22px;
@@ -645,27 +645,27 @@ function formatUpdatedAt(time: string | null): string {
 
 .status-tag.status-1,
 .status-tag.status-5 {
-  border-color: #bdd2ff;
-  background: #f0f6ff;
-  color: #2e4dd9;
+  border-color: var(--color-accent-wash);
+  background: var(--color-accent-wash);
+  color: var(--color-accent);
 }
 
 .status-tag.status-2 {
-  border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  border-color: color-mix(in oklab, var(--color-error) 25%, var(--color-paper));
+  background: color-mix(in oklab, var(--color-error) 8%, var(--color-paper));
+  color: var(--color-error-deep);
 }
 
 .status-tag.status-3 {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
-  color: #047857;
+  border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
+  background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper));
+  color: var(--color-success);
 }
 
 .status-tag.status-4 {
-  border-color: #fde68a;
-  background: #fffbeb;
-  color: #b45309;
+  border-color: color-mix(in oklab, var(--color-warning) 40%, var(--color-paper));
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+  color: var(--color-warning);
 }
 
 /* 描述固定两行高度：卡片高度与原平台一致（44.8 + 页内外边距 = 161） */
@@ -674,7 +674,7 @@ function formatUpdatedAt(time: string | null): string {
   min-height: 44.8px;
   margin: 0 0 16px;
   overflow: hidden;
-  color: #757575;
+  color: var(--color-muted);
   font-size: 14px;
   line-height: 22.4px;
   -webkit-box-orient: vertical;
@@ -701,40 +701,40 @@ function formatUpdatedAt(time: string | null): string {
   padding: 2px 8px;
   box-sizing: border-box;
   border-radius: 6px;
-  background: #f5f5f5;
-  color: #757575;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   font-size: 12px;
   font-weight: 500;
   line-height: 22px;
 }
 
 .config-tag.mode-1 {
-  background: #f0f6ff;
-  color: #2e4dd9;
+  background: var(--color-accent-wash);
+  color: var(--color-accent);
 }
 
 .config-tag.mode-3 {
-  background: #f5f3ff;
-  color: #6d28d9;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
 }
 
 .card-meta {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 22px;
 }
 
 .meta-dot {
-  color: #d9d9d9;
+  color: var(--color-rule-2);
 }
 
 .no-more-data {
   width: 100%;
   padding: 24px 0;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 14px;
   line-height: 22px;
   text-align: center;
@@ -743,7 +743,7 @@ function formatUpdatedAt(time: string | null): string {
 .list-tip,
 .empty-state {
   padding: 24px 0;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 14px;
   text-align: center;
 }

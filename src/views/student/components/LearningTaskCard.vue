@@ -237,11 +237,11 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-$brand: #436bff;
+$brand: var(--color-accent);
 
 .learning-task {
   padding: 24px;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
 }
 
@@ -257,7 +257,7 @@ $brand: #436bff;
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
-  color: #262626;
+  color: var(--color-ink);
   white-space: nowrap;
 }
 
@@ -280,7 +280,7 @@ $brand: #436bff;
   padding: 24px 0;
   text-align: center;
   font-size: 14px;
-  color: #f5222d;
+  color: var(--color-error);
 }
 
 .task-empty {
@@ -288,7 +288,7 @@ $brand: #436bff;
   padding: 32px 0;
   text-align: center;
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .task-grid {
@@ -308,13 +308,13 @@ $brand: #436bff;
   padding: 12px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: #fafafa;
+  background: var(--color-paper-2);
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     border-color: $brand;
-    box-shadow: 0 2px 8px rgba(67, 107, 255, 0.12);
+    box-shadow: 0 2px 8px color-mix(in oklab, var(--color-accent) 12%, transparent);
   }
 
   &:focus-visible {
@@ -332,24 +332,24 @@ $brand: #436bff;
 .task-tag {
   padding: 0 8px;
   border-radius: 2px;
-  background: #f5f5f5;
-  color: #595959;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 20px;
 
   &.is-passed {
-    background: #f6ffed;
-    color: #389e0d;
+    background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
+    color: var(--color-success);
   }
 
   &.is-failed {
-    background: #fff2e8;
-    color: #d4380d;
+    background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+    color: var(--color-error);
   }
 
   &.is-important {
-    background: #fff1f0;
-    color: #f5222d;
+    background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+    color: var(--color-error);
   }
 }
 
@@ -358,7 +358,7 @@ $brand: #436bff;
   margin: 8px 0 0;
   font-size: 14px;
   line-height: 24px;
-  color: #262626;
+  color: var(--color-ink);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -373,7 +373,7 @@ $brand: #436bff;
   margin: 12px 0 0;
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .task-card__extra {

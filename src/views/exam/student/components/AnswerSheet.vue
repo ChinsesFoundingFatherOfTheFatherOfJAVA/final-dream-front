@@ -199,9 +199,9 @@ const ariaOf = (quesId: string, no: number) => {
 
 <style scoped lang="scss">
 /* 主色 #436BFF：原平台答题卡实测色（题号已做态、当前描边、提交按钮三处一致） */
-$primary: #436bff;
-$danger: #f5222d;
-$line: #e9e9e9;
+$primary: var(--color-accent);
+$danger: var(--color-error);
+$line: var(--color-rule);
 
 .sheet {
   width: 282px;
@@ -216,7 +216,7 @@ $line: #e9e9e9;
 }
 
 .sheet__card {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 4px;
   padding: 16px 0;
 }
@@ -236,11 +236,11 @@ $line: #e9e9e9;
   line-height: 20px;
 
   &-label {
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &-value {
-    color: #262626;
+    color: var(--color-ink);
     font-variant-numeric: tabular-nums;
     font-weight: 500;
 
@@ -260,7 +260,7 @@ $line: #e9e9e9;
 
 .sheet__progress-label {
   flex: none;
-  color: #8c8c8c;
+  color: var(--color-muted);
   margin-right: 8px;
 }
 
@@ -269,7 +269,7 @@ $line: #e9e9e9;
   min-width: 0;
   height: 6px;
   border-radius: 3px;
-  background: #f5f5f5;
+  background: var(--color-paper-3);
   margin-right: 8px;
   overflow: hidden;
 }
@@ -285,7 +285,7 @@ $line: #e9e9e9;
 
 .sheet__progress-count {
   flex: none;
-  color: #595959;
+  color: var(--color-ink-2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -299,7 +299,7 @@ $line: #e9e9e9;
   font-size: 18px;
   line-height: 26px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .sheet__legend {
@@ -327,8 +327,8 @@ $line: #e9e9e9;
   box-sizing: border-box;
 
   &--todo {
-    background: #fff;
-    border: 1px solid #d9d9d9;
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule-2);
   }
 
   &--done {
@@ -336,7 +336,7 @@ $line: #e9e9e9;
   }
 
   &--current {
-    background: #fff;
+    background: var(--color-paper);
     border: 1px solid $primary;
   }
 
@@ -351,7 +351,7 @@ $line: #e9e9e9;
 .sheet__legend-text {
   font-size: 12px;
   line-height: 20px;
-  color: #262626;
+  color: var(--color-ink);
   white-space: nowrap;
 }
 
@@ -380,7 +380,7 @@ $line: #e9e9e9;
   margin-bottom: 16px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -412,10 +412,10 @@ $line: #e9e9e9;
   height: 24px;
   padding: 0;
   box-sizing: border-box;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 12px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -440,7 +440,7 @@ $line: #e9e9e9;
   &.is-done {
     background: $primary;
     border-color: $primary;
-    color: #fff;
+    color: var(--color-accent-ink);
   }
 
   /* 当前：蓝描边（已做态也要能看出是当前题，所以描边用内阴影而不是换边框色） */
@@ -449,8 +449,8 @@ $line: #e9e9e9;
     color: $primary;
 
     &.is-done {
-      color: #fff;
-      box-shadow: inset 0 0 0 1px #fff;
+      color: var(--color-accent-ink);
+      box-shadow: inset 0 0 0 1px var(--color-accent-ink);
     }
   }
 }
@@ -482,10 +482,10 @@ $line: #e9e9e9;
   /* 用原平台实测色覆盖 Element Plus 的全局 #1890ff，保证与答题卡其他蓝色元素同色 */
   --el-button-bg-color: #{$primary};
   --el-button-border-color: #{$primary};
-  --el-button-hover-bg-color: #5f81ff;
-  --el-button-hover-border-color: #5f81ff;
-  --el-button-active-bg-color: #3558e6;
-  --el-button-active-border-color: #3558e6;
+  --el-button-hover-bg-color: color-mix(in oklab, var(--color-accent) 82%, white);
+  --el-button-hover-border-color: color-mix(in oklab, var(--color-accent) 82%, white);
+  --el-button-active-bg-color: var(--color-accent-deep);
+  --el-button-active-border-color: var(--color-accent-deep);
 }
 
 @media (max-width: 1180px) {

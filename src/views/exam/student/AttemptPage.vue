@@ -898,15 +898,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-/* 尺寸全部为原平台截图实测值（比例已用 ph16=16px 与 282px 卡宽双重校验） */
-$primary: #436bff;
-$danger: #f5222d;
-$text: #262626;
-$text-sub: #8c8c8c;
+/* 尺寸全部为原平台截图实测值（比例已用 ph16=16px 与 282px 卡宽双重校验）；颜色 2026-11-14 改走 Cobalt token */
 
 .attempt-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   padding-bottom: 40px;
 }
 
@@ -915,8 +911,8 @@ $text-sub: #8c8c8c;
   align-items: center;
   height: 44px;
   padding: 0 16px;
-  background: #fff;
-  border-bottom: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .attempt-top__exit {
@@ -926,17 +922,17 @@ $text-sub: #8c8c8c;
   padding: 0;
   border: 0;
   background: transparent;
-  color: #595959;
+  color: var(--color-ink-2);
   font-size: 14px;
   line-height: 20px;
   cursor: pointer;
 
   &:hover {
-    color: $primary;
+    color: var(--color-accent-deep);
   }
 
   &:focus-visible {
-    outline: 2px solid $primary;
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -963,7 +959,7 @@ $text-sub: #8c8c8c;
 
 .exam-info {
   padding: 20px 24px;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 4px;
   text-align: center;
 }
@@ -973,7 +969,8 @@ $text-sub: #8c8c8c;
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: $text;
+  font-family: var(--font-display);
+  color: var(--color-ink);
 }
 
 .exam-info__row {
@@ -987,7 +984,7 @@ $text-sub: #8c8c8c;
 }
 
 .exam-info__lbl {
-  color: $text-sub;
+  color: var(--color-muted);
   margin-right: 8px;
 
   /* 组间要拉开：原平台同一行里「考生 管理员（admin）  工号 --  部门 X」 */
@@ -997,11 +994,11 @@ $text-sub: #8c8c8c;
 }
 
 .exam-info__val {
-  color: $text;
+  color: var(--color-ink);
 }
 
 .exam-info__paren {
-  color: $text;
+  color: var(--color-ink);
 }
 
 .attempt-submitted-tip {
@@ -1028,7 +1025,7 @@ $text-sub: #8c8c8c;
 
 .exam-card {
   padding: 16px 24px 24px;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 4px;
 }
 
@@ -1042,16 +1039,16 @@ $text-sub: #8c8c8c;
   gap: 4px;
   margin: 0 0 0;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
   font-size: 14px;
   font-weight: 500;
-  color: $text;
+  color: var(--color-ink);
 }
 
 .sec-head__meta {
   font-size: 12px;
   font-weight: 400;
-  color: $text-sub;
+  color: var(--color-muted);
 }
 
 .sec-body {
@@ -1076,12 +1073,13 @@ $text-sub: #8c8c8c;
   gap: 4px;
   font-size: 14px;
   line-height: 22px;
-  color: $text;
+  color: var(--color-ink);
 }
 
 .q__index {
   flex: 0 0 auto;
   min-width: 20px;
+  font-variant-numeric: tabular-nums;
 }
 
 .q__stem {
@@ -1092,7 +1090,8 @@ $text-sub: #8c8c8c;
 
 .q__score {
   flex: 0 0 auto;
-  color: $text-sub;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 标记按钮：原平台题号行右端是灰色旗形图标（实测 1198..1211 / 14px 见方） */
@@ -1107,31 +1106,31 @@ $text-sub: #8c8c8c;
   padding: 0;
   border: 0;
   background: transparent;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
   cursor: pointer;
-  transition: color 0.15s;
+  transition: color var(--dur-micro) var(--ease-out);
 
   &:hover {
-    color: $danger;
+    color: var(--color-error);
   }
 
   &:focus-visible {
-    outline: 2px solid $primary;
+    outline: 2px solid var(--color-focus);
     outline-offset: 1px;
     border-radius: 2px;
   }
 
   &.is-on {
-    color: $danger;
+    color: var(--color-error);
   }
 
   /* 已交卷：标记不再可点，视觉上也要退掉，否则学员会以为是按钮坏了 */
   &:disabled {
-    color: #d9d9d9;
+    color: var(--color-rule-2);
     cursor: not-allowed;
 
     &.is-on {
-      color: #ffa39e;
+      color: color-mix(in oklab, var(--color-error) 45%, var(--color-paper));
     }
   }
 }
@@ -1142,11 +1141,11 @@ $text-sub: #8c8c8c;
   line-height: 22px;
 
   &.is-saving {
-    color: $text-sub;
+    color: var(--color-muted);
   }
 
   &.is-error {
-    color: $danger;
+    color: var(--color-error);
   }
 }
 
@@ -1154,7 +1153,7 @@ $text-sub: #8c8c8c;
   padding-top: 16px;
   font-size: 14px;
   line-height: 22px;
-  color: $text;
+  color: var(--color-ink);
   word-break: break-word;
 }
 
@@ -1162,7 +1161,7 @@ $text-sub: #8c8c8c;
   padding-top: 16px;
   font-size: 14px;
   line-height: 22px;
-  color: $text;
+  color: var(--color-ink);
 }
 
 /* 单题分页底部按钮条：居中，与契约「底部居中上一题/下一题」一致 */
@@ -1172,7 +1171,7 @@ $text-sub: #8c8c8c;
   gap: 16px;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #e9e9e9;
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 @media (max-width: 1180px) {

@@ -40,7 +40,7 @@
               @click="onLike(msg)"
               @keydown.enter.prevent="onLike(msg)"
             >
-              👍 <span class="action-text">{{ msg.likeCount }}</span>
+              <el-icon aria-hidden="true"><Pointer /></el-icon> <span class="action-text">{{ msg.likeCount }}</span>
             </span>
           </div>
           <!-- 改进建议展开区 -->
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { MagicStick } from '@element-plus/icons-vue'
+import { MagicStick, Pointer } from '@element-plus/icons-vue'
 import { computed, reactive, ref } from 'vue'
 import { likeMessage } from '@/api/student'
 import { trainerFace } from './trainerFace'
@@ -146,14 +146,14 @@ const onLike = async (msg: SessionMessage) => {
 }
 
 .trainer-avatar {
-  background: #ece9fb;
+  background: var(--color-accent-wash);
   object-fit: cover;
   overflow: hidden;
 }
 
 .student-avatar {
-  background: #2ec5b6;
-  color: #fff;
+  background: var(--color-accent-2);
+  color: var(--color-paper);
 }
 
 .bubble {
@@ -167,14 +167,14 @@ const onLike = async (msg: SessionMessage) => {
 }
 
 .trainer-bubble {
-  background: #efeafc;
-  color: #3a3552;
+  background: var(--color-accent-wash);
+  color: var(--color-ink);
   border-top-left-radius: 4px;
 }
 
 .student-bubble {
-  background: #f1f2f5;
-  color: #333;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
   border-top-right-radius: 4px;
 }
 
@@ -196,20 +196,20 @@ const onLike = async (msg: SessionMessage) => {
     gap: 4px;
     font-size: 12px;
     cursor: pointer;
-    color: #888;
+    color: var(--color-muted);
     user-select: none;
 
     // 可点操作项已转为按钮语义，补键盘焦点环
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
 
     .action-text {
-      color: #2e7cf6;
+      color: var(--color-accent);
 
       &.action-disabled {
-        color: #b8bfcc;
+        color: var(--color-muted);
         cursor: default;
       }
     }
@@ -219,10 +219,10 @@ const onLike = async (msg: SessionMessage) => {
     }
 
     &.like {
-      color: #666;
+      color: var(--color-muted);
 
       .action-text {
-        color: #666;
+        color: var(--color-muted);
       }
 
       &.liked {
@@ -240,12 +240,12 @@ const onLike = async (msg: SessionMessage) => {
 
 .suggestion-box {
   margin-top: 8px;
-  background: #f7f9ff;
-  border: 1px solid #e3eaff;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 13px;
-  color: #555;
+  color: var(--color-ink-2);
   line-height: 1.7;
   text-align: left;
   width: 100%;
@@ -254,7 +254,7 @@ const onLike = async (msg: SessionMessage) => {
 
 .empty-hint {
   text-align: center;
-  color: #999;
+  color: var(--color-muted);
   font-size: 14px;
   padding: 30px 0;
 }
@@ -263,7 +263,7 @@ const onLike = async (msg: SessionMessage) => {
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: #b0b0b0;
+  color: var(--color-muted);
   padding: 2px 12px;
   line-height: 1.6;
 }

@@ -147,20 +147,20 @@ watch(
   justify-content: space-between;
   gap: 16px;
   padding: 18px 22px 14px;
-  border-bottom: 1px solid #e9edf4;
+  border-bottom: 1px solid var(--color-rule);
 
   .header-title {
     min-width: 0;
 
     h3 {
       margin: 0;
-      color: #1f2937;
+      color: var(--color-ink);
       font-size: 16px;
     }
 
     p {
       margin: 5px 0 0;
-      color: #8a92a5;
+      color: var(--color-muted);
       font-size: 12px;
       white-space: nowrap;
     }
@@ -179,7 +179,7 @@ watch(
 }
 
 .dimension-label {
-  color: #596274;
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -187,7 +187,7 @@ watch(
   display: flex;
   gap: 10px;
   padding: 14px 18px;
-  border-bottom: 1px solid #e9edf4;
+  border-bottom: 1px solid var(--color-rule);
   :deep(.el-input) {
     flex: 1;
     min-width: 0;
@@ -211,7 +211,7 @@ watch(
   align-items: center;
   justify-content: center;
   min-height: 260px;
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -229,13 +229,13 @@ watch(
     gap: 12px;
     min-height: 68px;
     padding: 12px 14px;
-    border: 1px solid #edf0f5;
+    border: 1px solid var(--color-paper-2);
     border-radius: 9px;
-    background: #fff;
+    background: var(--color-paper);
 
     &.me {
-      border-color: #8eb5ff;
-      background: #f5f9ff;
+      border-color: var(--color-accent-2);
+      background: var(--color-paper-2);
     }
   }
 }
@@ -243,21 +243,21 @@ watch(
 .rank-index {
   width: 32px;
   flex-shrink: 0;
-  color: #7a8396;
+  color: var(--color-ink-2);
   font-size: 20px;
   font-weight: 700;
   text-align: center;
 
   &.top-1 {
-    color: #d99a00;
+    color: var(--color-warning);
   }
 
   &.top-2 {
-    color: #7f8c9f;
+    color: var(--color-muted);
   }
 
   &.top-3 {
-    color: #b66a2c;
+    color: var(--color-warning);
   }
 }
 
@@ -269,8 +269,8 @@ watch(
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4a7dff, #6f62dc);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent));
+  color: var(--color-paper);
   font-size: 15px;
   font-weight: 600;
 }
@@ -282,7 +282,7 @@ watch(
   p {
     margin: 5px 0 0;
     overflow: hidden;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -297,7 +297,7 @@ watch(
   strong {
     min-width: 0;
     overflow: hidden;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 14px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -306,14 +306,14 @@ watch(
 
 .me-tag {
   flex-shrink: 0;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 12px;
   font-weight: 600;
 }
 
 .score {
   flex-shrink: 0;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 28px;
 }
 

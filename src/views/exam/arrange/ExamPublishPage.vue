@@ -48,9 +48,9 @@ onMounted(() => {
 .publish-page { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 12px 16px 0; overflow-y: auto; }
 .publish-header {
   display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-  .back-btn { width: 28px; height: 28px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 18px; color: #4a5368; cursor: pointer; }
-  h1 { margin: 0; font-size: 16px; font-weight: 600; color: #1f2937; }
-  .status-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+  .back-btn { width: 28px; height: 28px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); font-size: 18px; color: var(--color-ink-2); cursor: pointer; }
+  h1 { margin: 0; font-size: 16px; font-weight: 600; color: var(--color-ink); }
+  .status-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-success) 40%, var(--color-paper)); color: var(--color-success); }
 }
-.empty-cell { text-align: center; color: #999; padding: 60px 0; }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 60px 0; }
 </style>

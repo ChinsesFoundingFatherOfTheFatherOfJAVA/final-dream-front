@@ -18,7 +18,7 @@
             height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#436bff"
+            stroke="var(--color-accent)"
             stroke-width="2"
           >
             <circle cx="12" cy="12" r="9" />
@@ -55,7 +55,7 @@
             height="16"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#436bff"
+            stroke="var(--color-accent)"
             stroke-width="2.4"
             aria-hidden="true"
           >
@@ -256,12 +256,12 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #f0f4ff;
+    background: var(--color-accent-wash);
   }
 
   &__title {
     margin-top: 14px;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 18px;
     font-weight: 700;
     line-height: 26px;
@@ -269,7 +269,7 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
 
   &__sub {
     margin-top: 6px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 20px;
   }
@@ -288,9 +288,9 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
   position: relative;
   width: 100%;
   padding: 14px 16px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-paper);
   cursor: pointer;
   box-sizing: border-box;
   transition:
@@ -298,19 +298,19 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
     background-color 0.2s ease;
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   // 未选中时保持白底：原平台只有选中的考核卡带浅暖底，未被选中的训练卡为白底
   &.is-active.is-training {
-    border-color: #436bff;
-    background: #ffffff;
+    border-color: var(--color-accent);
+    background: var(--color-paper);
   }
 
   &.is-active.is-exam {
-    border-color: #fa8c16;
-    background: #fffaf2;
+    border-color: var(--color-warning);
+    background: color-mix(in oklab, var(--color-warning) 8%, var(--color-paper));
   }
 
   &.is-disabled {
@@ -325,7 +325,7 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
   }
 
   &__title {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
@@ -344,34 +344,34 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
     margin-top: 2px;
 
     &.is-ok {
-      color: #52c41a;
+      color: var(--color-success);
     }
 
     &.is-danger {
-      color: #f5222d;
+      color: var(--color-error);
     }
 
     &.is-warn {
-      color: #fa8c16;
+      color: var(--color-warning);
     }
   }
 
   &__label {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 13px;
     line-height: 20px;
   }
 
   &__desc {
     margin-top: 2px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
 
   &__reason {
     margin-top: 10px;
-    color: #fa8c16;
+    color: var(--color-warning);
     font-size: 12px;
     line-height: 20px;
   }
@@ -379,7 +379,7 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
 
 .dm-mode-empty {
   margin: 0;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 13px;
   line-height: 20px;
   text-align: center;
@@ -402,15 +402,15 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
   font-weight: 500;
 
   &--training {
-    border-color: #436bff;
-    background: #436bff;
-    color: #ffffff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 
   &--exam {
-    border-color: #fa8c16;
-    background: #fa8c16;
-    color: #ffffff;
+    border-color: var(--color-warning);
+    background: var(--color-warning);
+    color: var(--color-paper);
   }
 }
 </style>
@@ -428,7 +428,7 @@ function select(option: { mode: StudyMode; enabled: boolean }) {
   margin: calc((100vh - 571px) / 2) auto 0;
   padding: 0;
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   .el-dialog__header {
     display: flex;

@@ -292,7 +292,7 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-$brand: #436bff;
+/* 2026-11-14 Hallmark Cobalt 重构：#436bff 系弃用，颜色统一走 token 层 */
 
 .paper-page {
   max-width: 1320px;
@@ -321,7 +321,7 @@ $brand: #436bff;
   padding: 0;
   border: 0;
   background: transparent;
-  color: #262626;
+  color: var(--color-ink);
   font-size: 14px;
 
   span[aria-hidden='true'] {
@@ -330,7 +330,7 @@ $brand: #436bff;
   }
 
   &:hover {
-    color: $brand;
+    color: var(--color-accent-deep);
   }
 }
 
@@ -351,8 +351,8 @@ $brand: #436bff;
 
 .info-card {
   padding: 20px 24px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .info-top {
@@ -369,7 +369,7 @@ $brand: #436bff;
   font-size: 18px;
   line-height: 26px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
   word-break: break-word;
 }
 
@@ -380,17 +380,18 @@ $brand: #436bff;
   margin-top: 6px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .info-item {
   display: inline-flex;
   align-items: baseline;
   gap: 8px;
+  font-variant-numeric: tabular-nums;
 
   em {
     font-style: normal;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -405,8 +406,8 @@ $brand: #436bff;
 
 .card {
   padding: 16px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .score-line,
@@ -424,20 +425,21 @@ $brand: #436bff;
 .score-label {
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 /* 「通过分数」标签与值都比「考试成绩」淡一档 */
 .pass-line .score-label,
 .pass-value {
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
-/* 右栏成绩：24px / #F5222D（§9.6，别和结果页四格的 #262626 32px 混用） */
+/* 右栏成绩：24px / error token（§9.6 层级口径保留，色走 token） */
 .score-value {
   font-size: 24px;
   line-height: 32px;
-  color: #f5222d;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-error);
 }
 
 .pass-value {
@@ -448,7 +450,7 @@ $brand: #436bff;
 .divider {
   height: 1px;
   margin: 16px 0;
-  background: #f0f0f0;
+  background: var(--color-paper-3);
 }
 
 .filter-list {
@@ -466,7 +468,7 @@ $brand: #436bff;
 
   :deep(.el-checkbox__label) {
     font-size: 14px;
-    color: #262626;
+    color: var(--color-ink);
   }
 }
 
@@ -476,7 +478,7 @@ $brand: #436bff;
   font-size: 18px;
   line-height: 26px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 /* 图例：色块 14×14、圆角 2px、右侧小字 12px（§6 实测） */
@@ -492,25 +494,26 @@ $brand: #436bff;
   gap: 6px;
   font-size: 12px;
   line-height: 20px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
+/* 图例色块走功能色 token */
 .legend-box {
   width: 14px;
   height: 14px;
   border-radius: 2px;
 
   &--blank {
-    border: 1px solid #d9d9d9;
-    background: #fff;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
   }
 
   &--right {
-    background: #d7f7c1;
+    background: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
   }
 
   &--wrong {
-    background: #fef2f0;
+    background: color-mix(in oklab, var(--color-error) 14%, var(--color-paper));
   }
 }
 
@@ -522,7 +525,7 @@ $brand: #436bff;
   margin: 0 0 8px;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .sheet-group__items {
@@ -531,40 +534,42 @@ $brand: #436bff;
   gap: 8px;
 }
 
-/* 题号块：原平台是 28×28 左右的小方块，按三种状态上色 */
+/* 题号块：原平台是 28×28 左右的小方块，按三种状态上色；机器值 mono */
 .sheet-no {
   min-width: 28px;
   height: 28px;
   padding: 0 6px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 2px;
-  background: #fff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 1;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 
   &:hover {
-    border-color: $brand;
-    color: $brand;
+    border-color: var(--color-accent);
+    color: var(--color-accent-deep);
   }
 
   &:focus-visible {
-    outline: 2px solid $brand;
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 
   &.is-right {
-    border-color: #d7f7c1;
-    background: #d7f7c1;
-    color: #389e0d;
+    border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
+    background: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
+    color: var(--color-success);
   }
 
   &.is-wrong {
-    border-color: #fef2f0;
-    background: #fef2f0;
-    color: #f5222d;
+    border-color: color-mix(in oklab, var(--color-error) 16%, var(--color-paper));
+    background: color-mix(in oklab, var(--color-error) 14%, var(--color-paper));
+    color: var(--color-error);
   }
 }
 

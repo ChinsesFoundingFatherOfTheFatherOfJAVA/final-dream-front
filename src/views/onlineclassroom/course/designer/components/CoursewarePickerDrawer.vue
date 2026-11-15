@@ -62,7 +62,7 @@
           <el-table-column label="名称" min-width="280">
             <template #default="{ row }">
               <div class="title-cell">
-                <span class="type-icon" :style="{ background: typeColor(row.type) }" aria-hidden="true">{{ typeGlyph(row.type) }}</span>
+                <span class="type-icon" :style="{ background: typeColor(row.type) }" aria-hidden="true"><el-icon><component :is="typeGlyph(row.type)" /></el-icon></span>
                 <span class="title-text" :title="row.title">{{ row.title }}</span>
               </div>
             </template>
@@ -104,7 +104,9 @@
 </template>
 
 <script setup lang="ts">
-import { Search } from '@element-plus/icons-vue'
+import { Box, Collection, Document, Headset, Link, MagicStick, Monitor, Search, UploadFilled, VideoPlay } from '@element-plus/icons-vue'
+import { markRaw } from 'vue'
+import type { Component } from 'vue'
 import { computed, reactive, ref, watch } from 'vue'
 import KngDrawer from '../../../components/KngDrawer.vue'
 import PaginationBar from '../../../courseware/components/PaginationBar.vue'
@@ -193,9 +195,20 @@ function snapshotOf(id: string) {
   return snapshotCache.get(id)
 }
 
+// t21：类型 → EP 图标组件映射（glyph 字段已废弃）
+const TYPE_ICONS: Record<number, Component> = {
+  1: markRaw(Document),
+  2: markRaw(VideoPlay),
+  3: markRaw(Headset),
+  4: markRaw(Box),
+  6: markRaw(Collection),
+  7: markRaw(Monitor),
+  8: markRaw(Link),
+  0: markRaw(UploadFilled),
+  5: markRaw(MagicStick)
+}
 function typeGlyph(type: number) {
-  const found = TASK_TYPE_ITEMS.find(item => item.type === type)
-  return found ? found.glyph : 'P'
+  return TYPE_ICONS[type] ?? Document
 }
 
 function typeColor(type: number) {
@@ -370,7 +383,7 @@ watch(
 .filter-select {
   max-width: 190px;
   border-radius: 6px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-select__wrapper) {
@@ -396,16 +409,16 @@ watch(
 .search-btn {
   height: 34px;
   padding: 0 14px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -420,20 +433,20 @@ watch(
 
   :deep(.el-table__header th) {
     height: 44px;
-    background: #f8fafc;
-    color: #667085;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 13px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 44px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
   :deep(.checked-row) {
-    background: #f2f7ff;
+    background: var(--color-accent-wash);
   }
 }
 
@@ -451,7 +464,7 @@ watch(
   display: grid;
   place-items: center;
   border-radius: 6px;
-  color: #fff;
+  color: var(--color-accent-ink);
   font-size: 11px;
   font-weight: 700;
 }
@@ -459,7 +472,7 @@ watch(
 .title-text {
   min-width: 0;
   overflow: hidden;
-  color: #253047;
+  color: var(--color-ink);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -474,16 +487,16 @@ watch(
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #98a1b2;
+    background: var(--color-muted);
   }
 }
 
 .status-2 i {
-  background: #35b56a;
+  background: var(--color-success);
 }
 
 .status-1 i {
-  background: #f0a13b;
+  background: var(--color-warning);
 }
 
 .picker-footer {
@@ -501,19 +514,19 @@ watch(
 }
 
 .selected-count {
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
 }
 
 .text-btn {
   border: none;
   background: transparent;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:hover {
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 }
 
@@ -525,21 +538,21 @@ watch(
 .btn {
   height: 34px;
   padding: 0 18px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 
     &:disabled {
-      border-color: #d9deea;
-      background: #f5f6f8;
-      color: #b3bac7;
+      border-color: var(--color-rule-2);
+      background: var(--color-paper-3);
+      color: var(--color-rule-2);
       cursor: not-allowed;
     }
   }

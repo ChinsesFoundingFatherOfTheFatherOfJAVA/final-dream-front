@@ -610,25 +610,25 @@ onMounted(load)
 
   &__add {
     width: 112px;
-    border-color: #436bff;
-    background: #436bff;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 
-    &:hover { border-color: #3358e0; background: #3358e0; }
+      &:hover { border-color: var(--color-accent-deep); background: var(--color-accent-deep); }
   }
 
   /* 后置功能：明确灰态，不是随机配色 */
   &__urge {
     width: 166px;
-    background: #f5f5f5;
-    color: #8c8c8c;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
   }
 
   &__export {
     width: 127px;
-    border-color: #d9d9d9;
-    background: #fff;
-    color: #bfbfbf;
+    border-color: var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-muted);
   }
 
   &__filters {
@@ -648,18 +648,18 @@ onMounted(load)
       width: 100%;
       height: 32px;
       padding: 4px 12px 4px 32px;
-      border: 1px solid #d9d9d9;
+      border: 1px solid var(--color-rule-2);
       border-radius: 4px;
-      background: #fff;
+      background: var(--color-paper);
       box-sizing: border-box;
       font-family: inherit;
       font-size: 14px;
       line-height: 22px;
-      color: #262626;
+      color: var(--color-ink);
       outline: none;
 
-      &::placeholder { color: #bfbfbf; }
-      &:focus { border-color: #436bff; }
+      &::placeholder { color: var(--color-muted); }
+      &:focus { border-color: var(--color-accent); }
     }
   }
 
@@ -669,7 +669,7 @@ onMounted(load)
     left: 11px;
     display: flex;
     align-items: center;
-    color: #bfbfbf;
+    color: var(--color-muted);
     pointer-events: none;
   }
 
@@ -682,13 +682,13 @@ onMounted(load)
       min-height: 32px;
       height: 32px;
       border-radius: 4px;
-      box-shadow: 0 0 0 1px #d9d9d9 inset;
+      box-shadow: 0 0 0 1px var(--color-rule-2) inset;
       font-size: 14px;
     }
 
     :deep(.el-select__placeholder) {
       font-size: 14px;
-      color: #595959;
+      color: var(--color-ink-2);
     }
   }
 
@@ -696,19 +696,19 @@ onMounted(load)
   &__filter-btn {
     height: 32px;
     padding: 4px 12px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
-    background: #fff;
+    background: var(--color-paper);
     box-sizing: border-box;
     font-family: inherit;
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-ink-2);
     cursor: pointer;
     white-space: nowrap;
 
-    &:hover { border-color: #436bff; color: #436bff; }
-    &.is-active { border-color: #436bff; color: #436bff; background: #f0f6ff; }
+      &:hover { border-color: var(--color-accent); color: var(--color-accent-deep); }
+      &.is-active { border-color: var(--color-accent); color: var(--color-accent-deep); background: var(--color-accent-wash); }
   }
 
   /* 批量操作条：选中后才出现，避免默认态挤占工具栏的单行 32 高标准 */
@@ -719,12 +719,12 @@ onMounted(load)
     height: 40px;
     margin-top: 12px;
     padding: 0 12px;
-    border: 1px solid #bdd2ff;
+    border: 1px solid color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
     border-radius: 8px;
-    background: #f0f6ff;
+    background: var(--color-accent-wash);
     box-sizing: border-box;
     font-size: 13px;
-    color: #2e4dd9;
+    color: var(--color-accent-deep);
   }
 
   &__bulk-count {
@@ -735,17 +735,17 @@ onMounted(load)
   &__bulk-btn {
     height: 28px;
     padding: 0 12px;
-    border: 1px solid #fca5a5;
+    border: 1px solid color-mix(in oklab, var(--color-error) 30%, var(--color-paper));
     border-radius: 4px;
-    background: #fff;
+    background: var(--color-paper);
     font-family: inherit;
     font-size: 13px;
     line-height: 20px;
-    color: #dc2626;
+    color: var(--color-error);
     cursor: pointer;
 
-    &:hover:not(:disabled) { border-color: #ef4444; }
-    &:disabled { border-color: #d9d9d9; color: #bfbfbf; cursor: not-allowed; }
+      &:hover:not(:disabled) { border-color: var(--color-error); }
+      &:disabled { border-color: var(--color-rule-2); color: var(--color-muted); cursor: not-allowed; }
   }
 
   &__bulk-clear {
@@ -754,7 +754,7 @@ onMounted(load)
     padding: 0;
     font-family: inherit;
     font-size: 13px;
-    color: #2e4dd9;
+    color: var(--color-accent-deep);
     cursor: pointer;
   }
 
@@ -771,24 +771,24 @@ onMounted(load)
     justify-content: space-between;
     height: 54px;
     padding: 12px;
-    border: 1px solid #e9e9e9;
+    border: 1px solid var(--color-rule);
     border-radius: 8px;
-    background: #fff;
+    background: var(--color-paper);
     box-sizing: border-box;
   }
 
   &__source-count {
     font-size: 14px;
     font-weight: 500;
-    color: #262626;
+    color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
 
   &__table {
     margin-top: 16px;
-    border: 1px solid #e9e9e9;
+    border: 1px solid var(--color-rule);
     border-radius: 12px;
-    background: #fff;
+    background: var(--color-paper);
     overflow: hidden;
 
     table {
@@ -800,12 +800,12 @@ onMounted(load)
     th {
       height: 50px;
       padding: 14px 16px 13px;
-      border-bottom: 1px solid #e9e9e9;
-      background: #f9fafb;
+      border-bottom: 1px solid var(--color-rule);
+      background: var(--color-paper-2);
       font-size: 14px;
       font-weight: 700;
       line-height: 22px;
-      color: #262626;
+      color: var(--color-ink);
       text-align: left;
       white-space: nowrap;
     }
@@ -813,14 +813,14 @@ onMounted(load)
     td {
       height: 72px;
       padding: 14px 16px 13px;
-      border-bottom: 1px solid #e9e9e9;
+      border-bottom: 1px solid var(--color-rule);
       font-size: 14px;
       line-height: 22px;
-      color: #262626;
+      color: var(--color-ink);
       text-align: left;
     }
 
-    tbody tr:hover { background: #fafafa; }
+    tbody tr:hover { background: var(--color-paper-2); }
 
     .is-right { text-align: right; }
 
@@ -846,7 +846,7 @@ onMounted(load)
   &__account {
     margin-left: 8px;
     font-size: 12px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__badge {
@@ -854,18 +854,18 @@ onMounted(load)
     align-items: center;
     height: 22px;
     padding: 2px 8px;
-    border: 1px solid #bdd2ff;
+    border: 1px solid color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
     border-radius: 4px;
-    background: #f0f6ff;
+    background: var(--color-accent-wash);
     font-size: 12px;
     font-weight: 500;
     line-height: 16px;
-    color: #2e4dd9;
+    color: var(--color-accent-deep);
     white-space: nowrap;
 
-    &.is-public { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
-    &.is-running { border-color: #fde68a; background: #fffbeb; color: #b45309; }
-    &.is-idle { border-color: #e5e6eb; background: #f7f8fa; color: #8c8c8c; }
+      &.is-public { border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-paper)); background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper)); color: var(--color-success); }
+      &.is-running { border-color: color-mix(in oklab, var(--color-warning) 30%, var(--color-paper)); background: color-mix(in oklab, var(--color-warning) 10%, var(--color-paper)); color: var(--color-warning); }
+      &.is-idle { border-color: var(--color-rule); background: var(--color-paper-2); color: var(--color-muted); }
   }
 
   &__link {
@@ -874,11 +874,11 @@ onMounted(load)
     padding: 0;
     font-family: inherit;
     font-size: 14px;
-    color: #436bff;
+    color: var(--color-accent-deep);
     cursor: pointer;
 
     & + & { margin-left: 12px; }
-    &.is-danger { color: #f5222d; }
+      &.is-danger { color: var(--color-error); }
   }
 
   &__empty {
@@ -886,7 +886,7 @@ onMounted(load)
     padding: 48px 0;
     text-align: center;
     font-size: 14px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__pager {
@@ -896,14 +896,14 @@ onMounted(load)
     height: 60px;
     padding: 16px;
     font-size: 14px;
-    color: #595959;
+    color: var(--color-ink-2);
   }
 
   &__filter-note {
     margin: 0;
     font-size: 12px;
     line-height: 16px;
-    color: #b45309;
+    color: var(--color-warning);
     text-align: right;
   }
 
@@ -911,14 +911,14 @@ onMounted(load)
     margin: 0;
     font-size: 12px;
     line-height: 16px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     text-align: right;
   }
 
   &__hint {
     font-size: 12px;
     line-height: 1.5;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -928,13 +928,13 @@ onMounted(load)
   align-items: center;
   height: 22px;
   padding: 2px 8px;
-  border: 1px solid #bdd2ff;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
   border-radius: 4px;
-  background: #f0f6ff;
+  background: var(--color-accent-wash);
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
-  color: #2e4dd9;
+  color: var(--color-accent-deep);
   white-space: nowrap;
 }
 

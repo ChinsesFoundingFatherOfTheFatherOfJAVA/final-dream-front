@@ -216,36 +216,36 @@ const doExport = async () => {
 
 <style scoped lang="scss">
 .list-card { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 0 0 12px; }
-.filter-row { display: flex; gap: 8px; align-items: center; input { flex: 1; min-width: 150px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; } .export-btn { margin-left: auto; } }
+.filter-row { display: flex; gap: 8px; align-items: center; input { flex: 1; min-width: 150px; border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; } .export-btn { margin-left: auto; } }
 .filter-select { font-size: 12px; }
 .table-wrap { flex: 1; min-height: 0; overflow: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f2f4f8; }
-th { background: #fafbfd; color: #667; font-weight: 500; white-space: nowrap; }
-tr:hover td { background: #fafbfe; }
+th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--color-paper-2); }
+th { background: var(--color-paper-2); color: var(--color-muted); font-weight: 500; white-space: nowrap; }
+tr:hover td { background: var(--color-accent-wash); }
 .col-name { max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .col-sm { min-width: 78px; white-space: nowrap; }
 .col-point { min-width: 110px; }
 .col-op { min-width: 130px; white-space: nowrap; }
-.op-link { color: #1890ff; cursor: pointer; margin-right: 10px; &:hover { text-decoration: underline; } }
-.empty-cell { text-align: center; color: #999; padding: 44px 0; }
-.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
-.drawer { width: 640px; height: 100%; background: #fff; display: flex; flex-direction: column; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
+.op-link { color: var(--color-accent); cursor: pointer; margin-right: 10px; &:hover { text-decoration: underline; } }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 44px 0; }
+.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--color-muted); button { padding: 4px 10px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); cursor: pointer; &:disabled { opacity: .5; } } }
+.drawer { width: 640px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; font-size: 13px; }
-.q-meta { margin: 0 0 14px; color: #8a92a5; font-size: 12px; }
-.q-label { margin: 14px 0 6px; color: #4a5368; font-weight: 500; }
-.q-content { padding: 10px 12px; background: #fafbfd; border-radius: 6px; line-height: 1.8; }
-.q-options { margin: 0; padding: 0; list-style: none; li { padding: 6px 0; &.correct { color: #52c41a; font-weight: 600; } } }
-.q-label-row { margin: 10px 0 0; line-height: 1.8; b { color: #4a5368; } }
-.q-updated { margin: 16px 0 0; font-size: 12px; color: #b0b7c3; }
+.q-meta { margin: 0 0 14px; color: var(--color-muted); font-size: 12px; }
+.q-label { margin: 14px 0 6px; color: var(--color-ink-2); font-weight: 500; }
+.q-content { padding: 10px 12px; background: var(--color-paper-2); border-radius: 6px; line-height: 1.8; }
+.q-options { margin: 0; padding: 0; list-style: none; li { padding: 6px 0; &.correct { color: var(--color-success); font-weight: 600; } } }
+.q-label-row { margin: 10px 0 0; line-height: 1.8; b { color: var(--color-ink-2); } }
+.q-updated { margin: 16px 0 0; font-size: 12px; color: var(--color-rule-2); }
 .opt-stat { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
-.opt-key { width: 18px; color: #4a5368; }
+.opt-key { width: 18px; color: var(--color-ink-2); }
 .opt-text { flex: 0 0 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.opt-bar { flex: 1; height: 8px; background: #f0f2f5; border-radius: 4px; overflow: hidden; i { display: block; height: 100%; background: #1890ff; } }
-.opt-num { min-width: 120px; color: #8a92a5; font-size: 12px; }
-.opt-correct { color: #52c41a; font-size: 12px; }
-.btn { padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } }
+.opt-bar { flex: 1; height: 8px; background: var(--color-paper-2); border-radius: 4px; overflow: hidden; i { display: block; height: 100%; background: var(--color-accent); } }
+.opt-num { min-width: 120px; color: var(--color-muted); font-size: 12px; }
+.opt-correct { color: var(--color-success); font-size: 12px; }
+.btn { padding: 7px 16px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); font-size: 13px; cursor: pointer; &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); } }
 
 /* ===== 答题详情抽屉（2026-11-13，对齐原平台，台账 1a0f） ===== */
 
@@ -268,7 +268,7 @@ tr:hover td { background: #fafbfe; }
   margin-bottom: 18px;
   font-size: 14px;
   line-height: 1.7;
-  color: #1f2533;
+  color: var(--color-ink);
 }
 
 /* 选项行：radio 圆圈 + 文字/进度条两行 */
@@ -289,15 +289,15 @@ tr:hover td { background: #fafbfe; }
   width: 14px;
   height: 14px;
   margin-top: 3px;
-  border: 1px solid #c9ced9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .is-correct .ad-radio {
-  border-color: #1890ff;
-  background: #1890ff;
-  box-shadow: inset 0 0 0 3px #fff;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 3px var(--color-accent-ink);
 }
 
 .ad-opt-main { flex: 1; min-width: 0; }
@@ -306,7 +306,7 @@ tr:hover td { background: #fafbfe; }
   display: block;
   font-size: 13px;
   line-height: 1.6;
-  color: #1f2533;
+  color: var(--color-ink);
 }
 
 .ad-opt-bar-row {
@@ -319,24 +319,24 @@ tr:hover td { background: #fafbfe; }
 .ad-bar {
   flex: 1;
   height: 6px;
-  background: #f0f2f5;
+  background: var(--color-paper-2);
   border-radius: 3px;
   overflow: hidden;
 
   i {
     display: block;
     height: 100%;
-    background: #c9ced9;
+    background: var(--color-rule-2);
   }
 }
 
 /* 正确答案的进度条变蓝，与圆圈呼应 */
-.is-correct .ad-bar i { background: #1890ff; }
+.is-correct .ad-bar i { background: var(--color-accent); }
 
 .ad-opt-num {
   flex: 0 0 auto;
   font-size: 12px;
-  color: #8a92a5;
+  color: var(--color-muted);
 }
 
 /* 底部信息：蓝底小标签 + 值，两列对齐 */
@@ -351,8 +351,8 @@ tr:hover td { background: #fafbfe; }
     height: 22px;
     padding: 0 6px;
     border-radius: 2px;
-    background: #ecf0ff;
-    color: #436bff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-size: 12px;
     line-height: 22px;
     text-align: center;
@@ -361,7 +361,7 @@ tr:hover td { background: #fafbfe; }
   dd {
     margin: 0;
     line-height: 22px;
-    color: #1f2533;
+    color: var(--color-ink);
     word-break: break-word;
   }
 }
@@ -377,11 +377,11 @@ tr:hover td { background: #fafbfe; }
   border: 0;
   border-radius: 4px;
   background: transparent;
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  &:hover { background: #f0f2f5; color: #1f2533; }
+  &:hover { background: var(--color-paper-2); color: var(--color-ink); }
 }
 </style>
 

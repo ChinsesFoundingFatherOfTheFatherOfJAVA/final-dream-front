@@ -325,7 +325,7 @@
 
       <div class="drawer-footer">
         <span class="footer-tip">{{
-          materialText.length > 5000 ? '⚠ 粘贴文本超过 5000 字，建议精简' : ''
+  materialText.length > 5000 ? '粘贴文本超过 5000 字，建议精简' : ''
         }}</span>
         <el-button class="btn" @click="emit('close')">取消</el-button>
         <el-button class="btn primary" :disabled="!drafts.length || saving" @click="saveAll">
@@ -737,7 +737,7 @@ const saveAll = async () => {
   width: 1040px;
   max-width: 96vw;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   display: flex;
   flex-direction: column;
 }
@@ -747,16 +747,16 @@ const saveAll = async () => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-rule);
   font-size: 15px;
   font-weight: 600;
 
   .close-btn {
     font-size: 22px;
-    color: #999;
+    color: var(--color-muted);
     cursor: pointer;
     &:focus-visible {
-      outline: 2px solid #1890ff;
+      outline: 2px solid var(--color-accent);
       outline-offset: -2px;
       border-radius: 4px;
     }
@@ -774,16 +774,16 @@ const saveAll = async () => {
     border-radius: 4px;
     background: transparent;
     font-size: 14px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
     &:hover {
-      background: #f5f8ff;
+      background: var(--color-accent-wash);
     }
     &.active {
-      background: #eaf2ff;
-      border-color: #c7ddff;
-      color: #1890ff;
+      background: var(--color-accent-wash);
+      border-color: var(--color-rule-2);
+      color: var(--color-accent);
       font-weight: 600;
     }
   }
@@ -792,7 +792,7 @@ const saveAll = async () => {
 /* 规范说明块：照截图23 的灰色底 + 圆点列表 */
 .rule-block {
   padding: 10px 12px;
-  background: #f7f8fa;
+  background: var(--color-paper-2);
   border-radius: 4px;
 }
 
@@ -800,7 +800,7 @@ const saveAll = async () => {
   margin: 0 0 6px;
   font-size: 12px;
   font-weight: 600;
-  color: #4a5368;
+  color: var(--color-ink-2);
 }
 
 .rule-list {
@@ -812,7 +812,7 @@ const saveAll = async () => {
     margin: 0 0 3px;
     font-size: 12px;
     line-height: 1.7;
-    color: #667;
+    color: var(--color-muted);
   }
 }
 
@@ -822,7 +822,7 @@ const saveAll = async () => {
   background: transparent;
   padding: 0;
   font-size: 12px;
-  color: #1890ff;
+  color: var(--color-accent);
   cursor: pointer;
 }
 
@@ -830,7 +830,7 @@ const saveAll = async () => {
   margin: 12px 0 0;
   font-size: 12px;
   font-weight: 600;
-  color: #4a5368;
+  color: var(--color-ink-2);
 }
 
 .example-tabs {
@@ -838,7 +838,7 @@ const saveAll = async () => {
   flex-wrap: wrap;
   gap: 16px;
   margin: 8px 0 8px;
-  border-bottom: 1px solid #e6eaf1;
+  border-bottom: 1px solid var(--color-rule);
 
   .example-tab {
     padding: 4px 2px;
@@ -846,15 +846,15 @@ const saveAll = async () => {
     border-bottom: 2px solid transparent;
     background: transparent;
     font-size: 13px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
     &:hover {
-      color: #1890ff;
+      color: var(--color-accent);
     }
     &.active {
-      color: #1890ff;
-      border-bottom-color: #1890ff;
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
       font-weight: 600;
     }
   }
@@ -866,13 +866,13 @@ const saveAll = async () => {
   overflow-y: auto;
   margin: 0;
   padding: 8px 10px;
-  background: #fff;
-  border: 1px solid #eef1f6;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 4px;
   font-family: inherit;
   font-size: 12px;
   line-height: 1.9;
-  color: #4a5368;
+  color: var(--color-ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -885,35 +885,35 @@ const saveAll = async () => {
 
   .hint {
     font-size: 11px;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
   }
 
   .chip {
     padding: 3px 10px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 12px;
-    background: #fff;
+    background: var(--color-paper);
     font-size: 12px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
     &:hover {
-      border-color: #1890ff;
-      color: #1890ff;
+      border-color: var(--color-accent);
+      color: var(--color-accent);
     }
   }
 }
 
 .issue-box {
   padding: 8px 10px;
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
+  background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-error) 35%, var(--color-paper));
   border-radius: 6px;
 
   p {
     margin: 0 0 3px;
     font-size: 12px;
-    color: #cf1322;
+    color: var(--color-error);
     line-height: 1.6;
   }
 }
@@ -922,7 +922,7 @@ const saveAll = async () => {
   margin-left: 6px;
   border: none;
   background: transparent;
-  color: #1890ff;
+  color: var(--color-accent);
   font-size: 12px;
   cursor: pointer;
   &:hover {
@@ -948,7 +948,7 @@ const saveAll = async () => {
 
   textarea {
     width: 100%;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
     padding: 9px 10px;
     font-size: 13px;
@@ -957,25 +957,25 @@ const saveAll = async () => {
     outline: none;
 
     &:focus {
-      border-color: #1890ff;
+      border-color: var(--color-accent);
     }
   }
 
   .char-count {
     text-align: right;
     font-size: 11px;
-    color: #b0b7c3;
+    color: var(--color-rule-2);
     margin-top: -6px;
   }
 }
 
 .form-label {
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   font-weight: 500;
 
   .hint {
-    color: #a0a7b8;
+    color: var(--color-rule-2);
     font-weight: 400;
     font-size: 11px;
   }
@@ -988,7 +988,7 @@ const saveAll = async () => {
 
   .hint {
     font-size: 11px;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
   }
   .file-input {
     display: none;
@@ -1004,7 +1004,7 @@ const saveAll = async () => {
 
   .hint {
     font-size: 11px;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
   }
 
   .kng-selected {
@@ -1014,14 +1014,14 @@ const saveAll = async () => {
     min-width: 0;
     max-width: 100%;
     padding: 3px 8px;
-    border: 1px solid #adc6ff;
+    border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
     border-radius: 4px;
-    background: #f0f5ff;
+    background: var(--color-accent-wash);
   }
 
   .kng-name {
     font-size: 12px;
-    color: #2f54eb;
+    color: var(--color-accent-deep);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1036,7 +1036,7 @@ const saveAll = async () => {
 
   .hint {
     font-size: 11px;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
   }
 }
 
@@ -1053,7 +1053,7 @@ const saveAll = async () => {
   gap: 6px;
   min-width: 0;
   font-size: 12px;
-  color: #4a5368;
+  color: var(--color-ink-2);
 
   // Element Plus 数字输入默认 140px，三列会把左侧面板撑出横向滚动条
   :deep(.el-input-number) {
@@ -1072,7 +1072,7 @@ const saveAll = async () => {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -1082,10 +1082,10 @@ const saveAll = async () => {
   justify-content: space-between;
   align-items: center;
   padding: 9px 14px;
-  border-bottom: 1px solid #eef1f6;
-  background: #fafbfd;
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper-2);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
 }
 
 .card-list {
@@ -1098,7 +1098,7 @@ const saveAll = async () => {
 }
 
 .card {
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
   padding: 10px 12px;
   font-size: 12px;
@@ -1109,34 +1109,34 @@ const saveAll = async () => {
     gap: 8px;
     cursor: pointer;
     &:focus-visible {
-      outline: 2px solid #1890ff;
+      outline: 2px solid var(--color-accent);
       outline-offset: -2px;
       border-radius: 4px;
     }
   }
   .tag {
-    background: #f0f5ff;
-    border: 1px solid #adc6ff;
-    color: #2f54eb;
+    background: var(--color-accent-wash);
+    border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+    color: var(--color-accent-deep);
     border-radius: 3px;
     padding: 0 6px;
   }
   .level {
-    color: #8a92a5;
+    color: var(--color-muted);
   }
   .card-top .link {
     margin-left: auto;
   }
 
   &.expanded {
-    border-color: #adc6ff;
-    background: #fcfdff;
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+    background: var(--color-paper-2);
   }
 
   .expand-hint {
     margin-left: auto;
     font-size: 11px;
-    color: #1890ff;
+    color: var(--color-accent);
   }
   .card-top .link {
     margin-left: 10px;
@@ -1144,29 +1144,29 @@ const saveAll = async () => {
 
   .card-stem {
     margin: 8px 0 6px;
-    color: #1f2937;
+    color: var(--color-ink);
     line-height: 1.6;
   }
   .card-options {
     margin: 0 0 6px;
     padding-left: 18px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     line-height: 1.8;
   }
   .card-options .correct {
-    color: #52c41a;
+    color: var(--color-success);
     font-weight: 600;
   }
   .card-answer {
-    color: #389e0d;
+    color: var(--color-success);
   }
   .card-keywords {
     margin-top: 4px;
-    color: #8a92a5;
+    color: var(--color-muted);
   }
   .card-analysis {
     margin-top: 4px;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
     line-height: 1.6;
   }
 }
@@ -1176,14 +1176,14 @@ const saveAll = async () => {
   display: block;
   margin: 10px 0 4px;
   font-size: 12px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   font-weight: 500;
 }
 
 .card textarea,
 .edit-option input {
   width: 100%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
   padding: 6px 8px;
   font-size: 12px;
@@ -1192,7 +1192,7 @@ const saveAll = async () => {
   resize: vertical;
 
   &:focus {
-    border-color: #1890ff;
+    border-color: var(--color-accent);
   }
 }
 
@@ -1222,7 +1222,7 @@ const saveAll = async () => {
     width: 18px;
     text-align: center;
     font-size: 12px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     font-weight: 600;
   }
   .score-input {
@@ -1230,16 +1230,16 @@ const saveAll = async () => {
   }
   .percent {
     font-size: 11px;
-    color: #8a92a5;
+    color: var(--color-muted);
   }
   .drag-handle {
-    color: #b0b7c3;
+    color: var(--color-rule-2);
     cursor: grab;
     user-select: none;
   }
   &.dragging {
     opacity: 0.5;
-    background: #f3f7ff;
+    background: var(--color-accent-wash);
     border-radius: 4px;
   }
   .link:disabled {
@@ -1252,10 +1252,10 @@ const saveAll = async () => {
   padding: 4px 12px;
   font-size: 12px;
   margin: 4px 0 0;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
-  color: #4a5368;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
   &:disabled {
     opacity: 0.5;
@@ -1268,7 +1268,7 @@ const saveAll = async () => {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   white-space: nowrap;
 }
 
@@ -1276,12 +1276,12 @@ const saveAll = async () => {
   display: flex;
   gap: 16px;
   font-size: 12px;
-  color: #4a5368;
+  color: var(--color-ink-2);
 }
 
 .empty-tip {
   text-align: center;
-  color: #b0b7c3;
+  color: var(--color-rule-2);
   font-size: 13px;
   margin-top: 60px;
 }
@@ -1291,12 +1291,12 @@ const saveAll = async () => {
   align-items: center;
   gap: 10px;
   padding: 12px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-rule);
 
   .footer-tip {
     margin-right: auto;
     font-size: 11px;
-    color: #d46b08;
+    color: color-mix(in oklab, var(--color-warning) 60%, var(--color-ink));
   }
 }
 
@@ -1312,25 +1312,25 @@ const saveAll = async () => {
   }
 }
 .btn {
-  border: 1px solid #d9d9d9;
-  background: #fff;
-  color: #4a5368;
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
 }
 .btn.primary,
 .btn-primary {
-  border: 1px solid #1890ff;
-  background: #1890ff;
-  color: #fff;
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 .link {
   border: none;
   background: transparent;
-  color: #1890ff;
+  color: var(--color-accent);
   font-size: 12px;
   cursor: pointer;
   &.danger {
-    color: #f5222d;
+    color: var(--color-error);
   }
 }
 </style>

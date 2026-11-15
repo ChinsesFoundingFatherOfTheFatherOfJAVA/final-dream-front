@@ -129,13 +129,13 @@ onMounted(async () => {
 
   h1 {
     margin: 0 0 5px;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 22px;
   }
 
   p {
     margin: 0;
-    color: #7b8494;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -145,10 +145,10 @@ onMounted(async () => {
 }
 
 .table-panel {
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .department-table {
@@ -156,15 +156,15 @@ onMounted(async () => {
 
   :deep(.el-table__header th) {
     height: 46px;
-    background: #f8fafc;
-    color: #596274;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 14px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 46px;
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 14px;
   }
 }
@@ -191,12 +191,19 @@ onMounted(async () => {
   min-width: 24px;
   height: 30px;
 
+    // gate26a：link 按钮的可键盘焦点信号（全局 a/button 环对自定义 class 仍生效，这里补足可见性口径）
+    &:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+      border-radius: var(--radius-input);
+    }
+
   span {
     width: 0;
     height: 0;
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
-    border-left: 6px solid #8b95a7;
+    border-left: 6px solid var(--color-rule-2);
     transition: transform 0.16s ease;
   }
 
@@ -205,8 +212,15 @@ onMounted(async () => {
   }
 }
 
+// gate27：树箭头旋转在减动效偏好下停用
+@media (prefers-reduced-motion: reduce) {
+  .tree-arrow span {
+    transition: none;
+  }
+}
+
 .dept-name {
-  color: #253047;
+  color: var(--color-ink-2);
   font-weight: 500;
 }
 

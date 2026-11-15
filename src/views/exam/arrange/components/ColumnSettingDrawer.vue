@@ -200,23 +200,24 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 420px; height: 100%; background: #fff; display: flex; flex-direction: column; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
+.drawer { width: 420px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
-.tip { margin: 0 0 12px; font-size: 12px; color: #a0a7b8; }
+.tip { margin: 0 0 12px; font-size: 12px; color: var(--color-muted); }
 // 原平台面板首项是「全部」全选开关，与列表之间用细分割线隔开
-.col-all { padding: 2px 4px 10px; border-bottom: 1px solid #f2f4f5; margin-bottom: 4px; :deep(.el-checkbox__label) { font-size: 13px; font-weight: 500; color: #4a5368; } }
+.col-all { padding: 2px 4px 10px; border-bottom: var(--rule-hair) solid var(--color-paper-3); margin-bottom: 4px; :deep(.el-checkbox__label) { font-size: 13px; font-weight: 500; color: var(--color-ink-2); } }
 .col-list { margin: 0; padding: 0; list-style: none; }
 .col-item {
-  display: flex; align-items: center; gap: 8px; padding: 9px 4px; border-bottom: 1px dashed #f0f2f5;
+  display: flex; align-items: center; gap: 8px; padding: 9px 4px; border-bottom: 1px dashed var(--color-rule);
   &.dragging { opacity: .45; }
-  &.drag-over { box-shadow: inset 0 2px 0 #1890ff; }
+  &.drag-over { box-shadow: inset 0 2px 0 var(--color-accent); }
 }
-.drag-handle { flex: none; color: #b0b7c3; font-size: 14px; cursor: grab; user-select: none; &:active { cursor: grabbing; } }
-.col-check { flex: 1; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #4a5368; cursor: pointer; input { accent-color: #1890ff; } .locked { color: #b0b7c3; } }
+.drag-handle { flex: none; color: var(--color-rule-2); font-size: 14px; cursor: grab; user-select: none; &:active { cursor: grabbing; } }
+.col-check { flex: 1; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-ink-2); cursor: pointer; .locked { color: var(--color-rule-2); } }
 .col-actions { display: flex; gap: 6px; }
 // 幽灵图标按钮（与 QuesBodyForm 口径一致）
-.mini { width: 26px; height: 24px; padding: 0; border: none; border-radius: 4px; background: transparent; cursor: pointer; color: #8a92a5; .el-icon { font-size: 14px; } &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; } &:disabled { color: #d5dae3; cursor: not-allowed; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; } }
-.drawer-footer { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; .spacer { flex: 1; } }
-.btn { padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } &:disabled { opacity: .6; } }
+.mini { width: 26px; height: 24px; padding: 0; border: none; border-radius: 4px; background: transparent; cursor: pointer; color: var(--color-muted); .el-icon { font-size: 14px; } &:hover:not(:disabled) { color: var(--color-accent-deep); background: var(--color-accent-wash); } &:disabled { color: var(--color-rule-2); cursor: not-allowed; } &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; } }
+.drawer-footer { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: var(--rule-hair) solid var(--color-rule); .spacer { flex: 1; } }
+.btn { padding: 7px 16px; border-radius: 4px; font-size: 13px; cursor: pointer; &:disabled { opacity: .6; } }
 </style>

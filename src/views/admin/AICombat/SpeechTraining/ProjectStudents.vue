@@ -390,10 +390,10 @@ onMounted(async () => {
 
 .page-panel {
   padding: 20px;
-  border: 1px solid #edf0f5;
+  border: 1px solid var(--color-paper-2);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(24, 39, 75, 0.04);
+  background: var(--color-paper);
+  box-shadow: 0 2px 10px color-mix(in oklab, var(--color-graphite) 4%, transparent);
 }
 
 .toolbar {
@@ -413,10 +413,10 @@ onMounted(async () => {
 .filter-picker {
   height: 34px;
   box-sizing: border-box;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 }
@@ -425,15 +425,15 @@ onMounted(async () => {
   padding: 0 16px;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 
   &.danger {
-    border-color: #f1c7c7;
-    color: #d94a4a;
-    background: #fffafa;
+    border-color: color-mix(in oklab, var(--color-error) 22%, var(--color-paper));
+    color: var(--color-error);
+    background: var(--color-paper);
   }
 
   &:disabled {
@@ -473,7 +473,7 @@ onMounted(async () => {
 
 .table-wrap {
   overflow-x: auto;
-  border: 1px solid #eef1f6;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
 }
 
@@ -481,20 +481,24 @@ onMounted(async () => {
   width: 100%;
 
   :deep(.el-table__header th) {
-    background: #fafbfd;
-    color: #4d5568;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row td) {
-    color: #4d5568;
+    height: 44px;
+    color: var(--color-ink-2);
     font-size: 13px;
+    border-bottom: 1px solid var(--color-rule);
   }
+  :deep(.el-table .cell) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :deep(.el-table__row:hover > td) { background: var(--color-accent-wash) !important; }
 }
 
 .name-cell {
-  color: #253047;
+  color: var(--color-ink);
   font-weight: 500;
 }
 
@@ -503,7 +507,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   padding-top: 14px;
-  color: #7a8396;
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 

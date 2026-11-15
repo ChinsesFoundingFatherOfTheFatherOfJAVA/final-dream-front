@@ -559,7 +559,7 @@ onBeforeUnmount(() => {
   width: 100vw;
   height: 100vh;
   min-height: 0;
-  background: #fff;
+  background: var(--color-paper);
   overflow: hidden;
 }
 
@@ -571,8 +571,8 @@ onBeforeUnmount(() => {
   gap: 16px;
   height: 64px;
   padding: 0 24px;
-  border-bottom: 1px solid #e9edf4;
-  background: #fff;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper);
 }
 
 .bar-left {
@@ -586,30 +586,30 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   flex-shrink: 0;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 8px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 17px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
 .divider {
   width: 1px;
   height: 16px;
-  background: #e2e7f0;
+  background: var(--color-rule-2);
 }
 
 .course-name {
   margin: 0;
   max-width: 320px;
   overflow: hidden;
-  color: #253047;
+  color: var(--color-ink);
   font-size: 15px;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -623,16 +623,16 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   height: 30px;
   padding: 0 12px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #f8fafc;
-  color: #596274;
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-size: 12px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -649,49 +649,49 @@ onBeforeUnmount(() => {
   gap: 6px;
   height: 34px;
   padding: 0 14px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:hover {
-    border-color: #2e7cf6;
-    color: #2e7cf6;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
 .caret {
   margin-left: 2px;
   font-size: 12px;
-  color: #98a1b2;
+  color: var(--color-muted);
 }
 
 .btn {
   height: 34px;
   padding: 0 18px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:disabled {
-    color: #b3bac7;
+    color: var(--color-rule-2);
     cursor: not-allowed;
   }
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 
     &:disabled {
-      border-color: #b9d4fb;
-      background: #b9d4fb;
-      color: #fff;
+      border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+      background: color-mix(in oklab, var(--color-accent) 45%, var(--color-paper));
+      color: var(--color-accent-ink);
     }
   }
 }
@@ -710,7 +710,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 14px;
   padding: 16px 20px;
-  background: #f7f9fc;
+  background: var(--color-paper-2);
   overflow: hidden;
 }
 
@@ -718,9 +718,9 @@ onBeforeUnmount(() => {
   flex: 1;
   min-height: 0;
   padding: 14px 16px;
-  border: 1px solid #edf0f5;
-  border-radius: 8px;
-  background: #fff;
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .page-loading {
@@ -729,8 +729,8 @@ onBeforeUnmount(() => {
   z-index: 5;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  color: #7b8496;
+  background: color-mix(in oklab, var(--color-paper) 70%, transparent);
+  color: var(--color-muted);
   font-size: 13px;
 }
 </style>

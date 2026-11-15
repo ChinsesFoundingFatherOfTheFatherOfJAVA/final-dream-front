@@ -178,6 +178,7 @@ import { useTrainingStore } from '@/stores/training'
 import { useRecorder } from '@/composables/useRecorder'
 import { useAudioPlayer } from '@/composables/useAudioPlayer'
 import type { SessionMessage } from '@/types/student'
+import { VideoPlay } from '@element-plus/icons-vue'
 
 /**
  * 后端音频地址是相对路径（/audio/tts/xx.mp3、/audio/asr/xx.wav），不带 /api 前缀时
@@ -488,7 +489,7 @@ const onSend = async () => {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: color-mix(in oklab, var(--color-accent-ink) 15%, transparent);
     border-radius: 3px;
   }
 }
@@ -515,14 +516,14 @@ const onSend = async () => {
 }
 
 .trainer-avatar {
-  background: #2b3350;
+  background: var(--color-graphite);
   object-fit: cover;
   overflow: hidden;
 }
 
 .student-avatar {
-  background: #2ec5b6;
-  color: #fff;
+  background: var(--color-accent-2);
+  color: var(--color-paper);
 }
 
 .narration-tip {
@@ -530,7 +531,7 @@ const onSend = async () => {
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.45); /* 深色训练背景上的可读灰白 */
+  color: color-mix(in oklab, var(--color-accent-ink) 45%, transparent); /* 深色训练背景上的可读灰白 */
   padding: 2px 12px;
   line-height: 1.6;
 }
@@ -546,8 +547,8 @@ const onSend = async () => {
 }
 
 .trainer-bubble {
-  background: #232b47;
-  color: #e8ecf7;
+  background: var(--color-graphite);
+  color: var(--color-graphite-ink);
   border-top-left-radius: 4px;
   display: flex;
   align-items: center;
@@ -559,8 +560,8 @@ const onSend = async () => {
 }
 
 .student-bubble {
-  background: #43485c;
-  color: #eef0f6;
+  background: var(--color-graphite-2);
+  color: var(--color-graphite-ink);
   border-top-right-radius: 4px;
   display: flex;
   align-items: center;
@@ -571,7 +572,7 @@ const onSend = async () => {
   }
 
   &.voice-pending .bubble-text {
-    color: rgba(238, 240, 246, 0.55);
+    color: color-mix(in oklab, var(--color-paper-2) 55%, transparent);
   }
 }
 
@@ -583,25 +584,25 @@ const onSend = async () => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(232, 236, 247, 0.75);
+  background: color-mix(in oklab, var(--color-accent-ink) 10%, transparent);
+  color: color-mix(in oklab, var(--color-paper-2) 75%, transparent);
   cursor: pointer;
   flex-shrink: 0;
   transition: color 0.2s, background 0.2s;
 
   &:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.2);
+    color: var(--color-paper);
+    background: color-mix(in oklab, var(--color-accent-ink) 20%, transparent);
   }
 
   &:focus-visible {
-    outline: 2px solid #6ea8ff;
+    outline: 2px solid var(--color-accent-2);
     outline-offset: 2px;
   }
 
   &.active {
-    color: #6ea8ff;
-    background: rgba(110, 168, 255, 0.18);
+    color: var(--color-accent-2);
+    background: var(--color-accent-wash);
   }
 
   &.loading {
@@ -615,8 +616,8 @@ const onSend = async () => {
   margin: 0 0 8px;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(229, 169, 69, 0.14);
-  color: #e9c37f;
+  background: color-mix(in oklab, var(--color-warning) 14%, transparent);
+  color: var(--color-warning);
   font-size: 12px;
 }
 
@@ -629,8 +630,8 @@ const onSend = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in oklab, var(--color-accent-ink) 8%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
   border-radius: 26px;
   padding: 6px 6px 6px 20px;
 
@@ -639,12 +640,12 @@ const onSend = async () => {
     border: none;
     outline: none;
     background: transparent;
-    color: #eef0f6;
+    color: var(--color-graphite-ink);
     font-size: 14px;
     height: 36px;
 
     &::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      color: color-mix(in oklab, var(--color-accent-ink) 35%, transparent);
     }
 
     &:disabled {
@@ -654,7 +655,7 @@ const onSend = async () => {
 
   // 聊天输入框本体去掉了 outline，改由容器边框提示焦点（不产生布局位移）
   &:focus-within {
-    border-color: rgba(110, 168, 255, 0.55);
+    border-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
   }
 
   .send-btn {
@@ -662,8 +663,8 @@ const onSend = async () => {
     padding: 0 22px;
     border: none;
     border-radius: 18px;
-    background: #fff;
-    color: #2e3a6e;
+    background: var(--color-paper);
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -671,12 +672,12 @@ const onSend = async () => {
     flex-shrink: 0;
 
     &:hover:not(.disabled) {
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 12px color-mix(in oklab, var(--color-accent-ink) 25%, transparent);
     }
 
     &.disabled {
-      background: rgba(255, 255, 255, 0.25);
-      color: rgba(255, 255, 255, 0.4);
+      background: color-mix(in oklab, var(--color-accent-ink) 25%, transparent);
+      color: color-mix(in oklab, var(--color-accent-ink) 40%, transparent);
       cursor: not-allowed;
     }
   }
@@ -689,25 +690,25 @@ const onSend = async () => {
   justify-content: flex-end;
   gap: 12px;
   min-height: 50px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in oklab, var(--color-accent-ink) 8%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
   border-radius: 26px;
   padding: 6px 10px 6px 20px;
 
   .voice-hint {
     margin-right: auto;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.45);
+    color: color-mix(in oklab, var(--color-accent-ink) 45%, transparent);
   }
 
   /* 60s 上限倒计时：最后 10 秒变红，避免录音被自动截断而学员不知道 */
   .record-countdown {
     font-size: 13px;
     font-variant-numeric: tabular-nums;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in oklab, var(--color-accent-ink) 55%, transparent);
 
     &.urgent {
-      color: #ff8f8f;
+      color: var(--color-error);
       font-weight: 700;
     }
   }
@@ -716,17 +717,17 @@ const onSend = async () => {
   .retry-btn {
     height: 28px;
     padding: 0 12px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 22%, transparent);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #cdd5e8;
+    background: color-mix(in oklab, var(--color-accent-ink) 8%, transparent);
+    color: var(--color-rule);
     font-size: 12px;
     cursor: pointer;
     flex-shrink: 0;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.16);
-      color: #fff;
+      background: color-mix(in oklab, var(--color-accent-ink) 16%, transparent);
+      color: var(--color-paper);
     }
   }
 }
@@ -744,17 +745,17 @@ const onSend = async () => {
   .wave-bar {
     width: 4px;
     border-radius: 2px;
-    background: #6ea8ff;
+    background: var(--color-accent-2);
     animation: wave-jump 1s ease-in-out infinite;
   }
 
   &:hover .wave-bar {
-    background: #9cc2ff;
+    background: var(--color-accent-2);
   }
 
   // 录音波形点击即停止发送，补键盘焦点环
   &:focus-visible {
-    outline: 2px solid #6ea8ff;
+    outline: 2px solid var(--color-accent-2);
     outline-offset: 2px;
   }
 }
@@ -791,15 +792,15 @@ const onSend = async () => {
 /* 麦克风主按钮：蓝紫渐变 */
 .mic-btn,
 .mic-inline-btn {
-  background: linear-gradient(135deg, #7a6cf0 0%, #4a7dff 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 100%);
+  color: var(--color-paper);
 
   &:hover:not(:disabled) {
-    box-shadow: 0 0 14px rgba(110, 140, 255, 0.55);
+    box-shadow: 0 0 14px color-mix(in oklab, var(--color-accent) 55%, transparent);
   }
 
   &.loading {
-    background: rgba(255, 255, 255, 0.2);
+    background: color-mix(in oklab, var(--color-accent-ink) 20%, transparent);
     color: transparent;
     cursor: wait;
   }
@@ -807,22 +808,22 @@ const onSend = async () => {
 
 /* 录音中的停止按钮：白底红块 */
 .stop-btn {
-  background: #fff;
-  color: #e54545;
+  background: var(--color-paper);
+  color: var(--color-error);
 
   &:hover {
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 12px color-mix(in oklab, var(--color-accent-ink) 35%, transparent);
   }
 }
 
 /* 键盘切换：幽灵描边 */
 .ghost-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #cdd5e8;
+  background: color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 18%, transparent);
+  color: var(--color-rule);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
   }
 }
 
@@ -837,8 +838,8 @@ const onSend = async () => {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in oklab, var(--color-accent-ink) 35%, transparent);
+  border-top-color: var(--color-paper);
   animation: spin 0.8s linear infinite;
 }
 

@@ -69,7 +69,7 @@
     <!-- ===== 状态 C：核验未通过（DER-07：只记录，不阻断） ===== -->
     <template v-else-if="phase === 'fail'">
       <div class="result-block">
-        <div class="result-icon is-fail" aria-hidden="true">✕</div>
+<el-icon class="result-icon is-fail" aria-hidden="true"><Close /></el-icon>
         <p class="result-title">身份核验未通过</p>
         <p class="result-desc">
           本次考试仍可继续，但会被标记为「待人工核对」，批阅时需要你配合确认身份。
@@ -86,7 +86,7 @@
     <!-- ===== 状态 D：核验通过 ===== -->
     <template v-else-if="phase === 'pass'">
       <div class="result-block">
-        <div class="result-icon is-pass" aria-hidden="true">✓</div>
+<el-icon class="result-icon is-pass" aria-hidden="true"><Check /></el-icon>
         <p class="result-title">{{ passTitle }}</p>
         <p class="result-desc">正在进入考试…</p>
       </div>
@@ -188,6 +188,7 @@
  * <p>判定口径（结论 → identity_status、重试上限、错误文案）全在
  * `faceVerifyModel.ts`，那里配了单测；本组件只负责采集与展示。
  */
+import { Check, Close } from '@element-plus/icons-vue'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import {
   MAX_FACE_RETRY,
@@ -903,7 +904,7 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
     font-size: 16px;
     line-height: 24px;
     font-weight: 500;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   :deep(.el-dialog__body) {
@@ -920,7 +921,7 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   width: 100%;
   height: 270px;
   overflow: hidden;
-  background: #f2f2f2;
+  background: var(--color-paper-3);
   border-radius: 2px;
 }
 
@@ -940,8 +941,8 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  color: #ffffff;
+  background: oklch(21% 0.028 262 / 0.45);
+  color: var(--color-paper);
   font-size: 14px;
   line-height: 22px;
 }
@@ -953,7 +954,7 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   bottom: 0;
   left: 0;
   padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.55);
+  background: oklch(21% 0.028 262 / 0.45);
   text-align: center;
 }
 
@@ -962,21 +963,21 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--color-paper);
 }
 
 .challenge-countdown {
   margin: 2px 0 0;
   font-size: 12px;
   line-height: 18px;
-  color: rgba(255, 255, 255, 0.8);
+  color: oklch(98.6% 0.005 250 / 0.8);
 }
 
 .face-tip {
   margin: 12px 0 0;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
   text-align: center;
 }
 
@@ -984,7 +985,7 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   margin: 8px 0 0;
   font-size: 12px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
   text-align: center;
 }
 
@@ -1003,18 +1004,18 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   font-weight: 500;
 
   &.is-pass {
-    background: #f6ffed;
-    color: #52c41a;
+    background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
+    color: var(--color-success);
   }
 
   &.is-fail {
-    background: #fff1f0;
-    color: #f5222d;
+    background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+    color: var(--color-error);
   }
 
   &.is-warn {
-    background: #fffbe6;
-    color: #fa8c16;
+    background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper));
+    color: var(--color-warning);
   }
 }
 
@@ -1023,21 +1024,21 @@ defineExpose({ MAX_FACE_RETRY, phase, challengeState })
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .result-desc {
   margin: 0;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .result-reason {
   margin: 8px 0 0;
   font-size: 12px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .face-footer {

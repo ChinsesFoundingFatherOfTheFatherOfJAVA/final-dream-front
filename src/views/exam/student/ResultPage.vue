@@ -160,12 +160,12 @@
                   <div class="donut">
                     <svg viewBox="0 0 190 190" width="190" height="190" role="img" :aria-label="`总体正确率 ${overallRateText}`">
                       <!-- 轨道：浅灰整圆 -->
-                      <circle cx="95" cy="95" :r="DONUT_R" fill="none" stroke="#F0F2F5" stroke-width="10" />
+                      <circle cx="95" cy="95" :r="DONUT_R" fill="none" stroke="var(--color-paper-3)" stroke-width="10" />
                       <!-- 进度弧：stroke-dasharray 控制弧长，rotate(-90) 让起点落在 12 点方向 -->
                       <circle
                         v-if="donutDash > 0"
                         cx="95" cy="95" :r="DONUT_R"
-                        fill="none" stroke="#436BFF" stroke-width="10" stroke-linecap="round"
+                        fill="none" stroke="var(--color-accent)" stroke-width="10" stroke-linecap="round"
                         :stroke-dasharray="`${donutDash} ${donutCircumference}`"
                         transform="rotate(-90 95 95)"
                       />
@@ -491,8 +491,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-/* 学员端强调色统一 #436BFF（fe-shell 实机复核：原平台主按钮就是它，不是 #1890ff） */
-$brand: #436bff;
+/* 2026-11-14 Hallmark Cobalt 重构：学员端强调色 #436BFF 弃用，统一走 Cobalt token 层 */
 
 .result-page {
   max-width: 1320px;
@@ -506,26 +505,26 @@ $brand: #436bff;
 }
 
 :deep(.el-breadcrumb__inner) {
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-weight: 400;
 }
 
 :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner) {
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .card {
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
   padding: 24px;
 }
 
-/* 顶部主卡：白底、圆角 8px、无强阴影（原平台实测） */
+/* 顶部主卡：paper 底、圆角 var(--radius-card)（原平台实测结构保留） */
 .head-card {
   padding: 20px 24px 18px;
   margin-bottom: 16px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .head-top {
@@ -541,7 +540,8 @@ $brand: #436bff;
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: #262626;
+  font-family: var(--font-display);
+  color: var(--color-ink);
   word-break: break-word;
 }
 
@@ -552,9 +552,8 @@ $brand: #436bff;
   flex: 0 0 auto;
 }
 
+/* 主按钮键帽化由主题层承担，这里只留排版 */
 .btn-retry {
-  background: $brand;
-  border-color: $brand;
   border-radius: 4px;
   font-size: 14px;
 }
@@ -566,7 +565,7 @@ $brand: #436bff;
   margin-top: 6px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .head-item {
@@ -576,13 +575,16 @@ $brand: #436bff;
 
   em {
     font-style: normal;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
+
+  /* 成绩/分数机器值 mono 等宽 */
+  font-variant-numeric: tabular-nums;
 }
 
 /* 第二行（总分/最高分/次数/入场时间）文字更淡，视觉上退到次要层 */
 .head-row--meta .head-item {
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .layout {
@@ -601,7 +603,7 @@ $brand: #436bff;
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .help-icon {
@@ -610,9 +612,9 @@ $brand: #436bff;
   justify-content: center;
   width: 14px;
   height: 14px;
-  border: 1px solid #bfbfbf;
+  border: 1px solid var(--color-rule-2);
   border-radius: 50%;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
   font-size: 10px;
   line-height: 1;
   cursor: help;
@@ -631,7 +633,7 @@ $brand: #436bff;
 .history-empty {
   margin: 0;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .history-list {
@@ -646,25 +648,25 @@ $brand: #436bff;
 /*
  * 历史条目（2026-11-13 起可点击）。
  *
- * 非当前项给手型 + hover 底色，让「能点」看得出来；
+ * 非当前项给手型 + hover wash，让「能点」看得出来（敢做档：侧栏宽行 wash+抬升）；
  * 当前项不加 hover、也不给 cursor:pointer —— 它点了没反应，给手型是骗人。
- * 键盘焦点环由全局层统一提供（AGENTS.md §4），这里不重复实现。
  */
 .history-item {
   padding: 8px;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 
   &[role="button"] {
     cursor: pointer;
 
     &:hover {
-      background: #f0f4ff;
+      background: var(--color-accent-wash);
+      transform: translateY(-1px);
     }
   }
 
   &.is-current {
-    background: #f7f8fa;
+    background: var(--color-paper-2);
   }
 }
 
@@ -678,37 +680,38 @@ $brand: #436bff;
 }
 
 .history-key {
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .history-score,
 .history-time {
-  color: #262626;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .history-time {
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
-/* 「未通过」12px / #F5222D；批阅中给灰，避免未出分被读成未通过 */
+/* 「未通过」走 error token；批阅中给 warning，避免未出分被读成未通过 */
 .history-state {
   font-size: 12px;
   line-height: 20px;
 
   &.is-failed {
-    color: #f5222d;
+    color: var(--color-error);
   }
 
   &.is-passed {
-    color: #52c41a;
+    color: var(--color-success);
   }
 
   &.is-pending {
-    color: #fa8c16;
+    color: var(--color-warning);
   }
 
   &.is-invalid {
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -721,8 +724,8 @@ $brand: #436bff;
   margin: 16px 0 0;
   padding: 8px 12px;
   border-radius: 4px;
-  background: #f0f4ff;
-  color: $brand;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 13px;
   line-height: 20px;
 }
@@ -731,7 +734,7 @@ $brand: #436bff;
   margin: 16px 0 0;
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .action-row {
@@ -741,18 +744,10 @@ $brand: #436bff;
   margin-top: 16px;
 }
 
-/* 次要按钮：白底 + 1px #D9D9D9 + 4px 圆角（原平台实测） */
+/* 次要按钮交给主题层键帽/描边态，这里只留排版 */
 .btn-detail {
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  background: #fff;
-  color: #262626;
   font-size: 14px;
-
-  &:hover:not(.is-disabled) {
-    border-color: $brand;
-    color: $brand;
-  }
 }
 
 /* el-tooltip 需要一个可包裹元素；禁用按钮自身不触发 mouse 事件 */
@@ -769,30 +764,32 @@ $brand: #436bff;
   padding: 24px 0;
   text-align: center;
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .block-empty--pending {
-  color: #fa8c16;
+  color: var(--color-warning);
 }
 
-/* 考核点表：表头 14px #262626 / 底 #F9FAFB / 行高 50px / 数值右对齐（原平台实测） */
+/* 考核点表：表头 paper-2 底 / 行 hairline 分隔 / 数值右对齐 mono（敢做档表格套件） */
 .point-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  color: #262626;
+  color: var(--color-ink);
 
   th,
   td {
     padding: 14px 16px;
-    border: 1px solid #f0f0f0;
+    border: var(--rule-hair) solid var(--color-rule);
     text-align: right;
     font-weight: 400;
+    font-variant-numeric: tabular-nums;
   }
 
   th {
-    background: #f9fafb;
+    background: var(--color-paper-2);
+    font-weight: 500;
     line-height: 22px;
   }
 
@@ -841,14 +838,15 @@ $brand: #436bff;
   margin: 0;
   font-size: 12px;
   line-height: 18px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 .donut-value {
   margin: 0;
   font-size: 28px;
   line-height: 36px;
   font-weight: 700;
-  color: #262626;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
 }
 
 /* 右侧：题型卡片 2 列网格 */
@@ -861,17 +859,17 @@ $brand: #436bff;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
-/* 卡片：浅灰底 / 圆角 4 / 内边距 14（截图像素口径） */
+/* 卡片：paper-2 底 / 圆角 4 / 内边距 14（截图像素口径，色换 token） */
 .type-card {
   padding: 14px;
   border-radius: 4px;
-  background: #fafafa;
+  background: var(--color-paper-2);
 }
 .type-card__name {
   margin: 0 0 10px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 /* 第二行：标签 + 进度条 + 右端百分比 */
 .type-card__rate {
@@ -883,32 +881,34 @@ $brand: #436bff;
   flex: 0 0 auto;
   font-size: 12px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
-/* 进度条：高 6 / 圆角 / 轨道 #F0F2F5 */
+/* 进度条：高 6 / 圆角 / 轨道 paper-3 */
 .type-card__bar {
   flex: 1 1 auto;
   min-width: 0;
   height: 6px;
   border-radius: 3px;
-  background: #f0f2f5;
+  background: var(--color-paper-3);
   overflow: hidden;
 }
 .type-card__bar-fill {
   display: block;
   height: 100%;
   border-radius: 3px;
-  background: #436bff;
+  background: var(--color-accent);
   /* 只过渡宽度，不用 transition: all */
-  transition: width 0.3s ease;
+  transition: width 0.3s var(--ease-out);
 }
-/* 百分比固定宽度，让各卡片的进度条右端能对齐 */
+/* 百分比固定宽度，让各卡片的进度条右端能对齐；机器值 mono */
 .type-card__rate-value {
   flex: 0 0 44px;
   text-align: right;
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 20px;
-  color: #262626;
+  color: var(--color-ink);
 }
 /* 第三行：答对 + 排名，两段之间留空 */
 .type-card__meta {
@@ -918,7 +918,7 @@ $brand: #436bff;
   margin-top: 8px;
   font-size: 12px;
   line-height: 20px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 /* 底部一整行：用时 / 用时排名 */
@@ -928,10 +928,10 @@ $brand: #436bff;
   gap: 48px;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: var(--rule-hair) solid var(--color-rule);
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 @media (max-width: 1000px) {

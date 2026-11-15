@@ -23,7 +23,7 @@
     <!-- 主体：纯聊天态单栏居中；topic-changed 后左右两栏（左 45% / 右 55%） -->
     <div class="page-body">
       <div v-if="initError" class="init-error">
-        <div class="err-icon" aria-hidden="true">⚠️</div>
+        <div class="err-icon" aria-hidden="true"><el-icon><WarningFilled /></el-icon></div>
         <p class="err-text">{{ initError }}</p>
         <el-button class="err-retry" @click="bootstrap">重试</el-button>
       </div>
@@ -44,6 +44,7 @@ import ArtifactPanel from './components/ArtifactPanel.vue'
 import ChatColumn from './components/ChatColumn.vue'
 import { useAssistantStore } from './composables/useAssistantStore'
 import { useAssistantWs } from './composables/useAssistantWs'
+import { WarningFilled } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -108,7 +109,7 @@ watch(routeThemeId, (_id, prev) => {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .page-head {
@@ -116,26 +117,26 @@ watch(routeThemeId, (_id, prev) => {
   align-items: center;
   gap: 14px;
   padding: 10px 20px;
-  border-bottom: 1px solid #eceef2;
-  background: #fff;
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper);
   flex-shrink: 0;
 
   .back-btn {
     padding: 5px 12px;
-    background: #fff;
-    border: 1px solid #dcdfe6;
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
     font-size: 13px;
-    color: #4e5969;
+    color: var(--color-ink-2);
     cursor: pointer;
 
-    &:hover { color: #1890ff; border-color: #1890ff; }
+    &:hover { color: var(--color-accent); border-color: var(--color-accent); }
   }
 
   .head-title {
     font-size: 16px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -143,8 +144,8 @@ watch(routeThemeId, (_id, prev) => {
     .readonly-tag {
       font-size: 12px;
       font-weight: 400;
-      color: #8a8f98;
-      background: #f2f3f5;
+      color: var(--color-muted);
+      background: var(--color-paper-2);
       border-radius: 4px;
       padding: 2px 8px;
     }
@@ -158,17 +159,17 @@ watch(routeThemeId, (_id, prev) => {
 
     .debug-btn {
       padding: 4px 10px;
-      background: #fff;
-      border: 1px dashed #d0d3d9;
+      background: var(--color-paper);
+      border: 1px dashed var(--color-rule-2);
       border-radius: 6px;
       font-size: 12px;
-      color: #8a8f98;
+      color: var(--color-muted);
       cursor: pointer;
 
-      &:hover { color: #fa8c16; border-color: #fa8c16; }
+      &:hover { color: var(--color-warning); border-color: var(--color-warning); }
     }
 
-    .head-hint { font-size: 12px; color: #a5a9b0; }
+    .head-hint { font-size: 12px; color: var(--color-muted); }
   }
 }
 
@@ -187,14 +188,14 @@ watch(routeThemeId, (_id, prev) => {
 .single-column {
   .page-body {
     justify-content: center;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
   }
 
   .chat-slot {
     flex: 0 1 880px;
     max-width: 880px;
-    border-left: 1px solid #eceef2;
-    border-right: 1px solid #eceef2;
+    border-left: 1px solid var(--color-rule);
+    border-right: 1px solid var(--color-rule);
   }
 }
 
@@ -226,15 +227,15 @@ watch(routeThemeId, (_id, prev) => {
     max-width: 560px;
     text-align: center;
     font-size: 14px;
-    color: #8a3d3d;
+    color: var(--color-error-deep);
     line-height: 1.7;
   }
 
   .err-retry {
     padding: 7px 22px;
-    background: #1890ff;
-    border: 1px solid #1890ff;
-    color: #fff;
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    color: var(--color-paper);
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;

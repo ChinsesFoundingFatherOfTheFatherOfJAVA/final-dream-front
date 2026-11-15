@@ -62,7 +62,7 @@ watch(() => props.visible, visible => {
 
 <style scoped lang="scss">
 .dialog-title {
-  color: #30384a;
+  color: var(--color-ink);
   font-size: 17px;
   font-weight: 600;
 }
@@ -74,7 +74,7 @@ watch(() => props.visible, visible => {
 
   p {
     margin: 0;
-    color: #6f788a;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 1.7;
   }
@@ -87,8 +87,8 @@ watch(() => props.visible, visible => {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #f59f2f;
-  color: #fff;
+  background: var(--color-warning);
+  color: var(--color-accent-ink);
   font-weight: 700;
 }
 

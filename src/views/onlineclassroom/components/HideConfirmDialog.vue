@@ -52,7 +52,8 @@ void props
 
 <style scoped lang="scss">
 .hide-dialog-title {
-  color: #30384a;
+  color: var(--color-ink);
+  font-family: var(--font-display);
   font-size: 17px;
   font-weight: 600;
 }
@@ -64,7 +65,7 @@ void props
 
   p {
     margin: 0;
-    color: #6f788a;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 1.7;
   }
@@ -77,8 +78,8 @@ void props
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #f59f2f;
-  color: #fff;
+  background: var(--color-warning);
+  color: var(--color-graphite);
   font-weight: 700;
 }
 </style>

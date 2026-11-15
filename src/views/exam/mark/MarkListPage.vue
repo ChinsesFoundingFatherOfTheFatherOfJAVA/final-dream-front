@@ -53,7 +53,7 @@
 
         <el-table-column label="交卷人数" width="120" prop="submittedQty" align="right" />
 
-        <!-- 「待批阅」列**不加任何高亮**（§9.4 实测 0 与 1 文字色都是 #262626、类名同为 is-right） -->
+        <!-- 「待批阅」列**不加任何高亮**（§9.4 实测 0 与 1 文字色一致、类名同为 is-right） -->
         <el-table-column label="待批阅" width="120" prop="pendingQty" align="right" />
 
         <el-table-column label="操作" width="180" fixed="right">
@@ -91,7 +91,7 @@
  * <p>与原平台列表的差异：**左侧没有分类树**（§7 实测），直接是筛选 + 表格。
  *
  * <p>「待批阅」列不做高亮：早期文档猜测「有值就标红」，2026-11-10 实测推翻——
- * 0 和 1 的文字颜色都是 `#262626`、类名同为 `is-right`。加高亮会让整列像告警区，
+ * 0 和 1 的文字颜色一致、类名同为 `is-right`。加高亮会让整列像告警区，
  * 而这里只是普通计数。
  *
  * <p>「来源」显示文案而不是标签：原平台就是纯文本「单独安排」。
@@ -177,15 +177,13 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-$brand: #436bff;
-
 .mark-list-page {
   display: flex;
   flex-direction: column;
   min-height: 0;
   height: 100%;
   padding: 16px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .filter-row {
@@ -208,10 +206,28 @@ $brand: #436bff;
   width: 280px;
 }
 
+/* 敢做档表格套件：paper-2 表头 + hairline 行分隔 + hover wash + 单元格 nowrap 挂 .cell（AGENTS.md 8.2） */
 .table-wrap {
   flex: 1;
   min-height: 0;
   overflow: auto;
+
+  :deep(.el-table) {
+    --el-table-header-bg-color: var(--color-paper-2);
+    --el-table-header-text-color: var(--color-ink);
+    --el-table-border-color: var(--color-rule);
+    --el-table-row-hover-bg-color: var(--color-accent-wash);
+
+    th.el-table__cell { font-weight: 500; }
+    td.el-table__cell { padding: 10px 0; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+    .cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+}
+
+/* 行内计数走 mono 等宽（机器值口径） */
+:deep(.el-table) .el-table__cell.is-right .cell {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 操作列两个文字按钮之间竖分隔线（原平台实测） */
@@ -224,7 +240,7 @@ $brand: #436bff;
 .action-sep {
   width: 1px;
   height: 14px;
-  background: #e8e8e8;
+  background: var(--color-rule);
 }
 
 .pagination {
@@ -233,6 +249,6 @@ $brand: #436bff;
   justify-content: space-between;
   padding-top: 16px;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 </style>

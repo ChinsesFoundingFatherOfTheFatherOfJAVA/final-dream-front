@@ -41,7 +41,7 @@ const handleVisibleChange = (visible: boolean) => {
 <style scoped lang="scss">
 .dialog-body {
   margin: 0;
-  color: #666;
+  color: var(--color-muted);
   font-size: 15px;
   line-height: 1.6;
 }

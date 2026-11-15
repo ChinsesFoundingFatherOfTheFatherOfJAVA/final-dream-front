@@ -136,7 +136,7 @@ onMounted(async () => {
 .drawer {
   width: 420px;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   display: flex;
   flex-direction: column;
 }
@@ -146,11 +146,11 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-rule);
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body {
@@ -162,13 +162,13 @@ onMounted(async () => {
   gap: 12px;
 
   input {
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
     padding: 6px 10px;
     font-size: 12px;
     outline: none;
 
-    &:focus { border-color: #1890ff; }
+    &:focus { border-color: var(--color-accent); }
   }
 }
 
@@ -176,7 +176,7 @@ onMounted(async () => {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  border: 1px solid #eef1f6;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
   padding: 8px 0;
 }
@@ -187,28 +187,28 @@ onMounted(async () => {
   gap: 4px;
   padding: 7px 12px;
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
 
   .expand-arrow {
     width: 16px;
     text-align: center;
-    color: #a0a7b8;
+    color: var(--color-rule-2);
     transition: transform 0.15s;
     cursor: pointer;
 
     &.expanded { transform: rotate(90deg); }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; }
   }
 
   .expand-placeholder { width: 16px; }
 
-  &:hover { background: #f7faff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:hover { background: var(--color-accent-wash); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
   &.selected {
-    background: #e8f1ff;
-    color: #1890ff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent);
     font-weight: 500;
   }
 }
@@ -218,18 +218,18 @@ onMounted(async () => {
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-rule);
 }
 
 .btn {
   padding: 7px 20px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
   cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 </style>

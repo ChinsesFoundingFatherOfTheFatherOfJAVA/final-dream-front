@@ -791,54 +791,55 @@ const ScoreCell = defineComponent({
 </script>
 
 <style scoped lang="scss">
-.auto-edit { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
+.auto-edit { height: 100vh; display: flex; flex-direction: column; background: var(--color-paper); }
 
 .edit-header {
   flex-shrink: 0; display: flex; align-items: center; gap: 12px;
-  height: 56px; padding: 0 20px; border-bottom: 1px solid #e8eaef;
+  height: 56px; padding: 0 20px; border-bottom: var(--rule-hair) solid var(--color-rule);
 
-  .back-btn { width: 26px; height: 26px; border: none; background: none; font-size: 20px; color: #4a5368; cursor: pointer; }
-  h1 { margin: 0; font-size: 15px; font-weight: 500; color: #303133; }
+  .back-btn { width: 26px; height: 26px; border: none; background: none; font-size: 20px; color: var(--color-ink-2); cursor: pointer; }
+  h1 { margin: 0; font-size: 15px; font-weight: 500; color: var(--color-ink); }
   // 提示类文本：信息图标 + 浅底胶囊，弱化但可辨识，不用装饰圆点
   .save-hint {
     display: inline-flex; align-items: center; gap: 5px;
     height: 24px; padding: 0 10px;
-    background: #eef3fb; border-radius: 12px;
-    font-size: 12px; color: #5b6682;
-    .el-icon { font-size: 13px; color: #7d90b8; }
+    background: var(--color-accent-wash); border-radius: 12px;
+    font-size: 12px; color: var(--color-ink-2);
+    .el-icon { font-size: 13px; color: var(--color-accent-deep); }
   }
   .header-actions { margin-left: auto; display: flex; gap: 10px; }
   .paper-steps { margin: 0 auto; }
-  .sync-btn { padding: 6px 14px; border: 1px solid #e5e8ef; border-radius: 4px; background: #f5f7fa; color: #b0b7c3; font-size: 13px; }
+  .sync-btn { padding: 6px 14px; border: 1px solid var(--color-rule); border-radius: 4px; background: var(--color-paper-2); color: var(--color-rule-2); font-size: 13px; }
 }
 
 .edit-body { flex: 1; min-height: 0; display: flex; }
 
 .tab-rail {
-  flex: 0 0 58px; border-right: 1px solid #e8eaef;
+  flex: 0 0 58px; border-right: var(--rule-hair) solid var(--color-rule);
   display: flex; flex-direction: column; padding-top: 14px; gap: 10px;
 
   .rail-tab {
     position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px;
     // EP 按钮默认锁 32px 高，而内容（图标+竖排文字）约 50px，不放开会把上下两个 tab 的内容挤得互相重叠
-    width: 100%; height: auto; margin-left: 0; padding: 10px 0; border: none; background: none; cursor: pointer; color: #8a92a5; font-size: 12px;
+    width: 100%; height: auto; margin-left: 0; padding: 10px 0; border: none; background: none; cursor: pointer; color: var(--color-muted); font-size: 12px;
 
     // el-button 的内容包裹 span 不接管 flex 的话，图标与竖排文字都不会真正居中
     :deep(> span) {
       display: flex; flex-direction: column; align-items: center; gap: 4px;
     }
 
-    // 图标占位固定宽度并居中：两个 tab 的字形宽度不同（▦/◔），
+    // 图标占位固定宽度并居中：两个 tab 的字形宽度不同，
     // 不定宽会让竖排文字的中心线随图标偏移、不在同一垂直线上
     .rail-icon {
       width: 22px; display: inline-flex; justify-content: center;
       font-size: 18px; line-height: 1;
     }
     .rail-text { writing-mode: vertical-rl; letter-spacing: 2px; }
-    &.active { color: #1890ff; }
+    &.active { color: var(--color-accent-deep); }
     &.active::before {
       content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
-      width: 3px; background: #1890ff; border-radius: 0 2px 2px 0;
+      width: 3px; background: var(--color-accent); border-radius: 0 2px 2px 0;
     }
   }
 }
@@ -846,16 +847,15 @@ const ScoreCell = defineComponent({
 .config { flex: 1; min-width: 0; overflow-y: auto; padding: 18px 22px 40px; }
 .config-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 .config-left { min-width: 0; }
-.catalog-line { margin: 0 0 12px; font-size: 13px; color: #4a5368; }
+.catalog-line { margin: 0 0 12px; font-size: 13px; color: var(--color-ink-2); }
 
 .mode-line {
   display: flex; align-items: center; flex-wrap: wrap; gap: 22px; margin-bottom: 14px;
 
-  .mode-label { font-size: 13px; color: #4a5368; }
-  .mode-label.required::before { content: '＊'; color: #f5222d; margin-right: 2px; }
+  .mode-label { font-size: 13px; color: var(--color-ink-2); }
+  .mode-label.required::before { content: '＊'; color: var(--color-error); margin-right: 2px; }
   .mode-radio {
-    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #4a5368; cursor: pointer;
-    input { margin: 0; accent-color: #1890ff; }
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-ink-2); cursor: pointer;
     // EP 渲染的空 label 占位（自带 padding）会撑开圆点与文字的距离，隐藏它；
     // .el-radio 默认 margin-right 30px 同样会拉开距离，一并清除
     :deep(.el-radio) { margin-right: 0; }
@@ -865,20 +865,30 @@ const ScoreCell = defineComponent({
 
 .config-actions { display: flex; gap: 12px; }
 
+/* 记分牌小卡：paper-2 底 + 顶部 2px 族标色条（敢做档 dashboard 三件套） */
 .stat-card {
   flex: 0 0 auto; display: flex; align-items: center; gap: 30px;
-  padding: 12px 26px; background: #fafbfd; border-radius: 6px;
+  padding: 12px 26px; background: var(--color-paper-2); border-radius: 6px;
+  position: relative; overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--color-accent);
+  }
 
   .stat-cell {
     display: flex; flex-direction: column; align-items: center; gap: 2px;
-    b { font-size: 20px; font-weight: 500; color: #303133; }
-    span { font-size: 12px; color: #8a92a5; }
+    b { font-size: 20px; font-weight: 600; color: var(--color-ink); font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+    span { font-size: 12px; color: var(--color-muted); }
   }
 }
 
 .empty-tip {
-  margin: 30px 0; padding: 50px 20px; border: 1px dashed #d9e1ec; border-radius: 8px;
-  text-align: center; color: #8a92a5; font-size: 13px;
+  margin: 30px 0; padding: 50px 20px; border: 1px dashed var(--color-rule-2); border-radius: var(--radius-card);
+  text-align: center; color: var(--color-muted); font-size: 13px;
 }
 
 .table-card { margin-top: 18px; }
@@ -888,8 +898,8 @@ const ScoreCell = defineComponent({
 
   :deep(.el-table__header th) {
     height: 44px;
-    background: #f7f8fa;
-    color: #303133;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     font-weight: 500;
   }
 
@@ -904,23 +914,23 @@ const ScoreCell = defineComponent({
   }
 
   :deep(.col-head) {
-    color: #303133;
+    color: var(--color-ink);
     text-align: left;
   }
 
   :deep(.matrix-sum-row td) {
-    background: #f7f8fa;
-    color: #303133;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
   }
 }
 
 .lib-cell { text-align: left !important; }
-.head-note { margin: 8px 0 0; font-size: 12px; color: #8a92a5; }
+.head-note { margin: 8px 0 0; font-size: 12px; color: var(--color-muted); }
 
 :deep(.lib-meta) {
-  .lib-name { margin: 0 0 6px; font-size: 13px; color: #303133; }
-  .meta-line { margin: 0 0 4px; font-size: 12px; color: #8a92a5; }
-  .orange { color: #fa8c16; }
+  .lib-name { margin: 0 0 6px; font-size: 13px; color: var(--color-ink); }
+  .meta-line { margin: 0 0 4px; font-size: 12px; color: var(--color-muted); }
+  .orange { color: var(--color-warning); }
 }
 
 :deep(.qty-cell) {
@@ -931,41 +941,40 @@ const ScoreCell = defineComponent({
 
     .el-input__inner { text-align: center; }
   }
-  .max-hint { font-size: 12px; color: #8a92a5; }
+  .max-hint { font-size: 12px; color: var(--color-muted); }
 }
 
 :deep(.score-line) {
   display: flex; align-items: center; justify-content: center; gap: 6px;
 
-  .score-label { font-size: 12px; color: #4a5368; }
+  .score-label { font-size: 12px; color: var(--color-ink-2); }
   .score-input, .miss-input {
     .el-input__inner { text-align: center; }
   }
   .score-input { width: 78px; }
   .miss-input { width: 64px; }
-  .score-unit { font-size: 12px; color: #8a92a5; }
+  .score-unit { font-size: 12px; color: var(--color-muted); }
 }
 
 :deep(.miss-block) {
   margin-top: 10px; text-align: left;
 
-  .miss-title { margin: 0 0 6px; font-size: 12px; color: #4a5368; }
+  .miss-title { margin: 0 0 6px; font-size: 12px; color: var(--color-ink-2); }
   .miss-radio-group { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
   .miss-radio {
     height: auto; margin-right: 0;
-    font-size: 12px; color: #4a5368;
+    font-size: 12px; color: var(--color-ink-2);
 
     .el-radio__label { display: inline-flex; align-items: center; gap: 4px; }
   }
 }
 
-.link { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
+.link { color: var(--color-accent-deep); cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; } }
 
 .btn {
-  padding: 6px 16px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
-
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 6px 16px; border-radius: 4px;
+  font-size: 13px; cursor: pointer;
+  /* plain/primary 态由 EP 主题层统一映射 */
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 

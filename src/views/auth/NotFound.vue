@@ -1,6 +1,6 @@
 <template>
   <div class="notfound-page">
-    <div class="notfound-card">
+    <div class="notfound-card cut">
       <div class="code">404</div>
       <h1>页面不存在</h1>
       <p>你访问的地址不存在或已被移除。</p>
@@ -33,43 +33,53 @@ const goHome = () => {
 </script>
 
 <style scoped lang="scss">
+/* Hallmark Cobalt 404 页：与登录/403 页同一材质语言（paper-2 底 + paper 切角卡片） */
 .notfound-page {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--space-lg);
   box-sizing: border-box;
-  background: #f5f7fb;
+  font-family: var(--font-display);
+  background: var(--color-paper-2);
 }
 
 .notfound-card {
   width: 460px;
   max-width: 100%;
   padding: 48px 40px;
-  border: 1px solid #e7ebf3;
-  border-radius: 16px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
   text-align: center;
-  box-shadow: 0 18px 48px rgba(31, 45, 76, 0.1);
+  /* 键帽底边 + 轻落影，对齐 Login 卡片做法 */
+  box-shadow: var(--shadow-key);
   box-sizing: border-box;
 
+  /* 钴蓝只做信号：404 数字用深钴蓝 */
   .code {
-    color: #1890ff;
-    font-size: 42px;
-    font-weight: 700;
+    color: var(--color-accent-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 56px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--tracking-display);
     line-height: 1;
   }
 
   h1 {
     margin: 18px 0 10px;
-    color: #1e2638;
+    color: var(--color-ink);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
     font-size: 22px;
   }
 
   p {
     margin: 0;
-    color: #7a8396;
-    font-size: 14px;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
     line-height: 1.7;
   }
 }
@@ -86,7 +96,7 @@ const goHome = () => {
   min-width: 110px;
   height: 40px;
   padding: 0 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--radius-input);
+  font-size: var(--text-sm);
 }
 </style>

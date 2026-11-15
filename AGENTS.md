@@ -8,7 +8,7 @@
 
 ## 2. 技术栈与结构
 
-- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus（`main.ts` 全量注册，主题由 `src/assets/styles/element-theme.scss` 统一覆盖；主色 `#1890ff`）· Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
+- Vue 3.5（`<script setup>` + TS）· Vite 8 · Element Plus（`main.ts` 全量注册，主题由 `src/assets/styles/element-theme.scss` 统一覆盖；主题走 Hallmark Cobalt token 层（`src/assets/styles/hallmark-tokens.scss`，主色 `--color-accent: oklch(52% 0.185 258)` 钴蓝，EP 变量由 `element-theme.scss` 映射）；组件层禁止裸写色值/emoji 图标（见第 4 节 Hallmark 口径））· Pinia · vue-router（hash 模式）· vue-flow（流程设计器）· echarts · axios。
 - 目录：`src/api`（按后端模块拆分的请求封装）、`src/views`（admin / student / onlineclassroom / auth / exam）、
   `src/components/layout`（AdminLayout/EnterpriseLayout/AdminTopNav/StudentTopNav）、`src/stores`（auth/training）、`src/utils`、`src/mock`、`src/types`。
 - 测试：Vitest + @vue/test-utils（`npm run test`）；类型检查 `vue-tsc`（`npm run build` 自带 type-check）。
@@ -55,10 +55,17 @@
   源码树内的《复刻平台前端》《复刻话术训练模块》文档目录已迁至 `D:\JACK\plan` 仓库。
 - **UI 控件口径（2026-10-22）**：普通表单、列表、分页、弹窗、抽屉、树控件统一使用 Element Plus；文件上传原生 `input`、聊天输入区、FlowDesign/NodeConfigPanel/EdgeWeightDialog、玩家/字幕专用交互和全屏 AI 生成向导属于已登记例外。新增页面不得恢复手写通用控件。
 - **抽屉约定**：考试域等自定义业务抽屉使用 `class="exam-drawer"` 的 `el-drawer`，`with-header=false` 时在内部保留业务头部；抽屉内容自行管理滚动，点击遮罩由 Element Plus 负责关闭。
+- **Hallmark Cobalt 视觉口径（2026-11-14 全站铺开）**：全站视觉走 `hallmark-tokens.scss` 的 Cobalt token 层，新增/改样式必须引 token（`var(--color-*)`），禁止裸 hex/rgba/emoji 图标（象形 emoji 一律换 `@element-plus/icons-vue` 组件）。已登记例外：FlowDesign/NodeConfigPanel/EdgeWeightDialog/全屏 AI 生成向导（存量裸色待专项清理，见 sloplint 报告）。常用套路：
+  - 表格三件套：表头 `--color-paper-2` 灰底+500 字+44px、行 hairline `--color-rule` 分隔+44px+`hover: var(--color-accent-wash)`、`:deep(.el-table .cell)` nowrap（同 8.2）；
+  - 按钮形态分级：实心键帽（`--shadow-key` 3px 底边）只给 primary；plain = wash 底+deep 字；link/text 禁底色 hover 只字色；激活态导航项 = `--color-accent-deep` 字+下边信号条+600 字重，全程无底色块；
+  - 交互语境区分：点击=字色/信号条反馈，按压=键帽下沉（`--shadow-key-press`）；列表行 hover 用 wash 不用抬升，侧栏宽行用 wash+抬升；
+  - 记分牌：大数字 Familjen Grotesk 600 48px+ `tabular-nums`（`.fig`/`--font-display`），单位/机器值 JetBrains Mono 小号（`--font-outlier`）；
+  - 切角面板挂全局 `.cut`（`@supports (corner-shape: bevel)` 渐进增强）；graphite 深板一页最多一块；ASCII field 用 `hallmark-field.ts`（`data-field` 挂载）。
+  - 校验：`node scripts/sloplint.mjs <目录> --scope app`（skill 路径 `C:/Users/me/.dsh/skills/hallmark/scripts/`）Floor 0 FAIL 后才可交付。
 
 ## 5. 构建与验证
 
-- `npm run test`（vitest，当前 **8 个 spec / 35 个用例**必须全绿）；`npm run type-check`、`npm run build-only`（Vite 打包）通过后再提交。
+- `npm run test`（vitest，当前 **27 个 spec / 374 个用例**必须全绿）；`npm run type-check`、`npm run build-only`（Vite 打包）通过后再提交。
 - 本地联调：后端网关 8080 + ACT 8082（WS）在跑即可 `npm run dev`（端口 3000）。
 - 提交前跑 `npm run format`（prettier），不要提交与本次改动无关的大面积格式化。
 

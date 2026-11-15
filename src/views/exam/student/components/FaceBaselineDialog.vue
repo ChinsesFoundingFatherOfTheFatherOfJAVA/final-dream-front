@@ -47,7 +47,7 @@
     <!-- ===== 完成 ===== -->
     <template v-else>
       <div class="result-block">
-        <div class="result-icon is-ok" aria-hidden="true">✓</div>
+<el-icon class="result-icon is-ok" aria-hidden="true"><Check /></el-icon>
         <p class="result-title">照片已保存</p>
         <p class="result-desc">下次进入考试时会用它核对身份。</p>
       </div>
@@ -89,6 +89,7 @@
  * <p>**能力边界（DEF-01）**：这张照片是学员自己拍的，首次就可以是别人。
  * 它只能用于检测「这次与上次不是同一人」，**不是身份认证**。UI 文案不得暗示"已确认本人"。
  */
+import { Check } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { toast } from '@/utils/toast'
 import { uploadExamFile } from '@/api/exam'
@@ -254,7 +255,7 @@ watch(visible, (v) => {
   position: relative;
   width: 100%;
   height: 300px;
-  background: #000;
+  background: var(--color-paper-2);
   border-radius: 6px;
   overflow: hidden;
   display: flex;
@@ -284,22 +285,22 @@ watch(visible, (v) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
+  background: oklch(21% 0.028 262 / 0.45);
+  color: var(--color-paper);
   font-size: 14px;
 }
 
 .face-tip {
   margin: 12px 0 4px;
   font-size: 14px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .face-note {
   margin: 0;
   font-size: 12px;
   line-height: 1.7;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .result-block {
@@ -318,8 +319,8 @@ watch(visible, (v) => {
   font-size: 28px;
 
   &.is-ok {
-    background: #f6ffed;
-    color: #52c41a;
+    background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
+    color: var(--color-success);
   }
 }
 
@@ -327,13 +328,13 @@ watch(visible, (v) => {
   margin: 0 0 6px;
   font-size: 16px;
   font-weight: 600;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .result-desc {
   margin: 0;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .dialog-footer {

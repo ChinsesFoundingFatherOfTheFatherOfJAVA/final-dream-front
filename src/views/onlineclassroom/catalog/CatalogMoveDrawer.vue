@@ -166,7 +166,7 @@ watch(() => props.visible, async visible => {
   grid-template-columns: 100px 1fr;
   align-items: center;
   gap: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-input__wrapper) {
@@ -177,17 +177,17 @@ watch(() => props.visible, async visible => {
 
 .notice {
   padding: 10px 12px;
-  border: 1px solid #cfe0ff;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
   border-radius: 6px;
-  background: #f2f7ff;
-  color: #2e6dc4;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 12px;
 }
 
 .target-tree {
   max-height: 360px;
   overflow-y: auto;
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 10px;
 }
@@ -197,12 +197,12 @@ watch(() => props.visible, async visible => {
   align-items: center;
   gap: 4px;
   min-height: 34px;
-  color: #394253;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   &:hover {
     border-radius: 6px;
-    background: #f8fafc;
+    background: var(--color-paper-2);
   }
 }
 
@@ -214,7 +214,7 @@ watch(() => props.visible, async visible => {
 
 .root-row {
   width: 100%;
-  border-bottom: 1px solid #eef1f6;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
   margin: 0 0 4px;
   margin-right: 0;
 }
@@ -229,7 +229,7 @@ watch(() => props.visible, async visible => {
 .expand-btn {
   border: none;
   background: transparent;
-  color: #7a8396;
+  color: var(--color-muted);
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
@@ -244,7 +244,7 @@ watch(() => props.visible, async visible => {
 .tree-row :deep(.el-radio__label) {
   min-width: 0;
   overflow: hidden;
-  color: #394253;
+  color: var(--color-ink-2);
   font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -252,7 +252,7 @@ watch(() => props.visible, async visible => {
 
 .empty-tip {
   padding: 20px;
-  color: #98a1b2;
+  color: var(--color-muted);
   text-align: center;
   font-size: 13px;
 }
@@ -264,15 +264,15 @@ watch(() => props.visible, async visible => {
   cursor: pointer;
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #e75487;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="message-row" :class="message.role === 'user' ? 'row-user' : 'row-agent'">
-    <div v-if="message.role === 'agent'" class="avatar" aria-hidden="true">🤖</div>
+    <img v-if="message.role === 'agent'" class="avatar" :src="sageAvatar" alt="大贤者" />
 
     <div class="bubble-wrap">
       <!-- 助手：段落按 markdown 渲染（含表格）；用户：纯文本气泡 -->
@@ -19,7 +19,7 @@
 
         <!-- 文件消息卡（用户上传） -->
         <div v-else-if="block.kind === 'file'" class="file-card">
-          <span class="file-icon" aria-hidden="true">{{ fileIcon(block.fileType) }}</span>
+          <span class="file-icon" aria-hidden="true"><el-icon><component :is="fileIcon(block.fileType)" /></el-icon></span>
           <div class="file-meta">
             <div class="file-name">{{ block.name }}</div>
             <div class="file-sub">{{ block.fileType.toUpperCase() }} · {{ formatSize(block.fileSize) }}</div>
@@ -37,7 +37,7 @@
           </template>
           <template v-else-if="block.parseError">
             <div class="event-head">
-              <span class="event-icon" aria-hidden="true">⚠️</span>
+              <span class="event-icon" aria-hidden="true"><el-icon><WarningFilled /></el-icon></span>
               <span class="event-title">事件解析失败</span>
             </div>
             <pre class="event-raw">{{ block.raw }}</pre>
@@ -52,7 +52,7 @@
             </div>
             <ul class="event-files">
               <li v-for="f in parseFiles(block)" :key="f.id">
-                <span class="file-icon sm" aria-hidden="true">📄</span>
+                <span class="file-icon sm" aria-hidden="true"><el-icon><Document /></el-icon></span>
                 <span class="file-item-name">{{ f.name }}</span>
                 <span class="file-item-status" :class="{ ok: Number(f.status) === 1 }">
                   {{ Number(f.status) === 1 ? '解析完成' : '解析中…' }}
@@ -87,7 +87,7 @@
           <!-- biz-side-manage-topic-changed：草稿主题已创建 -->
           <template v-else-if="block.bizType === 'biz-side-manage-topic-changed'">
             <div class="event-head">
-              <span class="event-icon" aria-hidden="true">📌</span>
+              <span class="event-icon" aria-hidden="true"><el-icon><Position /></el-icon></span>
               <span class="event-title">已创建草稿主题</span>
             </div>
             <div class="event-topic-name">{{ str(block.params.topic) }}</div>
@@ -98,7 +98,7 @@
           <!-- biz-side-manage-artifact-updated：内容已更新 -->
           <template v-else-if="block.bizType === 'biz-side-manage-artifact-updated'">
             <div class="event-head">
-              <span class="event-icon" aria-hidden="true">✏️</span>
+              <span class="event-icon" aria-hidden="true"><el-icon><EditPen /></el-icon></span>
               <span class="event-title">主题内容已更新</span>
               <span class="event-version">v{{ str(block.params.version) }}</span>
             </div>
@@ -115,7 +115,7 @@
             <div class="event-head">
               <span v-if="generatedStatus(block) === 'in_progress'" class="spinner"></span>
               <span v-else-if="generatedStatus(block) === 'completed'" class="event-icon ok" aria-hidden="true">✓</span>
-              <span v-else class="event-icon" aria-hidden="true">⚠️</span>
+              <span v-else class="event-icon" aria-hidden="true"><el-icon><WarningFilled /></el-icon></span>
               <span class="event-title">
                 {{ generatedStatus(block) === 'in_progress' ? '正在生成主题内容…' : generatedStatus(block) === 'completed' ? '主题内容生成完成' : '主题内容生成失败' }}
               </span>
@@ -136,7 +136,7 @@
           <!-- biz-side-manage-case-generated：单案例完成 -->
           <template v-else-if="block.bizType === 'biz-side-manage-case-generated'">
             <div class="event-head">
-              <span class="event-icon" aria-hidden="true">🎬</span>
+              <span class="event-icon" aria-hidden="true"><el-icon><VideoCamera /></el-icon></span>
               <span class="event-title">实战案例已生成</span>
             </div>
             <div class="event-case-name">{{ str(block.params.scriptName) }}</div>
@@ -177,6 +177,8 @@ import { ACT_DIFFICULTY_TEXT } from '@/types/actTheme'
 import { getSessionMaterials } from '@/api/assistant'
 import { useAssistantStore } from '../composables/useAssistantStore'
 import { renderMarkdown } from '../utils/markdown'
+import sageAvatar from '@/assets/sage-avatar.jpg'
+import { WarningFilled, Document, Position, EditPen, VideoCamera, DocumentCopy, Notebook, Paperclip } from '@element-plus/icons-vue'
 import type {
   AssistantChatMessage,
   AssistantMaterialBrief,
@@ -329,17 +331,17 @@ function scenarioSeq(block: AssistantRenderBlock): string {
 }
 
 // ---------- 文件 ----------
-const FILE_ICON: Record<string, string> = {
-  ppt: '📊',
-  pptx: '📊',
-  doc: '📝',
-  docx: '📝',
-  pdf: '📕',
-  txt: '📄',
-  md: '📄'
+const FILE_ICON: Record<string, any> = {
+  ppt: DocumentCopy,
+  pptx: DocumentCopy,
+  doc: Notebook,
+  docx: Notebook,
+  pdf: Document,
+  txt: Document,
+  md: Document
 }
-function fileIcon(type: string): string {
-  return FILE_ICON[type?.toLowerCase()] ?? '📎'
+function fileIcon(type: string) {
+  return FILE_ICON[type?.toLowerCase()] ?? Paperclip
 }
 function formatSize(bytes: number): string {
   if (!bytes) return '--'
@@ -364,12 +366,10 @@ function formatSize(bytes: number): string {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2b2f3a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
+  object-fit: cover;
+  object-position: center 18%;
   flex-shrink: 0;
+  border: 1px solid var(--color-rule);
 }
 
 .bubble-wrap {
@@ -388,17 +388,17 @@ function formatSize(bytes: number): string {
   word-break: break-word;
 
   &.bubble-user {
-    background: #1890ff;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     border-bottom-right-radius: 3px;
 
     .user-text { white-space: pre-wrap; }
   }
 
   &.bubble-agent {
-    background: #fff;
-    color: #1f2329;
-    border: 1px solid #e8eaee;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 1px solid var(--color-rule);
     border-bottom-left-radius: 3px;
   }
 }
@@ -406,7 +406,7 @@ function formatSize(bytes: number): string {
 .typing-caret {
   display: inline-block;
   margin-left: 2px;
-  color: #1890ff;
+  color: var(--color-accent);
   animation: caret-blink 1s steps(2, start) infinite;
 }
 
@@ -428,16 +428,16 @@ function formatSize(bytes: number): string {
   :deep(.md-list) { margin: 0 0 8px; padding-left: 20px; }
   :deep(.md-list li) { margin: 2px 0; }
   :deep(.md-code) {
-    background: #f2f3f5;
+    background: var(--color-paper-2);
     border-radius: 3px;
     padding: 1px 5px;
     font-family: Consolas, Monaco, monospace;
     font-size: 13px;
-    color: #d4477e;
+    color: var(--color-accent);
   }
   :deep(.md-pre) {
-    background: #f7f8fa;
-    border: 1px solid #e8eaee;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
     padding: 10px 12px;
     overflow-x: auto;
@@ -452,13 +452,13 @@ function formatSize(bytes: number): string {
   :deep(.md-quote) {
     margin: 0 0 8px;
     padding: 8px 12px;
-    background: #f5f7ff;
-    border-left: 3px solid #6b5ce7;
+    background: var(--color-accent-wash);
+    border-left: 3px solid var(--color-accent);
     border-radius: 4px;
-    color: #5b5f78;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
-  :deep(.md-hr) { border: none; border-top: 1px solid #e8eaee; margin: 10px 0; }
+  :deep(.md-hr) { border: none; border-top: 1px solid var(--color-rule); margin: 10px 0; }
   :deep(.md-table-wrap) { overflow-x: auto; margin: 0 0 10px; }
   :deep(.md-table) {
     border-collapse: collapse;
@@ -467,14 +467,14 @@ function formatSize(bytes: number): string {
 
     th,
     td {
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-rule);
       padding: 6px 10px;
       text-align: left;
     }
 
-    th { background: #f7f8fa; font-weight: 600; }
+    th { background: var(--color-paper-2); font-weight: 600; }
   }
-  :deep(a) { color: #1890ff; }
+  :deep(a) { color: var(--color-accent); }
 }
 
 /* 文件消息卡 */
@@ -483,28 +483,28 @@ function formatSize(bytes: number): string {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   max-width: 320px;
 
   .file-icon { font-size: 22px; flex-shrink: 0; }
-  .file-name { font-size: 14px; color: #1f2329; font-weight: 500; }
-  .file-sub { font-size: 12px; color: #a5a9b0; margin-top: 2px; }
+  .file-name { font-size: 14px; color: var(--color-ink); font-weight: 500; }
+  .file-sub { font-size: 12px; color: var(--color-muted); margin-top: 2px; }
 }
 
 /* 事件卡 */
 .event-card {
   padding: 11px 14px;
   border-radius: 8px;
-  background: #f7f8fa;
-  border: 1px solid #e8eaee;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
   font-size: 13px;
-  color: #4e5969;
+  color: var(--color-ink-2);
 
-  &.is-pending { background: #f5f7ff; border-color: #dfe4fb; }
-  &.is-done { background: #f4fbf3; border-color: #d9f0d3; }
-  &.is-error { background: #fdf3f3; border-color: #f7d9d9; }
+  &.is-pending { background: var(--color-accent-wash); border-color: var(--color-accent-wash); }
+  &.is-done { background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper)); border-color: color-mix(in oklab, var(--color-success) 25%, var(--color-paper)); }
+  &.is-error { background: color-mix(in oklab, var(--color-error) 8%, var(--color-paper)); border-color: color-mix(in oklab, var(--color-error) 25%, var(--color-paper)); }
 }
 
 .event-head {
@@ -513,17 +513,17 @@ function formatSize(bytes: number): string {
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--color-ink);
 
   .event-icon { font-size: 15px; }
-  .event-icon.ok { color: #52c41a; }
+  .event-icon.ok { color: var(--color-success); }
   .event-version {
     margin-left: auto;
     font-size: 12px;
     font-weight: 400;
-    color: #8a8f98;
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    color: var(--color-muted);
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule);
     border-radius: 4px;
     padding: 0 6px;
   }
@@ -532,8 +532,8 @@ function formatSize(bytes: number): string {
 .spinner {
   width: 13px;
   height: 13px;
-  border: 2px solid #c7d2f5;
-  border-top-color: #3b5bdb;
+  border: 2px solid var(--color-accent-wash);
+  border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   flex-shrink: 0;
@@ -558,9 +558,9 @@ function formatSize(bytes: number): string {
     .file-item-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .file-item-status {
       font-size: 12px;
-      color: #3b5bdb;
+      color: var(--color-accent);
 
-      &.ok { color: #52c41a; }
+      &.ok { color: var(--color-success); }
     }
   }
 }
@@ -569,19 +569,19 @@ function formatSize(bytes: number): string {
   margin: 8px 0 0;
   line-height: 1.6;
 
-  &.error-text { color: #d43c3c; }
+  &.error-text { color: var(--color-error); }
 }
 
 /* 材料摘要预览（parse-file 完成态） */
 .event-summary {
   margin: 6px 0 0;
   padding: 7px 10px;
-  background: #fff;
-  border-left: 3px solid #52c41a;
+  background: var(--color-paper);
+  border-left: 3px solid var(--color-success);
   border-radius: 4px;
   font-size: 12px;
   line-height: 1.7;
-  color: #4e5969;
+  color: var(--color-ink-2);
   max-height: 120px;
   overflow: hidden;
 }
@@ -589,14 +589,14 @@ function formatSize(bytes: number): string {
 .event-hint {
   margin: 6px 0 0;
   font-size: 12px;
-  color: #8a8f98;
+  color: var(--color-muted);
 }
 
 .event-topic-name {
   margin-top: 6px;
   font-size: 15px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--color-ink);
 }
 
 .event-list {
@@ -607,13 +607,13 @@ function formatSize(bytes: number): string {
   &.counts { padding-left: 18px; }
 }
 
-.patch-reason { color: #a5a9b0; }
+.patch-reason { color: var(--color-muted); }
 
 .event-case-name {
   margin-top: 6px;
   font-size: 14px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--color-ink);
 }
 
 .event-case-meta {
@@ -628,28 +628,28 @@ function formatSize(bytes: number): string {
     border-radius: 4px;
   }
 
-  .case-difficulty { color: #e8940c; background: #fff7e6; }
-  .case-scene { color: #6b5ce7; background: #f0edff; }
+  .case-difficulty { color: var(--color-warning); background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); }
+  .case-scene { color: var(--color-accent); background: var(--color-accent-wash); }
 }
 
 .event-link {
   margin-top: 8px;
   padding: 5px 12px;
-  background: #fff;
-  border: 1px solid #1890ff;
-  color: #1890ff;
+  background: var(--color-paper);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
   border-radius: 4px;
   font-size: 13px;
   cursor: pointer;
 
-  &:hover { background: #e6f7ff; }
+  &:hover { background: var(--color-accent-wash); }
 }
 
 .event-raw {
   margin: 8px 0 0;
   padding: 8px;
-  background: #fff;
-  border: 1px solid #f7d9d9;
+  background: var(--color-paper);
+  border: 1px solid color-mix(in oklab, var(--color-error) 25%, var(--color-paper));
   border-radius: 4px;
   font-size: 12px;
   max-height: 160px;
@@ -665,34 +665,34 @@ function formatSize(bytes: number): string {
 
 .parse-toggle {
   padding: 4px 12px;
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  color: #595959;
+  color: var(--color-muted);
   font-size: 12px;
   cursor: pointer;
 
-  &:hover { border-color: #1890ff; color: #1890ff; }
+  &:hover { border-color: var(--color-accent); color: var(--color-accent); }
 }
 
 .parse-detail {
   margin-top: 8px;
   padding: 10px;
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
 }
 
 .parse-hint {
   margin: 0;
   font-size: 12px;
-  color: #8a8f98;
+  color: var(--color-muted);
 }
 
 .parse-item + .parse-item {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px dashed #eee;
+  border-top: 1px dashed var(--color-rule);
 }
 
 .parse-item-head {
@@ -705,12 +705,12 @@ function formatSize(bytes: number): string {
 .parse-item-name {
   font-size: 13px;
   font-weight: 600;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .parse-item-meta {
   font-size: 12px;
-  color: #8a8f98;
+  color: var(--color-muted);
 }
 
 .parse-item-text {
@@ -718,11 +718,11 @@ function formatSize(bytes: number): string {
   padding: 8px;
   max-height: 240px;
   overflow: auto;
-  background: #fafafa;
+  background: var(--color-paper-2);
   border-radius: 4px;
   font-size: 12px;
   line-height: 1.7;
-  color: #434343;
+  color: var(--color-ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }

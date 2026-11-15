@@ -2,7 +2,7 @@
   <header class="top-nav">
     <div class="nav-left">
       <router-link to="/homepage" class="logo">
-        <span class="logo-text">JACK 杰克</span>
+        <span class="logo-text">JACK <em class="logo-accent">杰克</em></span>
       </router-link>
       <nav class="nav-menu">
         <router-link
@@ -53,7 +53,7 @@
               ><el-icon><ArrowDown /></el-icon></span
           ></span>
           <template #dropdown>
-            <el-dropdown-menu class="more-menu">
+            <el-dropdown-menu class="more-menu cut">
               <el-dropdown-item disabled>学习路径</el-dropdown-item>
               <el-dropdown-item disabled>知识图谱</el-dropdown-item>
               <el-dropdown-item disabled>学习社区</el-dropdown-item>
@@ -63,9 +63,9 @@
       </nav>
     </div>
     <div class="nav-right">
-      <span class="nav-icon" aria-hidden="true" title="敬请期待">🎨</span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待">🔍</span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待">🔔</span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Brush /></el-icon></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Search /></el-icon></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Bell /></el-icon></span>
       <el-dropdown trigger="hover" @command="handleUserCommand">
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
@@ -75,7 +75,7 @@
           ></span>
         </span>
         <template #dropdown>
-          <el-dropdown-menu class="user-menu">
+          <el-dropdown-menu class="user-menu cut">
             <el-dropdown-item command="admin">前往管理端</el-dropdown-item>
             <el-dropdown-item disabled>个人中心</el-dropdown-item>
             <el-dropdown-item disabled>我的收藏</el-dropdown-item>
@@ -83,13 +83,13 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span class="nav-item workbench"> <span>⊞</span> 工作台 </span>
+      <span class="nav-item workbench"> <span aria-hidden="true">⊞</span> 工作台 </span>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Brush, Search, Bell } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -114,17 +114,19 @@ const handleUserCommand = (command: string) => {
 </script>
 
 <style scoped lang="scss">
+/* Hallmark Cobalt 顶栏：冷灰纸面 + 发丝线分隔，Familjen Grotesk，钴蓝只做激活信号 */
 .top-nav {
   height: 60px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-sticky-nav);
+  font-family: var(--font-display);
 }
 
 .nav-left {
@@ -139,13 +141,18 @@ const handleUserCommand = (command: string) => {
   text-decoration: none;
 }
 
+// 品牌字标改双色：墨色为主、钴蓝只点在「杰克」，不再做渐变蓝大色块
 .logo-text {
   font-size: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+
+  .logo-accent {
+    margin-left: 2px;
+    color: var(--color-accent-2);
+    font-style: normal;
+  }
 }
 
 .nav-menu {
@@ -159,35 +166,39 @@ const handleUserCommand = (command: string) => {
   // line-height 差异顶偏（实测 dropdown 项文字偏高 3.2px）
   display: inline-flex;
   align-items: center;
-  color: #333;
+  color: var(--color-ink-2);
   text-decoration: none;
-  font-size: 14px;
+  font-size: var(--text-sm);
   // 显式行高：el-dropdown 会向触发项注入 line-height:1，导致与普通项行盒差 0.2px
   line-height: 20px;
   padding: 8px 0;
   // 下划线用透明边框常驻占位：激活只换颜色不改盒子高度，否则激活项多出的
   // 2px 会经 flex 拉伸让整排文字基线跳动（实测 1.2px）
   border-bottom: 2px solid transparent;
-  transition: color 0.3s;
+  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
   cursor: pointer;
   position: relative;
   white-space: nowrap;
 
-  &:hover,
-  &.active {
-    color: #1890ff;
+  // 批注17：横向顶栏窄项 hover 只字变色（div 整体变色太重），激活态才给 wash 底
+  &:hover {
+    color: var(--color-accent-2);
   }
 
   &.disabled {
-    color: #c0c4cc;
+    color: var(--color-muted);
     cursor: not-allowed;
     &:hover {
-      color: #c0c4cc;
+      color: var(--color-muted);
+      background: transparent;
     }
   }
 
+  // 批注18：激活态去底色块——字变深钴蓝+下边信号条+加重字重，全程无底色
   &.active {
-    border-bottom-color: #1890ff;
+    color: var(--color-accent-deep);
+    border-bottom-color: var(--color-accent);
+    font-weight: 600;
   }
 }
 
@@ -205,7 +216,7 @@ const handleUserCommand = (command: string) => {
 // 占位图标无实际功能，不呈现可点击态，避免误导用户
 .nav-icon {
   font-size: 18px;
-  color: #666;
+  color: var(--color-muted);
   cursor: default;
   padding: 8px;
 }
@@ -234,8 +245,8 @@ const handleUserCommand = (command: string) => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #e6f7ff;
-  color: #1890ff;
+  background: color-mix(in oklab, var(--color-accent) 18%, var(--color-paper));
+  color: var(--color-accent-2);
   display: flex;
   align-items: center;
   justify-content: center;

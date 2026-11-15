@@ -18,7 +18,7 @@
     </div>
 
     <div v-if="!profiles.length" class="empty-state">
-      <div class="empty-icon" aria-hidden="true">📦</div>
+      <div class="empty-icon" aria-hidden="true"><el-icon><Box /></el-icon></div>
       <p class="empty-text">暂无产品档案</p>
     </div>
 
@@ -161,6 +161,7 @@
 // 产品档案面板（契约 09 §4.4/§5.1）：工作区 v0 编辑，AI 候选只返回不落库
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Box } from '@element-plus/icons-vue'
 import {
   createProductProfile,
   deleteProductProfile,

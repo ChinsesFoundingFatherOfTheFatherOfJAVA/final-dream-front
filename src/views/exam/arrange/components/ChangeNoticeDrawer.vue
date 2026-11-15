@@ -176,44 +176,44 @@ onMounted(loadHistory)
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 560px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
+.drawer { width: 560px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600;
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; } }
 }
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .block { margin-bottom: 22px; }
-.block-title { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #303133; }
+.block-title { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--color-ink); }
 .field {
-  display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #4a5368; margin-bottom: 12px;
+  display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--color-ink-2); margin-bottom: 12px;
   input[type="text"], input:not([type]), textarea {
-    border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none;
-    &:focus { border-color: #1890ff; }
+    border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none;
+    &:focus { border-color: var(--color-focus); }
   }
 }
 .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 12px; }
-.field-item { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #4a5368; input { accent-color: #1890ff; } }
-.preview-tip { margin: -4px 0 12px; font-size: 12px; color: #8a92a5; b { color: #1890ff; } }
+.field-item { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-ink-2); }
+.preview-tip { margin: -4px 0 12px; font-size: 12px; color: var(--color-muted); b { color: var(--color-accent-deep); } }
 .actions { display: flex; justify-content: flex-end; gap: 10px; }
-.hint { margin: 10px 0 0; font-size: 12px; color: #a0a7b8; line-height: 1.6; }
+.hint { margin: 10px 0 0; font-size: 12px; color: var(--color-muted); line-height: 1.6; }
 .btn {
-  padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  font-size: 13px; color: #4a5368; cursor: pointer;
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 7px 16px; border-radius: 4px;
+  font-size: 13px; cursor: pointer;
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
-.empty { text-align: center; color: #999; font-size: 12px; padding: 24px 0; }
+.empty { text-align: center; color: var(--color-muted); font-size: 12px; padding: 24px 0; }
 .history-list { display: flex; flex-direction: column; gap: 10px; }
-.history-item { border: 1px solid #e5e8ef; border-radius: 6px; padding: 10px 12px; }
+.history-item { border: var(--rule-hair) solid var(--color-rule); border-radius: 6px; padding: 10px 12px; }
 .history-head { display: flex; align-items: center; gap: 8px; }
-.history-title { font-size: 13px; font-weight: 600; color: #1f2937; }
-.status-tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; background: #f5f5f5; color: #8c8c8c; }
-.status-tag.s0 { background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; }
-.status-tag.s1 { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
-.status-tag.s2 { background: #fff1f0; border: 1px solid #ffa39e; color: #cf1322; }
-.status-tag.s3 { background: #fafafa; border: 1px solid #e5e8ef; color: #8c8c8c; }
-.revoke-link { margin-left: auto; font-size: 12px; color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
-.history-content { margin: 6px 0; font-size: 12px; color: #4a5368; line-height: 1.7; }
-.history-meta { margin: 0; display: flex; gap: 14px; font-size: 12px; color: #a0a7b8; }
+.history-title { font-size: 13px; font-weight: 600; color: var(--color-ink); }
+.status-tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; background: var(--color-paper-2); color: var(--color-muted); }
+.status-tag.s0 { background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper)); color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink)); }
+.status-tag.s1 { background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-success) 40%, var(--color-paper)); color: var(--color-success); }
+.status-tag.s2 { background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-error) 40%, var(--color-paper)); color: var(--color-error); }
+.status-tag.s3 { background: var(--color-paper-2); border: 1px solid var(--color-rule); color: var(--color-muted); }
+.revoke-link { margin-left: auto; font-size: 12px; color: var(--color-accent-deep); cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; } }
+.history-content { margin: 6px 0; font-size: 12px; color: var(--color-ink-2); line-height: 1.7; }
+.history-meta { margin: 0; display: flex; gap: 14px; font-size: 12px; color: var(--color-muted); }
 </style>

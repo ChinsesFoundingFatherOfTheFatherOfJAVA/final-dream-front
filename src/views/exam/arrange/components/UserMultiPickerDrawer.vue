@@ -281,12 +281,13 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
 .drawer {
   display: flex;
   flex-direction: column;
   width: 1040px;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .drawer-header {
@@ -294,16 +295,16 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
   font-size: 15px;
   font-weight: 600;
 
   .close-btn {
     font-size: 22px;
-    color: #999;
+    color: var(--color-muted);
     cursor: pointer;
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; }
   }
 }
 
@@ -338,16 +339,16 @@ onMounted(async () => {
     width: 220px;
     height: 32px;
     padding: 0 10px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
-    background: #fff;
+    background: var(--color-paper);
     font-size: 12px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
-    &:hover { border-color: #1890ff; }
-    .placeholder { color: #b0b7c3; }
-    .select-arrow { color: #8a92a5; font-size: 11px; }
+    &:hover { border-color: var(--color-accent); }
+    .placeholder { color: var(--color-rule-2); }
+    .select-arrow { color: var(--color-muted); font-size: 11px; }
   }
 
   .dept-dropdown {
@@ -360,19 +361,18 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     padding: 8px;
-    background: #fff;
-    border: 1px solid #e6eaf1;
+    background: var(--color-paper);
+    border: var(--rule-hair) solid var(--color-rule);
     border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-card);
   }
 }
 
+/* 搜索主按钮交给 EP 主题层键帽化，这里只管排版 */
 .search-btn {
   padding: 6px 18px;
   border: none;
   border-radius: 4px;
-  background: #1890ff;
-  color: #fff;
   font-size: 12px;
   cursor: pointer;
 }
@@ -388,7 +388,7 @@ onMounted(async () => {
   flex: 1;
   min-width: 0;
   overflow: auto;
-  border: 1px solid #eef1f6;
+  border: var(--rule-hair) solid var(--color-rule);
   border-radius: 6px;
 }
 
@@ -398,10 +398,10 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  border: 1px solid #e6eaf1;
+  border: var(--rule-hair) solid var(--color-rule);
   border-radius: 6px;
 
-  .panel-title { margin: 0 0 10px; font-size: 12px; color: #667; }
+  .panel-title { margin: 0 0 10px; font-size: 12px; color: var(--color-ink); }
   .selected-list {
     flex: 1;
     overflow-y: auto;
@@ -410,26 +410,27 @@ onMounted(async () => {
     align-content: flex-start;
     gap: 6px;
   }
-  .empty-tip { font-size: 12px; color: #b0b7c3; }
+  .empty-tip { font-size: 12px; color: var(--color-rule-2); }
 }
 
+/* 已选标签：accent-wash 底 + accent-deep 字 */
 .picked-tag {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border: 1px solid #d6e4ff;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
   border-radius: 3px;
-  background: #f0f5ff;
-  color: #2f54eb;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
 
   i {
     font-style: normal;
-    color: #8a92a5;
+    color: var(--color-muted);
     cursor: pointer;
 
-    &:hover { color: #f5222d; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+    &:hover { color: var(--color-error); }
+    &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 2px; }
   }
 }
 
@@ -438,7 +439,7 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #667;
+  color: var(--color-muted);
 }
 
 .drawer-footer {
@@ -446,18 +447,13 @@ onMounted(async () => {
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .btn {
   padding: 7px 16px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  background: #fff;
   font-size: 13px;
-  color: #4a5368;
   cursor: pointer;
-
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
 }
 </style>

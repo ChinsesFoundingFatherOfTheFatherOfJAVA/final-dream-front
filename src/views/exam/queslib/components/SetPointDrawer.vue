@@ -85,48 +85,48 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 560px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 560px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 600;
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 20px; }
 
-.tip { margin: 0; font-size: 12px; color: #8a92a5; line-height: 1.8; }
+.tip { margin: 0; font-size: 12px; color: var(--color-muted); line-height: 1.8; }
 
-.point-list { flex: 1; min-height: 0; overflow-y: auto; border: 1px solid #e6eaf1; border-radius: 6px; }
+.point-list { flex: 1; min-height: 0; overflow-y: auto; border: 1px solid var(--color-rule); border-radius: 6px; }
 
 .point-row {
   display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px; font-size: 13px; color: #4a5368;
-  border-bottom: 1px solid #f2f4f8; cursor: pointer;
+  padding: 10px 14px; font-size: 13px; color: var(--color-ink-2);
+  border-bottom: 1px solid var(--color-paper-2); cursor: pointer;
 
-  &:hover { background: #f7f9fd; }
-  input { accent-color: #1890ff; }
+  &:hover { background: var(--color-accent-wash); }
+  input { accent-color: var(--color-accent); }
   .point-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .default-tag {
-    padding: 1px 6px; border-radius: 3px; background: #f0f5ff;
-    border: 1px solid #d6e4ff; color: #2f54eb; font-size: 12px;
+    padding: 1px 6px; border-radius: 3px; background: var(--color-accent-wash);
+    border: 1px solid var(--color-rule-2); color: var(--color-accent-deep); font-size: 12px;
   }
 }
 
-.empty { text-align: center; color: #b0b7c3; font-size: 13px; padding: 40px 0; margin: 0; }
+.empty { text-align: center; color: var(--color-rule-2); font-size: 13px; padding: 40px 0; margin: 0; }
 
 .drawer-footer {
   display: flex; align-items: center; gap: 10px;
-  padding: 14px 20px; border-top: 1px solid #eee;
+  padding: 14px 20px; border-top: 1px solid var(--color-rule);
 
-  .picked-count { margin-right: auto; font-size: 12px; color: #8a92a5; }
+  .picked-count { margin-right: auto; font-size: 12px; color: var(--color-muted); }
 }
 
 .btn {
-  padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 7px 18px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

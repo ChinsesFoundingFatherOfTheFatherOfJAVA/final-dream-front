@@ -5,12 +5,12 @@
     </p>
 
     <div v-if="materials.length === 0" class="empty-state">
-      <div class="empty-icon" aria-hidden="true">📎</div>
+      <div class="empty-icon" aria-hidden="true"><el-icon><Paperclip /></el-icon></div>
       <p class="empty-text">暂无培训材料，可在左侧对话中上传</p>
     </div>
 
     <div v-for="m in materials" :key="m.id" class="material-card">
-      <span class="file-icon" aria-hidden="true">{{ fileIcon(m.fileType) }}</span>
+      <span class="file-icon" aria-hidden="true"><el-icon><component :is="fileIcon(m.fileType)" /></el-icon></span>
       <div class="material-meta">
         <div class="material-name">
           {{ m.name }}
@@ -38,6 +38,7 @@
 import { computed } from 'vue'
 import { useAssistantStore } from '../../composables/useAssistantStore'
 import type { ArtifactMaterial } from '@/types/assistant'
+import { Paperclip, DocumentCopy, Notebook } from '@element-plus/icons-vue'
 
 const props = defineProps<{ disabled?: boolean }>()
 
@@ -45,16 +46,16 @@ const store = useAssistantStore()
 const materials = computed<ArtifactMaterial[]>(() => store.artifactContent?.materials ?? [])
 const disabled = computed(() => props.disabled === true)
 
-const FILE_ICON: Record<string, string> = {
-  ppt: '📊',
-  pptx: '📊',
-  doc: '📝',
-  docx: '📝',
-  pdf: '📕',
-  txt: '📄',
-  md: '📄',
+const FILE_ICON: Record<string, any> = {
+  ppt: DocumentCopy,
+  pptx: DocumentCopy,
+  doc: Notebook,
+  docx: Notebook,
+  pdf: Document,
+  txt: Document,
+  md: Document,
 }
-const fileIcon = (type: string) => FILE_ICON[(type || '').toLowerCase()] ?? '📎'
+const fileIcon = (type: string) => FILE_ICON[(type || '').toLowerCase()] ?? Paperclip
 
 /**
  * 文件大小展示：后端 artifact 里 fileSize 为字节数、fileSizeUnit 为 "B"（保留精度），
@@ -82,7 +83,7 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
 <style scoped lang="scss">
 .tab-desc {
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
   line-height: 1.7;
   margin: 0 0 14px;
 }
@@ -97,7 +98,7 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   }
   .empty-text {
     font-size: 14px;
-    color: #999;
+    color: var(--color-muted);
     margin: 0;
   }
 }
@@ -107,10 +108,10 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   margin-bottom: 10px;
-  background: #fff;
+  background: var(--color-paper);
 
   .file-icon {
     font-size: 24px;
@@ -124,7 +125,7 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
     .material-name {
       font-size: 14px;
       font-weight: 500;
-      color: #1f2329;
+      color: var(--color-ink);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -141,20 +142,20 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
       font-size: 11px;
       font-weight: 400;
       line-height: 1.6;
-      color: #2f54eb;
-      background: #f0f5ff;
-      border: 1px solid #adc6ff;
+      color: var(--color-accent);
+      background: var(--color-accent-wash);
+      border: 1px solid var(--color-accent-2);
 
       &.local {
-        color: #8a8f98;
-        background: #f7f8fa;
-        border-color: #e5e7eb;
+        color: var(--color-muted);
+        background: var(--color-paper-2);
+        border-color: var(--color-rule);
       }
     }
 
     .material-sub {
       font-size: 12px;
-      color: #a5a9b0;
+      color: var(--color-muted);
       margin-top: 3px;
     }
   }
@@ -178,7 +179,7 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
     width: 38px;
     height: 20px;
     border-radius: 10px;
-    background: #dcdfe6;
+    background: var(--color-rule);
     position: relative;
     transition: background 0.2s;
     flex-shrink: 0;
@@ -190,14 +191,14 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #fff;
+      background: var(--color-paper);
       transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px color-mix(in oklab, var(--color-graphite) 20%, transparent);
     }
   }
 
   input:checked + .switch-track {
-    background: #1890ff;
+    background: var(--color-accent);
 
     .switch-thumb {
       transform: translateX(18px);
@@ -210,12 +211,12 @@ function onToggle(m: ArtifactMaterial, checked: boolean) {
 
   /* 视觉隐藏的原生 checkbox：键盘聚焦时在轨道上显示焦点环 */
   input:focus-visible + .switch-track {
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.45);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 45%, transparent);
   }
 
   .switch-text {
     font-size: 13px;
-    color: #4e5969;
+    color: var(--color-ink-2);
     white-space: nowrap;
   }
 }

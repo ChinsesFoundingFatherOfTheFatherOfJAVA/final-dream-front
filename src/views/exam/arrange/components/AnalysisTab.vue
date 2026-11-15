@@ -105,13 +105,13 @@ const renderChart = async () => {
         return `${p.name}<br/>正确率 ${formatRate(hit?.value ?? 0)}<br/>题数 ${hit?.quesCount ?? 0}`
       }
     },
-    xAxis: { type: 'category', data: data.map(d => labelOf(d.key)), axisLabel: { fontSize: 12, color: '#4a5368' } },
-    yAxis: { type: 'value', max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)}%`, color: '#8a92a5' } },
+    xAxis: { type: 'category', data: data.map(d => labelOf(d.key)), axisLabel: { fontSize: 12, color: '#3f4553' } },
+    yAxis: { type: 'value', max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)}%`, color: '#6f7686' } },
     series: [{
       type: 'bar',
       barMaxWidth: 42,
       data: data.map(d => d.value),
-      itemStyle: { color: '#1890ff', borderRadius: [3, 3, 0, 0] },
+      itemStyle: { color: '#3059d4', borderRadius: [3, 3, 0, 0] },
       label: { show: true, position: 'top', formatter: (p: any) => formatRate(Number(p.value)) }
     }]
   }, true)
@@ -149,23 +149,23 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .list-card { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; }
-.empty-cell { text-align: center; color: #999; padding: 60px 0; }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 60px 0; }
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .card {
   display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center;
-  padding: 16px 10px; background: #fafbfd; border: 1px solid #eef1f6; border-radius: 8px;
-  b { font-size: 22px; font-weight: 500; color: #303133; }
-  span { font-size: 12px; color: #8a92a5; text-align: center; }
+  padding: 16px 10px; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card);
+  b { font-size: 22px; font-weight: 500; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+  span { font-size: 12px; color: var(--color-muted); text-align: center; }
 }
 .cards.small .card b { font-size: 18px; }
-.block { border-top: 1px solid #f0f2f5; padding-top: 14px; }
+.block { border-top: var(--rule-hair) solid var(--color-rule); padding-top: 14px; }
 .block-head { display: flex; align-items: center; justify-content: space-between; }
-.block-title { margin: 0 0 10px; font-size: 14px; color: #303133; }
+.block-title { margin: 0 0 10px; font-size: 14px; color: var(--color-ink); }
 .dim-tabs { display: flex; gap: 6px; }
 .dim-tab {
-  padding: 5px 14px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  font-size: 12px; color: #4a5368; cursor: pointer;
-  &.active { border-color: #1890ff; background: #f0f8ff; color: #1890ff; }
+  padding: 5px 14px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper);
+  font-size: 12px; color: var(--color-ink-2); cursor: pointer;
+  &.active { border-color: var(--color-accent); background: var(--color-accent-wash); color: var(--color-accent-deep); }
 }
 .chart { height: 320px; }
 </style>

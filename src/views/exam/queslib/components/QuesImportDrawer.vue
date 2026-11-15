@@ -53,7 +53,7 @@
               </div>
 
               <p class="warn">
-                ⚠ 请勿修改模板的表头与列顺序；填写错误的行不会被导入，系统会在下方逐行提示原因。
+  <el-icon class="warn-icon" aria-hidden="true"><WarningFilled /></el-icon> 请勿修改模板的表头与列顺序；填写错误的行不会被导入，系统会在下方逐行提示原因。
               </p>
 
               <el-button class="btn primary" :disabled="!file || importing" @click="doImport">
@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import { WarningFilled } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { downloadQuesTemplate, importQuesFile, type ImportResult } from '@/api/exam'
@@ -185,7 +186,7 @@ const doImport = async () => {
 .drawer {
   width: 560px;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   display: flex;
   flex-direction: column;
 }
@@ -195,11 +196,11 @@ const doImport = async () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-rule);
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
@@ -216,66 +217,66 @@ const doImport = async () => {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #1890ff;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
     font-size: 12px;
     text-align: center;
     line-height: 20px;
   }
 
   .step-main { flex: 1; min-width: 0; }
-  .step-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: #1f2937; }
-  .step-hint { margin: 0 0 8px; font-size: 12px; color: #8a92a5; line-height: 1.7; }
+  .step-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--color-ink); }
+  .step-hint { margin: 0 0 8px; font-size: 12px; color: var(--color-muted); line-height: 1.7; }
 }
 
 .drop-zone {
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--color-rule-2);
   border-radius: 6px;
   padding: 24px 16px;
   text-align: center;
   cursor: pointer;
 
-  &:hover, &.over { border-color: #1890ff; background: #f5f9ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:hover, &.over { border-color: var(--color-accent); background: var(--color-accent-wash); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
-  .drop-tip { margin: 0; font-size: 13px; color: #8a92a5; line-height: 1.9; em { color: #1890ff; font-style: normal; } }
-  .hint { font-size: 11px; color: #b0b7c3; }
+  .drop-tip { margin: 0; font-size: 13px; color: var(--color-muted); line-height: 1.9; em { color: var(--color-accent); font-style: normal; } }
+  .hint { font-size: 11px; color: var(--color-rule-2); }
   .drop-file {
-    margin: 0; font-size: 13px; color: #1f2937;
-    i { margin-left: 8px; font-style: normal; color: #f5222d; cursor: pointer;
-      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; } }
+    margin: 0; font-size: 13px; color: var(--color-ink);
+    i { margin-left: 8px; font-style: normal; color: var(--color-error); cursor: pointer;
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; } }
   }
 }
 
 .hidden-file { display: none; }
 
-.warn {
+.warn { display: flex; align-items: center; gap: 4px;
   margin: 10px 0 12px;
   padding: 8px 10px;
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
+  background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-error) 35%, var(--color-paper));
   border-radius: 4px;
   font-size: 12px;
-  color: #cf1322;
+  color: var(--color-error);
   line-height: 1.7;
 }
 
 .result {
-  border-top: 1px solid #eef1f6;
+  border-top: 1px solid var(--color-rule);
   padding-top: 12px;
 
-  .result-title { margin: 0 0 8px; font-size: 13px; color: #4a5368; b { font-weight: 600; } .ok { color: #52c41a; } .bad { color: #f5222d; } }
+  .result-title { margin: 0 0 8px; font-size: 13px; color: var(--color-ink-2); b { font-weight: 600; } .ok { color: var(--color-success); } .bad { color: var(--color-error); } }
 }
 
 .error-list {
   max-height: 220px;
   overflow-y: auto;
   padding: 8px 10px;
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
+  background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-error) 35%, var(--color-paper));
   border-radius: 4px;
 
-  p { margin: 0 0 3px; font-size: 12px; color: #cf1322; line-height: 1.7; }
+  p { margin: 0 0 3px; font-size: 12px; color: var(--color-error); line-height: 1.7; }
 }
 
 .drawer-footer {
@@ -283,19 +284,19 @@ const doImport = async () => {
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-rule);
 }
 
 .btn {
   padding: 7px 18px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

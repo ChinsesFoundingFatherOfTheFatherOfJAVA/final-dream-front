@@ -14,8 +14,8 @@
           <img v-if="detail.coverImage" :src="detail.coverImage" alt="项目封面" />
           <div v-else class="cover-default">
             <svg width="56" height="46" viewBox="0 0 88 72" fill="none" aria-hidden="true">
-              <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="#ffffff" fill-opacity="0.9"/>
-              <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="#8FC7FF" fill-opacity="0.85"/>
+              <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="var(--color-accent-ink)" fill-opacity="0.9"/>
+              <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="var(--color-accent-2)" fill-opacity="0.85"/>
             </svg>
           </div>
         </div>
@@ -37,8 +37,8 @@
           </div>
           <div v-if="detail.completed" class="completed-tag">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" fill="#38b25c"/>
-              <path d="M7.5 12.5l3 3 6-6.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="10" fill="var(--color-success)"/>
+              <path d="M7.5 12.5l3 3 6-6.5" stroke="var(--color-accent-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             已完成
           </div>
@@ -54,10 +54,10 @@
       <div class="card-header">
         <span class="card-icon doc">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 2h9l5 5v15H6V2Z" stroke="#7a6cf0" stroke-width="1.6" fill="#efeaff"/>
-            <path d="M15 2v5h5" stroke="#7a6cf0" stroke-width="1.6" fill="none"/>
-            <line x1="9" y1="12" x2="16" y2="12" stroke="#7a6cf0" stroke-width="1.6" stroke-linecap="round"/>
-            <line x1="9" y1="16" x2="14" y2="16" stroke="#7a6cf0" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M6 2h9l5 5v15H6V2Z" stroke="var(--color-accent)" stroke-width="1.6" fill="var(--color-accent-wash)"/>
+            <path d="M15 2v5h5" stroke="var(--color-accent)" stroke-width="1.6" fill="none"/>
+            <line x1="9" y1="12" x2="16" y2="12" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="9" y1="16" x2="14" y2="16" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </span>
         <span class="card-title">话术训练说明</span>
@@ -70,8 +70,8 @@
       <div class="card-header">
         <span class="card-icon rule">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" fill="#efeaff"/>
-            <path d="M8 12.5l2.5 2.5L16 9.5" stroke="#7a6cf0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="10" fill="var(--color-accent-wash)"/>
+            <path d="M8 12.5l2.5 2.5L16 9.5" stroke="var(--color-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span class="card-title">练习规则</span>
@@ -94,8 +94,8 @@
       <div class="card-header">
         <span class="card-icon record">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" fill="#efeaff"/>
-            <path d="M12 7v5l3.5 2" stroke="#7a6cf0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="10" fill="var(--color-accent-wash)"/>
+            <path d="M12 7v5l3.5 2" stroke="var(--color-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span class="card-title">我的记录</span>
@@ -215,10 +215,10 @@ onMounted(async () => {
 /* 面包屑 */
 .breadcrumb {
   font-size: 13px;
-  color: #999;
+  color: var(--color-muted);
 
   .crumb-link {
-    color: #2e7cf6;
+    color: var(--color-accent);
     cursor: pointer;
 
     &:hover {
@@ -226,14 +226,14 @@ onMounted(async () => {
     }
 
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
 
   .crumb-sep {
     margin: 0 8px;
-    color: #ccc;
+    color: var(--color-rule-2);
   }
 }
 
@@ -245,8 +245,8 @@ onMounted(async () => {
   gap: 24px;
   padding: 24px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #1b2a5e 0%, #223a8f 55%, #2b4bb5 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-graphite) 0%, var(--color-accent-deep) 55%, var(--color-accent) 100%);
+  color: var(--color-paper);
 }
 
 .hero-left {
@@ -262,7 +262,7 @@ onMounted(async () => {
   border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in oklab, var(--color-accent-ink) 10%, transparent);
 
   img {
     width: 100%;
@@ -274,7 +274,7 @@ onMounted(async () => {
   .cover-default {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(143, 199, 255, 0.35), rgba(74, 125, 255, 0.35));
+    background: linear-gradient(135deg, color-mix(in oklab, var(--color-accent) 35%, transparent), color-mix(in oklab, var(--color-accent) 35%, transparent));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -289,10 +289,10 @@ onMounted(async () => {
     padding: 2px 12px;
     border-radius: 20px;
     font-size: 12px;
-    background: rgba(74, 125, 255, 0.85);
+    background: var(--color-accent);
 
     &.exam {
-      background: rgba(255, 122, 26, 0.9);
+      background: var(--color-warning);
     }
   }
 
@@ -300,7 +300,7 @@ onMounted(async () => {
     margin: 10px 0;
     font-size: 24px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-paper);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -311,14 +311,14 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in oklab, var(--color-accent-ink) 85%, transparent);
 
     .meta-avatar {
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: #e6f7ff;
-      color: #2e7cf6;
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
       font-size: 12px;
       display: flex;
       align-items: center;
@@ -336,10 +336,10 @@ onMounted(async () => {
 }
 
 .practice-panel {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 12px;
   padding: 14px 20px;
-  color: #333;
+  color: var(--color-ink);
   min-width: 150px;
 
   .practice-count {
@@ -348,7 +348,7 @@ onMounted(async () => {
     .num {
       font-size: 26px;
       font-weight: 700;
-      color: #2e7cf6;
+      color: var(--color-accent);
       margin: 0 2px;
     }
   }
@@ -359,7 +359,7 @@ onMounted(async () => {
     gap: 6px;
     margin-top: 6px;
     font-size: 13px;
-    color: #38b25c;
+    color: var(--color-success);
     font-weight: 500;
   }
 }
@@ -369,8 +369,8 @@ onMounted(async () => {
   height: 44px;
   border: none;
   border-radius: 22px;
-  background: linear-gradient(90deg, #7a6cf0 0%, #4a7dff 100%);
-  color: #fff;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 100%);
+  color: var(--color-paper);
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -392,10 +392,10 @@ onMounted(async () => {
 
 /* 信息卡通用 */
 .info-card {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 12px;
   padding: 20px 24px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 6px color-mix(in oklab, var(--color-graphite) 4%, transparent);
 }
 
 .card-header {
@@ -413,13 +413,13 @@ onMounted(async () => {
   .card-title {
     font-size: 16px;
     font-weight: 600;
-    color: #222;
+    color: var(--color-ink);
   }
 }
 
 .card-body {
   font-size: 14px;
-  color: #555;
+  color: var(--color-ink-2);
   line-height: 1.7;
 }
 
@@ -433,7 +433,7 @@ onMounted(async () => {
 .rule-panel,
 .record-panel {
   flex: 1;
-  background: #f7f8fa;
+  background: var(--color-paper-2);
   border-radius: 10px;
   padding: 18px 20px;
   text-align: center;
@@ -442,14 +442,14 @@ onMounted(async () => {
 .rule-panel .rule-value {
   font-size: 20px;
   font-weight: 700;
-  color: #222;
+  color: var(--color-ink);
 }
 
 .rule-panel .rule-label,
 .record-panel .record-label {
   margin-top: 6px;
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
 }
 
 .record-panel {
@@ -457,48 +457,48 @@ onMounted(async () => {
   transition: background 0.2s;
 
   &:hover {
-    background: #f0f4ff;
+    background: var(--color-accent-wash);
   }
 
   // 可点面板已补按钮语义，补键盘焦点环
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   .record-num {
     font-size: 24px;
     font-weight: 700;
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 
   .record-label {
-    color: #666;
+    color: var(--color-muted);
   }
 }
 
 .rule-footer {
   margin-top: 14px;
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
 }
 
 /* 加载/错误态 */
 .detail-loading {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 12px;
   padding: 80px 0;
   text-align: center;
-  color: #999;
+  color: var(--color-muted);
   font-size: 14px;
 
   .back-btn {
     margin-top: 16px;
     padding: 8px 24px;
-    border: 1px solid #2e7cf6;
+    border: 1px solid var(--color-accent);
     border-radius: 18px;
-    background: #fff;
-    color: #2e7cf6;
+    background: var(--color-paper);
+    color: var(--color-accent);
     cursor: pointer;
     font-size: 14px;
   }

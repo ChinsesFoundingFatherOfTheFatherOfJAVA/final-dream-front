@@ -113,9 +113,9 @@ onMounted(async () => {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    color: #333;
+    background: var(--color-paper);
+    border: 1px solid var(--color-paper-2);
+    color: var(--color-ink);
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -124,13 +124,13 @@ onMounted(async () => {
     transition: color 0.2s, border-color 0.2s;
 
     &:hover {
-      color: #2e7cf6;
-      border-color: #2e7cf6;
+      color: var(--color-accent);
+      border-color: var(--color-accent);
     }
 
     // 图标返回按钮：补键盘焦点环
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -138,15 +138,15 @@ onMounted(async () => {
   .page-title {
     font-size: 18px;
     font-weight: 600;
-    color: #222;
+    color: var(--color-ink);
   }
 }
 
 .records-card {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 12px;
   padding: 8px 24px 20px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 6px color-mix(in oklab, var(--color-graphite) 4%, transparent);
 }
 
 .records-table {
@@ -158,13 +158,13 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   padding: 14px 8px;
-  border-bottom: 1px solid #f2f2f2;
-  color: #444;
+  border-bottom: 1px solid var(--color-paper-2);
+  color: var(--color-ink-2);
 
   &.table-head {
-    color: #999;
+    color: var(--color-muted);
     font-size: 13px;
-    border-bottom: 1px solid #ececec;
+    border-bottom: 1px solid var(--color-paper-2);
   }
 }
 
@@ -186,18 +186,18 @@ onMounted(async () => {
   font-size: 12px;
 
   &.done {
-    color: #38b25c;
-    background: #eafaf0;
+    color: var(--color-success);
+    background: color-mix(in oklab, var(--color-success) 10%, var(--color-paper));
   }
 
   &.undone {
-    color: #999;
-    background: #f5f5f5;
+    color: var(--color-muted);
+    background: var(--color-paper-2);
   }
 }
 
 .view-report-link {
-  color: #2e7cf6;
+  color: var(--color-accent);
   cursor: pointer;
 
   &:hover {
@@ -205,19 +205,19 @@ onMounted(async () => {
   }
 
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 }
 
 .no-action {
-  color: #ccc;
+  color: var(--color-rule-2);
 }
 
 .empty-state {
   padding: 60px 0;
   text-align: center;
-  color: #999;
+  color: var(--color-muted);
   font-size: 14px;
 }
 </style>

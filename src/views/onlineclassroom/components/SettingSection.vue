@@ -38,9 +38,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .setting-section {
-  border: 1px solid #e6eaf1;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .section-header {
@@ -52,7 +52,7 @@ const emit = defineEmits<{
   padding: 0 16px;
   border: none;
   background: transparent;
-  color: #253047;
+  color: var(--color-ink);
   text-align: left;
   cursor: pointer;
 
@@ -77,18 +77,18 @@ const emit = defineEmits<{
   width: 3px;
   height: 14px;
   border-radius: 2px;
-  background: #2e7cf6;
+  background: var(--color-accent);
 }
 
 .toggle-link {
   margin-left: auto;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
 }
 
 .section-body {
   padding: 4px 20px 20px;
-  border-top: 1px solid #eef1f6;
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .section-footer {
@@ -102,12 +102,12 @@ const emit = defineEmits<{
   padding: 0 20px;
   border: none;
   border-radius: 4px;
-  background: #2e7cf6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
   font-size: 13px;
   cursor: pointer;
 
-  &:hover:not(:disabled) { background: #1a66d9; }
+  &:hover:not(:disabled) { background: var(--color-accent-deep); }
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;

@@ -22,7 +22,7 @@
           <div class="way-tabs readonly-tabs" role="tablist">
             <el-button v-for="w in WAYS" :key="w.key" class="way-tab"
                     :class="{ active: w.key === 'new' }" disabled>
-              <span class="way-icon" :class="w.key" aria-hidden="true">{{ w.icon }}</span>
+<span class="way-icon" :class="w.key" aria-hidden="true"><el-icon><component :is="WAY_ICONS[w.key]" /></el-icon></span>
               <span>{{ w.label }}</span>
             </el-button>
           </div>
@@ -70,7 +70,7 @@
             <el-button v-for="w in WAYS" :key="w.key" class="way-tab" role="tab"
                     :class="{ active: way === w.key }" :aria-selected="way === w.key"
                     @click="way = w.key">
-              <span class="way-icon" :class="w.key" aria-hidden="true">{{ w.icon }}</span>
+<span class="way-icon" :class="w.key" aria-hidden="true"><el-icon><component :is="WAY_ICONS[w.key]" /></el-icon></span>
               <span>{{ w.label }}</span>
             </el-button>
           </div>
@@ -203,6 +203,7 @@
 </template>
 
 <script setup lang="ts">
+import { Document, FolderOpened, Upload } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
@@ -223,10 +224,12 @@ const typeLabel = computed(() => (String(route.query.examType ?? '') === 'online
 const defaultCatalogId = ref(String(route.query.catalogId ?? 'root'))
 
 /** 第一步的三种创建方式（截图20：三个 tab，只显示选中方式的内容）。 */
+/** 创建方式 → EP 图标映射（模板 component :is 透传，字符 glyph 已清零） */
+const WAY_ICONS = { new: Document, pick: FolderOpened, import: Upload } as const
 const WAYS = [
-  { key: 'new' as const, label: '创建新试卷', icon: '＋' },
-  { key: 'pick' as const, label: '选择试卷', icon: '▤' },
-  { key: 'import' as const, label: '导入试卷', icon: '⇪' }
+  { key: 'new' as const, label: '创建新试卷' },
+  { key: 'pick' as const, label: '选择试卷' },
+  { key: 'import' as const, label: '导入试卷' },
 ]
 
 const step = ref(1)
@@ -467,117 +470,118 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+/* 2026-11-14 Hallmark Cobalt 重构：裸色值清零，颜色统一走 token 层 */
 .wizard-page { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 12px 16px 16px; }
 .wizard-header {
   display: flex; align-items: center; gap: 12px; margin-bottom: 12px; min-height: 40px;
-  .back-btn { width: 28px; height: 28px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 18px; color: #4a5368; cursor: pointer; }
-  h1 { margin: 0; font-size: 16px; font-weight: 600; color: #1f2937; }
-  .type-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; color: #1890ff; background: #e8f1ff; border: 1px solid #bcd7ff; }
-  .status-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+  .back-btn { width: 28px; height: 28px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); font-size: 18px; color: var(--color-ink-2); cursor: pointer; }
+  h1 { margin: 0; font-size: 16px; font-weight: 600; color: var(--color-ink); }
+  .type-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; color: var(--color-accent-deep); background: var(--color-accent-wash); border: 1px solid color-mix(in oklab, var(--color-accent) 30%, var(--color-paper)); }
+  .status-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-success) 40%, var(--color-paper)); color: var(--color-success); }
   /* 步骤条居中，上一步/下一步靠右（截图25） */
   .wizard-steps { margin: 0 auto; }
   .header-actions { display: flex; gap: 10px; flex-shrink: 0; .btn { align-self: center; } }
 }
 .readonly-banner {
   margin: 0 0 12px; padding: 9px 14px; border-radius: 4px; font-size: 13px; line-height: 1.6;
-  background: #fffbe6; border: 1px solid #ffe58f; color: #ad6800;
+  background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper)); color: color-mix(in oklab, var(--color-warning) 60%, var(--color-ink));
 }
 .wizard-body { flex: 1; min-height: 0; overflow-y: auto; }
-.panel-tip { margin: 0 0 12px; font-size: 13px; color: #8a92a5; }
+.panel-tip { margin: 0 0 12px; font-size: 13px; color: var(--color-muted); }
 
 /* ---- 第一步：三种创建方式（截图20） ---- */
 .way-tabs { display: flex; justify-content: center; gap: 16px; margin: 18px 0 14px; flex-wrap: wrap; }
 .way-tab {
   display: inline-flex; align-items: center; gap: 8px;
   min-width: 132px; padding: 10px 16px;
-  border: 1px solid #e5e8ef; border-radius: 4px; background: #fff;
-  font-size: 13px; color: #4a5368; cursor: pointer;
+  border: 1px solid var(--color-rule); border-radius: 4px; background: var(--color-paper);
+  font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &:hover { border-color: #91caff; }
-  &.active { border-color: #1890ff; color: #1890ff; background: #f5f9ff; }
+  &:hover { border-color: color-mix(in oklab, var(--color-accent) 45%, var(--color-paper)); }
+  &.active { border-color: var(--color-accent); color: var(--color-accent-deep); background: var(--color-accent-wash); }
 }
 .way-icon {
   display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center;
   border-radius: 4px; font-size: 13px;
-  &.new { color: #1890ff; background: #e8f1ff; }
-  &.pick { color: #fa8c16; background: #fff4e6; }
-  &.import { color: #52c41a; background: #f0f9eb; }
+  &.new { color: var(--color-accent-deep); background: var(--color-accent-wash); }
+  &.pick { color: var(--color-warning); background: color-mix(in oklab, var(--color-warning) 18%, var(--color-paper)); }
+  &.import { color: var(--color-success); background: color-mix(in oklab, var(--color-success) 14%, var(--color-paper)); }
 }
 .cycle-note {
   max-width: 720px; margin: 0 auto 22px; padding: 9px 14px; border-radius: 4px;
-  background: #fafbfd; border: 1px solid #eef1f6; font-size: 12px; color: #8a92a5; line-height: 1.7;
+  background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); font-size: 12px; color: var(--color-muted); line-height: 1.7;
 }
 .current-paper {
   max-width: 640px; margin: 0 auto 12px; padding: 8px 14px;
-  border: 1px solid #eef1f6; border-radius: 4px; background: #fafbfd;
-  font-size: 12px; color: #8a92a5;
-  b { color: #303133; font-weight: 500; margin: 0 8px; }
-  span { color: #52c41a; }
+  border: var(--rule-hair) solid var(--color-rule); border-radius: 4px; background: var(--color-paper-2);
+  font-size: 12px; color: var(--color-muted);
+  b { color: var(--color-ink); font-weight: 500; margin: 0 8px; }
+  span { color: var(--color-success); }
 }
 .paper-form { display: flex; flex-direction: column; gap: 16px; max-width: 640px; margin: 0 auto; }
 .form-row {
-  display: flex; align-items: center; gap: 12px; font-size: 13px; color: #4a5368;
+  display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--color-ink-2);
 
   .row-label {
     width: 80px; flex-shrink: 0; text-align: right;
-    &.required::after { content: ' *'; color: #f5222d; }
+    &.required::after { content: ' *'; color: var(--color-error); }
   }
   .input-wrap {
     position: relative; flex: 0 1 460px;
     input {
       width: 100%; box-sizing: border-box; padding: 7px 58px 7px 10px;
-      border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; outline: none;
-      &:focus { border-color: #1890ff; }
+      border: 1px solid var(--color-rule-2); border-radius: 4px; font-size: 13px; outline: none;
+      &:focus { border-color: var(--color-focus); }
     }
     em {
       position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-      font-style: normal; font-size: 12px; color: #b0b7c3;
+      font-style: normal; font-size: 12px; color: var(--color-rule-2);
     }
   }
   select {
-    flex: 0 1 460px; padding: 7px 10px; border: 1px solid #d9d9d9; border-radius: 4px;
-    font-size: 13px; color: #4a5368; background: #fff; outline: none;
+    flex: 0 1 460px; padding: 7px 10px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+    font-size: 13px; color: var(--color-ink-2); background: var(--color-paper); outline: none;
   }
 }
 .pill-group { display: inline-flex; gap: 10px; }
 .pill {
-  padding: 6px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  font-size: 13px; color: #4a5368; cursor: pointer;
-  &.active { border-color: #1890ff; background: #e8f1ff; color: #1890ff; }
+  padding: 6px 18px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper);
+  font-size: 13px; color: var(--color-ink-2); cursor: pointer;
+  &.active { border-color: var(--color-accent); background: var(--color-accent-wash); color: var(--color-accent-deep); }
 }
 .radio-inline {
   display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  font-size: 13px; color: #4a5368;
-  label { display: inline-flex; align-items: center; gap: 5px; input { accent-color: #1890ff; } }
-  em { font-style: normal; font-size: 12px; color: #8a92a5; }
+  font-size: 13px; color: var(--color-ink-2);
+  label { display: inline-flex; align-items: center; gap: 5px; }
+  em { font-style: normal; font-size: 12px; color: var(--color-muted); }
 }
 .way-panel { max-width: 640px; margin: 0 auto; padding: 8px 0; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
-.way-desc { margin: 0; font-size: 13px; color: #8a92a5; line-height: 1.8; }
-.paper-info { border: 1px solid #e5e8ef; border-radius: 8px; padding: 14px 18px; background: #fafbfd; margin-bottom: 12px; }
-.info-line { margin: 0 0 8px; font-size: 13px; color: #4a5368; span { color: #8a92a5; margin-right: 10px; } b { color: #1f2937; font-weight: 500; &.warn { color: #d46b08; } } }
+.way-desc { margin: 0; font-size: 13px; color: var(--color-muted); line-height: 1.8; }
+.paper-info { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); padding: 14px 18px; background: var(--color-paper-2); margin-bottom: 12px; }
+.info-line { margin: 0 0 8px; font-size: 13px; color: var(--color-ink-2); span { color: var(--color-muted); margin-right: 10px; } b { color: var(--color-ink); font-weight: 500; &.warn { color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink)); } } }
 .panel-actions { display: flex; gap: 10px; }
 .btn {
-  padding: 8px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff;
-  font-size: 13px; color: #4a5368; cursor: pointer; align-self: flex-start;
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 8px 18px; border-radius: 4px;
+  font-size: 13px; cursor: pointer; align-self: flex-start;
+  /* plain/primary 态由 EP 主题层统一映射 */
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 /* ---- 已发布只读回看（对齐原平台编辑页） ---- */
 .readonly-tabs .way-tab { cursor: default; }
 .readonly-form {
-  input, select { background: #f5f7fa; color: #8a92a5; cursor: not-allowed; }
+  input, select { background: var(--color-paper-2); color: var(--color-muted); cursor: not-allowed; }
   .pill {
-    background: #f5f7fa; color: #8a92a5; border-color: #e5e8ef; cursor: not-allowed;
-    &.active { background: #f0f5ff; color: #69a7f5; border-color: #c7ddff; }
+    background: var(--color-paper-2); color: var(--color-muted); border-color: var(--color-rule); cursor: not-allowed;
+    &.active { background: var(--color-accent-wash); color: var(--color-accent-deep); border-color: color-mix(in oklab, var(--color-accent) 30%, var(--color-paper)); }
   }
-  .radio-inline { color: #8a92a5; em { color: #a0a7b8; } }
+  .radio-inline { color: var(--color-muted); em { color: var(--color-muted); } }
 }
 .ro-paper-head { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; }
-.ro-paper-name { font-size: 15px; font-weight: 600; color: #1f2937; }
+.ro-paper-name { font-size: 15px; font-weight: 600; color: var(--color-ink); }
 .ro-tag {
   padding: 0 8px; border-radius: 3px; font-size: 11px;
-  color: #d46b08; background: #fff7e6; border: 1px solid #ffd591;
-  &.warn { color: #cf1322; background: #fff1f0; border-color: #ffa39e; }
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink)); background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper));
+  &.warn { color: var(--color-error); background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper)); border-color: color-mix(in oklab, var(--color-error) 40%, var(--color-paper)); }
 }
 .ro-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .ro-select { font-size: 12px; min-width: 96px; }
@@ -586,12 +590,12 @@ onMounted(async () => {
   // EP wrapper 自带边框，根元素不再画边框/加内边距（避免双层嵌套）
   font-size: 12px;
 }
-.ro-table-wrap { border: 1px solid #eef1f6; border-radius: 4px; overflow: auto; }
+.ro-table-wrap { border: var(--rule-hair) solid var(--color-rule); border-radius: 4px; overflow: auto; }
 .ro-table {
   width: 100%; border-collapse: collapse; font-size: 12px;
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f2f4f8; }
-  th { background: #fafbfd; color: #667; font-weight: 500; white-space: nowrap; }
-  .q-name { color: #1890ff; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+  th { background: var(--color-paper-2); color: var(--color-ink); font-weight: 500; white-space: nowrap; }
+  .q-name { color: var(--color-accent-deep); }
   .ellipsis { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .w-type { width: 90px; }
   .w-point { width: 190px; }
@@ -599,12 +603,12 @@ onMounted(async () => {
   .w-level { width: 70px; }
 }
 .ro-pagination {
-  display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 12px; color: #667;
+  display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 12px; color: var(--color-muted);
   button {
-    padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer;
+    padding: 4px 10px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); cursor: pointer;
     &:disabled { opacity: .5; cursor: not-allowed; }
   }
 }
-.empty-cell { text-align: center; color: #999; padding: 32px 0; }
-.table-loading { text-align: center; color: #999; font-size: 12px; padding: 12px 0; }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 32px 0; }
+.table-loading { text-align: center; color: var(--color-muted); font-size: 12px; padding: 12px 0; }
 </style>

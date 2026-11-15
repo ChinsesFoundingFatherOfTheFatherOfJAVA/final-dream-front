@@ -21,23 +21,23 @@
              @mouseenter="hoverId = point.id" @mouseleave="hoverId = ''">
           <template v-if="editingId !== '' && editingId === point.id">
             <el-input v-model.trim="editingName" placeholder="考核点名称" @keyup.enter="confirmEdit(point)" />
-            <el-button class="icon-btn" aria-label="确认修改" @click="confirmEdit(point)">✓</el-button>
+<el-button class="icon-btn" aria-label="确认修改" @click="confirmEdit(point)"><el-icon><Check /></el-icon></el-button>
             <el-button class="icon-btn" aria-label="取消编辑" @click="editingId = ''">×</el-button>
           </template>
           <template v-else>
             <span class="point-name">{{ point.name }}</span>
             <span v-if="point.defaultPoint === 1" class="default-tag">默认</span>
             <span v-show="hoverId === point.id" class="row-actions">
-              <el-button class="icon-btn" title="编辑" aria-label="编辑" @click="startEdit(point)">✎</el-button>
+<el-button class="icon-btn" title="编辑" aria-label="编辑" @click="startEdit(point)"><el-icon><EditPen /></el-icon></el-button>
               <el-button class="icon-btn danger" title="删除" aria-label="删除"
-                      :disabled="point.defaultPoint === 1" @click="remove(point)">🗑</el-button>
+:disabled="point.defaultPoint === 1" @click="remove(point)"><el-icon><Delete /></el-icon></el-button>
             </span>
           </template>
         </div>
 
         <div v-if="adding" class="point-row">
           <el-input v-model.trim="newName" placeholder="考核点名称" @keyup.enter="confirmAdd" />
-          <el-button class="icon-btn" aria-label="确认添加" @click="confirmAdd">✓</el-button>
+<el-button class="icon-btn" aria-label="确认添加" @click="confirmAdd"><el-icon><Check /></el-icon></el-button>
           <el-button class="icon-btn" aria-label="取消添加" @click="adding = false; newName = ''">×</el-button>
         </div>
 
@@ -53,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import { Check, Delete, EditPen } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { toast } from '@/utils/toast'
 import { confirmDialog } from '@/utils/confirmDialog'
@@ -144,7 +145,7 @@ onMounted(load)
 .drawer {
   width: 520px;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   display: flex;
   flex-direction: column;
 }
@@ -154,11 +155,11 @@ onMounted(load)
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-rule);
   font-size: 15px;
   font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 12px; }
@@ -171,21 +172,21 @@ onMounted(load)
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
 
-  &:hover { background: #f7f9fd; }
+  &:hover { background: var(--color-accent-wash); }
   // 键盘聚焦行内输入框时也显示操作按钮（原本仅 hover 显示）
   &:focus-within .row-actions { display: inline-flex; }
 
   input {
     flex: 1;
-    border: 1px solid #1890ff;
+    border: 1px solid var(--color-accent);
     border-radius: 4px;
     padding: 6px 8px;
     font-size: 13px;
     outline: none;
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
   }
 
   .point-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -193,9 +194,9 @@ onMounted(load)
   .default-tag {
     padding: 1px 6px;
     border-radius: 3px;
-    background: #f0f5ff;
-    border: 1px solid #d6e4ff;
-    color: #2f54eb;
+    background: var(--color-accent-wash);
+    border: 1px solid var(--color-rule-2);
+    color: var(--color-accent-deep);
     font-size: 11px;
   }
 
@@ -205,37 +206,37 @@ onMounted(load)
 .icon-btn {
   width: 26px;
   height: 26px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
-  color: #4a5368;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &.danger { color: #f5222d; }
+  &.danger { color: var(--color-error); }
   &:disabled { opacity: .35; cursor: not-allowed; }
 }
 
-.empty { text-align: center; color: #b0b7c3; font-size: 13px; padding: 40px 0; }
+.empty { text-align: center; color: var(--color-rule-2); font-size: 13px; padding: 40px 0; }
 
 .drawer-footer {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-rule);
 
-  .tip { margin-left: auto; font-size: 11px; color: #a0a7b8; }
+  .tip { margin-left: auto; font-size: 11px; color: var(--color-rule-2); }
 }
 
 .btn {
   padding: 7px 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
-  color: #4a5688;
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &:hover { border-color: #1890ff; color: #1890ff; }
+  &:hover { border-color: var(--color-accent); color: var(--color-accent); }
 }
 </style>

@@ -125,7 +125,7 @@ onMounted(() => load())
   min-height: calc(100vh - 104px);
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 header {
@@ -134,11 +134,11 @@ header {
   align-items: center;
   gap: 14px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   h1 {
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 18px;
   }
 }
@@ -146,7 +146,7 @@ header {
 .back-btn {
   border: none;
   background: transparent;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 30px;
   cursor: pointer;
 }
@@ -157,7 +157,7 @@ header {
   align-items: center;
   gap: 42px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   button {
     position: relative;
@@ -165,12 +165,12 @@ header {
     padding: 0;
     border: none;
     background: transparent;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      color: #2e7cf6;
+      color: var(--color-accent);
 
       &::after {
         content: '';
@@ -179,7 +179,7 @@ header {
         right: 0;
         bottom: 0;
         height: 2px;
-        background: #2e7cf6;
+        background: var(--color-accent);
       }
     }
   }
@@ -207,15 +207,15 @@ header {
 
   :deep(.el-table__header th) {
     height: 46px;
-    background: #f8fafc;
-    color: #30384a;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     font-size: 13px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 46px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
@@ -226,7 +226,7 @@ header {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #e05a4e;
+  color: var(--color-error);
 }
 
 </style>

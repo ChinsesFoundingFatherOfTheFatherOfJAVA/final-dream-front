@@ -101,7 +101,7 @@
                     width="13"
                     height="13"
                     viewBox="0 0 24 24"
-                    :fill="star <= (item.difficultyStars ?? 0) ? '#fa8c16' : '#d9d9d9'"
+                    :fill="star <= (item.difficultyStars ?? 0) ? 'var(--color-warning)' : 'var(--color-rule-2)'"
                   >
                     <path
                       d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
@@ -264,7 +264,7 @@
             height="14"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#8c8c8c"
+            stroke="var(--color-muted)"
             stroke-width="2"
             aria-hidden="true"
           >
@@ -641,8 +641,8 @@ watch(
   margin: 0;
   overflow: hidden;
   /* 原平台实测：14px / 400 / #595959（视觉契约 measured 的 title 探针）。
-     此前按"弹窗大标题"写成 20px/700/#262626，属偏差，已按基准修正。 */
-  color: #595959;
+     此前按"弹窗大标题"写成 20px/700/var(--color-ink)，属偏差，已按基准修正。 */
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 400;
   line-height: 21px;
@@ -658,19 +658,19 @@ watch(
   height: 22px;
   padding: 0 8px;
   border-radius: 4px;
-  color: #436bff;
-  background: #f0f4ff;
+  color: var(--color-accent);
+  background: var(--color-accent-wash);
   font-size: 12px;
   line-height: 22px;
 
   &.is-in_progress {
-    color: #fa8c16;
-    background: #fff7e6;
+    color: var(--color-warning);
+    background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
   }
 
   &.is-passed {
-    color: #52c41a;
-    background: #f6ffed;
+    color: var(--color-success);
+    background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
   }
 }
 
@@ -684,8 +684,8 @@ watch(
 .dm-prep-tag {
   padding: 2px 8px;
   border-radius: 4px;
-  color: #595959;
-  background: #f7f8fa;
+  color: var(--color-muted);
+  background: var(--color-paper-2);
   font-size: 12px;
   line-height: 18px;
 }
@@ -695,14 +695,14 @@ watch(
   text-align: right;
 
   &__label {
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 20px;
   }
 
   &__value {
     margin-top: 4px;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 18px;
     font-weight: 700;
     line-height: 26px;
@@ -730,7 +730,7 @@ watch(
   &--fill {
     padding: 16px;
     border-radius: 8px;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
   }
 
   &__head {
@@ -741,11 +741,11 @@ watch(
 
   &__icon {
     display: inline-flex;
-    color: #436bff;
+    color: var(--color-accent);
   }
 
   &__title {
-    color: #436bff;
+    color: var(--color-accent);
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
@@ -753,7 +753,7 @@ watch(
 
   &__count {
     margin-left: 4px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
@@ -761,9 +761,9 @@ watch(
 
 .dm-case-card {
   padding: 16px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   &__top {
     display: flex;
@@ -784,7 +784,7 @@ watch(
   }
 
   &__level {
-    color: #52c41a;
+    color: var(--color-success);
     font-size: 12px;
     line-height: 18px;
   }
@@ -793,10 +793,10 @@ watch(
     flex: none;
     height: 32px;
     padding: 0 16px;
-    border: 1px solid #436bff;
+    border: 1px solid var(--color-accent);
     border-radius: 6px;
-    background: #436bff;
-    color: #ffffff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 13px;
     line-height: 30px;
     cursor: pointer;
@@ -805,18 +805,18 @@ watch(
       border-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      border-color: #5b7dff;
-      background: #5b7dff;
+      border-color: var(--color-accent);
+      background: var(--color-accent);
     }
 
     &:disabled {
-      border-color: #d9d9d9;
-      background: #d9d9d9;
+      border-color: var(--color-rule-2);
+      background: var(--color-rule-2);
       cursor: not-allowed;
     }
 
     &:focus-visible {
-      outline: 2px solid #436bff;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -836,14 +836,14 @@ watch(
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #7c4dff;
-    color: #ffffff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 15px;
     font-weight: 600;
   }
 
   &__actor-name {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 15px;
     font-weight: 700;
     line-height: 22px;
@@ -851,14 +851,14 @@ watch(
 
   &__actor-role {
     margin-top: 2px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 18px;
   }
 
   &__title {
     margin: 14px 0 0;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 15px;
     font-weight: 700;
     line-height: 23px;
@@ -866,14 +866,14 @@ watch(
 
   &__desc {
     margin: 10px 0 0;
-    color: #595959;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 22px;
   }
 
   &__opening {
     margin: 12px 0 0;
-    color: #4a7dff;
+    color: var(--color-accent);
     font-size: 13px;
     line-height: 22px;
   }
@@ -888,16 +888,16 @@ watch(
 .dm-prep-profile {
   padding: 4px 12px;
   border-radius: 14px;
-  color: #595959;
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px #e9e9e9;
+  color: var(--color-muted);
+  background: var(--color-paper);
+  box-shadow: inset 0 0 0 1px var(--color-rule);
   font-size: 13px;
   line-height: 20px;
 }
 
 .dm-prep-text {
   margin: 0;
-  color: #262626;
+  color: var(--color-ink);
   font-size: 13px;
   line-height: 22px;
 }
@@ -905,7 +905,7 @@ watch(
 .dm-prep-list {
   margin: 0;
   padding-left: 18px;
-  color: #262626;
+  color: var(--color-ink);
   font-size: 13px;
   line-height: 22px;
 
@@ -927,11 +927,11 @@ watch(
   gap: 12px;
   padding: 8px 12px;
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   &__name {
     overflow: hidden;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 13px;
     line-height: 20px;
     text-overflow: ellipsis;
@@ -940,7 +940,7 @@ watch(
 
   &__weight {
     flex: none;
-    color: #436bff;
+    color: var(--color-accent);
     font-size: 13px;
     font-weight: 500;
     line-height: 20px;
@@ -959,7 +959,7 @@ watch(
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 20px;
   }
@@ -981,21 +981,21 @@ watch(
   font-weight: 500;
 
   &--cancel {
-    border-color: #d9d9d9;
-    background: #ffffff;
-    color: #595959;
+    border-color: var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-muted);
   }
 
   &--ghost {
-    border-color: #c7d4ff;
-    background: #ffffff;
-    color: #436bff;
+    border-color: var(--color-accent-wash);
+    background: var(--color-paper);
+    color: var(--color-accent);
   }
 
   &--primary {
-    border-color: #436bff;
-    background: #436bff;
-    color: #ffffff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 }
 </style>
@@ -1014,7 +1014,7 @@ watch(
   padding: 0;
   /* 原平台实测 r14（measured dialog.radius），此前 16 属偏差 */
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   .el-dialog__header {
     display: flex;
@@ -1036,7 +1036,7 @@ watch(
     flex: none;
     margin: 0;
     padding: 16px 0 0;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--color-paper-2);
     box-sizing: border-box;
   }
 }

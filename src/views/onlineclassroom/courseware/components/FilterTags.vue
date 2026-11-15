@@ -53,14 +53,14 @@ const tags = computed(() => {
 
   :deep(.el-tag) {
     height: 30px;
-    border-color: #b9d3ff;
-    background: #f7faff;
-    color: #426a9f;
+    border-color: color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-size: 12px;
   }
 
   .clear-all {
-    color: #7b8496;
+    color: var(--color-muted);
   }
 }
 </style>

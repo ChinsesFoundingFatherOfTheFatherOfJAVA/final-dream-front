@@ -3,7 +3,7 @@
     <div class="project-header">
       <div class="project-info">
         <div class="project-cover">
-          <span class="cover-icon" aria-hidden="true">📚</span>
+          <span class="cover-icon" aria-hidden="true"><el-icon><Collection /></el-icon></span>
         </div>
         <div class="project-details">
           <h1 class="project-name">{{ template.name || '话术模板' }}</h1>
@@ -44,6 +44,7 @@ import { getTemplateDetail } from '@/api/template'
 import { deleteTemplate } from '@/api/template'
 import { toTemplateCard } from '@/utils/convert'
 import TemplateFlowDesign from './TemplateFlowDesign.vue'
+import { Collection } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,13 +92,13 @@ onMounted(load)
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
 }
 
 .project-header {
-  background: #fff;
+  background: var(--color-paper);
   padding: 16px 24px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .project-info {
@@ -109,7 +110,7 @@ onMounted(load)
 .project-cover {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -125,7 +126,7 @@ onMounted(load)
   .project-name {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0 0 8px 0;
   }
 
@@ -134,7 +135,7 @@ onMounted(load)
     display: flex;
     gap: 24px;
     font-size: 14px;
-    color: #666;
+    color: var(--color-muted);
   }
 }
 
@@ -143,17 +144,17 @@ onMounted(load)
   border-radius: 4px;
   font-size: 12px;
 
-  &.tag-published { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
-  &.tag-draft { background: #f5f5f5; color: #999; border: 1px solid #d9d9d9; }
+  &.tag-published { background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); color: var(--color-success); border: 1px solid color-mix(in oklab, var(--color-success) 35%, var(--color-paper)); }
+  &.tag-draft { background: var(--color-paper-2); color: var(--color-muted); border: 1px solid var(--color-rule-2); }
 }
 
 .type-tag {
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 12px;
-  background: #e6f7ff;
-  color: #1890ff;
-  border: 1px solid #91d5ff;
+  background: var(--color-accent-wash);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-2);
 }
 
 .project-actions { display: flex; gap: 8px; }
@@ -163,10 +164,10 @@ onMounted(load)
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
-  &.btn-default { background: #fff; color: #333; }
-  &.btn-danger { background: #fff; color: #f5222d; border-color: #ffa39e; }
+  &.btn-default { background: var(--color-paper); color: var(--color-ink); }
+  &.btn-danger { background: var(--color-paper); color: var(--color-error); border-color: color-mix(in oklab, var(--color-error) 30%, var(--color-paper)); }
   &:hover { opacity: 0.85; }
 }
 
@@ -178,19 +179,19 @@ onMounted(load)
 
 .console-menu {
   width: 160px;
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
+  background: var(--color-paper);
+  border-right: 1px solid var(--color-rule);
   padding: 16px 0;
 
   .menu-item {
     display: block;
     padding: 12px 24px;
     font-size: 14px;
-    color: #666;
+    color: var(--color-muted);
     text-decoration: none;
 
-    &:hover { background: #f5f5f5; color: #1890ff; }
-    &.active { color: #1890ff; border-right: 3px solid #1890ff; background: #e6f7ff; }
+    &:hover { background: var(--color-paper-2); color: var(--color-accent); }
+    &.active { color: var(--color-accent); border-right: 3px solid var(--color-accent); background: var(--color-accent-wash); }
   }
 }
 

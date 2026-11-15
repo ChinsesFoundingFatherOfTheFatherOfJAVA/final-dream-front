@@ -81,25 +81,25 @@ const doExport = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 640px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 640px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600;
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; } }
 }
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
-.filter-row { display: flex; gap: 10px; input { flex: 1; border: 1px solid #d9d9d9; border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none; } }
-.table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 6px; }
+.filter-row { display: flex; gap: 10px; input { flex: 1; border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 7px 10px; font-size: 13px; outline: none; } }
+.table-wrap { flex: 1; min-height: 0; overflow: auto; border: var(--rule-hair) solid var(--color-rule); border-radius: 6px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #f2f4f8; }
-th { background: #fafbfd; color: #667; font-weight: 500; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+th { background: var(--color-paper-2); color: var(--color-ink); font-weight: 500; }
 .col-sign { width: 160px; } .col-time { width: 170px; }
 .sign-img { max-width: 140px; max-height: 48px; }
-.muted { color: #b0b7c3; }
-.empty-cell { text-align: center; color: #999; padding: 40px 0; }
-.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
+.muted { color: var(--color-rule-2); }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 40px 0; }
+.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--color-muted); button { padding: 4px 10px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); cursor: pointer; &:disabled { opacity: .5; } } }
 .btn {
-  padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer;
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  padding: 7px 18px; border-radius: 4px; font-size: 13px; cursor: pointer;
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
 }
 </style>

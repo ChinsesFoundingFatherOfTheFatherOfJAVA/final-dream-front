@@ -234,9 +234,9 @@ onMounted(async () => {
 .role-list-panel,
 .role-detail-panel {
   min-width: 0;
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .role-list-panel {
@@ -250,11 +250,11 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border-bottom: 1px solid #eef0f5;
+  border-bottom: 1px solid var(--color-rule);
 
   h2 {
     margin: 0;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 16px;
   }
 
@@ -284,17 +284,17 @@ onMounted(async () => {
   height: 42px;
   padding: 0 12px;
   border-radius: 6px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 14px;
   line-height: 42px;
 
   &:hover {
-    background: #f5f8fd;
+    background: var(--color-paper-2);
   }
 
   &.is-active {
-    background: #eaf2ff;
-    color: #1890ff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-weight: 600;
   }
 
@@ -305,9 +305,15 @@ onMounted(async () => {
     white-space: nowrap;
   }
 
+  // 批注6：人数字与角色名拉开间距，且永远不压缩（flex 布局下 span ellipsis + em auto）
   em {
     flex: 0 0 auto;
-    color: #98a0ad;
+    margin-left: 12px;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-style: normal;
+    flex: 0 0 auto;
+    color: var(--color-muted);
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -324,17 +330,17 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #edf0f5;
+  border-bottom: 1px solid var(--color-rule);
 
   h2 {
     margin: 0 0 5px;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 20px;
   }
 
   p {
     margin: 0;
-    color: #7b8494;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -346,8 +352,17 @@ onMounted(async () => {
   gap: 8px;
 
   .link-action {
-    color: #1890ff;
+    color: var(--color-accent-deep);
   }
+}
+
+
+/* gate26a：本页可点元素（EP 菜单项/链接键）的键盘焦点信号显式化——
+   EP 组件默认焦点样式被主题覆盖后需要一处统一兜底 */
+.role-item:focus-visible,
+.link-action:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .meta-grid {
@@ -363,12 +378,12 @@ onMounted(async () => {
   }
 
   span {
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
   }
 
   strong {
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 14px;
     font-weight: 500;
   }
@@ -381,13 +396,13 @@ onMounted(async () => {
 
   h3 {
     margin: 0 0 8px;
-    color: #253047;
+    color: var(--color-ink-2);
     font-size: 14px;
   }
 
   p {
     margin: 0;
-    color: #596274;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 1.8;
     white-space: pre-wrap;
@@ -405,7 +420,7 @@ onMounted(async () => {
   gap: 12px;
 
   span {
-    color: #98a0ad;
+    color: var(--color-muted);
     font-size: 12px;
   }
 }

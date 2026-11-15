@@ -26,14 +26,14 @@
         <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="docGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#7a6cf0"/>
-              <stop offset="100%" stop-color="#4a7dff"/>
+              <stop offset="0%" stop-color="var(--color-accent)"/>
+              <stop offset="100%" stop-color="var(--color-accent-2)"/>
             </linearGradient>
           </defs>
           <path d="M6 2h9l5 5v15H6V2Z" fill="url(#docGrad)" opacity="0.9"/>
-          <path d="M15 2v5h5" fill="#cfd9ff"/>
-          <line x1="9" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
-          <line x1="9" y1="16" x2="14" y2="16" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M15 2v5h5" fill="var(--color-accent-wash)"/>
+          <line x1="9" y1="12" x2="16" y2="12" stroke="var(--color-accent-ink)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="9" y1="16" x2="14" y2="16" stroke="var(--color-accent-ink)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </div>
       <p class="waiting-title">报告生成中，请耐心等待</p>
@@ -73,14 +73,14 @@
             </span>
             <span class="meta-item">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.8"/>
-                <path d="M12 7v5l3.5 2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="12" r="9" stroke="var(--color-accent-ink)" stroke-width="1.8"/>
+                <path d="M12 7v5l3.5 2" stroke="var(--color-accent-ink)" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
               练习时长：{{ formatDuration(report.durationSeconds) }}
             </span>
             <span class="meta-item">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 5h16v11H9l-4 4v-4H4V5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M4 5h16v11H9l-4 4v-4H4V5Z" stroke="var(--color-accent-ink)" stroke-width="1.8" stroke-linejoin="round"/>
               </svg>
               对话轮次：{{ report.roundCount }}轮
             </span>
@@ -347,7 +347,7 @@ export default { name: 'PracticeReport' }
 <style scoped lang="scss">
 .practice-report {
   min-height: 100vh;
-  background: #f2f3f5;
+  background: var(--color-paper-2);
   padding: 16px 24px 40px;
   display: flex;
   flex-direction: column;
@@ -365,29 +365,29 @@ export default { name: 'PracticeReport' }
 
   .back-arrow {
     font-size: 24px;
-    color: #555;
+    color: var(--color-ink-2);
     cursor: pointer;
     line-height: 1;
     padding: 0 4px;
 
     &:hover {
-      color: #2e7cf6;
+      color: var(--color-accent);
     }
 
     // 图标返回按钮：补键盘焦点环
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
 
   .topbar-label {
-    color: #2e7cf6;
+    color: var(--color-accent);
     font-size: 15px;
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -395,13 +395,13 @@ export default { name: 'PracticeReport' }
   .topbar-title {
     font-size: 16px;
     font-weight: 600;
-    color: #222;
+    color: var(--color-ink);
   }
 }
 
 /* 等待/失败/错误态 */
 .waiting-card {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 14px;
   padding: 90px 24px;
   text-align: center;
@@ -418,13 +418,13 @@ export default { name: 'PracticeReport' }
   .waiting-title {
     font-size: 17px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0;
   }
 
   .waiting-sub {
     font-size: 13px;
-    color: #999;
+    color: var(--color-muted);
     margin: 0;
   }
 
@@ -433,8 +433,8 @@ export default { name: 'PracticeReport' }
     padding: 10px 36px;
     border: none;
     border-radius: 22px;
-    background: linear-gradient(90deg, #7a6cf0 0%, #4a7dff 100%);
-    color: #fff;
+    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 100%);
+    color: var(--color-paper);
     font-size: 14px;
     cursor: pointer;
 
@@ -463,8 +463,8 @@ export default { name: 'PracticeReport' }
   gap: 24px;
   border-radius: 14px;
   padding: 26px 30px;
-  background: linear-gradient(115deg, #6d7cf0 0%, #5b8df5 45%, #57c8e8 100%);
-  color: #fff;
+  background: linear-gradient(115deg, var(--color-accent) 0%, var(--color-accent) 45%, var(--color-accent-2) 100%);
+  color: var(--color-paper);
 }
 
 .overview-main {
@@ -481,13 +481,13 @@ export default { name: 'PracticeReport' }
       font-size: 12px;
 
       &.solid {
-        background: #3b5bd6;
-        color: #fff;
+        background: var(--color-accent-deep);
+        color: var(--color-paper);
       }
 
       &.outline {
-        background: rgba(255, 255, 255, 0.92);
-        color: #3b5bd6;
+        background: color-mix(in oklab, var(--color-accent-ink) 92%, transparent);
+        color: var(--color-accent-deep);
       }
     }
   }
@@ -496,12 +496,12 @@ export default { name: 'PracticeReport' }
     font-size: 26px;
     font-weight: 700;
     margin: 0 0 8px;
-    color: #fff;
+    color: var(--color-paper);
   }
 
   .overview-rank {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
+    color: color-mix(in oklab, var(--color-accent-ink) 90%, transparent);
     margin: 0 0 16px;
   }
 
@@ -510,7 +510,7 @@ export default { name: 'PracticeReport' }
     flex-wrap: wrap;
     gap: 20px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.95);
+    color: color-mix(in oklab, var(--color-accent-ink) 95%, transparent);
 
     .meta-item {
       display: flex;
@@ -522,7 +522,7 @@ export default { name: 'PracticeReport' }
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.25);
+      background: color-mix(in oklab, var(--color-accent-ink) 25%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -542,8 +542,8 @@ export default { name: 'PracticeReport' }
   .done-pill {
     padding: 3px 12px;
     border-radius: 12px;
-    background: #3ec46d;
-    color: #fff;
+    background: var(--color-success);
+    color: var(--color-paper);
     font-size: 12px;
   }
 
@@ -551,7 +551,7 @@ export default { name: 'PracticeReport' }
     font-size: 44px;
     font-weight: 700;
     line-height: 1;
-    color: #fff;
+    color: var(--color-paper);
 
     .score-unit {
       font-size: 16px;
@@ -563,31 +563,31 @@ export default { name: 'PracticeReport' }
   .change-pill {
     padding: 3px 12px;
     border-radius: 12px;
-    background: #fff;
-    color: #2fae5d;
+    background: var(--color-paper);
+    color: var(--color-success);
     font-size: 12px;
   }
 }
 
 /* 白卡通用 */
 .white-card {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 14px;
   padding: 20px 24px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 6px color-mix(in oklab, var(--color-graphite) 4%, transparent);
 }
 
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #222;
+  color: var(--color-ink);
   margin-bottom: 8px;
 }
 
 /* 未参与评分维度的说明 */
 .dim-skip-note {
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
   line-height: 1.6;
   margin: 6px 0 2px;
 }
@@ -604,7 +604,7 @@ export default { name: 'PracticeReport' }
   }
 
   .score-card {
-    background: #f8f9fc;
+    background: var(--color-paper-2);
     border-radius: 10px;
     padding: 14px 16px;
 
@@ -616,22 +616,22 @@ export default { name: 'PracticeReport' }
 
       .dim-name {
         font-size: 13px;
-        color: #555;
+        color: var(--color-ink-2);
       }
 
       .dim-score {
         font-size: 15px;
         font-weight: 700;
-        color: #333;
+        color: var(--color-ink);
 
         &.low {
-          color: #e54545;
+          color: var(--color-error);
         }
 
         &.dim-score-na {
           font-size: 12px;
           font-weight: 400;
-          color: #999;
+          color: var(--color-muted);
         }
       }
     }
@@ -639,13 +639,13 @@ export default { name: 'PracticeReport' }
     .score-bar {
       height: 6px;
       border-radius: 3px;
-      background: #eceff5;
+      background: var(--color-paper-2);
       overflow: hidden;
 
       .score-bar-fill {
         height: 100%;
         border-radius: 3px;
-        background: linear-gradient(90deg, #4a7dff 0%, #57c8e8 100%);
+        background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
         transition: width 0.4s ease;
       }
     }
@@ -657,7 +657,7 @@ export default { name: 'PracticeReport' }
   display: flex;
   align-items: center;
   gap: 32px;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--color-paper-2);
   margin-bottom: 20px;
 
   .consistency-entry {
@@ -665,7 +665,7 @@ export default { name: 'PracticeReport' }
     align-self: center;
     padding-bottom: 10px;
     font-size: 13px;
-    color: #2e7cf6;
+    color: var(--color-accent);
     cursor: pointer;
 
     &:hover {
@@ -673,7 +673,7 @@ export default { name: 'PracticeReport' }
     }
 
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -681,17 +681,17 @@ export default { name: 'PracticeReport' }
   .tab {
     padding: 10px 0;
     font-size: 15px;
-    color: #666;
+    color: var(--color-muted);
     cursor: pointer;
     position: relative;
 
     &:focus-visible {
-      outline: 2px solid #2e7cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: -2px;
     }
 
     &.active {
-      color: #2e7cf6;
+      color: var(--color-accent);
       font-weight: 500;
 
       &::after {
@@ -701,7 +701,7 @@ export default { name: 'PracticeReport' }
         left: 0;
         right: 0;
         height: 2px;
-        background: #2e7cf6;
+        background: var(--color-accent);
       }
     }
   }
@@ -710,7 +710,7 @@ export default { name: 'PracticeReport' }
 .page-footer {
   text-align: center;
   font-size: 12px;
-  color: #b0b5c0;
+  color: var(--color-muted);
   margin: 8px 0 0;
 }
 </style>

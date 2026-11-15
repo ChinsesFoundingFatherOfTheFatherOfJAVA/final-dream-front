@@ -60,17 +60,17 @@ const render = async () => {
     {
       value: currentData,
       name: '本次',
-      itemStyle: { color: '#4A7CFF' },
-      lineStyle: { color: '#4A7CFF', width: 2, type: 'solid' },
-      areaStyle: { color: 'rgba(74, 124, 255, 0.18)' }
+      itemStyle: { color: 'var(--color-accent)' },
+      lineStyle: { color: 'var(--color-accent)', width: 2, type: 'solid' },
+      areaStyle: { color: 'color-mix(in oklab, var(--color-accent) 18%, transparent)' }
     }
   ]
   if (hasLast && last.values) {
     seriesData.push({
       value: last.values,
       name: '上次',
-      itemStyle: { color: '#22D3EE' },
-      lineStyle: { color: '#22D3EE', width: 2, type: 'dashed' },
+      itemStyle: { color: 'var(--color-accent-2)' },
+      lineStyle: { color: 'var(--color-accent-2)', width: 2, type: 'dashed' },
       areaStyle: undefined
     })
   }
@@ -92,14 +92,14 @@ const render = async () => {
         bottom: 0,
         itemWidth: 20,
         itemHeight: 8,
-        textStyle: { color: '#666', fontSize: 12 }
+        textStyle: { color: 'var(--color-muted)', fontSize: 12 }
       },
       radar: {
         indicator,
         radius: '62%',
         center: ['50%', '46%'],
         axisName: {
-          color: '#555',
+          color: 'var(--color-ink-2)',
           fontSize: 12,
           formatter: (name: string) => {
             // 轴标签形如 "话术一致性 40分"，低分（<60）整段标红
@@ -111,15 +111,15 @@ const render = async () => {
             return `{n_${key}|${dimName}} {v_${key}|${scoreStr}分}`
           },
           rich: {
-            n_normal: { color: '#555', fontSize: 12 },
-            v_normal: { color: '#555', fontSize: 12 },
-            n_red: { color: '#e54545', fontSize: 12 },
-            v_red: { color: '#e54545', fontSize: 12, fontWeight: 'bold' }
+            n_normal: { color: 'var(--color-ink-2)', fontSize: 12 },
+            v_normal: { color: 'var(--color-ink-2)', fontSize: 12 },
+            n_red: { color: 'var(--color-error)', fontSize: 12 },
+            v_red: { color: 'var(--color-error)', fontSize: 12, fontWeight: 'bold' }
           }
         },
-        axisLine: { lineStyle: { color: '#dde2ec' } },
-        splitLine: { lineStyle: { color: '#e8ecf3' } },
-        splitArea: { areaStyle: { color: ['#fff', '#fafbfe'] } }
+        axisLine: { lineStyle: { color: 'var(--color-rule)' } },
+        splitLine: { lineStyle: { color: 'var(--color-rule)' } },
+        splitArea: { areaStyle: { color: ['var(--color-paper)', 'var(--color-paper-2)'] } }
       },
       series: [
         {
@@ -168,13 +168,13 @@ onBeforeUnmount(() => {
   justify-content: center;
   margin: 0;
   font-size: 13px;
-  color: #999;
+  color: var(--color-muted);
 }
 
 .radar-note {
   margin: -8px 0 0;
   text-align: center;
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
 }
 </style>

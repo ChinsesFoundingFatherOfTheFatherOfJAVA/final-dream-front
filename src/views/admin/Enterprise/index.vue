@@ -437,13 +437,13 @@ onMounted(async () => {
 
   h1 {
     margin: 0 0 5px;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 22px;
   }
 
   p {
     margin: 0;
-    color: #7b8494;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -451,8 +451,8 @@ onMounted(async () => {
 .total-badge {
   padding: 7px 12px;
   border-radius: 6px;
-  color: #245fbd;
-  background: #eaf2ff;
+  color: var(--color-accent-deep);
+  background: var(--color-accent-wash);
   font-size: 13px;
   white-space: nowrap;
 }
@@ -468,9 +468,9 @@ onMounted(async () => {
 .department-panel,
 .user-panel {
   min-width: 0;
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .department-panel {
@@ -487,7 +487,7 @@ onMounted(async () => {
 
 .panel-heading {
   padding: 4px 12px 10px;
-  color: #1f2937;
+  color: var(--color-ink);
   font-size: 14px;
   font-weight: 600;
 }
@@ -498,7 +498,7 @@ onMounted(async () => {
   align-items: flex-end;
   gap: 10px;
   padding: 14px 16px;
-  border-bottom: 1px solid #edf0f5;
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .field {
@@ -507,7 +507,7 @@ onMounted(async () => {
   gap: 5px;
 
   > span {
-    color: #667085;
+    color: var(--color-ink-2);
     font-size: 12px;
   }
 
@@ -538,12 +538,12 @@ onMounted(async () => {
 
   :deep(.el-select__wrapper) {
     border-radius: 6px 0 0 6px;
-    box-shadow: 0 0 0 1px #d7dce5 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__wrapper) {
     border-radius: 0 6px 6px 0;
-    box-shadow: 0 0 0 1px #d7dce5 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
@@ -564,8 +564,8 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 12px;
   padding: 9px 16px;
-  border-bottom: 1px solid #edf0f5;
-  color: #667085;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 12px;
 
   span {
@@ -580,28 +580,35 @@ onMounted(async () => {
 .user-table {
   width: 100%;
 
+  // AGENTS 8.2：单元格 nowrap 必须挂 .cell 且 :deep() 才能压过 EP 默认折行
+  :deep(.el-table .cell) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   :deep(.el-table__header th) {
     height: 44px;
-    background: #f8fafc;
-    color: #596274;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 14px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 44px;
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 14px;
   }
 
   :deep(.disabled-row) {
-    color: #98a0ad;
-    background: #fbfbfc;
+    color: var(--color-muted);
+    background: var(--color-paper-2);
   }
 }
 
 .name-cell {
-  color: #1f2937;
+  color: var(--color-ink);
   font-weight: 600;
 }
 
@@ -614,7 +621,7 @@ onMounted(async () => {
 }
 
 .protected-text {
-  color: #98a0ad;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -624,8 +631,8 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  border-top: 1px solid #edf0f5;
-  color: #667085;
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-pagination) {
@@ -657,11 +664,11 @@ onMounted(async () => {
   margin-right: 0;
   padding: 0 8px;
   border-radius: 6px;
-  color: #394253;
+  color: var(--color-ink-2);
   font-size: 14px;
 
   &:hover {
-    background: #f5f8ff;
+    background: var(--color-accent-wash);
   }
 
   :deep(.el-checkbox__label) {
@@ -670,11 +677,11 @@ onMounted(async () => {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 14px;
 
     em {
-      color: #98a0ad;
+      color: var(--color-muted);
       font-size: 12px;
       font-style: normal;
     }
@@ -687,7 +694,7 @@ onMounted(async () => {
   justify-content: center;
   gap: 12px;
   padding: 0 18px 14px;
-  color: #667085;
+  color: var(--color-ink-2);
   font-size: 12px;
 
 }
@@ -699,7 +706,7 @@ onMounted(async () => {
   width: 100%;
 
   > span {
-    color: #667085;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 

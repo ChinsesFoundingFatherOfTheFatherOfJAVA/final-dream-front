@@ -3,7 +3,7 @@
     <p class="tab-desc">AI 角色类型即训练中的客户画像，决定演练对手的性格、关注点与沟通风格。</p>
 
     <div v-if="profiles.length === 0" class="empty-state">
-      <div class="empty-icon" aria-hidden="true">🧑‍💼</div>
+      <div class="empty-icon" aria-hidden="true"><el-icon><UserFilled /></el-icon></div>
       <p class="empty-text">暂无客户画像，可在左侧对话中让助手生成</p>
     </div>
 
@@ -51,6 +51,7 @@
 import { computed } from 'vue'
 import { useAssistantStore } from '../../composables/useAssistantStore'
 import type { ArtifactCustomerProfile } from '@/types/assistant'
+import { UserFilled } from '@element-plus/icons-vue'
 
 const store = useAssistantStore()
 const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent?.customerProfiles ?? [])
@@ -59,7 +60,7 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
 <style scoped lang="scss">
 .tab-desc {
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
   line-height: 1.7;
   margin: 0 0 14px;
 }
@@ -69,15 +70,15 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
   text-align: center;
 
   .empty-icon { font-size: 34px; margin-bottom: 10px; }
-  .empty-text { font-size: 14px; color: #999; margin: 0; }
+  .empty-text { font-size: 14px; color: var(--color-muted); margin: 0; }
 }
 
 .profile-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 13px 14px;
   margin-bottom: 10px;
-  background: #fff;
+  background: var(--color-paper);
 
   .profile-head {
     display: flex;
@@ -87,9 +88,9 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
     .profile-type {
       font-size: 14px;
       font-weight: 600;
-      color: #1f2329;
-      background: #f0edff;
-      color: #6b5ce7;
+      color: var(--color-ink);
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
       border-radius: 4px;
       padding: 2px 10px;
     }
@@ -98,7 +99,7 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
   .profile-desc {
     margin: 9px 0 0;
     font-size: 13px;
-    color: #646a73;
+    color: var(--color-ink-2);
     line-height: 1.7;
   }
 
@@ -110,20 +111,20 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
   }
 
   .field {
-    background: #fafbfc;
-    border: 1px solid #eef0f3;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-paper-2);
     border-radius: 6px;
     padding: 9px 11px;
 
     .field-label {
       font-size: 12px;
-      color: #8a8f98;
+      color: var(--color-muted);
       margin-bottom: 6px;
     }
 
     .field-text {
       font-size: 13px;
-      color: #4e5969;
+      color: var(--color-ink-2);
       margin: 0;
       line-height: 1.65;
     }
@@ -132,10 +133,10 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
       margin: 0;
       padding-left: 16px;
 
-      li { font-size: 13px; color: #4e5969; line-height: 1.65; }
+      li { font-size: 13px; color: var(--color-ink-2); line-height: 1.65; }
     }
 
-    .field-empty { font-size: 13px; color: #c0c4cc; }
+    .field-empty { font-size: 13px; color: var(--color-muted); }
   }
 }
 
@@ -149,9 +150,9 @@ const profiles = computed<ArtifactCustomerProfile[]>(() => store.artifactContent
     border-radius: 10px;
     font-size: 12px;
 
-    &.pill-0 { color: #3b5bdb; background: #e8edfb; }
-    &.pill-1 { color: #6b5ce7; background: #f0edff; }
-    &.pill-2 { color: #d4477e; background: #fdeef3; }
+    &.pill-0 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.pill-1 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.pill-2 { color: var(--color-accent); background: color-mix(in oklab, var(--color-accent) 10%, var(--color-paper)); }
   }
 }
 </style>

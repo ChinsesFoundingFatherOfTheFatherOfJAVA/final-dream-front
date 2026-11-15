@@ -201,7 +201,7 @@ async function save() {
 <style scoped lang="scss">
 .loading-box {
   padding: 40px 0;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 13px;
   text-align: center;
 }
@@ -213,12 +213,12 @@ async function save() {
   .label {
     display: block;
     margin-bottom: 7px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
 
     em {
       margin-left: 2px;
-      color: #f45b69;
+      color: var(--color-accent-deep);
       font-style: normal;
     }
   }
@@ -245,7 +245,7 @@ async function save() {
   align-items: center;
   gap: 8px;
   margin-top: 8px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-input-number) {
@@ -262,21 +262,21 @@ async function save() {
 .btn {
   height: 34px;
   padding: 0 18px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &:disabled {
-    color: #b3bac7;
+    color: var(--color-rule-2);
     cursor: not-allowed;
   }
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

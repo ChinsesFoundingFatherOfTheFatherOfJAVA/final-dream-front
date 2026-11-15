@@ -25,13 +25,13 @@
              @click="togglePoint(point.id)"
              @keydown.enter.prevent="togglePoint(point.id)">
           <span class="name">{{ point.name }}</span>
-          <span v-if="isSelected(point.id)" class="check" aria-hidden="true">✓</span>
+<span v-if="isSelected(point.id)" class="check" aria-hidden="true"><el-icon><Check /></el-icon></span>
         </div>
         <p v-if="!allPoints.length" class="empty">该题库下暂无考核点</p>
       </div>
 
       <el-button class="edit-btn" @click="openEditor">
-        <span class="pencil" aria-hidden="true">✎</span> 编辑
+<el-icon class="pencil" aria-hidden="true"><EditPen /></el-icon> 编辑
       </el-button>
     </div>
 
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Check, EditPen } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { getPointList, type PointItem } from '@/api/exam'
 import PointEditorDrawer from './PointEditorDrawer.vue'
@@ -113,21 +113,21 @@ defineExpose({ loadPoints })
   gap: 6px;
   min-height: 34px;
   padding: 4px 26px 4px 10px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
   cursor: pointer;
 
-  &:hover { border-color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:hover { border-color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
-  .placeholder { color: #b0b7c3; }
+  .placeholder { color: var(--color-rule-2); }
 
   .caret {
     position: absolute;
     right: 10px;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
     transition: transform .16s ease;
 
@@ -140,14 +140,14 @@ defineExpose({ loadPoints })
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border: 1px solid #d6e4ff;
+  border: 1px solid var(--color-rule-2);
   border-radius: 3px;
-  background: #f0f5ff;
-  color: #2f54eb;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 12px;
 
-  i { font-style: normal; color: #8a92a5; cursor: pointer; &:hover { color: #f5222d; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  i { font-style: normal; color: var(--color-muted); cursor: pointer; &:hover { color: var(--color-error); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; }
   }
 }
 
@@ -159,10 +159,10 @@ defineExpose({ loadPoints })
   z-index: 30;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #e6eaf1;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+  box-shadow: 0 8px 24px var(--shadow-card);
   overflow: hidden;
 }
 
@@ -179,17 +179,17 @@ defineExpose({ loadPoints })
   gap: 8px;
   padding: 8px 14px;
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &:hover { background: #f3f7ff; }
-  &.active { color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+  &:hover { background: var(--color-accent-wash); }
+  &.active { color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
   .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .check { color: #1890ff; }
+  .check { color: var(--color-accent); }
 }
 
-.empty { text-align: center; color: #b0b7c3; font-size: 12px; padding: 20px 0; margin: 0; }
+.empty { text-align: center; color: var(--color-rule-2); font-size: 12px; padding: 20px 0; margin: 0; }
 
 .edit-btn {
   display: flex;
@@ -197,14 +197,14 @@ defineExpose({ loadPoints })
   gap: 6px;
   padding: 10px 14px;
   border: none;
-  border-top: 1px solid #eef1f6;
-  background: #fafbfd;
+  border-top: 1px solid var(--color-rule);
+  background: var(--color-paper-2);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   text-align: left;
   cursor: pointer;
 
-  &:hover { background: #f3f7ff; color: #1890ff; }
+  &:hover { background: var(--color-accent-wash); color: var(--color-accent); }
   .pencil { font-size: 12px; }
 }
 </style>

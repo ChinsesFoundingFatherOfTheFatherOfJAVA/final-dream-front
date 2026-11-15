@@ -113,11 +113,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .rich-editor {
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
   overflow: hidden;
 
-  &:focus-within { border-color: #1890ff; }
+  &:focus-within { border-color: var(--color-accent); }
 }
 
 .toolbar {
@@ -125,8 +125,8 @@ onMounted(() => {
   align-items: center;
   gap: 2px;
   padding: 4px 6px;
-  background: #fafbfd;
-  border-bottom: 1px solid #eef1f6;
+  background: var(--color-paper-2);
+  border-bottom: 1px solid var(--color-rule);
 
   button {
     min-width: 26px;
@@ -136,14 +136,14 @@ onMounted(() => {
     border-radius: 3px;
     background: transparent;
     font-size: 12px;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
-    &:hover { background: #eef4ff; border-color: #d6e4ff; color: #1890ff; }
+    &:hover { background: var(--color-accent-wash); border-color: var(--color-rule-2); color: var(--color-accent); }
   }
 
-  .sep { width: 1px; height: 16px; background: #e6eaf1; margin: 0 4px; }
-  .upload-tip { margin-left: auto; font-size: 11px; color: #1890ff; }
+  .sep { width: 1px; height: 16px; background: var(--color-rule); margin: 0 4px; }
+  .upload-tip { margin-left: auto; font-size: 11px; color: var(--color-accent); }
 }
 
 .editor {
@@ -157,7 +157,7 @@ onMounted(() => {
 
   &:empty::before {
     content: attr(data-placeholder);
-    color: #b0b7c3;
+    color: var(--color-rule-2);
   }
 
   :deep(img), :deep(video) { max-width: 100%; }

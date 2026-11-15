@@ -48,13 +48,13 @@ const onJump = (no: number) => {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #8a92a5;
+  color: var(--color-muted);
   white-space: nowrap;
 
   & + &::before {
     content: '›';
     margin: 0 10px 0 4px;
-    color: #c2c8d4;
+    color: var(--color-rule-2);
   }
 
   .step-no {
@@ -63,30 +63,34 @@ const onJump = (no: number) => {
     justify-content: center;
     width: 20px;
     height: 20px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 50%;
-    background: #f5f7fa;
-    color: #8a92a5;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 11px;
     line-height: 1;
   }
 
   &.done {
-    color: #1890ff;
-    .step-no { border-color: #bcd7ff; background: #e8f1ff; color: #1890ff; }
+    color: var(--color-accent-deep);
+    .step-no {
+      border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-paper));
+      background: var(--color-accent-wash);
+      color: var(--color-accent-deep);
+    }
   }
 
   &.active {
-    color: #1890ff;
+    color: var(--color-accent-deep);
     font-weight: 600;
-    .step-no { border-color: #1890ff; background: #1890ff; color: #fff; }
+    .step-no { border-color: var(--color-accent); background: var(--color-accent); color: var(--color-accent-ink); }
   }
 
   &.clickable {
     cursor: pointer;
-    &:hover { color: #1890ff; }
+    &:hover { color: var(--color-accent-deep); }
     &:focus-visible {
-      outline: 2px solid #1890ff;
+      outline: 2px solid var(--color-focus);
       outline-offset: 2px;
       border-radius: 4px;
     }

@@ -102,14 +102,14 @@
           <!-- 默认封面：蓝色渐变 + 双对话气泡 -->
           <div v-else class="cover-default">
             <svg width="88" height="72" viewBox="0 0 88 72" fill="none" aria-hidden="true">
-              <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="#ffffff" fill-opacity="0.9"/>
-              <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="#8FC7FF" fill-opacity="0.85"/>
-              <circle cx="24" cy="28" r="3" fill="#4A7DFF"/>
-              <circle cx="36" cy="28" r="3" fill="#4A7DFF"/>
-              <circle cx="48" cy="28" r="3" fill="#4A7DFF"/>
-              <circle cx="50" cy="48" r="3" fill="#fff"/>
-              <circle cx="62" cy="48" r="3" fill="#fff"/>
-              <circle cx="74" cy="48" r="3" fill="#fff"/>
+              <path d="M8 8h44a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H24l-10 10V44H8a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" transform="translate(4 4)" fill="var(--color-accent-ink)" fill-opacity="0.9"/>
+              <path d="M44 24h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8h-4v8l-9-8H44a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8Z" fill="var(--color-accent-2)" fill-opacity="0.85"/>
+              <circle cx="24" cy="28" r="3" fill="var(--color-accent)"/>
+              <circle cx="36" cy="28" r="3" fill="var(--color-accent)"/>
+              <circle cx="48" cy="28" r="3" fill="var(--color-accent)"/>
+              <circle cx="50" cy="48" r="3" fill="var(--color-accent-ink)"/>
+              <circle cx="62" cy="48" r="3" fill="var(--color-accent-ink)"/>
+              <circle cx="74" cy="48" r="3" fill="var(--color-accent-ink)"/>
             </svg>
           </div>
           <!-- 左上角类型徽标 -->
@@ -129,9 +129,9 @@
     <!-- 空状态 -->
     <div v-else-if="!loading" class="empty-state">
       <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
-        <rect x="30" y="40" width="60" height="50" rx="4" fill="#e8e8e8" stroke="#d9d9d9" stroke-width="2"/>
-        <rect x="40" y="30" width="40" height="20" rx="4" fill="#f5f5f5" stroke="#d9d9d9" stroke-width="2"/>
-        <circle cx="60" cy="65" r="10" fill="#d9d9d9"/>
+        <rect x="30" y="40" width="60" height="50" rx="4" fill="var(--color-paper-2)" stroke="var(--color-rule-2)" stroke-width="2"/>
+        <rect x="40" y="30" width="40" height="20" rx="4" fill="var(--color-paper-2)" stroke="var(--color-rule-2)" stroke-width="2"/>
+        <circle cx="60" cy="65" r="10" fill="var(--color-rule-2)"/>
       </svg>
       <p class="empty-text">暂无数据</p>
     </div>
@@ -308,13 +308,13 @@ export default { name: 'SpeechList' }
 </script>
 
 <style scoped lang="scss">
-$primary: #2e7cf6;
+$primary: var(--color-accent);
 
 .speech-list {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 12px;
   padding: 20px 24px 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 4%, transparent);
   min-height: calc(100vh - 60px - 48px);
   display: flex;
   flex-direction: column;
@@ -324,13 +324,13 @@ $primary: #2e7cf6;
 .tab-bar {
   display: flex;
   gap: 40px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--color-rule);
   margin-bottom: 20px;
 
   .tab-item {
     padding: 12px 0;
     font-size: 16px;
-    color: #333;
+    color: var(--color-ink);
     position: relative;
 
     &.active {
@@ -349,7 +349,7 @@ $primary: #2e7cf6;
     }
 
     &.disabled {
-      color: #bbb;
+      color: var(--color-rule-2);
       cursor: not-allowed;
     }
   }
@@ -362,10 +362,10 @@ $primary: #2e7cf6;
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  background: #fff;
-  border: 1px solid #ececec;
+  background: var(--color-paper);
+  border: 1px solid var(--color-paper-2);
   border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--color-graphite) 3%, transparent);
   margin-bottom: 20px;
 }
 
@@ -384,12 +384,12 @@ $primary: #2e7cf6;
     justify-content: space-between;
     height: 34px;
     padding: 0 12px;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--color-rule-2);
     border-radius: 6px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     cursor: pointer;
-    background: #fff;
+    background: var(--color-paper);
 
     // 自定义下拉触发器：补键盘焦点环
     &:focus-visible {
@@ -398,12 +398,12 @@ $primary: #2e7cf6;
     }
 
     .placeholder {
-      color: #999;
+      color: var(--color-muted);
     }
 
     .chevron {
       font-size: 10px;
-      color: #999;
+      color: var(--color-muted);
       transition: transform 0.2s;
     }
   }
@@ -417,10 +417,10 @@ $primary: #2e7cf6;
     top: calc(100% + 4px);
     left: 0;
     right: 0;
-    background: #fff;
-    border: 1px solid #e4e7ed;
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--color-graphite) 10%, transparent);
     z-index: 20;
     padding: 4px 0;
     max-height: 240px;
@@ -429,11 +429,11 @@ $primary: #2e7cf6;
     .select-option {
       padding: 8px 12px;
       font-size: 14px;
-      color: #606266;
+      color: var(--color-ink-2);
       cursor: pointer;
 
       &:hover {
-        background: #f5f7fa;
+        background: var(--color-paper-2);
       }
 
       &:focus-visible {
@@ -456,7 +456,7 @@ $primary: #2e7cf6;
   :deep(.el-input__wrapper) {
     height: 34px;
     border-radius: 6px;
-    box-shadow: 0 0 0 1px #dcdfe6 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__inner) {
@@ -487,15 +487,15 @@ $primary: #2e7cf6;
 
 .project-card {
   width: 280px;
-  background: #fff;
-  border: 1px solid #ececec;
+  background: var(--color-paper);
+  border: 1px solid var(--color-paper-2);
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow 0.2s, transform 0.2s;
 
   &:hover {
-    box-shadow: 0 6px 16px rgba(46, 124, 246, 0.15);
+    box-shadow: 0 6px 16px color-mix(in oklab, var(--color-accent) 15%, transparent);
     transform: translateY(-2px);
   }
 
@@ -520,7 +520,7 @@ $primary: #2e7cf6;
   .cover-default {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #4a7dff 0%, #2e5cd8 60%, #1e3fa8 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 60%, var(--color-accent-deep) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -533,15 +533,15 @@ $primary: #2e7cf6;
     padding: 3px 10px;
     border-radius: 4px;
     font-size: 12px;
-    color: #fff;
+    color: var(--color-paper);
     line-height: 1.4;
 
     &.train {
-      background: rgba(46, 124, 246, 0.92);
+      background: var(--color-accent);
     }
 
     &.exam {
-      background: rgba(255, 122, 26, 0.92);
+      background: var(--color-warning);
     }
   }
 
@@ -552,8 +552,8 @@ $primary: #2e7cf6;
     padding: 3px 10px;
     border-radius: 4px;
     font-size: 12px;
-    color: #fff;
-    background: rgba(56, 178, 92, 0.92);
+    color: var(--color-paper);
+    background: var(--color-success);
   }
 }
 
@@ -563,7 +563,7 @@ $primary: #2e7cf6;
   .card-title {
     font-size: 15px;
     font-weight: 600;
-    color: #222;
+    color: var(--color-ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -572,7 +572,7 @@ $primary: #2e7cf6;
   .card-time {
     margin-top: 6px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-muted);
   }
 }
 
@@ -587,7 +587,7 @@ $primary: #2e7cf6;
 
   .empty-text {
     font-size: 14px;
-    color: #999;
+    color: var(--color-muted);
   }
 }
 
@@ -601,17 +601,17 @@ $primary: #2e7cf6;
 
   .total-text {
     font-size: 13px;
-    color: #666;
+    color: var(--color-muted);
     margin-right: 8px;
   }
 
   .page-btn {
     min-width: 30px;
     height: 30px;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
-    background: #fff;
-    color: #606266;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     font-size: 13px;
     cursor: pointer;
     display: flex;
@@ -621,8 +621,8 @@ $primary: #2e7cf6;
 
     &:hover:not(:disabled):not(.active) {
       color: $primary;
-      border-color: #c6e2ff;
-      background: #ecf5ff;
+      border-color: var(--color-accent-wash);
+      background: var(--color-accent-wash);
     }
 
     &.active {
@@ -631,7 +631,7 @@ $primary: #2e7cf6;
     }
 
     &:disabled {
-      color: #c0c4cc;
+      color: var(--color-muted);
       cursor: not-allowed;
     }
   }

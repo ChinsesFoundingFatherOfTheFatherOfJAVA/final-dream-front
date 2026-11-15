@@ -103,7 +103,7 @@ function confirm() {
 .section-title {
   display: block;
   margin-bottom: 10px;
-  color: #30384a;
+  color: var(--color-ink);
   font-size: 14px;
   font-weight: 600;
 }
@@ -121,13 +121,13 @@ function confirm() {
     white-space: normal;
 
     strong {
-      color: #30384a;
+      color: var(--color-ink);
       font-size: 13px;
       font-weight: 600;
     }
 
     small {
-      color: #98a1b2;
+      color: var(--color-muted);
       font-size: 12px;
     }
   }
@@ -137,34 +137,34 @@ function confirm() {
   }
 
   &.inline :deep(.el-radio__label) {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
 
     em {
-      color: #a2a9b7;
+      color: var(--color-muted);
       font-style: normal;
     }
   }
 }
 
 .hint {
-  color: #a2a9b7;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
 .btn {
   height: 34px;
   padding: 0 18px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

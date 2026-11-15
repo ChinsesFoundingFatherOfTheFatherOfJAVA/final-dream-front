@@ -8,7 +8,7 @@
         </div>
         <h3 class="user-name">{{ authStore.displayName }}</h3>
         <div class="user-badges">
-          <span class="medal-badge">🏅 0枚勋章</span>
+          <span class="medal-badge"><el-icon aria-hidden="true"><Medal /></el-icon> 0枚勋章</span>
           <span class="level-badge">Lv.2</span>
         </div>
         <div class="user-exp">
@@ -38,7 +38,7 @@
         <div class="user-credits">
           <span class="credits-label">我的学分</span>
           <span class="credits-value">0</span>
-          <span class="credits-icon" aria-hidden="true">💎</span>
+          <el-icon class="credits-icon" aria-hidden="true"><Trophy /></el-icon>
         </div>
         <div class="pk-ranking">
           <div class="ranking-header" title="敬请期待">
@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown, Medal, Trophy } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { getStudentProjects } from '@/api/student'
 import { useAuthStore } from '@/stores/auth'
@@ -159,7 +159,7 @@ const getTagClass = (tag: string) => {
 <style scoped lang="scss">
 .my-practice { height: 100%; position: relative; }
 
-.task-empty { padding: 48px 0; text-align: center; color: #999; font-size: 14px; }
+.task-empty { padding: 48px 0; text-align: center; color: var(--color-muted); font-size: 14px; }
 
 .layout {
   display: flex;
@@ -169,83 +169,83 @@ const getTagClass = (tag: string) => {
 
 .user-sidebar {
   width: 240px;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 5%, transparent);
 
   .user-avatar {
-    width: 80px; height: 80px; border-radius: 50%; background: #e6f7ff;
+    width: 80px; height: 80px; border-radius: 50%; background: var(--color-accent-wash);
     display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
-    .avatar-text { font-size: 32px; color: #1890ff; font-weight: 500; }
+    .avatar-text { font-size: 32px; color: var(--color-accent); font-weight: 500; }
   }
 
-  .user-name { text-align: center; font-size: 16px; font-weight: 600; color: #333; margin: 0 0 12px 0; }
+  .user-name { text-align: center; font-size: 16px; font-weight: 600; color: var(--color-ink); margin: 0 0 12px 0; }
 
   .user-badges {
     display: flex; justify-content: center; gap: 12px; margin-bottom: 16px;
-    .medal-badge { font-size: 12px; color: #faad14; background: #fffbe6; padding: 4px 8px; border-radius: 4px; }
-    .level-badge { font-size: 12px; color: #1890ff; background: #e6f7ff; padding: 4px 8px; border-radius: 4px; }
+    .medal-badge { font-size: 12px; color: var(--color-warning); background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); padding: 4px 8px; border-radius: 4px; }
+    .level-badge { font-size: 12px; color: var(--color-accent); background: var(--color-accent-wash); padding: 4px 8px; border-radius: 4px; }
   }
 
   .user-exp {
     margin-bottom: 20px;
-    .exp-text { font-size: 12px; color: #999; display: block; margin-bottom: 8px; strong { color: #333; } }
+    .exp-text { font-size: 12px; color: var(--color-muted); display: block; margin-bottom: 8px; strong { color: var(--color-ink); } }
   }
 
-  .progress-bar { height: 6px; background: #e8e8e8; border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: #1890ff; border-radius: 3px; }
+  .progress-bar { height: 6px; background: var(--color-rule); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--color-accent); border-radius: 3px; }
 
   .user-stats {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;
     .stat-item { text-align: center; }
-    .stat-value { display: block; font-size: 24px; font-weight: 600; color: #333; margin-bottom: 4px; }
-    .stat-label { font-size: 12px; color: #999; }
+    .stat-value { display: block; font-size: 24px; font-weight: 600; color: var(--color-ink); margin-bottom: 4px; }
+    .stat-label { font-size: 12px; color: var(--color-muted); }
   }
 
   .user-credits {
-    display: flex; align-items: center; gap: 8px; padding: 12px; background: #f5f5f5;
+    display: flex; align-items: center; gap: 8px; padding: 12px; background: var(--color-paper-2);
     border-radius: 8px; margin-bottom: 20px;
-    .credits-label { font-size: 14px; color: #333; }
-    .credits-value { font-size: 18px; font-weight: 600; color: #1890ff; margin-left: auto; }
+    .credits-label { font-size: 14px; color: var(--color-ink); }
+    .credits-value { font-size: 18px; font-weight: 600; color: var(--color-accent); margin-left: auto; }
     .credits-icon { font-size: 20px; }
   }
 
   .pk-ranking {
-    border-top: 1px solid #e8e8e8; padding-top: 16px;
-    .ranking-header { .ranking-title { font-size: 14px; font-weight: 500; color: #333; } }
-    .ranking-content { margin-top: 12px; .view-all { font-size: 12px; color: #1890ff; } }
+    border-top: 1px solid var(--color-rule); padding-top: 16px;
+    .ranking-header { .ranking-title { font-size: 14px; font-weight: 500; color: var(--color-ink); } }
+    .ranking-content { margin-top: 12px; .view-all { font-size: 12px; color: var(--color-accent); } }
   }
 }
 
 .main-content {
-  flex: 1; background: #fff; border-radius: 8px; padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex: 1; background: var(--color-paper); border-radius: 8px; padding: 24px;
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 5%, transparent);
 }
 
 .content-header {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
   .header-left { display: flex; align-items: center; gap: 16px; }
-  .page-title { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
-  .task-count { font-size: 14px; color: #999; strong { color: #f5222d; } }
+  .page-title { font-size: 20px; font-weight: 600; color: var(--color-ink); margin: 0; }
+  .task-count { font-size: 14px; color: var(--color-muted); strong { color: var(--color-error); } }
   .header-right { display: flex; gap: 12px; }
 }
 
-.filter-select { height: 32px; font-size: 14px; color: #333; }
+.filter-select { height: 32px; font-size: 14px; color: var(--color-ink); }
 
 .task-list { display: flex; flex-direction: column; gap: 16px; }
 
 .task-card {
-  border: 1px solid #e8e8e8; border-radius: 8px; padding: 20px;
+  border: 1px solid var(--color-rule); border-radius: 8px; padding: 20px;
   .task-tags { display: flex; gap: 8px; margin-bottom: 12px; }
-  .task-title { font-size: 14px; font-weight: 500; color: #333; margin: 0 0 8px 0; }
-  .task-time { font-size: 12px; color: #999; margin: 0; }
+  .task-title { font-size: 14px; font-weight: 500; color: var(--color-ink); margin: 0 0 8px 0; }
+  .task-time { font-size: 12px; color: var(--color-muted); margin: 0; }
 }
 
 .tag {
   padding: 2px 8px; border-radius: 4px; font-size: 12px;
-  &.tag-info { background: #f0f0f0; color: #666; }
-  &.tag-danger { background: #fff1f0; color: #f5222d; }
+  &.tag-info { background: var(--color-paper-2); color: var(--color-muted); }
+  &.tag-danger { background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper)); color: var(--color-error); }
 }
 
 

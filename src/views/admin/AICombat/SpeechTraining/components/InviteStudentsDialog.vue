@@ -219,8 +219,8 @@ watch(
   min-height: 0;
   padding: 12px 8px;
   overflow-y: auto;
-  border-right: 1px solid #eef0f5;
-  background: #fafbfd;
+  border-right: 1px solid var(--color-rule);
+  background: var(--color-paper-2);
 }
 
 .candidate-panel {
@@ -251,7 +251,7 @@ watch(
   min-height: 0;
   margin: 0 16px;
   overflow: auto;
-  border: 1px solid #eef0f5;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
 }
 
@@ -259,16 +259,20 @@ watch(
   width: 100%;
 
   :deep(.el-table__header th) {
-    background: #fafbfd;
-    color: #4d5568;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row td) {
-    color: #4d5568;
+    height: 44px;
+    color: var(--color-ink-2);
     font-size: 13px;
+    border-bottom: 1px solid var(--color-rule);
   }
+  :deep(.el-table .cell) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :deep(.el-table__row:hover > td) { background: var(--color-accent-wash) !important; }
 }
 
 .pagination {
@@ -276,7 +280,7 @@ watch(
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  color: #7a8396;
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 
@@ -289,7 +293,7 @@ watch(
 
   .dept-panel {
     border-right: none;
-    border-bottom: 1px solid #eef0f5;
+    border-bottom: 1px solid var(--color-rule);
   }
 }
 </style>

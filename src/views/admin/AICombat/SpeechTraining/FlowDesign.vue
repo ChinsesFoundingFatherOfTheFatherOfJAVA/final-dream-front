@@ -2,7 +2,7 @@
   <div class="flow-design">
     <!-- 提示信息 -->
     <div class="alert-info">
-      <span class="alert-icon" aria-hidden="true">⚠️</span>
+      <span class="alert-icon" aria-hidden="true"><el-icon aria-hidden="true"><WarningFilled /></el-icon></span>
       <span>发布/提交前，请先检查下方「陪练者问学员答」和「学员问陪练者答」中学员说中的流转条件，此设置影响训练的难易程度</span>
     </div>
 
@@ -10,16 +10,16 @@
     <div class="flow-toolbar">
       <span class="update-time">最近更新时间: 2026-06-01 14:08</span>
       <div class="toolbar-right">
-        <el-button v-if="hasFlow" class="btn btn-text" @click="handleImportTemplate"><span aria-hidden="true">📋</span> 从话术模版中选择</el-button>
+        <el-button v-if="hasFlow" class="btn btn-text" @click="handleImportTemplate"><el-icon aria-hidden="true"><Tickets /></el-icon> 从话术模版中选择</el-button>
         <el-button v-if="hasFlow" class="btn btn-text" @click="openAIDialog"><el-icon class="btn-caret"><MagicStick /></el-icon> AI生成话术</el-button>
-        <el-button class="btn btn-text" @click="handleSave"><span aria-hidden="true">💾</span> 保存</el-button>
+        <el-button class="btn btn-text" @click="handleSave"><el-icon aria-hidden="true"><DocumentChecked /></el-icon> 保存</el-button>
       </div>
     </div>
 
     <!-- 无流程时的空状态 -->
     <div v-if="!hasFlow" class="flow-empty">
       <div class="empty-inner">
-        <div class="empty-illustration" aria-hidden="true">🔀</div>
+        <div class="empty-illustration" aria-hidden="true"><el-icon><Switch /></el-icon></div>
         <p class="empty-title">还没有设置训练流程</p>
         <p class="empty-desc">请选择一种方式开始创建你的话术训练流程</p>
         <div class="create-methods">
@@ -32,14 +32,14 @@
           </el-button>
           <el-button class="method-btn" @click="createManualFlow">
             <span class="method-inner">
-              <span class="method-icon" aria-hidden="true">✏️</span>
+              <span class="method-icon" aria-hidden="true"><el-icon><EditPen /></el-icon></span>
               <span class="method-label">手动创建流程</span>
               <span class="method-desc">从空白画布开始，自由拖拽节点</span>
             </span>
           </el-button>
           <el-button class="method-btn" @click="handleImportTemplate">
             <span class="method-inner">
-              <span class="method-icon" aria-hidden="true">📋</span>
+              <span class="method-icon" aria-hidden="true"><el-icon><Tickets /></el-icon></span>
               <span class="method-label">选择话术模板</span>
               <span class="method-desc">复用已创建的话术模板流程</span>
             </span>
@@ -93,7 +93,7 @@
           @drop="onDrop"
           @dragover="onDragOver"
         >
-          <Background :gap="20" :size="1.4" pattern-color="#d9d9d9" />
+          <Background :gap="20" :size="1.4" pattern-color="var(--color-rule-2)" />
           <Controls position="bottom-right" />
           <MiniMap pannable zoomable />
 
@@ -156,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { MagicStick } from '@element-plus/icons-vue'
+import { MagicStick, WarningFilled, DocumentChecked, Switch, EditPen, Tickets } from '@element-plus/icons-vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { toast } from '@/utils/toast'
 import { useRoute } from 'vue-router'
@@ -198,11 +198,11 @@ let nodeSeq = 0
 const genId = (prefix: string) => `${prefix}-${Date.now()}-${nodeSeq++}`
 
 const nodePanelItems = [
-  { type: 'start', label: '开始', color: '#52c41a' },
-  { type: 'trainer_ask', label: '陪练者问学员说', color: '#fa8c16' },
-  { type: 'student_ask', label: '学员问陪练者说', color: '#1890ff' },
-  { type: 'narration', label: '旁白', color: '#722ed1' },
-  { type: 'end', label: '结束', color: '#f5222d' }
+  { type: 'start', label: '开始', color: 'var(--color-success)' },
+  { type: 'trainer_ask', label: '陪练者问学员说', color: 'var(--color-warning)' },
+  { type: 'student_ask', label: '学员问陪练者说', color: 'var(--color-accent)' },
+  { type: 'narration', label: '旁白', color: 'var(--color-accent-deep)' },
+  { type: 'end', label: '结束', color: 'var(--color-error)' }
 ]
 
 const defaultData = (): FlowNodeData => ({
@@ -400,7 +400,7 @@ const onConnect = (params: any) => {
     label: '1',
     weight: 1,
     markerEnd: MarkerType.ArrowClosed,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
+    style: { stroke: 'var(--color-accent)', strokeWidth: 2 },
     data: { weight: 1, sourceLabel: label, targetLabel: targetNode?.data?.nodeTypeTitle || '节点' }
   })
 }
@@ -442,7 +442,7 @@ const createManualFlow = () => {
       label: '1',
       weight: 1,
       markerEnd: MarkerType.ArrowClosed,
-      style: { stroke: '#1890ff', strokeWidth: 2 },
+      style: { stroke: 'var(--color-accent)', strokeWidth: 2 },
       data: { weight: 1 }
     }
   ]
@@ -588,7 +588,7 @@ const initDemoFlow = () => {
       label: '1',
       weight: 1,
       markerEnd: MarkerType.ArrowClosed,
-      style: { stroke: '#1890ff', strokeWidth: 2 },
+      style: { stroke: 'var(--color-accent)', strokeWidth: 2 },
       data: { weight: 1 }
     })
     prevId = big.id
@@ -605,7 +605,7 @@ const initDemoFlow = () => {
     label: '1',
     weight: 1,
     markerEnd: MarkerType.ArrowClosed,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
+    style: { stroke: 'var(--color-accent)', strokeWidth: 2 },
     data: { weight: 1 }
   })
 
@@ -626,8 +626,8 @@ onMounted(() => {
 }
 
 .alert-info {
-  background: #fffbe6;
-  border: 1px solid #ffe58f;
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-warning) 35%, var(--color-paper));
   border-radius: 4px;
   padding: 12px 16px;
   display: flex;
@@ -635,7 +635,7 @@ onMounted(() => {
   gap: 8px;
   margin-bottom: 16px;
   font-size: 14px;
-  color: #d48806;
+  color: var(--color-warning);
 }
 
 .flow-toolbar {
@@ -644,7 +644,7 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 16px;
 
-  .update-time { font-size: 14px; color: #999; }
+  .update-time { font-size: 14px; color: var(--color-muted); }
   .toolbar-right { display: flex; gap: 8px; }
 }
 
@@ -654,13 +654,13 @@ onMounted(() => {
   font-size: 14px;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, opacity 0.2s;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
   &.btn-text {
-    background: #fff;
-    color: #333;
-    border-color: #d9d9d9;
-    &:hover { color: #1890ff; border-color: #1890ff; }
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border-color: var(--color-rule-2);
+    &:hover { color: var(--color-accent); border-color: var(--color-accent); }
   }
   &:hover { opacity: 0.88; }
 }
@@ -671,7 +671,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
 }
 
@@ -680,8 +680,8 @@ onMounted(() => {
   padding: 40px;
 
   .empty-illustration { font-size: 64px; margin-bottom: 16px; }
-  .empty-title { font-size: 18px; font-weight: 600; color: #333; margin: 0 0 8px 0; }
-  .empty-desc { font-size: 14px; color: #999; margin: 0 0 32px 0; }
+  .empty-title { font-size: 18px; font-weight: 600; color: var(--color-ink); margin: 0 0 8px 0; }
+  .empty-desc { font-size: 14px; color: var(--color-muted); margin: 0 0 32px 0; }
 
   .create-methods {
     display: flex;
@@ -694,15 +694,15 @@ onMounted(() => {
     // el-button 默认固定 32px 高，卡片式内容不放开高度会整体溢出、文字互相叠压
     height: auto;
     padding: 24px 20px;
-    background: #fff;
-    border: 1px solid #e8e8e8;
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule);
     border-radius: 10px;
     cursor: pointer;
     transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 
     &:hover {
-      border-color: #1890ff;
-      box-shadow: 0 6px 18px rgba(24, 144, 255, 0.15);
+      border-color: var(--color-accent);
+      box-shadow: 0 6px 18px color-mix(in oklab, var(--color-accent) 15%, transparent);
       transform: translateY(-3px);
     }
 
@@ -715,8 +715,8 @@ onMounted(() => {
     }
 
     .method-icon { font-size: 30px; }
-    .method-label { font-size: 15px; font-weight: 500; color: #333; }
-    .method-desc { font-size: 12px; color: #999; line-height: 1.5; }
+    .method-label { font-size: 15px; font-weight: 500; color: var(--color-ink); }
+    .method-desc { font-size: 12px; color: var(--color-muted); line-height: 1.5; }
   }
 }
 
@@ -724,7 +724,7 @@ onMounted(() => {
 .flow-canvas-wrapper {
   flex: 1;
   display: flex;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   overflow: hidden;
   min-height: 520px;
@@ -732,22 +732,22 @@ onMounted(() => {
 
 .node-panel {
   width: 190px;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid var(--color-rule);
   padding: 16px;
   flex-shrink: 0;
-  background: #fff;
+  background: var(--color-paper);
 
   .panel-title {
     font-size: 13px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin-bottom: 14px;
   }
 
   .panel-tip {
     margin-top: 18px;
     font-size: 12px;
-    color: #bbb;
+    color: var(--color-rule-2);
     line-height: 1.6;
   }
 }
@@ -763,18 +763,18 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: #fafafa;
-  border: 1px solid #e8e8e8;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
   cursor: grab;
   font-size: 13px;
-  color: #333;
+  color: var(--color-ink);
   user-select: none;
   transition: background 0.2s, border-color 0.2s;
 
   &:hover {
-    background: #e6f7ff;
-    border-color: #91d5ff;
+    background: var(--color-accent-wash);
+    border-color: var(--color-accent-2);
   }
 
   &:active { cursor: grabbing; }
@@ -803,18 +803,18 @@ onMounted(() => {
 }
 
 .vue-flow__edge:hover .vue-flow__edge-path {
-  stroke: #1890ff !important;
+  stroke: var(--color-accent) !important;
   stroke-width: 3 !important;
 }
 
 .vue-flow__edge-text {
   font-size: 12px;
-  fill: #1890ff;
+  fill: var(--color-accent);
   font-weight: 600;
 }
 
 .vue-flow__edge-textbg {
-  fill: #fff;
+  fill: var(--color-paper);
 }
 
 .vue-flow__node {

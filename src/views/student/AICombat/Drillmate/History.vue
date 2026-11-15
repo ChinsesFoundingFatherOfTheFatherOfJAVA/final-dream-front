@@ -4,7 +4,7 @@
       <nav class="dm-breadcrumb">
         <button type="button" class="dm-breadcrumb__link" @click="goBack">AI实战训练场</button>
         <svg class="dm-breadcrumb__sep" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-          <path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="#c0c4cc" stroke-width="1.2" />
+          <path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="var(--color-rule-2)" stroke-width="1.2" />
         </svg>
         <span class="dm-breadcrumb__current">练习历程</span>
       </nav>
@@ -19,7 +19,7 @@
           <div v-for="item in statCells" :key="item.label" class="dm-stat-cell">
             <div class="dm-stat-label">
               <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                <circle cx="7" cy="7" r="5.6" fill="none" stroke="#bfbfbf" stroke-width="1.2" />
+                <circle cx="7" cy="7" r="5.6" fill="none" stroke="var(--color-rule-2)" stroke-width="1.2" />
               </svg>
               <span>{{ item.label }}</span>
             </div>
@@ -298,11 +298,11 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-$primary: #436bff;
-$text-1: #262626;
-$text-2: #595959;
-$text-3: #8c8c8c;
-$border: #e9e9e9;
+$primary: var(--color-accent);
+$text-1: var(--color-ink);
+$text-2: var(--color-muted);
+$text-3: var(--color-muted);
+$border: var(--color-rule);
 
 .dm-history {
   padding-bottom: 24px;
@@ -340,7 +340,7 @@ $border: #e9e9e9;
   }
 
   &__current {
-    color: #1a1a1a;
+    color: var(--color-graphite);
     font-size: 13px;
     line-height: 22px;
   }
@@ -349,7 +349,7 @@ $border: #e9e9e9;
 .dm-history__card {
   padding: 24px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-paper);
   overflow: hidden;
 }
 
@@ -423,7 +423,7 @@ $border: #e9e9e9;
   padding: 0 12px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   color: $text-2;
   font-size: 14px;
   font-weight: 500;
@@ -433,7 +433,7 @@ $border: #e9e9e9;
   &.is-active {
     border-color: $primary;
     background: $primary;
-    color: #fff;
+    color: var(--color-paper);
   }
 }
 
@@ -455,14 +455,14 @@ $border: #e9e9e9;
     height: 32px;
     padding: 0 30px 0 11px;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
     font-size: 14px;
   }
 
   :deep(.dm-theme-select .el-select__placeholder),
   :deep(.dm-theme-select .el-select__selected-item) {
     font-size: 14px;
-    color: #595959;
+    color: var(--color-muted);
   }
 }
 
@@ -479,13 +479,13 @@ $border: #e9e9e9;
   border-collapse: collapse;
   border-radius: 4px;
   overflow: hidden;
-  background: #fff;
+  background: var(--color-paper);
 
   th {
     height: 50px;
     padding: 14px 0 13px;
     border-bottom: 1px solid $border;
-    background: #f9fafb;
+    background: var(--color-paper-2);
     color: $text-1;
     font-size: 14px;
     font-weight: 700;
@@ -557,27 +557,27 @@ $border: #e9e9e9;
     font-size: 12px;
     line-height: 18px;
     font-weight: 500;
-    background: #fff1f0;
-    color: #f5222d;
+    background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+    color: var(--color-error);
 
     &.is-passed {
-      background: #f6ffed;
-      color: #52c41a;
+      background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
+      color: var(--color-success);
     }
 
     &.is-running {
-      background: #e8f0ff;
+      background: var(--color-accent-wash);
       color: $primary;
     }
   }
 
   &__score {
-    color: #f5222d;
+    color: var(--color-error);
     font-size: 18px;
     font-weight: 800;
 
     &.is-passed {
-      color: #52c41a;
+      color: var(--color-success);
     }
   }
 

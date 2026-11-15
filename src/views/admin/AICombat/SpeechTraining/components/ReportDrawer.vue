@@ -152,13 +152,13 @@ watch(
 .drawer-header {
   h3 {
     margin: 0;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 17px;
   }
 
   p {
     margin: 5px 0 0;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
   }
 }
@@ -169,7 +169,7 @@ watch(
   align-items: center;
   justify-content: center;
   padding: 40px;
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -181,13 +181,13 @@ watch(
   margin: 16px 18px 0;
   padding: 18px 20px;
   border-radius: 10px;
-  background: linear-gradient(120deg, #4f6ee8 0%, #3386d5 100%);
-  color: #fff;
+  background: linear-gradient(120deg, var(--color-accent) 0%, var(--color-accent) 100%);
+  color: var(--color-paper);
 
   .banner-label {
     display: block;
     margin-bottom: 4px;
-    color: rgba(255, 255, 255, 0.78);
+    color: color-mix(in oklab, var(--color-accent-ink) 78%, transparent);
     font-size: 12px;
   }
 
@@ -200,7 +200,7 @@ watch(
 .change-tag {
   padding: 4px 10px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.16);
+  background: color-mix(in oklab, var(--color-accent-ink) 16%, transparent);
   font-size: 12px;
 }
 
@@ -209,21 +209,21 @@ watch(
   align-items: center;
   gap: 8px;
   padding: 14px 18px 0;
-  background: #fff;
+  background: var(--color-paper);
 
   button {
     height: 32px;
     padding: 0 14px;
     border: none;
     border-radius: 6px;
-    background: #f2f4f8;
-    color: #667085;
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
     font-size: 13px;
     cursor: pointer;
 
     &.active {
-      background: #eaf1ff;
-      color: #2e7cf6;
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
       font-weight: 600;
     }
   }
@@ -232,7 +232,7 @@ watch(
     margin-left: auto;
     padding: 0;
     background: transparent;
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 }
 
@@ -246,13 +246,13 @@ watch(
 .report-section {
   margin-bottom: 16px;
   padding: 18px;
-  border: 1px solid #edf0f5;
+  border: 1px solid var(--color-paper-2);
   border-radius: 9px;
-  background: #fff;
+  background: var(--color-paper);
 
   h4 {
     margin: 0 0 14px;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 600;
   }

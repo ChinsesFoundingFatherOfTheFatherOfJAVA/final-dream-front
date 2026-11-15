@@ -2,7 +2,9 @@
   <!-- 批阅答卷列表（学员维度，契约 01 §M2 / 路由 /exam/mark/:arrangeId/users） -->
   <div class="mark-user-page">
     <header class="page-head">
-      <el-button class="back-btn" aria-label="返回批阅列表" @click="goBack">‹</el-button>
+      <el-button class="back-btn" aria-label="返回批阅列表" @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+      </el-button>
       <h1 class="page-title">{{ base?.name || '考试批阅' }}</h1>
       <span v-if="arrangeTypeText" class="source-tag">{{ arrangeTypeText }}</span>
     </header>
@@ -42,7 +44,9 @@
               <span class="name-text">{{ row.fullname || '--' }}</span>
               <!-- 身份核验异常（2 不通过 / 3 无法核验）必须显眼：批阅人据此判断是否作废答卷 -->
               <el-tooltip v-if="needsIdentityCheck(row.identityStatus)" content="人脸核验未通过或无法核验，请核对身份证件" placement="top">
-                <span class="identity-flag" role="img" aria-label="身份待核对">⚠ 身份待核对</span>
+                <span class="identity-flag" role="img" aria-label="身份待核对">
+                  <el-icon class="flag-icon" aria-hidden="true"><WarningFilled /></el-icon> 身份待核对
+                </span>
               </el-tooltip>
             </span>
           </template>
@@ -105,12 +109,16 @@
  * <p>**同一学员多次作答逐条返回，不合并**（契约 §M2 第一条验收）：
  * 合并会让批阅人看不到历史答卷，而补考/申诉恰恰要看历史。
  *
- * <p>身份核验异常（`identityStatus` 2/3）显示「⚠ 身份待核对」标记（DER-07）：
+ * <p>身份核验异常（`identityStatus` 2/3）显示「身份待核对」标记（DER-07）：
  * 核验只采集证据不阻断，异常就挂在这条队列上由批阅人核对，必要时走 `status=4 已作废`。
  * 这个标记是整条链路里唯一的人工兜底入口，不能省。
  *
  * <p>「考试用时」用 `formatUsedTime`（`43秒` / `4分` / `5分34秒`），与列表页同一口径。
+ *
+ * <p>2026-11-14 Hallmark 重构：⚠ 字符换成 EP WarningFilled 图标（emoji/字符 glyph 清零），
+ * 颜色改走 warning 功能色 token。
  */
+import { WarningFilled, ArrowLeft } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getMarkBase, listMarkUsers } from '@/api/studentExam'
@@ -208,15 +216,13 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-$brand: #436bff;
-
 .mark-user-page {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   padding: 16px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .page-head {
@@ -230,32 +236,21 @@ $brand: #436bff;
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-  color: #262626;
-  font-size: 16px;
-  line-height: 1;
-
-  &:hover {
-    border-color: $brand;
-    color: $brand;
-  }
 }
 
 .page-title {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 /* 来源标签：原平台是纯文本小标签，浅灰底 */
 .source-tag {
   padding: 0 8px;
   border-radius: 2px;
-  background: #f5f5f5;
-  color: #595959;
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-size: 12px;
   line-height: 20px;
 }
@@ -275,17 +270,35 @@ $brand: #436bff;
   width: 280px;
 }
 
+/* 敢做档表格套件：paper-2 表头 + hairline 行分隔 + hover wash + 单元格 nowrap 挂 .cell */
 .table-wrap {
   flex: 1;
   min-height: 0;
   overflow: auto;
+
+  :deep(.el-table) {
+    --el-table-header-bg-color: var(--color-paper-2);
+    --el-table-header-text-color: var(--color-ink);
+    --el-table-border-color: var(--color-rule);
+    --el-table-row-hover-bg-color: var(--color-accent-wash);
+
+    th.el-table__cell { font-weight: 500; }
+    td.el-table__cell { padding: 10px 0; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+    .cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+}
+
+/* 得分列 mono 等宽（机器值口径） */
+:deep(.el-table) .el-table__cell.is-right .cell {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
 }
 
 .name-cell {
   /*
    * 姓名 + 身份标签要能同处一格而不互相挤压（2026-11-13 修）。
    *
-   * 原先用 inline-flex 且没设换行：列宽只有 120px，"⚠ 身份待核对" 自带 nowrap
+   * 原先用 inline-flex 且没设换行：列宽只有 120px，"身份待核对" 自带 nowrap
    * 吃掉几乎全部宽度，剩余空间不够放姓名，中文就会被逐字挤成竖排
    * （用户实测：姓名显示成一列单字）。
    *
@@ -302,16 +315,21 @@ $brand: #436bff;
   white-space: nowrap;
 }
 
-/* 身份待核对：橙色，比红轻一档——它是"请核对"而不是"已判定作弊" */
+/* 身份待核对：warning 功能色 token，比 error 轻一档——它是"请核对"而不是"已判定作弊" */
 .identity-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   padding: 0 6px;
   border-radius: 2px;
-  background: #fff7e6;
-  color: #d46b08;
+  background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
   font-size: 12px;
   line-height: 20px;
   white-space: nowrap;
   cursor: help;
+
+  .flag-icon { font-size: 12px; }
 }
 
 .action-list {
@@ -323,7 +341,7 @@ $brand: #436bff;
 .action-sep {
   width: 1px;
   height: 14px;
-  background: #e8e8e8;
+  background: var(--color-rule);
 }
 
 .pagination {
@@ -332,6 +350,6 @@ $brand: #436bff;
   justify-content: space-between;
   padding-top: 16px;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 </style>

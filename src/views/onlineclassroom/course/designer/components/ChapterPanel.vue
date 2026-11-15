@@ -90,8 +90,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
   display: flex;
   flex-direction: column;
   padding: 14px 12px;
-  border-right: 1px solid #e9edf4;
-  background: #fafbfd;
+  border-right: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper-2);
   overflow-y: auto;
 }
 
@@ -102,7 +102,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
   margin-bottom: 12px;
 
   .title {
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 600;
   }
@@ -111,7 +111,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
 .add-btn {
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 12px;
   cursor: pointer;
 
@@ -131,25 +131,25 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
   display: flex;
   align-items: center;
   padding: 10px 12px;
-  border: 1px solid #e9edf4;
-  border-radius: 8px;
-  background: #fff;
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
   cursor: pointer;
 
   /* 自定义可点章节行：键盘可达，补可见焦点环（不占布局空间） */
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-focus);
     outline-offset: 1px;
   }
 
   /* 附录D：章节项=白卡+选中浅蓝底 */
   &.active {
-    border-color: #b9d4fb;
-    background: #eef5ff;
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+    background: var(--color-accent-wash);
   }
 
   &:hover {
-    border-color: #b9d4fb;
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
   }
 }
 
@@ -164,14 +164,14 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
 .chapter-name {
   max-width: 100%;
   overflow: hidden;
-  color: #30384a;
+  color: var(--color-ink);
   font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .task-count {
-  color: #a2a9b7;
+  color: var(--color-muted);
   font-size: 11px;
 }
 
@@ -182,13 +182,13 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
   border: none;
   border-radius: 5px;
   background: transparent;
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 14px;
   cursor: pointer;
 
   &:hover {
-    background: #f1f4f9;
-    color: #4d5568;
+    background: var(--color-paper-3);
+    color: var(--color-ink-2);
   }
 }
 
@@ -199,10 +199,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
   z-index: 30;
   min-width: 92px;
   padding: 5px;
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(30, 45, 70, 0.16);
+  background: var(--color-paper);
+  box-shadow: 0 10px 28px oklch(21% 0.028 262 / 0.16);
 
   button {
     display: block;
@@ -212,14 +212,14 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
     border: none;
     border-radius: 5px;
     background: transparent;
-    color: #4d5568;
+    color: var(--color-ink-2);
     text-align: left;
     font-size: 12px;
     cursor: pointer;
 
     &:hover {
-      background: #f2f7ff;
-      color: #2e7cf6;
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
     }
   }
 
@@ -231,7 +231,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeMenuOnOut
 
 .empty {
   padding: 22px 0;
-  color: #a2a9b7;
+  color: var(--color-muted);
   font-size: 12px;
   text-align: center;
 }

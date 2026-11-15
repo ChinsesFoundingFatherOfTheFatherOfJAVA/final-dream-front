@@ -269,7 +269,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  color: #757575;
+  color: var(--color-muted);
 }
 
 .ai-add-link {
@@ -281,7 +281,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
-  color: #436bff;
+  color: var(--color-accent);
   cursor: pointer;
 
   &:hover {
@@ -297,7 +297,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
     margin: 0;
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -308,17 +308,17 @@ const tierText = (dim: ActEvaluationDimension): string => {
 
 .unit-card {
   margin-bottom: 16px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-paper);
   overflow: hidden;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
 
   &:hover {
-    border-color: #93c5fd;
-    box-shadow: 0 4px 12px rgb(15 23 42 / 8%);
+    border-color: var(--color-accent-2);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--color-graphite) 8%, transparent);
   }
 
   &:last-child {
@@ -357,11 +357,11 @@ const tierText = (dim: ActEvaluationDimension): string => {
   height: 32px;
   border-radius: 8px;
   /* 原平台为 #4f46e5 → #7c3aed 渐变，审计无法对渐变取单色，故契约 skipProps:['background'] */
-  background: linear-gradient(to bottom right, #4f46e5, #7c3aed);
+  background: linear-gradient(to bottom right, var(--color-accent), var(--color-accent));
   font-size: 14px;
   font-weight: 700;
   line-height: 22px;
-  color: #fff;
+  color: var(--color-paper);
 }
 
 .unit-name-wrap {
@@ -374,7 +374,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
   font-size: 16px;
   font-weight: 600;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -402,13 +402,13 @@ const tierText = (dim: ActEvaluationDimension): string => {
 }
 
 .audience-tag {
-  color: #7e22ce;
-  background: #faf5ff;
+  color: var(--color-accent-deep);
+  background: var(--color-accent-wash);
 }
 
 .duration-tag {
-  color: #d97706;
-  background: #fffbeb;
+  color: var(--color-warning);
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
 }
 
 .expand-toggle {
@@ -418,18 +418,18 @@ const tierText = (dim: ActEvaluationDimension): string => {
   gap: 4px;
   width: 48px;
   height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .toggle-label {
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .fold {
   flex-shrink: 0;
-  color: #8c8c8c;
+  color: var(--color-muted);
   transition: transform 0.2s;
 
   &.is-up {
@@ -440,7 +440,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
 /* 展开态：白底卡片内部，16px 内边距 + 顶部 1px 分隔线，块间距 12 */
 .unit-detail {
   padding: 16px;
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid var(--color-paper-2);
 
   > * {
     margin-top: 12px;
@@ -486,7 +486,7 @@ const tierText = (dim: ActEvaluationDimension): string => {
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  color: #1d2129;
+  color: var(--color-ink);
   word-break: break-word;
 }
 
@@ -512,47 +512,47 @@ const tierText = (dim: ActEvaluationDimension): string => {
   width: 5px;
   font-size: 14px;
   line-height: 22px;
-  color: #1d2129;
+  color: var(--color-ink);
 }
 
 .sc-block__cross {
   flex-shrink: 0;
   margin-top: 4px;
   font-size: 14px;
-  color: #1d2129;
+  color: var(--color-ink);
 }
 
 /* 变体配色全部取原平台 computed 值 */
 .sc-block--neutral {
-  background: #f8f9ff;
-  color: #4460e8;
+  background: var(--color-paper-2);
+  color: var(--color-accent);
 }
 
 .sc-block--white-neutral {
-  background: #fff;
-  border-color: #e9e9e9;
-  color: #4460e8;
+  background: var(--color-paper);
+  border-color: var(--color-rule);
+  color: var(--color-accent);
 }
 
 .sc-block--positive {
-  background: #f4fff5;
-  color: #00b42a;
+  background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper));
+  color: var(--color-success);
 }
 
 .sc-block--warning {
-  background: #fff8f6;
-  color: #f53f3f;
+  background: color-mix(in oklab, var(--color-warning) 8%, var(--color-paper));
+  color: var(--color-error);
 }
 
 .sc-block--constraint {
-  background: #fbf8ff;
-  color: #722ed1;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
 }
 
 .sc-block--white {
-  background: #fff;
-  border-color: #e9e9e9;
-  color: #262626;
+  background: var(--color-paper);
+  border-color: var(--color-rule);
+  color: var(--color-ink);
 }
 
 /* 两列布局：业务影响|失败代价、失败模式|困难挑战、禁止行为|时间限制 */
@@ -578,33 +578,33 @@ const tierText = (dim: ActEvaluationDimension): string => {
   line-height: 20px;
 
   &:nth-child(6n + 1) {
-    color: #0369a1;
-    background: #f0f9ff;
+    color: var(--color-accent-deep);
+    background: var(--color-accent-wash);
   }
 
   &:nth-child(6n + 2) {
-    color: #075985;
-    background: #e0f2fe;
+    color: var(--color-accent-deep);
+    background: var(--color-accent-wash);
   }
 
   &:nth-child(6n + 3) {
-    color: #2e4dd9;
-    background: #f0f6ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
   }
 
   &:nth-child(6n + 4) {
-    color: #4338ca;
-    background: #eef2ff;
+    color: var(--color-accent-deep);
+    background: var(--color-accent-wash);
   }
 
   &:nth-child(6n + 5) {
-    color: #7e22ce;
-    background: #f3e8ff;
+    color: var(--color-accent-deep);
+    background: var(--color-accent-wash);
   }
 
   &:nth-child(6n + 6) {
-    color: #be185d;
-    background: #fdf2f8;
+    color: var(--color-accent);
+    background: color-mix(in oklab, var(--color-accent) 8%, var(--color-paper));
   }
 }
 
@@ -619,21 +619,21 @@ const tierText = (dim: ActEvaluationDimension): string => {
 .sc-group__icon {
   flex-shrink: 0;
   font-size: 16px;
-  color: #0f172a;
+  color: var(--color-graphite);
 }
 
 .sc-group__title {
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
-  color: #0f172a;
+  color: var(--color-graphite);
 }
 
 .sc-group__hint {
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  color: #757575;
+  color: var(--color-muted);
 }
 
 .sc-dim {
@@ -653,27 +653,27 @@ const tierText = (dim: ActEvaluationDimension): string => {
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .sc-dim__weight {
   font-size: 14px;
   font-weight: 700;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .sc-dim__bar {
   height: 6px;
   border-radius: 4px;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   overflow: hidden;
 }
 
 .sc-dim__fill {
   height: 100%;
   border-radius: 4px;
-  background: #436bff;
+  background: var(--color-accent);
   transition: width 0.2s;
 }
 
@@ -681,14 +681,14 @@ const tierText = (dim: ActEvaluationDimension): string => {
   margin: 8px 0 0;
   font-size: 14px;
   line-height: 23px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .sc-dim__tiers {
   margin: 4px 0 0;
   font-size: 14px;
   line-height: 23px;
-  color: #8c8c8c;
+  color: var(--color-muted);
   white-space: pre-line;
 }
 </style>

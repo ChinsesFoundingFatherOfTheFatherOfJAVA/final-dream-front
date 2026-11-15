@@ -405,12 +405,12 @@ const showInfoBlock = (card: PaperCard) =>
 .ap-empty {
   padding: 60px 0;
   text-align: center;
-  color: #999;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
 .ap-section {
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .ap-section__head {
@@ -420,11 +420,11 @@ const showInfoBlock = (card: PaperCard) =>
   margin: 0 0 12px;
   font-size: 14px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 
   .ap-section__meta {
     font-weight: 400;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -441,7 +441,7 @@ const showInfoBlock = (card: PaperCard) =>
   align-items: flex-start;
   gap: 4px;
   font-size: 14px;
-  color: #262626;
+  color: var(--color-ink);
   line-height: 22px;
 }
 
@@ -457,7 +457,7 @@ const showInfoBlock = (card: PaperCard) =>
 
 .ap-q__score {
   flex: 0 0 auto;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 /* 三行信息块：原平台实测 #FAFAFA / 圆角 4px / padding 8px 24px / margin-top 10px */
@@ -465,7 +465,7 @@ const showInfoBlock = (card: PaperCard) =>
   margin-top: 10px;
   padding: 8px 24px;
   border-radius: 4px;
-  background: #fafafa;
+  background: var(--color-paper-2);
 }
 
 .ap-info__row {
@@ -485,8 +485,8 @@ const showInfoBlock = (card: PaperCard) =>
   height: 22px;
   padding: 0 8px;
   border-radius: 2px;
-  background: #ecf0ff;
-  color: #436bff;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 14px;
   line-height: 22px;
   white-space: nowrap;
@@ -495,7 +495,7 @@ const showInfoBlock = (card: PaperCard) =>
 .ap-info__text {
   flex: 1 1 auto;
   min-width: 0;
-  color: #595959;
+  color: var(--color-ink-2);
   font-size: 14px;
   line-height: 22px;
   word-break: break-word;
@@ -511,7 +511,7 @@ const showInfoBlock = (card: PaperCard) =>
 }
 
 .ap-grade__label {
-  color: #595959;
+  color: var(--color-ink-2);
   font-size: 14px;
 }
 
@@ -519,18 +519,18 @@ const showInfoBlock = (card: PaperCard) =>
   width: 32px;
   height: 32px;
   padding: 0;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
 
   svg {
     display: block;
   }
 
   &.is-success {
-    color: #52c41a;
+    color: var(--color-success);
   }
 
   &.is-error {
-    color: #f5222d;
+    color: var(--color-error);
   }
 }
 
@@ -541,13 +541,13 @@ const showInfoBlock = (card: PaperCard) =>
   :deep(.el-input__wrapper) {
     height: 32px;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
 .ap-grade__max {
   margin-left: 8px;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -564,6 +564,6 @@ const showInfoBlock = (card: PaperCard) =>
 .ap-subs {
   margin-top: 8px;
   padding-left: 16px;
-  border-left: 2px solid #f0f0f0;
+  border-left: 2px solid var(--color-rule);
 }
 </style>

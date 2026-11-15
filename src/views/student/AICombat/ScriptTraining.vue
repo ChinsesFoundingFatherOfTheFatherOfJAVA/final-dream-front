@@ -64,9 +64,9 @@
           <div class="detail-body">
             <div class="section-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 2h9l5 5v15H6V2Z" stroke="#8fa3d9" stroke-width="1.6" fill="#232b47"/>
-                <line x1="9" y1="12" x2="16" y2="12" stroke="#8fa3d9" stroke-width="1.6" stroke-linecap="round"/>
-                <line x1="9" y1="16" x2="14" y2="16" stroke="#8fa3d9" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M6 2h9l5 5v15H6V2Z" stroke="var(--color-graphite-muted)" stroke-width="1.6" fill="var(--color-graphite)"/>
+                <line x1="9" y1="12" x2="16" y2="12" stroke="var(--color-graphite-muted)" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="9" y1="16" x2="14" y2="16" stroke="var(--color-graphite-muted)" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
               话术训练说明
             </div>
@@ -214,10 +214,10 @@ export default { name: 'ScriptTraining' }
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(ellipse at 0% 0%, rgba(90, 80, 200, 0.18) 0%, transparent 45%),
-    radial-gradient(ellipse at 100% 100%, rgba(60, 100, 220, 0.14) 0%, transparent 45%),
-    linear-gradient(160deg, #10142b 0%, #0c1024 50%, #0a0d1e 100%);
-  color: #e8ecf7;
+    radial-gradient(ellipse at 0% 0%, color-mix(in oklab, var(--color-accent) 18%, transparent) 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 100%, color-mix(in oklab, var(--color-accent) 14%, transparent) 0%, transparent 45%),
+    linear-gradient(160deg, var(--color-graphite) 0%, var(--color-graphite) 50%, var(--color-graphite) 100%);
+  color: var(--color-graphite-ink);
   overflow: hidden;
 }
 
@@ -229,8 +229,8 @@ export default { name: 'ScriptTraining' }
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  background: rgba(16, 20, 43, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: color-mix(in oklab, var(--color-graphite) 85%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
 }
 
 .bar-left .exit-btn {
@@ -239,17 +239,17 @@ export default { name: 'ScriptTraining' }
   gap: 6px;
   height: 32px;
   padding: 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 18%, transparent);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #dfe5f2;
+  background: color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
+  color: var(--color-graphite-ink);
   font-size: 13px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
+    background: color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
+    color: var(--color-paper);
   }
 }
 
@@ -261,14 +261,14 @@ export default { name: 'ScriptTraining' }
   .train-pill {
     padding: 3px 14px;
     border-radius: 12px;
-    background: #3b6cf5;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 12px;
   }
 
   .project-name {
     font-size: 15px;
-    color: #cdd5e8;
+    color: var(--color-rule);
     max-width: 320px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -283,7 +283,7 @@ export default { name: 'ScriptTraining' }
 
   .progress-text {
     font-size: 13px;
-    color: #aab4cf;
+    color: var(--color-graphite-muted);
   }
 
   /* 语种是识别口径而非可切换功能，故为静态标记而非按钮 */
@@ -291,16 +291,16 @@ export default { name: 'ScriptTraining' }
   .detail-toggle-btn {
     height: 32px;
     padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 16%, transparent);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #cdd5e8;
+    background: color-mix(in oklab, var(--color-accent-ink) 5%, transparent);
+    color: var(--color-rule);
     font-size: 12px;
     cursor: pointer;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
     }
   }
 
@@ -310,7 +310,7 @@ export default { name: 'ScriptTraining' }
     cursor: default;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: color-mix(in oklab, var(--color-accent-ink) 5%, transparent);
     }
   }
 
@@ -342,13 +342,13 @@ export default { name: 'ScriptTraining' }
   gap: 18px;
   margin: 0 18px 14px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: color-mix(in oklab, var(--color-accent-ink) 3%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
 
   .load-error-text {
     margin: 0;
     font-size: 15px;
-    color: #e8ecf7;
+    color: var(--color-graphite-ink);
     text-align: center;
     max-width: 560px;
     line-height: 1.7;
@@ -363,22 +363,22 @@ export default { name: 'ScriptTraining' }
     height: 36px;
     padding: 0 22px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 22%, transparent);
     background: transparent;
-    color: #cdd5e8;
+    color: var(--color-rule);
     font-size: 13px;
     cursor: pointer;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: color-mix(in oklab, var(--color-accent-ink) 10%, transparent);
+      color: var(--color-paper);
     }
 
     &.primary {
       border-color: transparent;
-      background: linear-gradient(90deg, #7a6cf0 0%, #4a7dff 100%);
-      color: #fff;
+      background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 100%);
+      color: var(--color-paper);
     }
   }
 }
@@ -398,7 +398,7 @@ export default { name: 'ScriptTraining' }
   width: 100%;
   border-radius: 0;
   overflow: hidden;
-  background: #1d2547;
+  background: var(--color-graphite);
 
   .figure-img {
     width: 100%;
@@ -416,14 +416,14 @@ export default { name: 'ScriptTraining' }
   .info-label {
     margin: 0;
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in oklab, var(--color-accent-ink) 60%, transparent);
   }
 
   .info-name {
     margin: 2px 0 0;
     font-size: 20px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-paper);
     word-break: break-all;
   }
 }
@@ -433,10 +433,10 @@ export default { name: 'ScriptTraining' }
   flex: 1;
   min-width: 0;
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in oklab, var(--color-accent-ink) 3%, transparent);
   border: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 1px solid color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
+  border-right: 1px solid color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -451,8 +451,8 @@ export default { name: 'ScriptTraining' }
 .detail-card {
   height: 100%;
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: color-mix(in oklab, var(--color-accent-ink) 4%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-ink) 7%, transparent);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -463,27 +463,27 @@ export default { name: 'ScriptTraining' }
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-accent-ink) 7%, transparent);
 
   .detail-title {
     font-size: 15px;
     font-weight: 600;
-    color: #e8ecf7;
+    color: var(--color-graphite-ink);
   }
 
   .detail-close {
     font-size: 20px;
-    color: #8892ad;
+    color: var(--color-graphite-muted);
     cursor: pointer;
     line-height: 1;
 
     &:hover {
-      color: #fff;
+      color: var(--color-paper);
     }
 
     // 图标关闭按钮：补键盘焦点环
     &:focus-visible {
-      outline: 2px solid #7a9bff;
+      outline: 2px solid var(--color-accent-2);
       outline-offset: 2px;
     }
   }
@@ -499,13 +499,13 @@ export default { name: 'ScriptTraining' }
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #aab4cf;
+    color: var(--color-graphite-muted);
     margin-bottom: 10px;
   }
 
   .section-text {
     font-size: 13px;
-    color: #c3cbde;
+    color: var(--color-graphite-muted);
     line-height: 1.8;
     margin: 0;
     word-break: break-word;
@@ -518,6 +518,6 @@ export default { name: 'ScriptTraining' }
   text-align: center;
   padding: 10px 0 12px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
+  color: color-mix(in oklab, var(--color-accent-ink) 30%, transparent);
 }
 </style>

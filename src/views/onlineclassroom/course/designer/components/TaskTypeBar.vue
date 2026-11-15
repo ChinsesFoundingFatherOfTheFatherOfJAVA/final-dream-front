@@ -71,9 +71,9 @@ const iconFor = (type: number) => TYPE_ICONS[type] ?? Document
   gap: 14px 12px;
   align-items: start;
   padding: 14px 16px;
-  border: 1px solid #edf0f5;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
 }
 
 .task-type-bar > .type-item {
@@ -97,18 +97,18 @@ const iconFor = (type: number) => TYPE_ICONS[type] ?? Document
     width: 40px;
     height: 40px;
     border-radius: 9px;
-    color: #fff;
+    color: var(--color-accent-ink);
     font-size: 19px;
   }
 
   .type-label {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 12px;
     white-space: nowrap;
   }
 
   &:hover:not(.disabled) .type-label {
-    color: #2e7cf6;
+    color: var(--color-accent);
   }
 
   /* 占位类型：置灰 + 悬浮"功能建设中"（title 属性） */
@@ -116,7 +116,7 @@ const iconFor = (type: number) => TYPE_ICONS[type] ?? Document
     cursor: not-allowed;
 
     .type-label {
-      color: #b3bac7;
+      color: var(--color-rule-2);
     }
   }
 }

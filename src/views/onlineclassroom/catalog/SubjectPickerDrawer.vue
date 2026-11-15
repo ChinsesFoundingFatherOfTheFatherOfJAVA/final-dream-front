@@ -268,26 +268,26 @@ watch(
 
 .picker-main,
 .selected-panel {
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .tab-line {
   display: flex;
-  border-bottom: 1px solid #e9edf4;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   button {
     flex: 1;
     height: 42px;
     border: none;
-    background: #fff;
-    color: #667085;
+    background: var(--color-paper);
+    color: var(--color-muted);
     cursor: pointer;
 
     &.active {
-      color: #e75487;
-      box-shadow: inset 0 -2px #e75487;
+      color: var(--color-accent);
+      box-shadow: inset 0 -2px var(--color-accent);
       font-weight: 600;
     }
   }
@@ -319,7 +319,7 @@ watch(
   width: 100%;
   min-height: 36px;
   margin-right: 0;
-  color: #394253;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-checkbox__label) {
@@ -328,7 +328,7 @@ watch(
     align-items: center;
     gap: 9px;
     min-width: 0;
-    color: #394253;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
@@ -337,13 +337,13 @@ watch(
   }
 
   small {
-    color: #98a1b2;
+    color: var(--color-muted);
   }
 
   .remark {
     max-width: 140px;
     overflow: hidden;
-    color: #a5adbd;
+    color: var(--color-muted);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -364,21 +364,21 @@ watch(
   justify-content: space-between;
   gap: 8px;
   padding: 8px 0;
-  border-bottom: 1px solid #eef1f6;
-  color: #4d5568;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 13px;
 
   button {
     border: none;
     background: transparent;
-    color: #d94a4a;
+    color: var(--color-error);
     cursor: pointer;
   }
 }
 
 .empty-tip {
   padding: 18px 0;
-  color: #98a1b2;
+  color: var(--color-muted);
   text-align: center;
   font-size: 13px;
 }
@@ -389,7 +389,7 @@ watch(
   justify-content: center;
   gap: 10px;
   padding-top: 12px;
-  color: #7a8396;
+  color: var(--color-muted);
   font-size: 12px;
 
   :deep(.el-pagination) {
@@ -404,15 +404,15 @@ watch(
   cursor: pointer;
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #e75487;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

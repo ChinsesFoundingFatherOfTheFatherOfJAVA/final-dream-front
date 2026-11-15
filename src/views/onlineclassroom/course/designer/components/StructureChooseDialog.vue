@@ -63,14 +63,14 @@ const emit = defineEmits<{
 .structure-heading {
   h3 {
     margin: 0;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 17px;
     text-align: center;
   }
 
   .tip {
     margin: 8px 0 0;
-    color: #98a1b2;
+    color: var(--color-muted);
     font-size: 12px;
     text-align: center;
   }
@@ -91,22 +91,22 @@ const emit = defineEmits<{
   align-items: center;
   gap: 24px;
   padding: 16px 22px;
-  border: 1px solid #e2e7f0;
+  border: var(--rule-hair) solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
   color: inherit;
   text-align: left;
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 
   &:hover {
-    border-color: #2e7cf6;
-    background: #f8fbff;
-    box-shadow: 0 8px 22px rgba(46, 124, 246, 0.14);
+    border-color: var(--color-accent);
+    background: var(--color-accent-wash);
+    box-shadow: 0 8px 22px color-mix(in oklab, var(--color-accent) 14%, transparent);
   }
 
   &:focus-visible {
-    outline: 2px solid #2e7cf6;
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -118,12 +118,12 @@ const emit = defineEmits<{
   gap: 7px;
 
   strong {
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 15px;
   }
 
   .desc {
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 1.65;
     text-align: left;
@@ -138,7 +138,7 @@ const emit = defineEmits<{
   min-height: 68px;
   padding: 10px 12px;
   border-radius: 7px;
-  background: #f7f9fc;
+  background: var(--color-paper-2);
 }
 
 .preview-icon {
@@ -148,16 +148,16 @@ const emit = defineEmits<{
   height: 42px;
   flex: 0 0 34px;
   border-radius: 6px 6px 9px 6px;
-  color: #fff;
+  color: var(--color-accent-ink);
   font-size: 18px;
 }
 
 .flat .preview-icon {
-  background: #27b788;
+  background: color-mix(in oklab, var(--color-accent) 62%, var(--color-graphite));
 }
 
 .chaptered .preview-icon {
-  background: #f45b69;
+  background: var(--color-accent-deep);
 }
 
 .preview-lines {
@@ -171,7 +171,7 @@ const emit = defineEmits<{
     display: block;
     height: 6px;
     border-radius: 3px;
-    background: #e7ebf2;
+    background: var(--color-paper-3);
   }
 
   i:nth-child(2) {
@@ -196,7 +196,7 @@ const emit = defineEmits<{
     width: 3px;
     height: 14px;
     border-radius: 2px;
-    background: #2e7cf6;
+    background: var(--color-accent);
   }
 }
 </style>

@@ -27,20 +27,21 @@
           :aria-label="expandedKeys.has(node.id) ? '收起子分类' : '展开子分类'"
           @click.stop="toggleExpand(node.id)"
           @keydown.enter.prevent="toggleExpand(node.id)"
-        >›</span>
+        ><el-icon><ArrowRight /></el-icon></span>
         <span v-else class="expand-placeholder"></span>
         <span class="node-name" :title="node.name">{{ node.name }}</span>
         <!-- 齿轮菜单：悬浮子分类才显示（截图05） -->
         <span v-if="node.id !== 'root'" class="gear-btn" title="分类操作" aria-label="分类操作"
               role="button" tabindex="0"
               @click.stop="emit('gear', { node, event: $event })"
-              @keydown.enter.prevent="emit('gear', { node, event: $event as unknown as MouseEvent })">⚙</span>
+              @keydown.enter.prevent="emit('gear', { node, event: $event as unknown as MouseEvent })"><el-icon><MoreFilled /></el-icon></span>
       </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
+import { ArrowRight, MoreFilled } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 
 /** 树节点最小契约：题库/试卷分类共用同一份结构。 */
@@ -119,8 +120,8 @@ const toggleExpand = (id: string) => {
 .catalog-panel {
   width: 240px;
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e6eaf1;
+  background: var(--color-paper);
+  border-right: var(--rule-hair) solid var(--color-rule);
   display: flex;
   flex-direction: column;
 
@@ -129,16 +130,6 @@ const toggleExpand = (id: string) => {
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    input {
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 12px;
-      outline: none;
-
-      &:focus { border-color: #1890ff; }
-    }
   }
 }
 
@@ -149,23 +140,31 @@ const toggleExpand = (id: string) => {
   padding-bottom: 12px;
 }
 
+/* 树节点：横向窄行 hover 只动字色，激活 accent-wash 底 + accent-deep 字（无底色块重铺） */
 .tree-node {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 7px 12px;
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
   position: relative;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 
-  &:hover { background: #f3f7ff; }
-  &.active { background: #eaf2ff; color: #1890ff; font-weight: 600; }
+  &:hover { color: var(--color-accent-deep); }
+
+  &.active {
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
   &.disabled { opacity: .55; }
 
   // 键盘焦点环（节点/内部按钮均可聚焦）
   &:focus-visible {
-    outline: 2px solid #1890ff;
+    outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
@@ -174,16 +173,20 @@ const toggleExpand = (id: string) => {
 
   .expand-arrow {
     width: 16px;
-    text-align: center;
-    color: #a0a7b8;
-    transition: transform .15s;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    transition: transform var(--dur-micro) var(--ease-out);
     flex-shrink: 0;
     cursor: pointer;
 
-    &.expanded { transform: rotate(90deg); }
+    .el-icon { font-size: 12px; transition: transform var(--dur-micro) var(--ease-out); }
+    &.expanded .el-icon { transform: rotate(90deg); }
 
     &:focus-visible {
-      outline: 2px solid #1890ff;
+      outline: 2px solid var(--color-focus);
       outline-offset: -2px;
       border-radius: 2px;
     }
@@ -201,15 +204,15 @@ const toggleExpand = (id: string) => {
 
   .gear-btn {
     display: none;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
     padding: 0 2px;
     cursor: pointer;
 
-    &:hover { color: #1890ff; }
+    &:hover { color: var(--color-accent); }
 
     &:focus-visible {
-      outline: 2px solid #1890ff;
+      outline: 2px solid var(--color-focus);
       outline-offset: -2px;
       border-radius: 2px;
     }
@@ -218,15 +221,24 @@ const toggleExpand = (id: string) => {
   &:hover .gear-btn { display: inline; }
 }
 
+/* plain 形按钮：accent-wash 底 + accent-deep 字（敢做档表单口径，不再手绘描边按钮） */
 .btn-outline {
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
+  border-radius: var(--radius-input);
   padding: 7px 12px;
   font-size: 12px;
-  color: #4a5368;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
+  border: none;
   cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 
-  &:hover { border-color: #1890ff; color: #1890ff; }
+  &:hover {
+    background: color-mix(in oklab, var(--color-accent-wash) 82%, var(--color-accent));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+  }
+
+  &:active { transform: translateY(1px); box-shadow: var(--shadow-key-press); }
+  &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 }
 </style>

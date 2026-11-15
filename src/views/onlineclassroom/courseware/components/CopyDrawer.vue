@@ -129,8 +129,8 @@ watch(() => props.visible, async visible => {
   gap: 8px;
   padding: 12px 14px;
   border-radius: 6px;
-  background: #f4f8ff;
-  color: #5c6f8c;
+  background: var(--color-accent-wash);
+  color: var(--color-muted);
   font-size: 13px;
 
   span {
@@ -139,8 +139,8 @@ watch(() => props.visible, async visible => {
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: #2e7cf6;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
     font-family: Georgia, serif;
     font-size: 12px;
   }
@@ -149,8 +149,8 @@ watch(() => props.visible, async visible => {
 h4 {
   margin: 0;
   padding-left: 10px;
-  border-left: 3px solid #2e7cf6;
-  color: #30384a;
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-ink);
   font-size: 15px;
 }
 
@@ -167,7 +167,7 @@ h4 {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #3d4658;
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -177,7 +177,7 @@ h4 {
   height: 26px;
   border: none;
   background: transparent;
-  color: #7b8496;
+  color: var(--color-muted);
   cursor: pointer;
 }
 
@@ -192,20 +192,20 @@ h4 {
 .btn {
   height: 36px;
   padding: 0 20px;
-  border: 1px solid #d9deea;
+  border: 1px solid var(--color-rule-2);
   border-radius: 6px;
-  background: #fff;
-  color: #4d5568;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   cursor: pointer;
 
   &.primary {
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 
     &:disabled {
-      border-color: #cbd3df;
-      background: #cbd3df;
+      border-color: var(--color-rule-2);
+      background: var(--color-rule-2);
       cursor: not-allowed;
     }
   }

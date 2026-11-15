@@ -18,7 +18,7 @@
       <div v-if="store.loadingHistory" class="history-tip">正在加载历史消息…</div>
 
       <div v-else-if="store.isEmptyConversation" class="chat-empty">
-        <div class="empty-avatar"></div>
+        <img class="empty-avatar" :src="sageAvatar" alt="" />
         <h3 class="empty-title">你好，我是 无所不知的大贤者</h3>
         <p class="empty-sub">
           实战演练项目设计助手。告诉我这次训练的岗位、目标，或者直接上传产品资料，
@@ -39,7 +39,7 @@
       <template v-else>
         <MessageBubble v-for="msg in visibleMessages" :key="msg.id" :message="msg" />
         <div v-if="showWaitingRow" class="generating-row">
-          <div class="avatar" aria-hidden="true">🤖</div>
+          <img class="avatar" :src="sageAvatar" alt="" />
           <div class="generating-tip"><span class="spinner"></span>助手正在回复…</div>
         </div>
       </template>
@@ -86,7 +86,7 @@
           >
             <el-button class="tool-btn" :disabled="store.inputDisabled || uploading">
               <span v-if="uploading">上传中…</span>
-              <template v-else><span aria-hidden="true">📎</span> 上传资料</template>
+              <template v-else><el-icon aria-hidden="true"><Paperclip /></el-icon> 上传资料</template>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -135,6 +135,8 @@ import { useVoiceInput } from '../composables/useVoiceInput'
 import KngSourcePickerDrawer from '@/components/business/onlineClassroom/KngSourcePickerDrawer.vue'
 import MessageBubble from './MessageBubble.vue'
 import { showToast } from '../../components/ui'
+import sageAvatar from '@/assets/sage-avatar.jpg'
+import { Paperclip } from '@element-plus/icons-vue'
 
 const store = useAssistantStore()
 
@@ -357,7 +359,7 @@ onBeforeUnmount(() => {
   flex: 1;
   min-width: 0;
   min-height: 0;
-  background: #f7f8fa;
+  background: var(--color-paper-2);
 }
 
 .chat-topbar {
@@ -365,13 +367,13 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  border-bottom: 1px solid #eceef2;
-  background: #fff;
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper);
 
   .ai-notice {
     font-size: 12px;
-    color: #8a8f98;
-    background: #f2f3f5;
+    color: var(--color-muted);
+    background: var(--color-paper-2);
     border-radius: 10px;
     padding: 3px 10px;
   }
@@ -381,25 +383,25 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #8a8f98;
+    color: var(--color-muted);
 
     .dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #c9cdd4;
+      background: var(--color-rule-2);
     }
 
     &.status-open .dot {
-      background: #52c41a;
+      background: var(--color-success);
     }
     &.status-connecting .dot,
     &.status-reconnecting .dot {
-      background: #fa8c16;
+      background: var(--color-warning);
       animation: pulse 1.2s infinite;
     }
     &.status-closed .dot {
-      background: #e5484d;
+      background: var(--color-error);
     }
   }
 }
@@ -412,9 +414,9 @@ onBeforeUnmount(() => {
 
 .reconnect-banner {
   padding: 8px 20px;
-  background: #fff7e6;
-  border-bottom: 1px solid #ffe7ba;
-  color: #b06a00;
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+  border-bottom: 1px solid color-mix(in oklab, var(--color-warning) 30%, var(--color-paper));
+  color: var(--color-warning);
   font-size: 13px;
 }
 
@@ -429,7 +431,7 @@ onBeforeUnmount(() => {
 
 .history-tip {
   text-align: center;
-  color: #a5a9b0;
+  color: var(--color-muted);
   font-size: 13px;
   padding: 40px 0;
 }
@@ -440,27 +442,26 @@ onBeforeUnmount(() => {
   text-align: center;
 
   .empty-avatar {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 14px;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 16px;
     border-radius: 50%;
-    background: #2b2f3a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
+    object-fit: cover;
+    object-position: center 18%;
+    display: block;
+    border: 1px solid var(--color-rule);
   }
 
   .empty-title {
     font-size: 20px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
     margin: 0 0 8px;
   }
 
   .empty-sub {
     font-size: 14px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.8;
     margin: 0 0 20px;
   }
@@ -475,11 +476,11 @@ onBeforeUnmount(() => {
       width: 100%;
       max-width: 420px;
       padding: 10px 16px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
+      background: var(--color-paper);
+      border: 1px solid var(--color-rule);
       border-radius: 8px;
       font-size: 14px;
-      color: #4e5969;
+      color: var(--color-ink-2);
       cursor: pointer;
       text-align: left;
       transition:
@@ -487,8 +488,8 @@ onBeforeUnmount(() => {
         color 0.2s;
 
       &:hover:not(:disabled) {
-        border-color: #1890ff;
-        color: #1890ff;
+        border-color: var(--color-accent);
+        color: var(--color-accent);
       }
       &:disabled {
         opacity: 0.6;
@@ -509,12 +510,10 @@ onBeforeUnmount(() => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2b2f3a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
+  object-fit: cover;
+  object-position: center 18%;
   flex-shrink: 0;
+  border: 1px solid var(--color-rule);
 }
 
 .generating-tip {
@@ -522,13 +521,13 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
 
   .spinner {
     width: 12px;
     height: 12px;
-    border: 2px solid #c7d2f5;
-    border-top-color: #3b5bdb;
+    border: 2px solid var(--color-accent-wash);
+    border-top-color: var(--color-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -547,34 +546,34 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  color: #4e5969;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
+  color: var(--color-ink-2);
+  box-shadow: 0 2px 10px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   cursor: pointer;
   font-size: 15px;
 
   &:hover {
-    color: #1890ff;
-    border-color: #1890ff;
+    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 }
 
 .chat-input-area {
-  border-top: 1px solid #eceef2;
-  background: #fff;
+  border-top: 1px solid var(--color-rule);
+  background: var(--color-paper);
   padding: 12px 16px 14px;
 }
 
 .input-error {
   font-size: 13px;
-  color: #e5484d;
+  color: var(--color-error);
   margin-bottom: 6px;
 }
 
 .input-box {
   width: 100%;
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 14px;
@@ -583,17 +582,17 @@ onBeforeUnmount(() => {
   resize: none;
   outline: none;
   box-sizing: border-box;
-  color: #1f2329;
+  color: var(--color-ink);
   transition: border-color 0.2s;
 
   &:focus {
-    border-color: #1890ff;
+    border-color: var(--color-accent);
   }
 
   &:disabled,
   &.disabled {
-    background: #f7f8fa;
-    color: #a5a9b0;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     cursor: not-allowed;
   }
 }
@@ -617,11 +616,11 @@ onBeforeUnmount(() => {
 
     .tool-btn {
       padding: 6px 12px;
-      background: #fff;
-      border: 1px solid #dcdfe6;
+      background: var(--color-paper);
+      border: 1px solid var(--color-rule);
       border-radius: 6px;
       font-size: 13px;
-      color: #4e5969;
+      color: var(--color-ink-2);
       cursor: pointer;
       white-space: nowrap;
       transition:
@@ -630,24 +629,24 @@ onBeforeUnmount(() => {
         background 0.2s;
 
       &:hover:not(:disabled) {
-        color: #1890ff;
-        border-color: #1890ff;
+        color: var(--color-accent);
+        border-color: var(--color-accent);
       }
       &:disabled {
-        color: #c0c4cc;
-        border-color: #ebeef5;
+        color: var(--color-muted);
+        border-color: var(--color-rule);
         cursor: not-allowed;
       }
       &.recording {
-        color: #e5484d;
-        border-color: #e5484d;
-        background: #fff1f0;
+        color: var(--color-error);
+        border-color: var(--color-error);
+        background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
       }
     }
 
     .tool-hint {
       font-size: 12px;
-      color: #a5a9b0;
+      color: var(--color-muted);
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -657,9 +656,9 @@ onBeforeUnmount(() => {
 
   .send-btn {
     padding: 7px 22px;
-    background: #1890ff;
-    border: 1px solid #1890ff;
-    color: #fff;
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    color: var(--color-paper);
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
@@ -673,8 +672,8 @@ onBeforeUnmount(() => {
       opacity: 0.85;
     }
     &:disabled {
-      background: #c8d6e8;
-      border-color: #c8d6e8;
+      background: var(--color-rule);
+      border-color: var(--color-rule);
       cursor: not-allowed;
     }
   }

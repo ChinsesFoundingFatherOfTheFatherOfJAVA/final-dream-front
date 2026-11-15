@@ -104,7 +104,7 @@ watch(() => props.visible, async visible => {
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px 0;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 12px;
 
 }

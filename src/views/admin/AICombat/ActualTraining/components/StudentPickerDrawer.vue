@@ -17,7 +17,7 @@
     <div class="table-wrap">
       <el-table
         v-loading="loading"
-        element-loading-background="rgba(255, 255, 255, 0.72)"
+        element-loading-background="color-mix(in oklab, var(--color-accent-ink) 72%, transparent)"
         :data="users"
         row-key="userId"
         stripe

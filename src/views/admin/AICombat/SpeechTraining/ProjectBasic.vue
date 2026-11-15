@@ -56,7 +56,7 @@
             <div class="cover-preview" v-if="project.coverImage">
               <img :src="project.coverImage" alt="项目封面" />
             </div>
-            <div v-else class="cover-placeholder"><span aria-hidden="true">📘</span> 默认封面</div>
+            <div v-else class="cover-placeholder"><el-icon aria-hidden="true"><Collection /></el-icon> 默认封面</div>
           </div>
         </div>
 
@@ -139,7 +139,7 @@
                 :src="project.trainer.avatarImage"
                 alt="陪练者形象"
               />
-              <span v-else class="preview-icon" aria-hidden="true">👤</span>
+              <span v-else class="preview-icon" aria-hidden="true"><el-icon><User /></el-icon></span>
             </div>
           </div>
         </div>
@@ -153,6 +153,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProjectDetail } from '@/api/project'
 import { resolveAssetUrl } from '@/api/request'
+import { Collection, User } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const projectId = Number(route.params.id)
@@ -274,18 +275,18 @@ onMounted(loadDetail)
 }
 
 .form-section {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 5%, transparent);
 
   .section-title {
     font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-ink);
   margin: 0 0 20px 0;
   padding-left: 12px;
-  border-left: 3px solid #1890ff;
+  border-left: 3px solid var(--color-accent);
 }
 }
 
@@ -308,24 +309,24 @@ onMounted(loadDetail)
 
 .info-label {
   font-size: 14px;
-  color: #666;
+  color: var(--color-muted);
 
   .required {
-    color: #f5222d;
+    color: var(--color-error);
     margin-left: 4px;
   }
 }
 
 .info-value {
   font-size: 14px;
-  color: #333;
+  color: var(--color-ink);
   word-break: break-all;
 }
 
 .info-name { font-size: 16px; font-weight: 500; }
 
 .info-description {
-  background: #fafafa;
+  background: var(--color-paper-2);
   border-radius: 4px;
   padding: 12px;
   line-height: 1.6;
@@ -337,7 +338,7 @@ onMounted(loadDetail)
   height: 60px;
   border-radius: 4px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,11 +350,11 @@ onMounted(loadDetail)
   width: 80px;
   height: 60px;
   border-radius: 4px;
-  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--color-paper);
   font-size: 12px;
 }
 
@@ -361,7 +362,7 @@ onMounted(loadDetail)
   width: 200px;
   aspect-ratio: 3 / 4;
   border-radius: 4px;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -376,49 +377,49 @@ onMounted(loadDetail)
 
   .preview-icon {
     font-size: 80px;
-    color: #999;
+    color: var(--color-muted);
   }
 }
 
 // 评分维度表格
 .dims-table {
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--color-rule);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .dims-header {
   display: flex;
-  background: #fafafa;
+  background: var(--color-paper-2);
   padding: 12px 16px;
   font-weight: 500;
   font-size: 14px;
-  color: #333;
-  border-bottom: 1px solid #e8e8e8;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .dims-row {
   display: flex;
   padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-paper-2);
   align-items: flex-start;
 
   &:last-child { border-bottom: none; }
 }
 
-.dim-label-col { width: 120px; flex-shrink: 0; color: #333; font-size: 14px; }
+.dim-label-col { width: 120px; flex-shrink: 0; color: var(--color-ink); font-size: 14px; }
 .dim-rule-col { flex: 1; padding: 0 16px; }
-.dim-weight-col { width: 100px; text-align: right; color: #1890ff; font-weight: 500; flex-shrink: 0; }
+.dim-weight-col { width: 100px; text-align: right; color: var(--color-accent); font-weight: 500; flex-shrink: 0; }
 
 .rule-title {
   font-size: 14px;
-  color: #333;
+  color: var(--color-ink);
   margin-bottom: 4px;
 }
 
 .rule-detail {
   font-size: 12px;
-  color: #999;
+  color: var(--color-muted);
   line-height: 1.6;
 }
 </style>

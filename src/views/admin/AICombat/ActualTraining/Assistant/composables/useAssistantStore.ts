@@ -203,6 +203,9 @@ export const useAssistantStore = defineStore('assistant', () => {
   const loadingHistory = ref(false)
   /** 助手回复中（session-finish 解除）→ 输入框禁用 */
   const generating = ref(false)
+  /** 正文已写完但 session-finish 没来时，用来放开输入，避免光标一直停在回复末尾。 */
+  let replyStallTimer: number | null = null
+  const REPLY_STALL_MS = 8000
   /**
    * 当前轮次的 traceId（由 session-start 记录，该帧带 traceId）。
    * 用于"轮次归属"判断：连接抖动/重连会产生重复握手帧，服务端对重复握手只回 ack + session-finish；
@@ -609,6 +612,7 @@ export const useAssistantStore = defineStore('assistant', () => {
         break
       }
       case 'session-start': {
+        clearReplyStall()
         generating.value = true
         // 记录本轮 traceId（session-start 帧自带），登记进并存集合供 session-finish 做归属判断
         const startedTrace = String((frame.data as { traceId?: string }).traceId ?? '')
@@ -722,6 +726,13 @@ export const useAssistantStore = defineStore('assistant', () => {
             m.streaming = false
           })
         }
+        for (const m of messages.value) {
+          if (!m.streaming || m.blocks.length === 0) continue
+          const owner = messageRoundTrace.get(m.id) ?? ''
+          if (lastRound || owner === finishTraceId) m.streaming = false
+        }
+        clearReplyStall()
+        releaseSettledInput('session-finish')
         // 重连兜底：本轮若有案例生成，事件可能丢失案例正文，刷新 artifact 取回
         if (pendingArtifactRefresh && lastRound) {
           pendingArtifactRefresh = false
@@ -745,11 +756,61 @@ export const useAssistantStore = defineStore('assistant', () => {
    *
    * 文本块延迟到首个 delta 才创建（避免出现空气泡）；位次 -1 表示待创建。
    */
+  function clearReplyStall() {
+    if (replyStallTimer != null) {
+      window.clearTimeout(replyStallTimer)
+      replyStallTimer = null
+    }
+  }
+
+  function replyStillOpen(): boolean {
+    return Object.values(partBuffers.value).some((part) => !part.done)
+  }
+
+  /** 这条消息的 part 都关了，就拿掉输出末尾的光标。后面还有 part 时，openPart 会再点亮。 */
+  function settleClosedMessage(messageId: string) {
+    const msg = findMessage(messageId)
+    if (!msg || msg.blocks.length === 0) return
+    const stillOpen = Object.values(partBuffers.value).some(
+      (part) => part.messageId === messageId && !part.done,
+    )
+    if (!stillOpen) msg.streaming = false
+  }
+
+  /**
+   * 可见回复已经落地、没有未关闭的 part，就解除输入锁定。
+   * 不能只等最后一轮 session-finish：丢帧或残留轮次会让光标停在正文末尾，输入框一直禁用。
+   */
+  function releaseSettledInput(reason: string) {
+    if (replyStillOpen()) return
+    if (messages.value.some((m) => m.streaming && m.blocks.length === 0)) return
+    for (const m of messages.value) {
+      if (m.streaming) m.streaming = false
+    }
+    if (!generating.value && activeRoundTraces.value.length === 0) return
+    generating.value = false
+    activeRoundTraceId.value = ''
+    activeRoundTraces.value = []
+    console.info('[ws] 可见回复已结束，解除输入锁定', reason)
+  }
+
+  function armReplyStall() {
+    clearReplyStall()
+    if (!generating.value || replyStillOpen()) return
+    replyStallTimer = window.setTimeout(() => {
+      replyStallTimer = null
+      releaseSettledInput('stall')
+    }, REPLY_STALL_MS)
+  }
+
   function openPart(d: PartStartData) {
     const messageId = String(d.messageId ?? '')
     const index = Number(d.index ?? 0)
     const msg = findMessage(messageId)
     if (!msg) return
+    clearReplyStall()
+    msg.streaming = true
+    generating.value = true
     const kind: 'text' | 'data' = d.contentType === 'data' ? 'data' : 'text'
     const key = bufferKey(messageId, index)
     partBuffers.value = {
@@ -832,6 +893,8 @@ export const useAssistantStore = defineStore('assistant', () => {
     if (block?.kind === 'event') block.done = true
     if (buffer) buffer.done = true
     partBlockIndex.delete(key)
+    settleClosedMessage(messageId)
+    armReplyStall()
   }
 
   // ---------- §3.4 bizType 派发 ----------
@@ -1346,6 +1409,7 @@ export const useAssistantStore = defineStore('assistant', () => {
 
   /** 重置（路由切换 / 离开页面） */
   function reset() {
+    clearReplyStall()
     stopParseReconcile()
     sessionId.value = ''
     themeId.value = ''

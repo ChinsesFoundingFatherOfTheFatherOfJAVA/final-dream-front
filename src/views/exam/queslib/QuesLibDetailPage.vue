@@ -205,15 +205,15 @@ onMounted(load)
   .back-btn {
     width: 28px;
     height: 28px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
-    background: #fff;
+    background: var(--color-paper);
     font-size: 18px;
     line-height: 1;
-    color: #4a5368;
+    color: var(--color-ink-2);
     cursor: pointer;
 
-    &:hover { border-color: #1890ff; color: #1890ff; }
+    &:hover { border-color: var(--color-accent); color: var(--color-accent); }
   }
 
   .lib-name {
@@ -222,7 +222,7 @@ onMounted(load)
     margin: 0;
     font-size: 17px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--color-ink);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -231,9 +231,9 @@ onMounted(load)
   .secrecy-tag {
     padding: 1px 6px;
     border-radius: 3px;
-    background: #fff7e6;
-    border: 1px solid #ffd591;
-    color: #d46b08;
+    background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper));
+    border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper));
+    color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
     font-size: 11px;
     font-weight: 400;
   }
@@ -247,9 +247,9 @@ onMounted(load)
   align-items: center;
   gap: 24px;
   padding: 14px 18px;
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
 
   .info-item {
     display: flex;
@@ -257,15 +257,15 @@ onMounted(load)
     gap: 8px;
     font-size: 13px;
 
-    span { color: #8a92a5; }
-    strong { color: #1f2937; font-weight: 500; }
+    span { color: var(--color-muted); }
+    strong { color: var(--color-ink); font-weight: 500; }
   }
 
   .link-btn {
     margin-left: auto;
     border: none;
     background: transparent;
-    color: #1890ff;
+    color: var(--color-accent-deep);
     font-size: 13px;
     cursor: pointer;
 
@@ -276,20 +276,20 @@ onMounted(load)
 .tabs {
   display: flex;
   gap: 4px;
-  border-bottom: 1px solid #e5e8ef;
+  border-bottom: 1px solid var(--color-rule);
 
   .tab {
     padding: 9px 18px;
     border: none;
     border-bottom: 2px solid transparent;
     background: transparent;
-    color: #4a5368;
+    color: var(--color-ink-2);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      color: #1890ff;
-      border-bottom-color: #1890ff;
+      color: var(--color-accent-deep);
+      border-bottom-color: var(--color-accent);
       font-weight: 600;
     }
   }
@@ -297,14 +297,14 @@ onMounted(load)
 
 .tab-panel {
   padding: 48px 20px;
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
   text-align: center;
 
   .pending-title {
     margin: 0 0 8px;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 14px;
     font-weight: 600;
   }
@@ -312,7 +312,7 @@ onMounted(load)
   .pending-desc {
     margin: 0 auto;
     max-width: 640px;
-    color: #a0a7b8;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 1.8;
   }
@@ -320,13 +320,13 @@ onMounted(load)
 
 .btn {
   padding: 6px 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
 
-  &:hover { border-color: #1890ff; color: #1890ff; }
+  &:hover { border-color: var(--color-accent); color: var(--color-accent); }
 }
 </style>

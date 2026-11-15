@@ -68,21 +68,21 @@ const sortedDimensions = computed(() =>
       width: 4px;
       height: 16px;
       border-radius: 2px;
-      background: linear-gradient(180deg, #4a7dff, #7a6cf0);
+      background: linear-gradient(180deg, var(--color-accent), var(--color-accent));
     }
 
     .dim-name {
       font-size: 15px;
       font-weight: 600;
-      color: #222;
+      color: var(--color-ink);
     }
 
     .dim-help {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      border: 1px solid #c0c6d2;
-      color: #98a0b0;
+      border: 1px solid var(--color-muted);
+      color: var(--color-muted);
       font-size: 11px;
       display: flex;
       align-items: center;
@@ -94,8 +94,8 @@ const sortedDimensions = computed(() =>
     .dim-weight {
       padding: 2px 10px;
       border-radius: 10px;
-      background: #f2f4f8;
-      color: #8a92a5;
+      background: var(--color-paper-2);
+      color: var(--color-muted);
       font-size: 12px;
     }
 
@@ -103,23 +103,23 @@ const sortedDimensions = computed(() =>
       margin-left: auto;
       font-size: 15px;
       font-weight: 700;
-      color: #333;
+      color: var(--color-ink);
 
       &.low {
-        color: #e54545;
+        color: var(--color-error);
       }
 
       &.dim-score-na {
         font-size: 13px;
         font-weight: 400;
-        color: #999;
+        color: var(--color-muted);
       }
     }
   }
 
   .dim-comment {
     font-size: 13px;
-    color: #555;
+    color: var(--color-ink-2);
     line-height: 1.7;
     margin: 0 0 12px 12px;
   }
@@ -130,7 +130,7 @@ const sortedDimensions = computed(() =>
 
     .section-title {
       font-size: 13px;
-      color: #444;
+      color: var(--color-ink-2);
       font-weight: 500;
       margin: 0 0 6px;
     }
@@ -141,14 +141,14 @@ const sortedDimensions = computed(() =>
 
       li {
         font-size: 13px;
-        color: #666;
+        color: var(--color-muted);
         line-height: 1.8;
       }
     }
 
     .empty-hint {
       font-size: 13px;
-      color: #aaa;
+      color: var(--color-muted);
       margin: 0;
     }
   }

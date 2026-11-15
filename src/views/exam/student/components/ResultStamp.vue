@@ -62,15 +62,15 @@ const ariaText = computed(() => `考试结果：${text.value}`)
   flex: 0 0 auto;
   /* −20°：实测 matrix(0.939693,-0.34202,0.34202,0.939693,0,0) */
   transform: rotate(-20deg);
-  color: #ff7875;
+  color: color-mix(in oklab, var(--color-error) 70%, var(--color-paper));
 
   &--passed {
-    color: #52c41a;
+    color: var(--color-success);
   }
 
   &--pending {
     /* 批阅中给中性灰：红色会被读成"已判未通过" */
-    color: #bfbfbf;
+    color: var(--color-rule-2);
   }
 }
 

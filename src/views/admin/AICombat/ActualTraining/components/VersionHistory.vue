@@ -112,7 +112,7 @@ load()
     margin: 0;
     font-size: 14px;
     line-height: 22px;
-    color: #757575;
+    color: var(--color-muted);
   }
 }
 
@@ -120,7 +120,7 @@ load()
   padding: 40px 0;
   text-align: center;
   font-size: 15px;
-  color: #999;
+  color: var(--color-muted);
 }
 
 .version-list {
@@ -134,8 +134,8 @@ load()
   height: 206px;
   padding: 20px;
   margin-top: 0;
-  background: #fff;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
 
   .version-head {
@@ -157,25 +157,25 @@ load()
     font-size: 18px;
     font-weight: 700;
     line-height: 28px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .current-badge {
     box-sizing: border-box;
     height: 22px;
     padding: 2px 8px;
-    border: 1px solid #bdd2ff;
+    border: 1px solid var(--color-accent-wash);
     border-radius: 4px;
     font-size: 12px;
     line-height: 16px;
-    color: #2e4dd9;
-    background: #f0f6ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
   }
 
   .version-time {
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   .version-stats {
@@ -186,7 +186,7 @@ load()
     height: 82px;
     padding: 16px;
     margin: 0 0 16px;
-    background: #fafafa;
+    background: var(--color-paper-2);
     border-radius: 8px;
 
     .stat-col {
@@ -199,7 +199,7 @@ load()
       height: 22px;
       font-size: 14px;
       line-height: 22px;
-      color: #757575;
+      color: var(--color-muted);
     }
 
     .stat-num {
@@ -208,10 +208,10 @@ load()
       font-size: 18px;
       font-weight: 700;
       line-height: 28px;
-      color: #262626;
+      color: var(--color-ink);
 
-      &.green { color: #059669; }
-      &.blue { color: #436bff; }
+      &.green { color: var(--color-success); }
+      &.blue { color: var(--color-accent); }
     }
   }
 
@@ -225,7 +225,7 @@ load()
   .creator {
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   .rollback-slot {
@@ -235,15 +235,15 @@ load()
 
   .rollback-btn {
     padding: 5px 14px;
-    background: #fff;
-    color: #436bff;
-    border: 1px solid #436bff;
+    background: var(--color-paper);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s;
 
-    &:hover { background: #f0f6ff; }
+    &:hover { background: var(--color-accent-wash); }
   }
 }
 </style>

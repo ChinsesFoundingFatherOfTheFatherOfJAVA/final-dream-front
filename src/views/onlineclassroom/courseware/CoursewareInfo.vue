@@ -412,7 +412,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .detail-page {
   min-height: calc(100vh - 104px);
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .detail-header {
@@ -421,11 +421,11 @@ onMounted(async () => {
   align-items: center;
   gap: 14px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   h1 {
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 18px;
   }
 }
@@ -433,7 +433,7 @@ onMounted(async () => {
 .back-btn {
   border: none;
   background: transparent;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 30px;
   cursor: pointer;
 }
@@ -445,7 +445,7 @@ onMounted(async () => {
   align-items: center;
   gap: 42px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   button {
     position: relative;
@@ -453,12 +453,12 @@ onMounted(async () => {
     padding: 0;
     border: none;
     background: transparent;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      color: #2e7cf6;
+      color: var(--color-accent);
 
       &::after {
         content: '';
@@ -467,7 +467,7 @@ onMounted(async () => {
         right: 0;
         bottom: 0;
         height: 2px;
-        background: #2e7cf6;
+        background: var(--color-accent);
       }
     }
 
@@ -476,8 +476,8 @@ onMounted(async () => {
       margin-left: auto;
       padding: 0 18px;
       border-radius: 5px;
-      background: #2e7cf6;
-      color: #fff;
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
     }
   }
 }
@@ -505,13 +505,13 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     margin: 0 0 20px;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 16px;
 
     i {
       width: 3px;
       height: 18px;
-      background: #2e7cf6;
+      background: var(--color-accent);
     }
   }
 
@@ -531,17 +531,17 @@ onMounted(async () => {
   }
 
   dt {
-    color: #8b95a7;
+    color: var(--color-muted);
   }
 
   dd {
-    color: #30384a;
+    color: var(--color-ink);
     word-break: break-word;
   }
 }
 
 .score-follow {
-  color: #2e7cf6 !important;
+  color: var(--color-accent) !important;
 }
 
 .basic-aside {
@@ -554,7 +554,7 @@ onMounted(async () => {
   width: 300px;
   height: 170px;
   overflow: hidden;
-  background: #111827;
+  background: var(--color-graphite);
 
   img {
     width: 100%;
@@ -567,7 +567,7 @@ onMounted(async () => {
   height: 100%;
   display: grid;
   place-items: center;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -581,13 +581,13 @@ onMounted(async () => {
     padding: 0;
     border: none;
     background: transparent;
-    color: #7b8496;
+    color: var(--color-muted);
     text-align: left;
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      color: #2e7cf6;
+      color: var(--color-accent);
     }
   }
 }
@@ -603,7 +603,7 @@ onMounted(async () => {
   .study-search {
     height: 38px;
     border-radius: 5px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
@@ -639,15 +639,15 @@ onMounted(async () => {
 
   :deep(.el-table__header th) {
     height: 46px;
-    background: #f8fafc;
-    color: #30384a;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     font-size: 13px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 46px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
@@ -661,17 +661,17 @@ onMounted(async () => {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #2e7cf6;
+    background: var(--color-accent);
   }
 
   &.study-1 i {
-    background: #35b56a;
+    background: var(--color-success);
   }
 }
 
 .empty-cell {
   height: 220px;
-  color: #98a1b2;
+  color: var(--color-muted);
   text-align: center;
 }
 
@@ -686,18 +686,18 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 16px;
 
     i {
       width: 3px;
       height: 18px;
-      background: #2e7cf6;
+      background: var(--color-accent);
     }
   }
 
   span {
-    color: #98a1b2;
+    color: var(--color-muted);
     font-size: 12px;
   }
 
@@ -713,15 +713,15 @@ onMounted(async () => {
 
   article {
     padding: 22px 24px;
-    border: 1px solid #e6eaf1;
+    border: 1px solid var(--color-rule);
     border-radius: 3px;
-    background: #fff;
+    background: var(--color-paper);
 
     span {
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #667085;
+      color: var(--color-muted);
       font-size: 13px;
 
       i,
@@ -730,7 +730,7 @@ onMounted(async () => {
         height: 14px;
         display: grid;
         place-items: center;
-        border: 1px solid #98a1b2;
+        border: 1px solid var(--color-muted);
         border-radius: 50%;
         font-size: 9px;
         font-style: normal;
@@ -740,7 +740,7 @@ onMounted(async () => {
     strong {
       display: block;
       margin-top: 16px;
-      color: #30384a;
+      color: var(--color-ink);
       font-size: 30px;
       font-weight: 500;
     }
@@ -756,13 +756,13 @@ onMounted(async () => {
 .chart-card {
   min-height: 360px;
   padding: 22px;
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 3px;
-  background: #fff;
+  background: var(--color-paper);
 
   h3 {
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 15px;
   }
 
@@ -793,7 +793,7 @@ onMounted(async () => {
     grid-template-columns: 72px 1fr 34px;
     align-items: center;
     gap: 10px;
-    color: #667085;
+    color: var(--color-muted);
     font-size: 12px;
   }
 
@@ -801,17 +801,17 @@ onMounted(async () => {
     height: 12px;
     overflow: hidden;
     border-radius: 2px;
-    background: #eef2f7;
+    background: var(--color-paper-3);
 
     i {
       display: block;
       height: 100%;
-      background: #4c8cff;
+      background: var(--color-accent);
     }
   }
 
   strong {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-weight: 500;
   }
 }
@@ -821,7 +821,7 @@ onMounted(async () => {
   justify-content: flex-end;
   gap: 22px;
   margin-top: 22px;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 12px;
 
   span {
@@ -836,11 +836,11 @@ onMounted(async () => {
   }
 
   .study {
-    background: #4c8cff;
+    background: var(--color-accent);
   }
 
   .finish {
-    background: #45c99a;
+    background: var(--color-success);
   }
 }
 
@@ -852,8 +852,8 @@ onMounted(async () => {
   gap: 12px;
   margin-top: 18px;
   padding: 16px 10px 35px;
-  border-bottom: 1px solid #dfe4eb;
-  background: repeating-linear-gradient(to top, transparent 0, transparent 54px, #edf0f5 55px);
+  border-bottom: var(--rule-hair) solid var(--color-rule-2);
+  background: repeating-linear-gradient(to top, transparent 0, transparent 54px, var(--color-rule) 55px);
 }
 
 .dept-column {
@@ -877,18 +877,18 @@ onMounted(async () => {
   }
 
   .study {
-    background: #4c8cff;
+    background: var(--color-accent);
   }
 
   .finish {
-    background: #45c99a;
+    background: var(--color-success);
   }
 
   span {
     width: 100%;
     margin-top: 8px;
     overflow: hidden;
-    color: #667085;
+    color: var(--color-muted);
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -901,7 +901,7 @@ onMounted(async () => {
   inset: 0;
   display: grid;
   place-items: center;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 13px;
 }
 </style>

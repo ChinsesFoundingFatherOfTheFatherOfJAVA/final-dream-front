@@ -26,11 +26,11 @@
       <!-- 左侧竖排 tab -->
       <nav class="tab-rail">
         <el-button class="rail-tab" :class="{ active: tab === 'type' }" @click="tab = 'type'">
-          <span class="rail-icon">▦</span>
+<span class="rail-icon"><el-icon><Menu /></el-icon></span>
           <span class="rail-text">题型</span>
         </el-button>
         <el-button class="rail-tab" :class="{ active: tab === 'overview' }" @click="tab = 'overview'">
-          <span class="rail-icon">◔</span>
+<span class="rail-icon"><el-icon><DataBoard /></el-icon></span>
           <span class="rail-text">概览</span>
         </el-button>
       </nav>
@@ -41,7 +41,7 @@
           <p class="panel-title">选择题型</p>
           <el-button v-for="item in TYPE_BUTTONS" :key="item.type" class="type-btn"
                   :disabled="published" @click="addCard(item.type)">
-            <span class="type-icon">{{ item.icon }}</span>{{ item.label }}
+<span class="type-icon"><el-icon><component :is="item.icon" /></el-icon></span>{{ item.label }}
           </el-button>
 
           <div class="panel-foot">
@@ -69,8 +69,8 @@
               </div>
               <!-- 占位工具按钮：本期无功能，去掉 pointer 伪交互 -->
               <div class="section-tools">
-                <span class="tool" title="引用情况">🔗</span>
-                <span class="tool" title="更多">⋮</span>
+<span class="tool" title="引用情况"><el-icon><Link /></el-icon></span>
+<span class="tool" title="更多"><el-icon><MoreFilled /></el-icon></span>
               </div>
             </div>
 
@@ -172,9 +172,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
+import { CircleCheck, ChatLineSquare, CopyDocument, DataBoard, EditPen, Finished, Link, Menu, MoreFilled, Switch } from '@element-plus/icons-vue'
 import { confirmDialog } from '@/utils/confirmDialog'
 import { getLibList, type LibItem, type QuesBodyDraft } from '@/api/exam'
 import {
@@ -197,13 +199,13 @@ const paperId = String(route.query.paperId ?? '')
 const arrangeId = String(route.query.arrangeId ?? '')
 /** 六题型；组合题也占一个大题位，但走"先题干、再小题"的两段式编辑（见 PaperQuesCard）。 */
 const TYPE_BUTTONS = [
-  { type: 0, label: '单选题', icon: '◉' },
-  { type: 1, label: '多选题', icon: '☑' },
-  { type: 2, label: '判断题', icon: '％' },
-  { type: 3, label: '填空题', icon: '✎' },
-  { type: 4, label: '问答题', icon: '≡' },
-  { type: 5, label: '组合题', icon: '⧉' }
-]
+  { type: 2, label: '判断题', icon: Switch },
+  { type: 3, label: '填空题', icon: EditPen },
+  { type: 4, label: '问答题', icon: ChatLineSquare },
+  { type: 5, label: '组合题', icon: CopyDocument },
+] satisfies { type: number; label: string; icon: Component }[]
+
+/** 题型图标是已解析的 EP 组件，模板里 component :is 直接透传。 */
 const CN_NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
 
 /** 草稿卡片的父组件侧状态（与 PaperQuesCard 的 draft 形状一致）。 */
@@ -468,31 +470,31 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.quick-edit { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.quick-edit { height: 100vh; display: flex; flex-direction: column; background: var(--color-paper); }
 
 .edit-header {
   flex-shrink: 0;
   display: flex; align-items: center; gap: 12px;
-  height: 56px; padding: 0 20px; border-bottom: 1px solid #e8eaef;
+  height: 56px; padding: 0 20px; border-bottom: 1px solid var(--color-rule);
 
   .back-btn {
     width: 26px; height: 26px; border: none; background: none;
-    font-size: 20px; line-height: 1; color: #4a5368; cursor: pointer;
+    font-size: 20px; line-height: 1; color: var(--color-ink-2); cursor: pointer;
   }
-  h1 { margin: 0; font-size: 15px; font-weight: 500; color: #303133; }
+  h1 { margin: 0; font-size: 15px; font-weight: 500; color: var(--color-ink); }
   .save-hint {
     display: inline-flex; align-items: center; gap: 6px;
-    font-size: 13px; color: #8a92a5;
+    font-size: 13px; color: var(--color-muted);
     .hint-dot {
       width: 14px; height: 14px; border-radius: 50%;
-      border: 1.5px solid #c7d0de; display: inline-block; position: relative;
+      border: 1.5px solid var(--color-rule-2); display: inline-block; position: relative;
     }
   }
   .header-actions { margin-left: auto; display: flex; gap: 10px; }
   .paper-steps { margin: 0 auto; }
   .sync-btn {
-    padding: 6px 14px; border: 1px solid #e5e8ef; border-radius: 4px;
-    background: #f5f7fa; color: #b0b7c3; font-size: 13px;
+    padding: 6px 14px; border: 1px solid var(--color-rule); border-radius: 4px;
+    background: var(--color-paper-2); color: var(--color-muted); font-size: 13px;
   }
 }
 
@@ -500,7 +502,7 @@ onMounted(async () => {
 
 // ---- 左侧竖排 tab ----
 .tab-rail {
-  flex: 0 0 58px; border-right: 1px solid #e8eaef;
+  flex: 0 0 58px; border-right: 1px solid var(--color-rule);
   display: flex; flex-direction: column; padding-top: 14px; gap: 10px;
 
   .rail-tab {
@@ -511,26 +513,26 @@ onMounted(async () => {
     margin: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
     padding: 10px 0; border: none; background: none; cursor: pointer;
-    color: #8a92a5; font-size: 12px; line-height: 1;
+    color: var(--color-muted); font-size: 12px; line-height: 1;
 
     .rail-icon { font-size: 18px; line-height: 1; height: 18px; }
     .rail-text { writing-mode: vertical-rl; letter-spacing: 2px; line-height: 1; }
 
-    &.active { color: #1890ff; }
+    &.active { color: var(--color-accent-deep); }
     &.active::before {
       content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
-      width: 3px; background: #1890ff; border-radius: 0 2px 2px 0;
+      width: 3px; background: var(--color-accent); border-radius: 0 2px 2px 0;
     }
   }
 }
 
 // ---- 选择题型 ----
 .type-panel {
-  flex: 0 0 190px; border-right: 1px solid #e8eaef;
+  flex: 0 0 190px; border-right: 1px solid var(--color-rule);
   display: flex; flex-direction: column; gap: 10px;
   padding: 16px 14px;
 
-  .panel-title { margin: 0 0 4px; font-size: 14px; color: #303133; }
+  .panel-title { margin: 0 0 4px; font-size: 14px; color: var(--color-ink); }
 
   .type-btn {
     /* el-button 默认按内容撑开：文字长短不同框宽就不同（"单选题"比"判断题"宽），
@@ -540,11 +542,11 @@ onMounted(async () => {
        不清掉的话第二个题型起会整体右移，和"单选题"及下方按钮对不齐 */
     margin-left: 0;
     display: flex; align-items: center; justify-content: flex-start; gap: 8px;
-    padding: 11px 14px; border: 1px dashed #d9e1ec; border-radius: 6px;
-    background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+    padding: 11px 14px; border: 1px dashed var(--color-rule-2); border-radius: 6px;
+    background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-    .type-icon { color: #8a92a5; font-size: 14px; }
-    &:hover:not(:disabled) { border-color: #1890ff; color: #1890ff; }
+    .type-icon { color: var(--color-muted); font-size: 14px; }
+    &:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent-deep); }
     &:disabled { opacity: .55; cursor: not-allowed; }
   }
 
@@ -556,24 +558,24 @@ onMounted(async () => {
     /* 同 type-btn：三个底部按钮文字长度不同（AI出题 / 从题库选题 / 导入），必须等宽 */
     width: 100%;
     margin-left: 0;
-    padding: 10px 14px; border: 1px solid #d9d9d9; border-radius: 6px;
-    background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+    padding: 10px 14px; border: 1px solid var(--color-rule-2); border-radius: 6px;
+    background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-    &:hover:not(:disabled) { border-color: #1890ff; color: #1890ff; }
+    &:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent-deep); }
     &:disabled { opacity: .55; cursor: not-allowed; }
   }
 }
 
 // ---- 画布 ----
-.canvas { flex: 1; min-width: 0; overflow-y: auto; padding: 16px 20px 40px; background: #fff; }
+.canvas { flex: 1; min-width: 0; overflow-y: auto; padding: 16px 20px 40px; background: var(--color-paper); }
 
 .empty-tip {
   margin: 60px 24px 0; padding: 70px 20px;
-  border: 1px dashed #d9e1ec; border-radius: 8px; text-align: center; color: #8a92a5;
+  border: 1px dashed var(--color-rule-2); border-radius: 8px; text-align: center; color: var(--color-muted);
 
-  .empty-icon { font-size: 30px; color: #c7d0de; }
-  .empty-title { margin: 10px 0 4px; font-size: 14px; color: #667; }
-  .empty-desc { margin: 0; font-size: 12px; color: #a0a7b8; }
+  .empty-icon { font-size: 30px; color: var(--color-rule-2); }
+  .empty-title { margin: 10px 0 4px; font-size: 14px; color: var(--color-muted); }
+  .empty-desc { margin: 0; font-size: 12px; color: var(--color-muted); }
 }
 
 .section { margin-bottom: 26px; }
@@ -582,61 +584,59 @@ onMounted(async () => {
   display: flex; align-items: flex-start; justify-content: space-between;
   margin-bottom: 10px;
 
-  .section-title { margin: 0; font-size: 15px; font-weight: 600; color: #303133; }
-  .section-sub { margin: 4px 0 0; font-size: 12px; color: #8a92a5; }
-  .section-tools { display: flex; gap: 14px; .tool { color: #b0b7c3; } }
+  .section-title { margin: 0; font-size: 15px; font-weight: 600; color: var(--color-ink); }
+  .section-sub { margin: 4px 0 0; font-size: 12px; color: var(--color-muted); }
+  .section-tools { display: flex; gap: 14px; .tool { color: var(--color-muted); } }
 }
 
 // ---- 右侧统计 ----
 .stat-panel {
-  flex: 0 0 250px; border-left: 1px solid #e8eaef;
+  flex: 0 0 250px; border-left: 1px solid var(--color-rule);
   display: flex; flex-direction: column; padding: 16px 16px 20px;
 
   .stat-card {
     display: flex; align-items: center; justify-content: space-around;
-    padding: 14px 6px; background: #fafbfd; border-radius: 6px;
+    padding: 14px 6px; background: var(--color-paper-2); border-radius: 6px;
     margin-bottom: 10px;
   }
   .stat-cell {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    b { font-size: 20px; color: #303133; font-weight: 500; }
-    span { font-size: 12px; color: #8a92a5; }
+    b { font-size: 20px; color: var(--color-ink); font-weight: 500; }
+    span { font-size: 12px; color: var(--color-muted); }
   }
 
-  .stat-link {
-    align-self: center; border: none; background: none; padding: 4px 0;
-    font-size: 13px; color: #1890ff; cursor: pointer;
-
-    &:hover:not(:disabled) { text-decoration: underline; }
-    &:disabled { color: #c7d0de; cursor: not-allowed; }
+/* 批注16：stat-link 不再伪装成裸链接——el-button is-text 口径由 element-theme 统一承担，这里只留布局 */
+.stat-link {
+  align-self: center;
+  padding: 4px 0;
   }
 
   .group-list { margin-top: 16px; display: flex; flex-direction: column; gap: 14px; }
-  .group-title { margin: 0 0 8px; font-size: 13px; color: #303133; }
+  .group-title { margin: 0 0 8px; font-size: 13px; color: var(--color-ink); }
   .group-boxes { display: flex; flex-wrap: wrap; gap: 8px; }
   .group-box {
-    width: 30px; height: 30px; border: 1px solid #d9e1ec; border-radius: 4px;
-    background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+    width: 30px; height: 30px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+    background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-    &:hover { border-color: #1890ff; color: #1890ff; }
+      &:hover { border-color: var(--color-accent); color: var(--color-accent-deep); }
   }
-  .group-empty { font-size: 12px; color: #b0b7c3; }
+  .group-empty { font-size: 12px; color: var(--color-muted); }
 
   .drag-hint {
     margin: auto 0 0; display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: #8a92a5;
+    font-size: 12px; color: var(--color-muted);
 
     .drag-dot {
-      width: 12px; height: 12px; border-radius: 50%; background: #1890ff; display: inline-block;
+      width: 12px; height: 12px; border-radius: 50%; background: var(--color-accent); display: inline-block;
     }
   }
 }
 
 .btn {
-  padding: 6px 16px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 6px 16px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+    &.primary { background: var(--color-accent); border-color: var(--color-accent-edge); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

@@ -35,7 +35,7 @@ let typeChart: echarts.ECharts | null = null
 let pointChart: echarts.ECharts | null = null
 let levelChart: echarts.ECharts | null = null
 
-const PALETTE = ['#4d8bf5', '#5bd6a3', '#ffc069', '#b37feb', '#69c0ff']
+const PALETTE = ['var(--color-accent-deep)', 'var(--color-accent-deep)', 'var(--color-accent-deep)', 'var(--color-accent-deep)', 'var(--color-accent-deep)']
 
 /** 单个环形图：中心显示总数，右侧图例带百分比与题数。 */
 const renderRing = (
@@ -56,7 +56,7 @@ const renderRing = (
       icon: 'circle',
       itemWidth: 8,
       itemHeight: 8,
-      textStyle: { fontSize: 12, color: '#4a5368' },
+      textStyle: { fontSize: 12, color: 'var(--color-ink-2)' },
       formatter: (name: string) => {
         const hit = items.find(i => i.name === name)
         if (!hit) return name
@@ -74,8 +74,8 @@ const renderRing = (
         position: 'center',
         formatter: () => `{a|试题总数}\n{b|${total}}`,
         rich: {
-          a: { fontSize: 12, color: '#8a92a5', lineHeight: 20 },
-          b: { fontSize: 22, color: '#303133', fontWeight: 600, lineHeight: 28 }
+          a: { fontSize: 12, color: 'var(--color-muted)', lineHeight: 20 },
+          b: { fontSize: 22, color: 'var(--color-ink)', fontWeight: 600, lineHeight: 28 }
         }
       },
       emphasis: { scale: false },
@@ -127,7 +127,7 @@ defineExpose({ load })
 </script>
 
 <style scoped lang="scss">
-.overview-panel { flex: 1; min-width: 0; overflow-y: auto; padding: 24px 28px; background: #fff; }
+.overview-panel { flex: 1; min-width: 0; overflow-y: auto; padding: 24px 28px; background: var(--color-paper); }
 
 .charts {
   display: grid;
@@ -136,14 +136,14 @@ defineExpose({ load })
 }
 
 .chart-box {
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid var(--color-rule);
   padding-bottom: 20px;
 
   &.third { grid-column: 1 / 2; }
 
-  .chart-title { margin: 0 0 6px; font-size: 15px; color: #303133; }
+  .chart-title { margin: 0 0 6px; font-size: 15px; color: var(--color-ink); }
   .chart { height: 320px; }
 }
 
-.empty-cell { color: #999; font-size: 13px; padding: 60px 0; text-align: center; }
+.empty-cell { color: var(--color-muted); font-size: 13px; padding: 60px 0; text-align: center; }
 </style>

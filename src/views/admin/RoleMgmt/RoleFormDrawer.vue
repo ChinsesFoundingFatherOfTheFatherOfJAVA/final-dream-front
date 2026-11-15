@@ -127,7 +127,7 @@ function handleVisibleChange(visible: boolean) {
 
   :deep(.el-form-item__label) {
     padding-bottom: 7px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.2;

@@ -445,13 +445,13 @@ onMounted(load)
 
 .score-rules {
   padding-top: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 
 .score-rule {
   padding: 14px 0 18px;
-  border-bottom: 1px solid #eef1f6;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .rule-formula {
@@ -465,7 +465,7 @@ onMounted(load)
 
 .rule-label {
   min-width: 58px;
-  color: #253047;
+  color: var(--color-ink);
   font-weight: 600;
 }
 
@@ -476,7 +476,7 @@ onMounted(load)
     min-height: 26px;
     padding: 0 4px;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9deea inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__inner) {
@@ -491,7 +491,7 @@ onMounted(load)
   flex-wrap: wrap;
   gap: 7px 28px;
   margin: 7px 0 0 62px;
-  color: #526071;
+  color: var(--color-ink-2);
   font-size: 12px;
 
   :deep(.el-radio) {
@@ -503,24 +503,24 @@ onMounted(load)
   display: flex;
   align-items: center;
   padding: 11px 0;
-  border-bottom: 1px solid #eef1f6;
-  color: #4d5568;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 
 .course-label {
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-weight: 600;
 }
 
 .reward-settings {
   padding: 16px 0 12px;
-  border-bottom: 1px solid #eef1f6;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .reward-label {
   margin-bottom: 7px;
-  color: #253047;
+  color: var(--color-ink);
   font-size: 12px;
   font-weight: 600;
 }
@@ -532,7 +532,7 @@ onMounted(load)
   align-items: flex-start;
   gap: 7px;
   margin-left: 62px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
 
   :deep(.el-radio) {
@@ -543,14 +543,14 @@ onMounted(load)
 
 .score-notes {
   padding-top: 12px;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 1.8;
 }
 
 .inline-note,
 .switch-block p {
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -566,7 +566,7 @@ onMounted(load)
 .text-link {
   border: none;
   background: transparent;
-  color: #2e7cf6;
+  color: var(--color-accent);
   font-size: 13px;
   cursor: pointer;
 }
@@ -583,7 +583,7 @@ onMounted(load)
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
   line-height: 1.7;
 
@@ -599,7 +599,7 @@ onMounted(load)
     min-height: 26px;
     padding: 0 4px;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px #d9deea inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
@@ -608,7 +608,7 @@ onMounted(load)
   flex-direction: column;
   gap: 6px;
   margin-top: 14px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
 
   :deep(.el-textarea__inner) {
@@ -627,7 +627,7 @@ onMounted(load)
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 
@@ -638,7 +638,7 @@ onMounted(load)
   gap: 18px;
   margin-top: 14px;
   padding: 0;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 12px;
 
   :deep(.el-radio-group) {

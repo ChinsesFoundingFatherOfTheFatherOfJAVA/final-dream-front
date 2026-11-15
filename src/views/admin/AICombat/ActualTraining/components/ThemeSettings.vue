@@ -434,7 +434,7 @@
               <div class="overview-value">{{ contentOverview.evaluationDimensionCount }} <span class="overview-unit">个</span></div>
             </div>
           </div>
-          <el-button class="ai-design-btn" @click="goAssistant"><span aria-hidden="true">⚡</span> 进入 AI 设计助手 调整内容</el-button>
+          <el-button class="ai-design-btn" @click="goAssistant"><el-icon aria-hidden="true"><Lightning /></el-icon> 进入 AI 设计助手 调整内容</el-button>
           <p class="ai-design-hint overview-hint cap-note">在 AI 助手中可以调整场景设计、客户画像、冰山模型、评估标准和练习限制</p>
         </div>
       </section>
@@ -450,7 +450,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown, CaretTop } from '@element-plus/icons-vue'
+import { ArrowDown, CaretTop, Lightning } from '@element-plus/icons-vue'
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getThemeSettings, saveThemeSettings } from '@/api/actTheme'
@@ -673,8 +673,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .theme-settings {
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
 }
 
@@ -693,15 +693,15 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   position: sticky;
   top: 0;
   width: 160px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 14px 10px;
 
   .nav-title {
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     padding: 0 10px 10px;
-    border-bottom: 1px solid #f2f3f5;
+    border-bottom: 1px solid var(--color-paper-2);
   }
 
   .nav-item {
@@ -710,13 +710,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     margin-top: 4px;
     border-radius: 6px;
     font-size: 14px;
-    color: #4e5969;
+    color: var(--color-ink-2);
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
 
-    &:hover { background: #f5f7fa; }
-    &.active { background: #e6f7ff; color: #1890ff; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+    &:hover { background: var(--color-paper-2); }
+    &.active { background: var(--color-accent-wash); color: var(--color-accent); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
   }
 }
 
@@ -738,14 +738,14 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   align-items: center;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--color-ink);
   margin: 12px 0 16px;
 
   &::before {
     content: '';
     width: 3px;
     height: 16px;
-    background: #1890ff;
+    background: var(--color-accent);
     border-radius: 2px;
     margin-right: 8px;
   }
@@ -759,10 +759,10 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #1f2329;
+  color: var(--color-ink);
   margin-bottom: 8px;
 
-  .required { color: #e5484d; margin-right: 2px; }
+  .required { color: var(--color-error); margin-right: 2px; }
 }
 
 .label-row {
@@ -771,24 +771,24 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   align-items: center;
   margin-bottom: 8px;
 
-  .capacity-note { font-size: 13px; color: #8a8f98; }
+  .capacity-note { font-size: 13px; color: var(--color-muted); }
 }
 
 .form-input {
   width: 100%;
   height: 34px;
   padding: 0 12px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--color-rule);
   border-radius: 4px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-ink);
   outline: none;
 
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
   &.half { max-width: 280px; }
   &.narrow { max-width: 160px; }
   &.tiny { width: 72px; height: 30px; padding: 0 8px; }
-  &:disabled { background: #f5f7fa; color: #a5a9b0; cursor: not-allowed; }
+  &:disabled { background: var(--color-paper-2); color: var(--color-muted); cursor: not-allowed; }
 }
 
 .name-row {
@@ -801,7 +801,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     top: 50%;
     transform: translateY(-50%);
     font-size: 13px;
-    color: #bbb;
+    color: var(--color-rule-2);
   }
 
   .form-input { padding-right: 56px; }
@@ -815,15 +815,15 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     width: 100%;
     height: 88px;
     padding: 8px 12px;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--color-rule);
     border-radius: 4px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     outline: none;
     resize: none;
     font-family: inherit;
 
-    &:focus { border-color: #1890ff; }
+    &:focus { border-color: var(--color-accent); }
   }
 
   .char-counter {
@@ -831,18 +831,18 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     right: 10px;
     bottom: 8px;
     font-size: 13px;
-    color: #bbb;
+    color: var(--color-rule-2);
   }
 }
 
 .field-hint {
   font-size: 13px;
-  color: #a5a9b0;
+  color: var(--color-muted);
   margin: 6px 0 0;
 }
 
 .owner-block {
-  .owner-hint { font-size: 13px; color: #8a8f98; margin: 0 0 8px; }
+  .owner-hint { font-size: 13px; color: var(--color-muted); margin: 0 0 8px; }
 
   .owner-row {
     display: flex;
@@ -850,20 +850,20 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     gap: 10px;
   }
 
-  .owner-set { font-size: 14px; color: #4e5969; }
+  .owner-set { font-size: 14px; color: var(--color-ink-2); }
 
   .owner-tag {
     padding: 1px 10px;
     border-radius: 4px;
     font-size: 13px;
-    color: #1890ff;
-    background: #e6f7ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
   }
 }
 
 // 折叠面板
 .fold-panel {
-  border: 1px solid #f0f1f3;
+  border: 1px solid var(--color-paper-2);
   border-radius: 6px;
   margin-top: 12px;
   overflow: hidden;
@@ -874,20 +874,20 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     align-items: center;
     padding: 10px 14px;
     font-size: 14px;
-    color: #4e5969;
-    background: #fafbfc;
+    color: var(--color-ink-2);
+    background: var(--color-paper-2);
     cursor: pointer;
 
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
-    .link-text { color: #1890ff; }
-    .fold-arrow { color: #bbb; transition: transform 0.2s; &.open { transform: rotate(180deg); } }
+    .link-text { color: var(--color-accent); }
+    .fold-arrow { color: var(--color-rule-2); transition: transform 0.2s; &.open { transform: rotate(180deg); } }
   }
 
   .fold-body {
     padding: 10px 14px;
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.8;
 
     p { margin: 0; }
@@ -897,7 +897,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .sub-block {
   margin-bottom: 20px;
   padding-bottom: 4px;
-  border-bottom: 1px dashed #f0f1f3;
+  border-bottom: 1px dashed var(--color-paper-2);
 
   &:last-child { border-bottom: none; }
 }
@@ -905,7 +905,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .sub-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--color-ink);
 }
 
 .sub-title-row {
@@ -916,7 +916,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
 .sub-desc {
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
   margin: 4px 0 12px;
 }
 
@@ -925,7 +925,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   align-items: center;
   gap: 8px;
 
-  .unit { font-size: 14px; color: #4e5969; }
+  .unit { font-size: 14px; color: var(--color-ink-2); }
 }
 
 .radio-line {
@@ -939,13 +939,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     align-items: center;
     gap: 6px;
     font-size: 14px;
-    color: #4e5969;
+    color: var(--color-ink-2);
     cursor: pointer;
 
-    input[type='radio'] { accent-color: #1890ff; }
+    input[type='radio'] { accent-color: var(--color-accent); }
   }
 
-  .unit { font-size: 14px; color: #4e5969; }
+  .unit { font-size: 14px; color: var(--color-ink-2); }
 }
 
 .select-cards {
@@ -961,28 +961,28 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   align-items: flex-start;
   gap: 10px;
   padding: 14px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 
-  &:hover { border-color: #a5d8ff; }
-  &.selected { border-color: #1890ff; background: #f0f8ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  &:hover { border-color: var(--color-accent-2); }
+  &.selected { border-color: var(--color-accent); background: var(--color-accent-wash); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
-  .card-check { font-size: 18px; color: #bbb; line-height: 1.4; }
-  &.selected .card-check { color: #1890ff; }
+  .card-check { font-size: 18px; color: var(--color-rule-2); line-height: 1.4; }
+  &.selected .card-check { color: var(--color-accent); }
 
   .radio-dot {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--color-rule);
     flex-shrink: 0;
     margin-top: 2px;
 
     &.on {
-      border-color: #1890ff;
+      border-color: var(--color-accent);
       border-width: 5px;
     }
   }
@@ -992,7 +992,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   .select-card-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
     margin-bottom: 4px;
     display: flex;
     align-items: center;
@@ -1001,7 +1001,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
   .select-card-desc {
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.6;
   }
 
@@ -1010,8 +1010,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     border-radius: 3px;
     font-size: 12px;
     font-weight: 400;
-    color: #1890ff;
-    background: #e6f7ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
   }
 }
 
@@ -1021,35 +1021,35 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   gap: 8px;
   margin-top: 10px;
   font-size: 14px;
-  color: #4e5969;
+  color: var(--color-ink-2);
 }
 
 .blue-link {
   display: inline-block;
   font-size: 14px;
-  color: #1890ff;
+  color: var(--color-accent);
   cursor: pointer;
 
   &:hover { text-decoration: underline; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 }
 
 .enabled-pill {
   padding: 2px 10px;
   border-radius: 10px;
   font-size: 13px;
-  color: #1890ff;
-  background: #e6f7ff;
+  color: var(--color-accent);
+  background: var(--color-accent-wash);
   white-space: nowrap;
 }
 
 .mode-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 12px;
 
-  &.on { border-color: #b7c9f5; }
+  &.on { border-color: var(--color-accent-wash); }
 
   .mode-head {
     display: flex;
@@ -1062,13 +1062,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     font-size: 15px;
     font-weight: 600;
 
-    &.purple { color: #6b5ce7; }
-    &.gray { color: #646a73; }
+    &.purple { color: var(--color-accent); }
+    &.gray { color: var(--color-ink-2); }
   }
 
   .mode-desc {
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.6;
     margin: 4px 0 0;
     max-width: 560px;
@@ -1080,21 +1080,21 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   gap: 16px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px dashed #eef0f3;
+  border-top: 1px dashed var(--color-paper-2);
 
   .ability-left { flex: 1; min-width: 0; }
   .ability-right { width: 320px; flex-shrink: 0; }
 }
 
 .ability-card {
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 10px;
   transition: border-color 0.2s, background 0.2s;
 
-  &.selected { border-color: #1890ff; background: #f7fbff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; }
+  &.selected { border-color: var(--color-accent); background: var(--color-paper-2); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
   .check-line {
     display: flex;
@@ -1102,13 +1102,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     gap: 8px;
     cursor: pointer;
 
-    input[type='checkbox'] { accent-color: #1890ff; }
+    input[type='checkbox'] { accent-color: var(--color-accent); }
   }
 
   .ability-name {
     font-size: 14px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
   }
 
   .must-tag {
@@ -1116,20 +1116,20 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     border-radius: 3px;
     font-size: 12px;
     font-weight: 400;
-    color: #e8940c;
-    background: #fff7e6;
+    color: var(--color-warning);
+    background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
   }
 
   .ability-desc {
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.6;
     margin: 6px 0 0;
   }
 }
 
 .chat-mockup {
-  background: #2b2f3a;
+  background: var(--color-ink);
   border-radius: 10px;
   padding: 14px;
   display: flex;
@@ -1138,7 +1138,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
   .chat-title {
     font-size: 12px;
-    color: #9aa0ac;
+    color: var(--color-muted);
     text-align: center;
   }
 
@@ -1151,27 +1151,27 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
     &.student {
       align-self: flex-end;
-      background: #1890ff;
-      color: #fff;
+      background: var(--color-accent);
+      color: var(--color-paper);
       border-bottom-right-radius: 2px;
     }
 
     &.coach {
       align-self: flex-start;
-      background: #3d5a3d;
-      color: #d6f5d6;
+      background: var(--color-success);
+      color: color-mix(in oklab, var(--color-success) 25%, var(--color-paper));
       border-bottom-left-radius: 2px;
 
-      .coach-label { font-weight: 600; margin-bottom: 2px; color: #9be89b; }
+      .coach-label { font-weight: 600; margin-bottom: 2px; color: color-mix(in oklab, var(--color-success) 40%, var(--color-paper)); }
     }
 
     &.trainer {
       align-self: flex-start;
-      background: #3a3f4d;
-      color: #e8eaf0;
+      background: var(--color-ink-2);
+      color: var(--color-rule);
       border-bottom-left-radius: 2px;
 
-      .trainer-label { font-weight: 600; margin-bottom: 2px; color: #a5b4fc; }
+      .trainer-label { font-weight: 600; margin-bottom: 2px; color: var(--color-accent-2); }
 
       .suggest-btn {
         display: inline-block;
@@ -1179,8 +1179,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
         padding: 3px 10px;
         border-radius: 10px;
         font-size: 12px;
-        color: #fff;
-        background: #6b5ce7;
+        color: var(--color-paper);
+        background: var(--color-accent);
       }
     }
   }
@@ -1189,8 +1189,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     margin-top: 2px;
     padding: 7px 12px;
     border-radius: 14px;
-    background: #3a3f4d;
-    color: #7a8090;
+    background: var(--color-ink-2);
+    color: var(--color-muted);
     font-size: 13px;
     text-align: center;
   }
@@ -1199,8 +1199,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .anti-cheat {
   margin-top: 14px;
   padding: 12px 14px;
-  background: #fafbfc;
-  border: 1px dashed #e5e7eb;
+  background: var(--color-paper-2);
+  border: 1px dashed var(--color-rule);
   border-radius: 8px;
 }
 
@@ -1211,37 +1211,37 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
 .difficulty-btn {
   padding: 8px 18px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--color-rule);
   border-radius: 6px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 14px;
-  color: #4e5969;
+  color: var(--color-ink-2);
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 
-  &:hover { border-color: #1890ff; color: #1890ff; }
-  &.selected { border-color: #1890ff; color: #1890ff; background: #f0f8ff; font-weight: 600; }
+  &:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  &.selected { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-wash); font-weight: 600; }
 }
 
 .info-banner {
   padding: 10px 14px;
   border-radius: 6px;
-  background: #f0edff;
-  color: #4e5969;
+  background: var(--color-accent-wash);
+  color: var(--color-ink-2);
   font-size: 14px;
   margin-bottom: 16px;
 
-  b { color: #6b5ce7; }
+  b { color: var(--color-accent); }
 }
 
 .gray-info-box {
   padding: 10px 14px;
   border-radius: 6px;
-  background: #f5f6f8;
-  color: #4e5969;
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-size: 14px;
 
-  b { color: #1f2329; }
+  b { color: var(--color-ink); }
 }
 
 .overview-grid {
@@ -1252,18 +1252,18 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 }
 
 .overview-card {
-  background: #f5f6f8;
+  background: var(--color-paper-2);
   border-radius: 8px;
   padding: 16px;
 
-  .overview-label { font-size: 13px; color: #8a8f98; margin-bottom: 6px; }
+  .overview-label { font-size: 13px; color: var(--color-muted); margin-bottom: 6px; }
 
   .overview-value {
     font-size: 24px;
     font-weight: 600;
-    color: #1f2329;
+    color: var(--color-ink);
 
-    .overview-unit { font-size: 13px; font-weight: 400; color: #8a8f98; }
+    .overview-unit { font-size: 13px; font-weight: 400; color: var(--color-muted); }
   }
 }
 
@@ -1272,8 +1272,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   padding: 11px 0;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(90deg, #4f6ef7, #6b5ce7);
-  color: #fff;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent));
+  color: var(--color-paper);
   font-size: 15px;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -1284,7 +1284,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .ai-design-hint {
   text-align: center;
   font-size: 13px;
-  color: #a5a9b0;
+  color: var(--color-muted);
   margin: 10px 0 4px;
 }
 
@@ -1301,7 +1301,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   .slider {
     position: absolute;
     inset: 0;
-    background: #dcdfe6;
+    background: var(--color-rule);
     border-radius: 11px;
     transition: background 0.2s;
     cursor: pointer;
@@ -1313,15 +1313,15 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
       height: 18px;
       left: 2px;
       top: 2px;
-      background: #fff;
+      background: var(--color-paper);
       border-radius: 50%;
       transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px color-mix(in oklab, var(--color-graphite) 20%, transparent);
     }
   }
 
   input:checked + .slider {
-    background: #1890ff;
+    background: var(--color-accent);
 
     &::before { transform: translateX(18px); }
   }
@@ -1335,7 +1335,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   justify-content: center;
   gap: 16px;
   padding: 14px 24px;
-  border-top: 1px solid #f0f1f3;
+  border-top: 1px solid var(--color-paper-2);
 
   button {
     padding: 8px 28px;
@@ -1346,17 +1346,17 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   }
 
   .btn-cancel {
-    background: #fff;
-    color: #4e5969;
-    border: 1px solid #dcdfe6;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
+    border: 1px solid var(--color-rule);
 
-    &:hover { color: #1890ff; border-color: #1890ff; }
+    &:hover { color: var(--color-accent); border-color: var(--color-accent); }
   }
 
   .btn-save {
-    background: #1890ff;
-    color: #fff;
-    border: 1px solid #1890ff;
+    background: var(--color-accent);
+    color: var(--color-paper);
+    border: 1px solid var(--color-accent);
 
     &:hover:not(:disabled) { opacity: 0.85; }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -1366,10 +1366,10 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 // 原平台「主题设置」视觉契约：仅覆盖布局与视觉外壳，不改变表单行为。
 .theme-settings {
   display: block;
-  background: #fff;
+  background: var(--color-paper);
   border: 0;
   border-radius: 0;
-  color: #262626;
+  color: var(--color-ink);
 
   :deep(.el-checkbox__inner) {
     width: 16px;
@@ -1382,35 +1382,35 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   :deep(.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner) {
     width: 16px;
     height: 16px;
-    background: #436bff;
-    border-color: #436bff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
     border-radius: 2px;
   }
 
   :deep(.el-radio__input.is-checked .el-radio__inner) {
-    background: #436bff;
-    border-color: #436bff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
     border-radius: 100px;
   }
 
   :deep(.el-radio__label) {
     padding: 0 8px;
     font-size: 14px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   :deep(.el-switch__core) {
-    background: #d9d9d9;
+    background: var(--color-rule-2);
     border-radius: 14px;
   }
 
   :deep(.el-switch.is-checked .el-switch__core) {
-    background: #436bff;
-    border-color: #436bff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
   :deep(.el-switch__action) {
-    background: #fff;
+    background: var(--color-paper);
     border-radius: 50%;
   }
 }
@@ -1428,8 +1428,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   padding: 14px;
   position: sticky;
   top: 0;
-  background: #fff;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
 
   .nav-title {
@@ -1438,7 +1438,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     padding: 8px;
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   .nav-item {
@@ -1451,13 +1451,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     padding: 8px;
     border-radius: 8px;
     font-size: 14px;
-    color: #595959;
+    color: var(--color-muted);
     cursor: pointer;
     text-decoration: none;
 
-    &:hover { background: #f5f7fa; }
-    &.active { color: #436bff; background: #f1f6fe; font-weight: 600; }
-    &:focus-visible { outline-color: #436bff; }
+    &:hover { background: var(--color-paper-2); }
+    &.active { color: var(--color-accent); background: var(--color-accent-wash); font-weight: 600; }
+    &:focus-visible { outline-color: var(--color-accent); }
   }
 
   .nav-index { font-size: 12px; font-weight: 600; }
@@ -1485,20 +1485,20 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .sf-sublabel {
   font-size: 14px;
   font-weight: 700;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .form-label .sf-required {
   margin: 0 0 0 2px;
   font-size: 14px;
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .theme-settings .sf-name :deep(.el-input__wrapper),
@@ -1509,22 +1509,22 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   min-height: 32px;
   padding: 4px 12px;
   border-radius: 4px;
-  background: #fff;
-  box-shadow: 0 0 0 1px #d9d9d9 inset;
+  background: var(--color-paper);
+  box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   font-size: 14px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .sf-name :deep(.el-input__inner),
 .sf-date :deep(.el-input__inner),
 .sf-num :deep(.el-input__inner) {
   font-size: 14px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .theme-settings :deep(.el-input__count) {
   font-size: 12px;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
 }
 
 .sf-desc :deep(.el-textarea__inner) {
@@ -1533,10 +1533,10 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   min-height: 103px;
   padding: 9px 12px;
   border-radius: 4px;
-  background: #fff;
-  box-shadow: 0 0 0 1px #d9d9d9 inset;
+  background: var(--color-paper);
+  box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   font-size: 14px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .owner-block .owner-chip {
@@ -1546,14 +1546,14 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   gap: 4px;
   height: 32px;
   padding: 0 12px;
-  color: #c2410c;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  color: var(--color-warning);
+  background: color-mix(in oklab, var(--color-warning) 10%, var(--color-paper));
+  border: 1px solid color-mix(in oklab, var(--color-warning) 30%, var(--color-paper));
   border-radius: 4px;
 }
 
 .owner-chip-text { font-size: 12px; font-weight: 500; }
-.owner-block .owner-tag { font-size: inherit; color: #c2410c; background: #fff7ed; }
+.owner-block .owner-tag { font-size: inherit; color: var(--color-warning); background: color-mix(in oklab, var(--color-warning) 10%, var(--color-paper)); }
 
 .time-grid {
   display: grid;
@@ -1561,8 +1561,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   gap: 12px;
 }
 
-.setting-section-time { background: #fff; border-radius: 12px; }
-.sf-optional { font-size: 14px; color: #8c8c8c; }
+.setting-section-time { background: var(--color-paper); border-radius: 12px; }
+.sf-optional { font-size: 14px; color: var(--color-muted); }
 
 .fold-panel {
   border: 0;
@@ -1575,7 +1575,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
     gap: 5px;
     height: 22px;
     padding: 0;
-    color: #436bff;
+    color: var(--color-accent);
     background: transparent;
   }
 
@@ -1586,7 +1586,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .fold-panel .fold-head .link-text {
   font-size: 14px;
   line-height: 22px;
-  color: #436bff;
+  color: var(--color-accent);
 }
 
 .sub-title {
@@ -1599,11 +1599,11 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   margin: 2px 0 12px;
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
-.theme-settings .cap-note { font-size: 14px; color: #757575; }
-.theme-settings .unit { font-size: 14px; color: #8c8c8c; }
+.theme-settings .cap-note { font-size: 14px; color: var(--color-muted); }
+.theme-settings .unit { font-size: 14px; color: var(--color-muted); }
 
 .join-mode-item {
   display: block;
@@ -1614,14 +1614,14 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
 .join-mode-item.is-on {
   padding: 16px;
-  background: #f5f7ff;
-  border-color: #436bff;
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent);
   border-radius: 8px;
 }
 
 .select-card .join-title { margin-top: 0; font-weight: 700; }
 .sf-guest-row { display: flex; margin-top: 24px; }
-.sf-text-btn { border-radius: 4px; font-size: 14px; color: #436bff; }
+.sf-text-btn { border-radius: 4px; font-size: 14px; color: var(--color-accent); }
 
 .mode-option {
   display: flex;
@@ -1632,8 +1632,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 
 .mode-option.active {
   padding: 16px;
-  background: #f5f7ff;
-  border-color: #436bff;
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent);
   border-radius: 8px;
 }
 
@@ -1646,7 +1646,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .select-card .mode-desc {
   margin-top: 4px;
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .select-card .default-badge {
@@ -1654,8 +1654,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 3px;
   font-size: 12px;
   font-weight: 500;
-  color: #436bff;
-  background: #f5f7ff;
+  color: var(--color-accent);
+  background: var(--color-accent-wash);
 }
 
 .enabled-pill.dm-enabled-badge {
@@ -1663,14 +1663,14 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #436bff;
-  background: #f5f7ff;
+  color: var(--color-accent);
+  background: var(--color-accent-wash);
 }
 
 .mode-card.dm-card {
   padding: 0;
-  background: #fff;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
 }
 
@@ -1685,7 +1685,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   width: 8px;
   height: 8px;
   margin-right: 6px;
-  background: #436bff;
+  background: var(--color-accent);
   border-radius: 50%;
 }
 
@@ -1693,13 +1693,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 .mode-card .dm-name.gray {
   font-size: 14px;
   font-weight: 700;
-  color: #436bff;
+  color: var(--color-accent);
 }
 
 .mode-card .dm-tagline {
   margin-top: 4px;
   font-size: 14px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .dm-card .ai-ability { margin: 0 15px 15px; }
@@ -1712,25 +1712,25 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 8px;
 }
 
-.ability-card.dm-assist.is-on { border-color: #436bff; background: #f5f7ff; }
+.ability-card.dm-assist.is-on { border-color: var(--color-accent); background: var(--color-accent-wash); }
 .ability-card .dm-assist-name { font-size: 14px; font-weight: 700; }
-.ability-card .dm-assist-desc { margin: 0; font-size: 14px; color: #8c8c8c; }
+.ability-card .dm-assist-desc { margin: 0; font-size: 14px; color: var(--color-muted); }
 
 .ability-card .dm-tag {
   padding: 0 5px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: #8c8c8c;
-  background: #f5f5f5;
+  color: var(--color-muted);
+  background: var(--color-paper-2);
 }
 
-.sub-title.adp-title { font-size: 14px; font-weight: 600; color: #8c8c8c; }
+.sub-title.adp-title { font-size: 14px; font-weight: 600; color: var(--color-muted); }
 
 .chat-mockup.pv-stage {
   box-sizing: border-box;
   padding: 16px 14px;
-  background: #35322e;
+  background: var(--color-ink);
   border-radius: 14px;
 }
 
@@ -1738,14 +1738,14 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   padding: 10px;
   border-radius: 10px;
   font-size: 13px;
-  color: #262626;
-  background: #fff;
+  color: var(--color-ink);
+  background: var(--color-paper);
 }
 
 .chat-mockup .bubble.pv-review {
   padding: 10px;
   border-radius: 10px;
-  background: #26242f;
+  background: var(--color-ink);
 }
 
 .chat-mockup .bubble.trainer .pv-ai-avatar {
@@ -1753,8 +1753,8 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   padding: 2px 6px;
   border-radius: 50%;
   font-size: 11px;
-  color: #fff;
-  background: #8f86e8;
+  color: var(--color-paper);
+  background: var(--color-accent-2);
 }
 
 .chat-mockup .pv-input {
@@ -1770,13 +1770,13 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
 }
 
 .dm-ac-item {
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-paper);
+  border: 1px solid var(--color-paper-2);
   border-radius: 8px;
 }
 
 .dm-ac-name { font-size: 14px; font-weight: 700; }
-.dm-combo-cfg-item { padding: 16px; background: #fff; border-radius: 8px; }
+.dm-combo-cfg-item { padding: 16px; background: var(--color-paper); border-radius: 8px; }
 
 .practice-mode-item {
   display: flex;
@@ -1797,52 +1797,52 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #595959;
-  background: #fff;
+  color: var(--color-muted);
+  background: var(--color-paper);
 }
 
 .difficulty-row .diff-opt.active {
-  color: #436bff;
-  background: #f5f7ff;
-  border-color: #436bff;
+  color: var(--color-accent);
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent);
 }
 
-.diff-opt-stars { font-size: 12px; font-weight: 600; color: #f59e0b; }
+.diff-opt-stars { font-size: 12px; font-weight: 600; color: var(--color-warning); }
 
 .info-banner.pass-intro {
   padding: 10px 12px;
-  border: 1px solid #436bff;
+  border: 1px solid var(--color-accent);
   border-radius: 8px;
   font-size: 12px;
   line-height: 20px;
-  color: #595959;
-  background: #f5f7ff;
+  color: var(--color-muted);
+  background: var(--color-accent-wash);
 }
 
 .pass-intro strong { font-size: 12px; font-weight: 700; }
 .opt-config { display: flex; gap: 8px; margin-top: 10px; padding: 10px 0; }
-.pass-config-text { font-size: 13px; color: #595959; }
+.pass-config-text { font-size: 13px; color: var(--color-muted); }
 
 .gray-info-box.pass-fixed-note {
   margin-top: 8px;
   padding: 10px 12px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   font-size: 14px;
-  color: #595959;
-  background: #fafafa;
+  color: var(--color-muted);
+  background: var(--color-paper-2);
 }
 
 .pass-fixed-note strong { font-size: 14px; font-weight: 700; }
 
 .overview-card {
   padding: 12px;
-  background: #fafafa;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
 }
 
-.overview-card .overview-label { font-size: 14px; line-height: 22px; color: #757575; }
+.overview-card .overview-label { font-size: 14px; line-height: 22px; color: var(--color-muted); }
 .overview-card .overview-value { font-size: 18px; font-weight: 700; line-height: 28px; }
 
 .ai-design-btn {
@@ -1856,10 +1856,10 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #fff;
+  color: var(--color-paper);
 }
 
-.theme-settings .overview-hint { margin-top: 8px; font-size: 14px; color: #8c8c8c; }
+.theme-settings .overview-hint { margin-top: 8px; font-size: 14px; color: var(--color-muted); }
 
 .settings-footer.sf-footer {
   box-sizing: border-box;
@@ -1868,7 +1868,7 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   gap: 12px;
   height: 57px;
   padding: 12px 24px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .sf-footer > button {
@@ -1881,6 +1881,6 @@ reload().catch(() => { /* 加载失败由调用方处理 */ })
   font-weight: 500;
 }
 
-.sf-footer > .btn-cancel { color: #595959; background: #fff; }
-.sf-footer > .btn-save { color: #fff; background: #436bff; border-color: #436bff; }
+.sf-footer > .btn-cancel { color: var(--color-muted); background: var(--color-paper); }
+.sf-footer > .btn-save { color: var(--color-paper); background: var(--color-accent); border-color: var(--color-accent); }
 </style>

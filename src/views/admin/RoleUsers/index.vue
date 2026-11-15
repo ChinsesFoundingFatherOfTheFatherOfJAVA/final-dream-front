@@ -304,13 +304,13 @@ onMounted(async () => {
   h1 {
     display: inline-block;
     margin: 0 10px 5px 0;
-    color: #1f2937;
+    color: var(--color-ink);
     font-size: 22px;
   }
 
   p {
     margin: 0;
-    color: #7b8494;
+    color: var(--color-muted);
     font-size: 13px;
   }
 }
@@ -319,7 +319,7 @@ onMounted(async () => {
   height: 30px;
   margin-right: 10px;
   border-radius: 6px;
-  color: #596274;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -332,9 +332,9 @@ onMounted(async () => {
 }
 
 .content-panel {
-  border: 1px solid #e5e8ef;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-paper);
   overflow: hidden;
 }
 
@@ -344,7 +344,7 @@ onMounted(async () => {
   flex-wrap: wrap;
   gap: 10px;
   padding: 14px 16px;
-  border-bottom: 1px solid #edf0f5;
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .field {
@@ -353,7 +353,7 @@ onMounted(async () => {
   gap: 5px;
 
   > span {
-    color: #667085;
+    color: var(--color-ink-2);
     font-size: 12px;
   }
 
@@ -391,13 +391,13 @@ onMounted(async () => {
 
   :deep(.el-select__wrapper) {
     border-radius: 6px 0 0 6px;
-    box-shadow: 0 0 0 1px #d7dce5 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 
   :deep(.el-input__wrapper) {
     min-width: 0;
     border-radius: 0 6px 6px 0;
-    box-shadow: 0 0 0 1px #d7dce5 inset;
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
@@ -407,7 +407,7 @@ onMounted(async () => {
     max-width: 210px;
     padding: 0 12px;
     border-radius: 6px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
@@ -415,23 +415,30 @@ onMounted(async () => {
 .members-table {
   width: 100%;
 
+  // AGENTS 8.2：单元格 nowrap 必须挂 .cell 且 :deep() 才能压过 EP 默认折行
+  :deep(.el-table .cell) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   :deep(.el-table__header th) {
     height: 44px;
-    background: #f8fafc;
-    color: #596274;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   :deep(.el-table__row td) {
     height: 44px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
 
 .name-cell {
-  color: #253047;
+  color: var(--color-ink-2);
   font-weight: 500;
 }
 
@@ -441,7 +448,7 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  color: #667085;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-pagination) {

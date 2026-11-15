@@ -5,7 +5,7 @@
       <router-view />
     </main>
     <footer v-if="!isFullBleed" class="footer">
-      <p>2026 杰克数字人陪练</p>
+      <p>2026 杰克数字人陪练 · Animated icons by <a class="attribution" href="https://lordicon.com" target="_blank" rel="noopener">Lordicon</a></p>
     </footer>
   </div>
 </template>
@@ -25,6 +25,7 @@ const isFullBleed = computed(() => route.meta.fullBleed === true)
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: var(--font-display);
 
   // 铺满模式：锁定视口高度（min-height 只是下限，内容高时会被撑破导致整页滚动）
   &.full-bleed-layout {
@@ -35,8 +36,9 @@ const isFullBleed = computed(() => route.meta.fullBleed === true)
 
 .main-content {
   flex: 1;
-  padding: 24px;
-  background: #f5f5f5;
+  padding: var(--space-lg);
+  // Hallmark Cobalt：内容区是冷灰工作面（paper-2），业务卡片承载纸面色
+  background: var(--color-paper-2);
 
   // 铺满模式：无内边距、占满顶栏以下空间（flex 列容器），由模块内部滚动
   // 注意不用 height:calc——flex:1 的 flex-basis:0 会覆盖 height，且该高度对子元素百分比不生效
@@ -44,19 +46,19 @@ const isFullBleed = computed(() => route.meta.fullBleed === true)
     padding: 0;
     min-height: 0;
     overflow: hidden;
-    background: #fff;
+    background: var(--color-paper);
     display: flex;
     flex-direction: column;
   }
 }
 
 .footer {
-  padding: 24px;
+  padding: var(--space-lg);
   text-align: center;
-  color: #999;
-  font-size: 12px;
-  background: #fff;
-  border-top: 1px solid #e8e8e8;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-rule);
 }
 
 @media (max-width: 760px) {

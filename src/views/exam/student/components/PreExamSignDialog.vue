@@ -237,7 +237,7 @@ defineExpose({ clearInk, exportDataUrl, title })
     font-size: 16px;
     line-height: 24px;
     font-weight: 500;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   :deep(.el-dialog__body) {
@@ -253,7 +253,7 @@ defineExpose({ clearInk, exportDataUrl, title })
   margin: 0 0 12px;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .sign-canvas-wrap {
@@ -261,7 +261,7 @@ defineExpose({ clearInk, exportDataUrl, title })
   width: 472px;
   height: 264px;
   /* 原平台实测画布是纯色块、无描边（文档 §2「细边框」与截图不符，以截图为准） */
-  background: #f2f2f2;
+  background: var(--color-paper-3);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -282,7 +282,7 @@ defineExpose({ clearInk, exportDataUrl, title })
   transform: translate(-50%, -50%);
   font-size: 14px;
   line-height: 22px;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
   pointer-events: none;
   user-select: none;
 }
@@ -303,6 +303,6 @@ defineExpose({ clearInk, exportDataUrl, title })
 
 .btn-clear {
   /* 清除重签是次要操作，图标用内联 SVG，不额外引 icon 依赖 */
-  color: #595959;
+  color: var(--color-ink-2);
 }
 </style>

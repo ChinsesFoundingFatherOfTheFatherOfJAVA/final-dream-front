@@ -123,15 +123,15 @@ onMounted(load)
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .todo-count {
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 
   strong {
-    color: #f5222d;
+    color: var(--color-error);
     font-weight: 500;
   }
 }
@@ -152,8 +152,8 @@ onMounted(load)
   justify-content: space-between;
   gap: 16px;
   padding: 14px 16px;
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-paper);
+  border: 1px solid var(--color-paper-2);
   border-radius: 4px;
 }
 
@@ -171,13 +171,13 @@ onMounted(load)
 .item-name {
   font-size: 14px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
   white-space: nowrap;
 }
 
 .item-dept {
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -189,13 +189,13 @@ onMounted(load)
   padding: 0 6px;
   font-size: 12px;
   line-height: 20px;
-  color: #fa8c16;
-  background: #fff7e6;
+  color: var(--color-warning);
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
   border-radius: 2px;
 
   &.is-done {
-    color: #8c8c8c;
-    background: #f5f5f5;
+    color: var(--color-muted);
+    background: var(--color-paper-2);
   }
 }
 
@@ -205,11 +205,11 @@ onMounted(load)
   gap: 12px;
   margin-top: 6px;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .item-arrange {
-  color: #595959;
+  color: var(--color-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

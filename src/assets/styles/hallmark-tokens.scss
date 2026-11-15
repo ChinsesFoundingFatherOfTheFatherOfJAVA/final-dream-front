@@ -1,0 +1,108 @@
+/* hallmark-tokens.scss — Hallmark Cobalt 主题 token 层
+ * 产物来源：theme.mjs scaffold cobalt（deal 1/3, seed vue3-elementplus-saas-7046·nosalt·2026-11-13·r0）
+ * 铁律 Floor 1：全站颜色/字体只允许经本文件的 CSS 变量取值，禁止在组件里写裸色值。
+ * 2026-11-14 用户验收：Coral 暖色系废弃，全站换 Cobalt 冷色（electric cobalt 蓝，浅色工具风）。
+ * oklch 需要现代浏览器；项目面向 Chromium 内核（Vite dev + 现代目标），可放心使用。
+ */
+:root {
+  color-scheme: light;
+
+  /* ---- Hallmark 共享刻度（spacing / type / motion / z / layout）---- */
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+
+  /* ---- Cobalt 色板（oklch，全部冷区 hue 250-262）----
+   * 单信号色：electric cobalt accent 只花在信号位（激活/按压/焦点/链接），屏幕占比 <5%（field 除外）。
+   */
+  --color-paper: oklch(98.6% 0.005 250); --color-paper-2: oklch(96.2% 0.008 252); --color-paper-3: oklch(93% 0.011 252);
+  --color-ink: oklch(21% 0.028 262); --color-ink-2: oklch(36% 0.022 260); --color-muted: oklch(50% 0.018 258);
+  --color-rule: oklch(90% 0.009 252); --color-rule-2: oklch(83% 0.012 252);
+  --color-graphite: oklch(21% 0.024 262); --color-graphite-2: oklch(26.5% 0.026 262); --color-graphite-ink: oklch(93% 0.010 250); --color-graphite-muted: oklch(69% 0.022 256);
+  --color-accent: oklch(58% 0.185 258); --color-accent-2: oklch(76% 0.13 254); --color-accent-wash: oklch(95% 0.028 256); --color-accent-ink: oklch(98.6% 0.005 250); --color-focus: oklch(58% 0.185 258); /* focus 与 accent 同值，随提亮同步 */
+  --color-accent-deep: oklch(48% 0.19 262); --color-accent-edge: oklch(43% 0.16 260); /* edge 随 deep 同步提亮，保持键帽三态阴影层级 */
+  --color-glyph-1: oklch(89% 0.025 254); --color-glyph-2: oklch(81% 0.045 255); --color-glyph-3: oklch(70% 0.085 256); --color-glyph-4: oklch(60% 0.13 257);
+  --color-graphite-glyph-1: oklch(33% 0.03 262); --color-graphite-glyph-2: oklch(41% 0.05 260); --color-graphite-glyph-3: oklch(53% 0.1 258);
+  --color-key-face: oklch(99.4% 0.003 250); --color-key-edge: oklch(80% 0.016 254);
+
+  /* ---- 功能色（EP 语义保留，色相校准进 250-262 冷区）---- */
+  --color-error: oklch(52% 0.19 27); --color-error-deep: oklch(45% 0.18 27); /* danger plain 字色（深红墨） */
+  --color-success: oklch(50% 0.12 150);
+  --color-warning: oklch(72% 0.14 85);
+
+  /* ---- 字体栈（Familjen Grotesk 标题 / IBM Plex Sans 正文 / JetBrains Mono 代码与机器值）---- */
+  --font-display: "Familjen Grotesk", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- 圆角 / cell / cut / 描边 / 排版姿态 ---- */
+  --radius-card: 8px; --radius-input: 6px; --radius-pill: 999px;
+  --cell-w: 8px; --cell-h: 16px; --cut: 8px; --cut-l: 16px;
+  --rule-hair: 1px;
+  --tracking-display: -0.028em; --display-weight: 600;
+
+  /* ---- 阴影：卡片浅投影；keycap 三态（常态/主键/按压）---- */
+  --shadow-card: 0 1px 2px oklch(21% 0.028 262 / 0.06);
+  --shadow-key: 0 3px 0 0 var(--color-key-edge), 0 6px 8px -4px oklch(21% 0.028 262 / 0.28), inset 0 1px 0 oklch(100% 0 0 / 0.9);
+  --shadow-key-accent: 0 3px 0 0 var(--color-accent-edge), 0 6px 8px -4px oklch(30% 0.12 260 / 0.45), inset 0 1px 0 oklch(100% 0 0 / 0.22);
+  --shadow-key-press: inset 0 1px 2px oklch(21% 0.028 262 / 0.14);
+}
+
+/* 响应式 gutter / 节奏（与 scaffold base.css 的断点口径一致） */
+@media (max-width: 60rem) { :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; } }
+@media (max-width: 40rem) { :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; } }
+
+/* ---- Cobalt Build hint 工具类（组件层直接用；EP 组件内层用 :deep(.key) 等组合）---- */
+
+/* keycap 按钮：3px 底边键帽，hover 抬 1px、press 沉底 */
+.key {
+  border: var(--rule-hair) solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  padding: 0 var(--space-lg);
+  min-height: 48px;
+  background: var(--color-key-face);
+  color: var(--color-ink);
+  font: 500 var(--text-md)/1 var(--font-display);
+  box-shadow: var(--shadow-key);
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+.key:hover { transform: translateY(-1px); }
+.key:active { transform: translateY(3px); box-shadow: var(--shadow-key-press); }
+.key--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent-edge);
+  color: var(--color-accent-ink);
+  box-shadow: var(--shadow-key-accent);
+}
+
+/* cut 切角面板：两对角 bevel 切角，不支持 corner-shape 时回退圆角 */
+.cut {
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
+}
+@supports (corner-shape: bevel) {
+  .cut {
+    border-radius: var(--cut-l) 4px var(--cut-l) 4px;
+    corner-shape: bevel round bevel round;
+  }
+}
+
+/* graphite 深色面板：代码/机器值底座，语法高亮只走 accent-2（不用彩虹） */
+.graphite { background: var(--color-graphite); color: var(--color-graphite-ink); }
+.graphite .token { color: var(--color-accent-2); }
+
+/* 数字列统一 JetBrains Mono + 等宽数字 */
+.fig {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 链接：默认灰发丝下划线，hover 钴蓝 */
+a { text-decoration-color: var(--color-rule-2); text-underline-offset: 0.2em; }
+a:hover { text-decoration-color: var(--color-accent); }

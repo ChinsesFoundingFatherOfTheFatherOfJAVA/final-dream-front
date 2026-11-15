@@ -129,7 +129,7 @@ onMounted(refreshAll)
   box-sizing: border-box;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .dm-breadcrumb {
@@ -139,26 +139,26 @@ onMounted(refreshAll)
   height: 22px;
   font-size: 14px;
   line-height: 22px;
-  color: #757575;
+  color: var(--color-muted);
 
   &__link {
-    color: #757575;
+    color: var(--color-muted);
     cursor: pointer;
 
-    &:hover { color: #436bff; }
+    &:hover { color: var(--color-accent); }
   }
 
   /* 分隔符在原平台是 / 文本，同色 */
-  &__sep { color: #a8a8a8; }
+  &__sep { color: var(--color-muted); }
 
-  &__current { color: #757575; }
+  &__current { color: var(--color-muted); }
 }
 
 .page-tip {
   padding: 80px 0;
   text-align: center;
   font-size: 15px;
-  color: #999;
+  color: var(--color-muted);
 }
 
 /* FP-10 Tab：无外框，1.6px 底边在选中时点亮 */
@@ -182,15 +182,15 @@ onMounted(refreshAll)
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
-  color: #595959;
+  color: var(--color-muted);
   cursor: pointer;
   white-space: nowrap;
 
-  &:hover { color: #436bff; }
+  &:hover { color: var(--color-accent); }
 
   &.is-active {
-    color: #436bff;
-    border-bottom-color: #436bff;
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 }
 

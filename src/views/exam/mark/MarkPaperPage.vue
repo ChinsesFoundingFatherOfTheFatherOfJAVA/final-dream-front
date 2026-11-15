@@ -76,7 +76,9 @@
 
           <!-- 身份核验异常：批阅人要能看到异常与抓拍图，据此决定是否作废（DER-07 / §M3 验收 3） -->
           <div v-if="identityAbnormal" class="identity-block">
-            <span class="identity-flag" role="img" aria-label="身份待核对">⚠ 身份待核对</span>
+            <span class="identity-flag" role="img" aria-label="身份待核对">
+              <el-icon class="flag-icon" aria-hidden="true"><WarningFilled /></el-icon> 身份待核对
+            </span>
             <span class="identity-text">{{ identityText }}</span>
             <el-button v-if="detail.identityEvidence" link type="primary" @click="showEvidence = true">
               查看核验抓拍
@@ -195,6 +197,7 @@
  * <p>打分区本体在 `AnswerPaperBody` 里（每题一个，随三行信息一起），本页只负责
  * 取数、草稿状态与提交。
  */
+import { WarningFilled } from '@element-plus/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
@@ -605,8 +608,6 @@ watch(
 </script>
 
 <style scoped lang="scss">
-$brand: #436bff;
-
 .mark-paper-page {
   height: 100%;
   min-height: 0;
@@ -617,7 +618,7 @@ $brand: #436bff;
    * 内容距容器左边缘约 24px。上下保持 16px 不变，避免整体过于松散。
    */
   padding: 16px 24px;
-  background: #f5f6f8;
+  background: var(--color-paper-2);
 }
 
 .page-head {
@@ -631,29 +632,18 @@ $brand: #436bff;
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-  color: #262626;
-  font-size: 16px;
-  line-height: 1;
-
-  &:hover {
-    border-color: $brand;
-    color: $brand;
-  }
 }
 
 .page-title {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .head-student {
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 /*
@@ -682,19 +672,19 @@ $brand: #436bff;
   flex-direction: column;
   gap: 12px;
   padding: 16px 12px;
-  background: #fff;
-  border-radius: 4px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .queue-title {
   margin: 0;
   font-size: 14px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .queue-count {
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-weight: 400;
 }
 
@@ -711,8 +701,8 @@ $brand: #436bff;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #e6eeff;
-  color: #436bff;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 14px;
   line-height: 32px;
   text-align: center;
@@ -724,13 +714,13 @@ $brand: #436bff;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 13px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .queue-empty {
   margin: 0;
   font-size: 12px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .queue-nav {
@@ -744,25 +734,18 @@ $brand: #436bff;
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-  color: #262626;
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
 
-  &:hover:not(:disabled) { border-color: #436bff; color: #436bff; }
-  &:disabled { color: #d9d9d9; cursor: not-allowed; }
+  &:disabled { color: var(--color-rule-2); cursor: not-allowed; }
 }
 
 /* ---- 批阅状态三 tab（2026-11-13）---- */
+/* 横向窄项（敢做档）：hover 只动字色，激活无底色块 + 下边 2px 信号条 */
 .paper-tabs {
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 0 4px 12px;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 
 .paper-tab {
@@ -770,29 +753,31 @@ $brand: #436bff;
   border: 0;
   border-bottom: 2px solid transparent;
   background: transparent;
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 14px;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
 
-  &:hover { color: #436bff; }
+  &:hover { color: var(--color-accent-deep); }
   &.active {
-    color: #436bff;
-    border-bottom-color: #436bff;
+    color: var(--color-accent-deep);
+    border-bottom-color: var(--color-accent);
     font-weight: 500;
   }
+
+  &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
 }
 
 .tab-empty {
   margin: 24px 0;
   text-align: center;
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .queue-index {
   font-size: 13px;
-  color: #262626;
+  color: var(--color-ink);
   white-space: nowrap;
 }
 
@@ -805,8 +790,8 @@ $brand: #436bff;
 
 .info-card {
   padding: 20px 24px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .info-top {
@@ -823,7 +808,7 @@ $brand: #436bff;
   font-size: 18px;
   line-height: 26px;
   font-weight: 500;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .info-row {
@@ -833,7 +818,7 @@ $brand: #436bff;
   margin-top: 6px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .info-item {
@@ -843,11 +828,11 @@ $brand: #436bff;
 
   em {
     font-style: normal;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
-/* 身份异常块：浅橙底，跟答卷正文的浅灰块区分开 */
+/* 身份异常块：warning 功能色 token 浅底，跟答卷正文的浅灰块区分开 */
 .identity-block {
   display: flex;
   align-items: center;
@@ -856,22 +841,27 @@ $brand: #436bff;
   margin-top: 12px;
   padding: 8px 12px;
   border-radius: 4px;
-  background: #fff7e6;
+  background: color-mix(in oklab, var(--color-warning) 14%, var(--color-paper));
 }
 
 .identity-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   padding: 0 6px;
   border-radius: 2px;
-  background: #ffe7ba;
-  color: #d46b08;
+  background: color-mix(in oklab, var(--color-warning) 30%, var(--color-paper));
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
   font-size: 12px;
   line-height: 20px;
+
+  .flag-icon { font-size: 12px; }
 }
 
 .identity-text {
   font-size: 13px;
   line-height: 20px;
-  color: #d46b08;
+  color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink));
 }
 
 .paper-side {
@@ -881,20 +871,22 @@ $brand: #436bff;
 
 .card {
   padding: 16px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-paper);
+  border-radius: var(--radius-card);
 }
 
 .progress-line {
   margin: 0 0 12px;
   font-size: 14px;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .progress-num {
-  color: $brand;
+  color: var(--color-accent-deep);
   font-weight: 500;
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
 }
 
 .legend {
@@ -909,32 +901,33 @@ $brand: #436bff;
   gap: 6px;
   font-size: 12px;
   line-height: 20px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
+/* 图例色块走功能色 token（success/error 冷区校准后） */
 .legend-box {
   width: 14px;
   height: 14px;
   border-radius: 2px;
 
   &--blank {
-    border: 1px solid #d9d9d9;
-    background: #fff;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
   }
 
   &--right {
-    background: #d7f7c1;
+    background: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
   }
 
   &--wrong {
-    background: #fef2f0;
+    background: color-mix(in oklab, var(--color-error) 14%, var(--color-paper));
   }
 }
 
 .divider {
   height: 1px;
   margin: 16px 0;
-  background: #f0f0f0;
+  background: var(--color-paper-3);
 }
 
 .sheet-group {
@@ -945,7 +938,7 @@ $brand: #436bff;
   margin: 0 0 8px;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-ink-2);
 }
 
 .sheet-group__items {
@@ -954,39 +947,42 @@ $brand: #436bff;
   gap: 8px;
 }
 
+/* 题号方块：机器值 mono；对/错态走功能色 token */
 .sheet-no {
   min-width: 28px;
   height: 28px;
   padding: 0 6px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 2px;
-  background: #fff;
-  color: #595959;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 1;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 
   &:hover {
-    border-color: $brand;
-    color: $brand;
+    border-color: var(--color-accent);
+    color: var(--color-accent-deep);
   }
 
   &:focus-visible {
-    outline: 2px solid $brand;
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 
   &.is-right {
-    border-color: #d7f7c1;
-    background: #d7f7c1;
-    color: #389e0d;
+    border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
+    background: color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
+    color: var(--color-success);
   }
 
   &.is-wrong {
-    border-color: #fef2f0;
-    background: #fef2f0;
-    color: #f5222d;
+    border-color: color-mix(in oklab, var(--color-error) 16%, var(--color-paper));
+    background: color-mix(in oklab, var(--color-error) 14%, var(--color-paper));
+    color: var(--color-error);
   }
 }
 
@@ -1007,8 +1003,6 @@ $brand: #436bff;
 .btn-submit {
   width: 96px;
   border-radius: 4px;
-  background: $brand;
-  border-color: $brand;
 }
 
 .evidence-img {
@@ -1020,7 +1014,7 @@ $brand: #436bff;
   margin: 0;
   padding: 40px 0;
   text-align: center;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 @media (max-width: 1100px) {

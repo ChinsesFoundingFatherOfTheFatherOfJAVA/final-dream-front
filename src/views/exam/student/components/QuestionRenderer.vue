@@ -203,12 +203,12 @@ const onQaChange = (value: string) => {
       gap: 6px;
       padding-left: 8px;
       font-size: 14px;
-      color: #262626;
+      color: var(--color-ink);
     }
   }
 
   &__letter {
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__opt-text {
@@ -244,7 +244,7 @@ const onQaChange = (value: string) => {
   &__blank-no {
     flex: none;
     width: 20px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 14px;
   }
 
@@ -263,13 +263,13 @@ const onQaChange = (value: string) => {
   &__combo-tip {
     margin-top: 8px;
     font-size: 13px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__empty-tip {
     margin: 10px 0 0;
     font-size: 13px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 </style>

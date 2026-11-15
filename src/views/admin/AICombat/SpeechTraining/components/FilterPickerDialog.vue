@@ -124,7 +124,7 @@ const confirm = () => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-  color: #7a8396;
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -142,11 +142,11 @@ const confirm = () => {
   margin-right: 0;
   padding: 0 8px;
   border-radius: 7px;
-  color: #374151;
+  color: var(--color-ink-2);
   font-size: 14px;
 
   &:hover {
-    background: #f5f8ff;
+    background: var(--color-accent-wash);
   }
 
   :deep(.el-checkbox__label) {
@@ -154,7 +154,7 @@ const confirm = () => {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #374151;
+    color: var(--color-ink-2);
     font-size: 14px;
   }
 }
@@ -165,7 +165,7 @@ const confirm = () => {
 }
 
 .option-count {
-  color: #9aa3b2;
+  color: var(--color-muted);
   font-size: 12px;
 }
 

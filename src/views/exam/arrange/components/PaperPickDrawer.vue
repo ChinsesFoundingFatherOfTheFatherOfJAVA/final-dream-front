@@ -115,23 +115,23 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 900px; height: 100%; background: #fff; display: flex; flex-direction: column; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } } }
+.drawer { width: 900px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: var(--rule-hair) solid var(--color-rule); font-size: 15px; font-weight: 600; .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; border-radius: 4px; } } }
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
 .filter-row { display: flex; gap: 10px; .filter-select { width: 220px; font-size: 13px; } .el-input { flex: 1; min-width: 160px; font-size: 13px; } }
-.table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid #eef1f6; border-radius: 6px; }
+.table-wrap { flex: 1; min-height: 0; overflow: auto; border: var(--rule-hair) solid var(--color-rule); border-radius: 6px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #f2f4f8; }
-th { background: #fafbfd; color: #667; font-weight: 500; white-space: nowrap; }
-tr { cursor: pointer; &:hover td { background: #fafbfe; } &.picked td { background: #f0f8ff; } }
+th, td { padding: 9px 12px; text-align: left; border-bottom: var(--rule-hair) solid var(--color-paper-3); }
+th { background: var(--color-paper-2); color: var(--color-ink); font-weight: 500; white-space: nowrap; }
+tr { cursor: pointer; &:hover td { background: var(--color-accent-wash); } &.picked td { background: var(--color-accent-wash); } }
 .check-col { width: 40px; text-align: center; }
 .col-name { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .col-sm { min-width: 90px; white-space: nowrap; }
-.col-time { min-width: 150px; white-space: nowrap; color: #667; }
-.tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; &.ok { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; } &.warn { background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; } }
-.warn { margin: 0; padding: 8px 10px; background: #fff7e6; border: 1px solid #ffe9a8; border-radius: 4px; font-size: 12px; color: #ad8b00; }
-.empty-cell { text-align: center; color: #999; padding: 40px 0; }
-.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #667; button { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; &:disabled { opacity: .5; } } }
-.drawer-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }
-.btn { padding: 7px 18px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; font-size: 13px; cursor: pointer; &.primary { background: #1890ff; border-color: #1890ff; color: #fff; } &:disabled { opacity: .6; cursor: not-allowed; } }
+.col-time { min-width: 150px; white-space: nowrap; color: var(--color-muted); }
+.tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; &.ok { background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-success) 40%, var(--color-paper)); color: var(--color-success); } &.warn { background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-warning) 45%, var(--color-paper)); color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink)); } }
+.warn { margin: 0; padding: 8px 10px; background: color-mix(in oklab, var(--color-warning) 16%, var(--color-paper)); border: 1px solid color-mix(in oklab, var(--color-warning) 40%, var(--color-paper)); border-radius: 4px; font-size: 12px; color: color-mix(in oklab, var(--color-warning) 55%, var(--color-ink)); }
+.empty-cell { text-align: center; color: var(--color-muted); padding: 40px 0; }
+.pagination { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--color-muted); button { padding: 4px 10px; border: 1px solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper); cursor: pointer; &:disabled { opacity: .5; } } }
+.drawer-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: var(--rule-hair) solid var(--color-rule); }
+.btn { padding: 7px 18px; border-radius: 4px; font-size: 13px; cursor: pointer; &:disabled { opacity: .6; cursor: not-allowed; } }
 </style>

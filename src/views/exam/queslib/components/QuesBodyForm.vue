@@ -261,23 +261,23 @@ const moveOption = (index: number, delta: number) => {
 .block { display: flex; flex-direction: column; gap: 8px; }
 
 .block-label {
-  font-size: 13px; color: #4a5368; font-weight: 500;
-  &.required::after { content: ' *'; color: #f5222d; }
+  font-size: 13px; color: var(--color-ink-2); font-weight: 500;
+  &.required::after { content: ' *'; color: var(--color-error); }
 }
 
 .block textarea {
   width: 100%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
   padding: 8px 10px;
   font-size: 13px;
   line-height: 1.6;
   resize: vertical;
   outline: none;
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
 }
 
-.hint { margin: 0; font-size: 11px; color: #a0a7b8; }
+.hint { margin: 0; font-size: 11px; color: var(--color-rule-2); }
 
 .option-row {
   display: flex;
@@ -289,66 +289,66 @@ const moveOption = (index: number, delta: number) => {
   /* 判断题的两个纯文字输入（截图规定"仅文字"，不上富文本） */
   > input {
     flex: 1;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 4px;
     padding: 7px 10px;
     font-size: 13px;
     outline: none;
-    &:focus { border-color: #1890ff; }
+    &:focus { border-color: var(--color-accent); }
   }
 }
 
-.option-key { width: 22px; text-align: center; font-size: 13px; color: #4a5368; font-weight: 600; }
+.option-key { width: 22px; text-align: center; font-size: 13px; color: var(--color-ink-2); font-weight: 600; }
 
 .drag-handle {
   width: 16px;
-  color: #b0b7c3;
+  color: var(--color-rule-2);
   cursor: grab;
   user-select: none;
   text-align: center;
   &:active { cursor: grabbing; }
 }
 
-.option-row.dragging { opacity: .5; background: #f3f7ff; border-radius: 4px; }
+.option-row.dragging { opacity: .5; background: var(--color-accent-wash); border-radius: 4px; }
 
 .answer-flag {
   display: inline-flex; align-items: center; gap: 4px;
-  font-size: 12px; color: #4a5368; white-space: nowrap;
+  font-size: 12px; color: var(--color-ink-2); white-space: nowrap;
 }
 
 // 幽灵图标按钮：常态无边框融入行内，悬停才浮现底色，替代原"边框方块 + 文字箭头"的笨重样式
 .icon-btn {
   width: 26px; height: 26px; padding: 0;
   border: none; border-radius: 4px; background: transparent;
-  cursor: pointer; color: #8a92a5;
+  cursor: pointer; color: var(--color-muted);
   .el-icon { font-size: 15px; }
-  &:hover:not(:disabled) { color: #1890ff; background: #f0f7ff; }
-  &:disabled { color: #d5dae3; cursor: not-allowed; }
+  &:hover:not(:disabled) { color: var(--color-accent); background: var(--color-accent-wash); }
+  &:disabled { color: var(--color-rule-2); cursor: not-allowed; }
   &.danger {
-    color: #b0b7c3;
-    &:hover:not(:disabled) { color: #f5222d; background: #fff1f0; }
+    color: var(--color-rule-2);
+    &:hover:not(:disabled) { color: var(--color-error); background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper)); }
   }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
 }
 
-.radio-row { display: flex; gap: 20px; font-size: 13px; color: #4a5368; }
+.radio-row { display: flex; gap: 20px; font-size: 13px; color: var(--color-ink-2); }
 
 .score-input { width: 90px; }
-.percent { font-size: 12px; color: #8a92a5; }
-.block-hint { margin: -4px 0 8px; font-size: 12px; color: #8a92a5; }
-.fill-index { flex: none; width: 62px; font-size: 13px; color: #5a6478; }
+.percent { font-size: 12px; color: var(--color-muted); }
+.block-hint { margin: -4px 0 8px; font-size: 12px; color: var(--color-muted); }
+.fill-index { flex: none; width: 62px; font-size: 13px; color: var(--color-ink-2); }
 .blank-score-input { flex: none; width: 88px; }
 .block-check { margin-top: 8px; }
 /* 开关旁的说明图标：可聚焦，键盘也能看到提示 */
 .check-help {
   margin-left: 6px;
-  color: #8a92a5;
+  color: var(--color-muted);
   font-size: 14px;
   vertical-align: middle;
   cursor: help;
 }
 .check-help:focus-visible {
-  outline: 2px solid #1890ff;
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -362,11 +362,11 @@ const moveOption = (index: number, delta: number) => {
 .btn {
   align-self: flex-start;
   padding: 7px 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-size: 13px;
-  color: #4a5368;
+  color: var(--color-ink-2);
   cursor: pointer;
   &:disabled { opacity: .6; cursor: not-allowed; }
 }

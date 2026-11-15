@@ -49,20 +49,23 @@ const visibleMenus = computed(() =>
   min-height: 0;
   display: grid;
   grid-template-columns: 196px minmax(0, 1fr);
-  background: #f5f7fa;
+  background: var(--color-paper-2);
+  font-family: var(--font-display);
 }
 
 .enterprise-sidebar {
   min-height: 0;
   padding: 20px 12px;
-  border-right: 1px solid #e5e9f0;
-  background: #fff;
+  border-right: 1px solid var(--color-rule);
+  background: var(--color-paper);
+  // 侧栏立体：发丝描边 + 浅落影
+  box-shadow: var(--shadow-card);
 }
 
 .sidebar-title {
   padding: 0 12px 14px;
-  color: #1f2937;
-  font-size: 16px;
+  color: var(--color-ink);
+  font-size: var(--text-md);
   font-weight: 700;
 }
 
@@ -75,20 +78,40 @@ const visibleMenus = computed(() =>
   height: 42px;
   margin-bottom: 4px;
   padding: 0 14px !important;
-  border-radius: 7px;
-  color: #596274;
-  font-size: 14px;
-  transition: background 0.16s ease, color 0.16s ease;
+  border-radius: var(--radius-input);
+  color: var(--color-ink-2);
+  font-size: var(--text-sm);
+  // 过渡只列具体属性，禁 transition: all
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+  // 左信号条：伪元素常驻占位，激活/悬停只改颜色，不产生布局位移
+  position: relative;
 
-  &:hover {
-    background: #f4f7fc;
-    color: #1890ff;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    transition: background-color var(--dur-micro) var(--ease-out);
   }
 
+  &:hover {
+    background: var(--color-accent-wash);
+    color: var(--color-accent-2);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+  }
+
+  // 钴蓝只做激活信号：wash 底 + 左信号条 + 深钴蓝文字
   &.is-active {
-    background: #eaf2ff;
-    color: #1890ff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-2);
     font-weight: 600;
+
+    &::before { background: var(--color-accent); }
   }
 }
 
@@ -109,7 +132,8 @@ const visibleMenus = computed(() =>
   .enterprise-sidebar {
     padding: 10px 12px;
     border-right: none;
-    border-bottom: 1px solid #e5e9f0;
+    border-bottom: 1px solid var(--color-rule);
+    box-shadow: none;
   }
 
   .sidebar-title {

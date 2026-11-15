@@ -288,13 +288,13 @@ watch(sourceType, (next, prev) => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 880px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 880px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 500;
+  padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 500;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px 20px; gap: 12px; }
@@ -303,10 +303,10 @@ watch(sourceType, (next, prev) => {
   display: flex; align-items: center; gap: 20px;
 
   .mode-radio {
-    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #4a5368; cursor: pointer;
-    input { margin: 0; accent-color: #1890ff; }
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-ink-2); cursor: pointer;
+    input { margin: 0; accent-color: var(--color-accent); }
   }
-  .hint { font-size: 12px; color: #8a92a5; }
+  .hint { font-size: 12px; color: var(--color-muted); }
 }
 
 .toolbar {
@@ -324,77 +324,77 @@ watch(sourceType, (next, prev) => {
 .main-area { flex: 1; min-height: 0; display: flex; gap: 16px; }
 
 .tree-list {
-  flex: 1; min-width: 0; overflow-y: auto; border: 1px solid #eef1f6; border-radius: 6px; padding: 6px 0;
+  flex: 1; min-width: 0; overflow-y: auto; border: 1px solid var(--color-rule); border-radius: 6px; padding: 6px 0;
 }
 
 .lib-row {
-  display: flex; align-items: center; gap: 8px; padding: 9px 14px; font-size: 13px; color: #4a5368;
+  display: flex; align-items: center; gap: 8px; padding: 9px 14px; font-size: 13px; color: var(--color-ink-2);
 
-  &:hover { background: #f7faff; }
-  &.picked { background: #f2f8ff; }
+  &:hover { background: var(--color-accent-wash); }
+  &.picked { background: var(--color-accent-wash); }
 
   .expand-arrow {
-    width: 14px; text-align: center; color: #a0a7b8; cursor: pointer; transition: transform .15s;
+    width: 14px; text-align: center; color: var(--color-rule-2); cursor: pointer; transition: transform .15s;
     &.expanded { transform: rotate(90deg); }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; }
   }
   .expand-placeholder { width: 14px; }
   .lib-name { flex: 1; min-width: 0; cursor: pointer;
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; }
   }
-  .lib-cat { color: #8a92a5; font-size: 12px; }
-  input[type="checkbox"] { accent-color: #1890ff; }
+  .lib-cat { color: var(--color-muted); font-size: 12px; }
+  input[type="checkbox"] { accent-color: var(--color-accent); }
 }
 
 .point-row {
   display: flex; align-items: center; gap: 8px; padding: 7px 14px 7px 44px;
-  font-size: 13px; color: #4a5368;
+  font-size: 13px; color: var(--color-ink-2);
 
-  &:hover { background: #f7faff; }
-  input[type="checkbox"] { accent-color: #1890ff; }
+  &:hover { background: var(--color-accent-wash); }
+  input[type="checkbox"] { accent-color: var(--color-accent); }
 }
 
-.point-empty { margin: 4px 0 4px 44px; font-size: 12px; color: #b0b7c3; }
+.point-empty { margin: 4px 0 4px 44px; font-size: 12px; color: var(--color-rule-2); }
 
 .picked-panel {
-  flex: 0 0 280px; border: 1px solid #eef1f6; border-radius: 6px;
+  flex: 0 0 280px; border: 1px solid var(--color-rule); border-radius: 6px;
   display: flex; flex-direction: column; padding: 12px 14px;
 
   .picked-head {
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: #303133; margin-bottom: 10px;
+    font-size: 13px; color: var(--color-ink); margin-bottom: 10px;
   }
-  .clear-btn { color: #1890ff; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
+  .clear-btn { color: var(--color-accent); cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; } }
 }
 
 .picked-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
 
 .picked-group { width: 100%; margin-bottom: 10px; }
-.group-name { margin: 0 0 6px; font-size: 13px; color: #303133; }
+.group-name { margin: 0 0 6px; font-size: 13px; color: var(--color-ink); }
 .group-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .picked-tag {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 8px; border: 1px solid #d9e1ec; border-radius: 4px;
-  background: #fafbfd; font-size: 12px; color: #4a5368;
+  padding: 4px 8px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper-2); font-size: 12px; color: var(--color-ink-2);
 
-  i { font-style: normal; color: #a0a7b8; cursor: pointer; &:hover { color: #f5222d; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+  i { font-style: normal; color: var(--color-rule-2); cursor: pointer; &:hover { color: var(--color-error); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; }
   }
 }
 
-.empty, .empty-tip { font-size: 12px; color: #b0b7c3; }
+.empty, .empty-tip { font-size: 12px; color: var(--color-rule-2); }
 
 .drawer-footer {
   display: flex; justify-content: flex-end; gap: 10px;
-  padding: 14px 20px; border-top: 1px solid #eee;
+  padding: 14px 20px; border-top: 1px solid var(--color-rule);
 }
 
 .btn {
-  padding: 7px 22px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 7px 22px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

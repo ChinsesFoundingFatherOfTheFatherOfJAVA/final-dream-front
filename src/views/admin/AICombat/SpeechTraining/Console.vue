@@ -5,7 +5,7 @@
       <div class="project-info">
         <div class="project-cover">
           <img v-if="project.coverImage" :src="project.coverImage" :alt="project.name" width="60" height="60" class="cover-img" />
-          <span v-else class="cover-icon" aria-hidden="true">📚</span>
+          <span v-else class="cover-icon" aria-hidden="true"><el-icon><Collection /></el-icon></span>
         </div>
         <div class="project-details">
           <h1 class="project-name">{{ project.name }}</h1>
@@ -66,6 +66,7 @@ import { getProjectDetail, publishProject, withdrawProject, deleteProject } from
 import { resolveAssetUrl } from '@/api/request'
 import { useAuthStore } from '@/stores/auth'
 import { toStatus, toProjectType, toAssignType } from '@/utils/convert'
+import { Collection } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -145,13 +146,13 @@ onMounted(loadProject)
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
 }
 
 .project-header {
-  background: #fff;
+  background: var(--color-paper);
   padding: 16px 24px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .project-info {
@@ -163,7 +164,7 @@ onMounted(loadProject)
 .project-cover {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -182,7 +183,7 @@ onMounted(loadProject)
   .project-name {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0 0 8px 0;
   }
 
@@ -196,7 +197,7 @@ onMounted(loadProject)
     display: flex;
     gap: 24px;
     font-size: 14px;
-    color: #666;
+    color: var(--color-muted);
   }
 }
 
@@ -205,8 +206,8 @@ onMounted(loadProject)
   border-radius: 4px;
   font-size: 12px;
 
-  &.tag-published { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
-  &.tag-draft { background: #f5f5f5; color: #999; border: 1px solid #d9d9d9; }
+  &.tag-published { background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); color: var(--color-success); border: 1px solid color-mix(in oklab, var(--color-success) 35%, var(--color-paper)); }
+  &.tag-draft { background: var(--color-paper-2); color: var(--color-muted); border: 1px solid var(--color-rule-2); }
 }
 
 .type-tag {
@@ -214,8 +215,8 @@ onMounted(loadProject)
   border-radius: 4px;
   font-size: 12px;
 
-  &.tag-project { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
-  &.tag-single { background: #fff7e6; color: #faad14; border: 1px solid #ffd591; }
+  &.tag-project { background: var(--color-accent-wash); color: var(--color-accent); border: 1px solid var(--color-accent-2); }
+  &.tag-single { background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); color: var(--color-warning); border: 1px solid color-mix(in oklab, var(--color-warning) 35%, var(--color-paper)); }
 }
 
 .mode-tag {
@@ -223,8 +224,8 @@ onMounted(loadProject)
   border-radius: 4px;
   font-size: 12px;
 
-  &.tag-train { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
-  &.tag-examine { background: #fff7e6; color: #faad14; border: 1px solid #ffd591; }
+  &.tag-train { background: var(--color-accent-wash); color: var(--color-accent); border: 1px solid var(--color-accent-2); }
+  &.tag-examine { background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); color: var(--color-warning); border: 1px solid color-mix(in oklab, var(--color-warning) 35%, var(--color-paper)); }
 }
 
 .project-actions {
@@ -238,10 +239,10 @@ onMounted(loadProject)
   font-size: 14px;
   cursor: pointer;
   transition: opacity 0.2s;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
-  &.btn-default { background: #fff; color: #333; }
-  &.btn-danger { background: #fff; color: #f5222d; border-color: #f5222d; }
+  &.btn-default { background: var(--color-paper); color: var(--color-ink); }
+  &.btn-danger { background: var(--color-paper); color: var(--color-error); border-color: var(--color-error); }
   &:hover { opacity: 0.85; }
 }
 
@@ -253,20 +254,20 @@ onMounted(loadProject)
 
 .console-menu {
   width: 160px;
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
+  background: var(--color-paper);
+  border-right: 1px solid var(--color-rule);
   padding: 16px 0;
 
   .menu-item {
     display: block;
     padding: 12px 24px;
     font-size: 14px;
-    color: #666;
+    color: var(--color-muted);
     text-decoration: none;
     transition: background 0.2s, color 0.2s;
 
-    &:hover { background: #f5f5f5; color: #1890ff; }
-    &.active { color: #1890ff; border-right: 3px solid #1890ff; background: #e6f7ff; }
+    &:hover { background: var(--color-paper-2); color: var(--color-accent); }
+    &.active { color: var(--color-accent); border-right: 3px solid var(--color-accent); background: var(--color-accent-wash); }
   }
 }
 
@@ -325,7 +326,7 @@ onMounted(loadProject)
     box-sizing: border-box;
     padding: 0 12px;
     border-right: none;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--color-rule);
 
     .menu-item {
       flex-shrink: 0;
@@ -334,7 +335,7 @@ onMounted(loadProject)
 
       &.active {
         border-right: none;
-        border-bottom-color: #1890ff;
+        border-bottom-color: var(--color-accent);
       }
     }
   }

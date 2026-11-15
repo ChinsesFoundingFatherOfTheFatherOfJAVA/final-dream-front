@@ -181,10 +181,10 @@ async function onClear() {
 .ca-tip {
   margin: 0;
   font-size: 13px;
-  color: #646a73;
+  color: var(--color-ink-2);
 
   .ca-target {
-    color: #1f2329;
+    color: var(--color-ink);
     font-weight: 600;
   }
 }
@@ -202,11 +202,11 @@ async function onClear() {
   height: 64px;
   border-radius: 50%;
   overflow: hidden;
-  background: #f2f3f5;
+  background: var(--color-paper-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c0c6d2;
+  color: var(--color-muted);
   font-size: 22px;
 
   img {
@@ -225,20 +225,20 @@ async function onClear() {
 
   .ca-file {
     font-size: 12px;
-    color: #8a8f98;
+    color: var(--color-muted);
     word-break: break-all;
   }
 
   .ca-empty-hint {
     font-size: 12px;
-    color: #8a8f98;
+    color: var(--color-muted);
   }
 }
 
 .ca-hint {
   margin: 0;
   font-size: 12px;
-  color: #8a8f98;
+  color: var(--color-muted);
   line-height: 1.6;
 }
 </style>

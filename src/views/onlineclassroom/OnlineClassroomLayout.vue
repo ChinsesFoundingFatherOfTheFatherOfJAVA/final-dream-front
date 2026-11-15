@@ -1,7 +1,9 @@
 <template>
   <div class="kng-layout">
     <header class="kng-header">
-      <el-button class="back-btn" aria-label="返回首页" @click="router.push('/homepage')">‹</el-button>
+      <el-button class="back-btn" aria-label="返回首页" @click="router.push('/homepage')">
+        <el-icon><Back /></el-icon>
+      </el-button>
       <div>
         <h1>在线课堂</h1>
         <p>企业学习资源运营</p>
@@ -16,7 +18,7 @@
             :index="item.path"
             class="menu-item"
           >
-            <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
+            <el-icon class="menu-icon" aria-hidden="true"><component :is="item.icon" /></el-icon>
             <span>{{ item.label }}</span>
           </el-menu-item>
         </el-menu>
@@ -30,6 +32,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Back, Notebook, Reading, FolderOpened, Setting } from '@element-plus/icons-vue'
+import { markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -37,11 +41,12 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
+// t21：emoji 图标改 EP 图标组件（markRaw 避免组件对象被响应式代理）
 const menus = [
-  { path: '/kng/courseware', label: '课件管理', icon: '▤', permission: 'kng:courseware' },
-  { path: '/kng/course', label: '课程管理', icon: '▣', permission: 'kng:course' },
-  { path: '/kng/catalog', label: '分类管理', icon: '☷', permission: 'kng:catalog' },
-  { path: '/kng/setting', label: '课程设置', icon: '⚙', permission: 'kng:setting' }
+  { path: '/kng/courseware', label: '课件管理', icon: markRaw(Notebook), permission: 'kng:courseware' },
+  { path: '/kng/course', label: '课程管理', icon: markRaw(Reading), permission: 'kng:course' },
+  { path: '/kng/catalog', label: '分类管理', icon: markRaw(FolderOpened), permission: 'kng:catalog' },
+  { path: '/kng/setting', label: '课程设置', icon: markRaw(Setting), permission: 'kng:setting' }
 ]
 
 const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item.permission)))
@@ -52,8 +57,8 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f7fb;
-  color: #253047;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .kng-header {
@@ -63,17 +68,19 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   align-items: center;
   gap: 12px;
   padding: 0 22px;
-  background: #fff;
-  border-bottom: 1px solid #e6eaf1;
+  background: var(--color-paper);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   h1 {
     margin: 0;
+    font-family: var(--font-display);
     font-size: 18px;
+    color: var(--color-ink);
   }
 
   p {
     margin: 3px 0 0;
-    color: #8a92a5;
+    color: var(--color-muted);
     font-size: 12px;
   }
 }
@@ -81,11 +88,11 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
 .back-btn {
   width: 34px;
   height: 34px;
-  border: 1px solid #d9deea;
-  border-radius: 6px;
-  background: #fff;
-  color: #596274;
-  font-size: 24px;
+  border: 1px solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  background: var(--color-key-face);
+  color: var(--color-ink-2);
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
 }
@@ -100,8 +107,8 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   width: 200px;
   flex-shrink: 0;
   padding: 14px 10px;
-  background: #fff;
-  border-right: 1px solid #e6eaf1;
+  background: var(--color-paper);
+  border-right: var(--rule-hair) solid var(--color-rule);
 }
 
 .kng-menu {
@@ -109,24 +116,44 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
   background: transparent;
 }
 
+/* t21 侧栏宽行：hover wash+抬升，激活 accent 字色+左信号条（无底色块口径） */
 .menu-item {
+  position: relative;
   height: 42px;
   margin-bottom: 6px;
   padding: 0 14px;
-  border-radius: 7px;
-  color: #596274;
+  border-radius: var(--radius-input);
+  color: var(--color-ink-2);
   font-size: 14px;
   line-height: 42px;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 
-  &:hover,
+  &:hover {
+    background: var(--color-accent-wash);
+    transform: translateY(-1px);
+  }
+
   &.is-active {
-    color: #e75487;
-    background: #fff1f6;
+    color: var(--color-accent);
+    font-weight: 500;
+
+    /* 左缘 2px 族标信号条 */
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      border-radius: var(--radius-pill);
+      background: var(--color-accent);
+    }
   }
 }
 
 .menu-icon {
   width: 18px;
+  margin-right: 8px;
   text-align: center;
 }
 

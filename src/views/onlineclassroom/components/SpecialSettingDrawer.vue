@@ -58,10 +58,10 @@ watch(
 <style scoped lang="scss">
 .special-notice {
   padding: 10px 12px;
-  border: 1px solid #cfe0ff;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
   border-radius: 6px;
-  background: #f2f7ff;
-  color: #2e6dc4;
+  background: var(--color-accent-wash);
+  color: var(--color-accent-deep);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -71,7 +71,7 @@ watch(
 
   h4 {
     margin: 0 0 14px;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 14px;
   }
 }
@@ -80,7 +80,7 @@ watch(
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 }
 
@@ -96,15 +96,15 @@ watch(
   }
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #2e7cf6;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

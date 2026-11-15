@@ -87,7 +87,7 @@ const tiers = (c: unknown) => normalizeCriteria(c)
 <style scoped lang="scss">
 .tab-desc {
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
   line-height: 1.7;
   margin: 0 0 14px;
 }
@@ -97,23 +97,23 @@ const tiers = (c: unknown) => normalizeCriteria(c)
   align-items: baseline;
   gap: 12px;
   padding: 13px 16px;
-  background: #f5f7ff;
-  border: 1px solid #dfe4fb;
+  background: var(--color-accent-wash);
+  border: 1px solid var(--color-accent-wash);
   border-radius: 8px;
   margin-bottom: 14px;
 
-  .pass-label { font-size: 13px; color: #3b5bdb; font-weight: 600; }
+  .pass-label { font-size: 13px; color: var(--color-accent); font-weight: 600; }
 
   .pass-value {
     font-size: 24px;
     font-weight: 600;
-    color: #3b5bdb;
+    color: var(--color-accent);
     line-height: 1;
 
     .pass-unit { font-size: 13px; font-weight: 400; margin-left: 2px; }
   }
 
-  .pass-hint { font-size: 12px; color: #8a8f98; margin-left: auto; }
+  .pass-hint { font-size: 12px; color: var(--color-muted); margin-left: auto; }
 }
 
 .empty-state {
@@ -121,15 +121,15 @@ const tiers = (c: unknown) => normalizeCriteria(c)
   text-align: center;
 
   .empty-icon { font-size: 34px; margin-bottom: 10px; }
-  .empty-text { font-size: 14px; color: #999; margin: 0; }
+  .empty-text { font-size: 14px; color: var(--color-muted); margin: 0; }
 }
 
 .dimension-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   padding: 13px 14px;
   margin-bottom: 10px;
-  background: #fff;
+  background: var(--color-paper);
 
   .dim-head {
     display: flex;
@@ -141,8 +141,8 @@ const tiers = (c: unknown) => normalizeCriteria(c)
       width: 20px;
       height: 20px;
       border-radius: 4px;
-      background: #f0edff;
-      color: #6b5ce7;
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
       font-size: 12px;
       display: flex;
       align-items: center;
@@ -150,20 +150,20 @@ const tiers = (c: unknown) => normalizeCriteria(c)
       flex-shrink: 0;
     }
 
-    .dim-name { font-size: 14px; font-weight: 600; color: #1f2329; flex: 1; min-width: 0; }
-    .dim-weight { font-size: 14px; font-weight: 600; color: #3b5bdb; }
+    .dim-name { font-size: 14px; font-weight: 600; color: var(--color-ink); flex: 1; min-width: 0; }
+    .dim-weight { font-size: 14px; font-weight: 600; color: var(--color-accent); }
   }
 
   .dim-weight-bar {
     height: 6px;
-    background: #f2f3f5;
+    background: var(--color-paper-2);
     border-radius: 3px;
     overflow: hidden;
     margin-bottom: 9px;
 
     .weight-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3b5bdb, #6b5ce7);
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent));
       border-radius: 3px;
     }
   }
@@ -171,7 +171,7 @@ const tiers = (c: unknown) => normalizeCriteria(c)
   .dim-desc {
     margin: 0 0 9px;
     font-size: 13px;
-    color: #8a8f98;
+    color: var(--color-muted);
     line-height: 1.7;
   }
 
@@ -194,17 +194,17 @@ const tiers = (c: unknown) => normalizeCriteria(c)
       .tier-text { margin: 0; font-size: 13px; line-height: 1.7; }
     }
 
-    .tier-excellent { background: #f0fbe8; .tier-label { color: #2e7d32; } .tier-text { color: #44603a; } }
-    .tier-good { background: #e8edfb; .tier-label { color: #3b5bdb; } .tier-text { color: #43506f; } }
-    .tier-improve { background: #fff3e8; .tier-label { color: #c2410c; } .tier-text { color: #7a4a2c; } }
+    .tier-excellent { background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper)); .tier-label { color: var(--color-success); } .tier-text { color: var(--color-success); } }
+    .tier-good { background: var(--color-accent-wash); .tier-label { color: var(--color-accent); } .tier-text { color: var(--color-ink-2); } }
+    .tier-improve { background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); .tier-label { color: var(--color-warning); } .tier-text { color: var(--color-warning); } }
   }
 }
 
 .weight-sum {
   margin: 12px 0 0;
   font-size: 13px;
-  color: #646a73;
+  color: var(--color-ink-2);
 
-  .weight-warn { color: #e5484d; }
+  .weight-warn { color: var(--color-error); }
 }
 </style>

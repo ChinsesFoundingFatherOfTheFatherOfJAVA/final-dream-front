@@ -72,7 +72,7 @@ function handleVisibleChange(visible: boolean) {
 <style scoped lang="scss">
 .tip {
   margin: 0 0 14px;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -88,13 +88,13 @@ function handleVisibleChange(visible: boolean) {
   width: 100%;
   height: auto;
   padding: 9px 12px;
-  border: 1px solid #e9edf4;
+  border: var(--rule-hair) solid var(--color-rule);
   border-radius: 7px;
   margin-right: 0;
 
   &:hover {
-    border-color: #b9d4fb;
-    background: #f7faff;
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper));
+    background: var(--color-accent-wash);
   }
 
   :deep(.el-radio__label) {
@@ -109,14 +109,14 @@ function handleVisibleChange(visible: boolean) {
     flex: 1;
     min-width: 0;
     overflow: hidden;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .option-count {
-    color: #a2a9b7;
+    color: var(--color-muted);
     font-size: 11px;
   }
 }

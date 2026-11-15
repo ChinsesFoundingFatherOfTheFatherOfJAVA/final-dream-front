@@ -14,9 +14,9 @@
       <span class="metric__icon" aria-hidden="true">
         <!-- 是否通过：日历 + 对勾 -->
         <svg v-if="cell.key === 'pass'" viewBox="0 0 32 32" width="32" height="32" fill="none">
-          <rect x="4" y="6" width="24" height="22" rx="4" stroke="#595959" stroke-width="1.6" />
-          <path d="M4 12h24" stroke="#E9E9E9" stroke-width="1.6" />
-          <path d="M10.5 3.5v5M21.5 3.5v5" stroke="#595959" stroke-width="1.6" stroke-linecap="round" />
+          <rect x="4" y="6" width="24" height="22" rx="4" stroke="var(--color-ink-2)" stroke-width="1.6" />
+          <path d="M4 12h24" stroke="var(--color-rule)" stroke-width="1.6" />
+          <path d="M10.5 3.5v5M21.5 3.5v5" stroke="var(--color-ink-2)" stroke-width="1.6" stroke-linecap="round" />
           <path
             d="M11.293 19.536l3.12 3.12 6.294-6.292"
             stroke="currentColor"
@@ -30,25 +30,25 @@
         <svg v-else-if="cell.key === 'score'" viewBox="0 0 32 32" width="32" height="32" fill="none">
           <path
             d="M20 27H4a1 1 0 01-1-1V6a1 1 0 011-1h16a1 1 0 011 1v20a1 1 0 01-1 1z"
-            stroke="#595959"
+            stroke="var(--color-ink-2)"
             stroke-width="1.6"
           />
-          <path d="M8 9h8M8 13h5" stroke="#595959" stroke-width="1.6" stroke-linecap="round" />
-          <rect x="9" y="19" width="6" height="4" rx="1" fill="#E9E9E9" />
-          <path d="M18 20.5h6M18 24h4" stroke="#E9E9E9" stroke-width="1.6" stroke-linecap="round" />
+          <path d="M8 9h8M8 13h5" stroke="var(--color-ink-2)" stroke-width="1.6" stroke-linecap="round" />
+          <rect x="9" y="19" width="6" height="4" rx="1" fill="var(--color-rule)" />
+          <path d="M18 20.5h6M18 24h4" stroke="var(--color-rule)" stroke-width="1.6" stroke-linecap="round" />
         </svg>
 
         <!-- 考试用时：时钟 -->
         <svg v-else-if="cell.key === 'used'" viewBox="0 0 32 32" width="32" height="32" fill="none">
-          <circle cx="16" cy="16" r="13" stroke="#595959" stroke-width="1.6" />
+          <circle cx="16" cy="16" r="13" stroke="var(--color-ink-2)" stroke-width="1.6" />
           <path d="M16 8.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
           <path d="M16 17l5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
         </svg>
 
         <!-- 本次考试排名：三根圆角柱（高 16/25/19，§5 实测；线稿，中间柱为辅助面填充） -->
         <svg v-else viewBox="0 0 32 32" width="32" height="32" fill="none">
-          <rect x="4" y="13" width="7" height="16" rx="3" stroke="#595959" stroke-width="1.6" />
-          <rect x="12.5" y="4" width="7" height="25" rx="3" fill="#E9E9E9" />
+          <rect x="4" y="13" width="7" height="16" rx="3" stroke="var(--color-ink-2)" stroke-width="1.6" />
+          <rect x="12.5" y="4" width="7" height="25" rx="3" fill="var(--color-rule)" />
           <rect x="21" y="10" width="7" height="19" rx="3" stroke="currentColor" stroke-width="1.6" />
         </svg>
       </span>
@@ -91,7 +91,7 @@ defineProps<{
 
   /* 第一格不缩进，其余格用竖线分隔（原平台实测无 border-left，分隔靠卡片分隔线） */
   & + & {
-    border-left: 1px solid #f0f0f0;
+    border-left: 1px solid var(--color-rule);
   }
 
   &:first-child {
@@ -122,7 +122,7 @@ defineProps<{
   margin: 0 0 4px;
   font-size: 14px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: var(--color-muted);
 }
 
 .metric__value {
@@ -130,7 +130,7 @@ defineProps<{
   align-items: baseline;
   gap: 2px;
   margin: 0;
-  color: #262626;
+  color: var(--color-ink);
   line-height: 40px;
 }
 
@@ -148,7 +148,7 @@ defineProps<{
 .metric.is-pending {
   .metric__number,
   .metric__unit {
-    color: #bfbfbf;
+    color: var(--color-rule-2);
   }
 }
 

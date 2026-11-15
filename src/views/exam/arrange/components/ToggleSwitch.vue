@@ -43,7 +43,7 @@ const onChange = (checked: boolean) =>
     width: 52px;
     height: 28px;
     border-radius: 14px;
-    background: #d9d9d9;
+    background: var(--color-rule-2);
     transition: background .16s ease;
 
     &::after {
@@ -54,14 +54,14 @@ const onChange = (checked: boolean) =>
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+      background: var(--color-paper);
+      box-shadow: 0 1px 3px var(--shadow-card);
       transition: transform .16s ease;
     }
   }
 
   input:checked + .slider {
-    background: #1890ff;
+    background: var(--color-accent);
     &::after { transform: translateX(24px); }
   }
 
@@ -69,7 +69,7 @@ const onChange = (checked: boolean) =>
 
   // 内部 checkbox 被 width/height:0 隐藏，键盘聚焦时用滑块描边提供可见焦点
   &:has(input:focus-visible) .slider {
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, .35);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 35%, transparent);
   }
 }
 </style>

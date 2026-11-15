@@ -7,7 +7,7 @@
         <div class="menu-list">
           <div class="menu-group expanded">
             <div class="menu-group-title" role="button" tabindex="0" @keydown.enter.prevent="toggleGroup('speechNew')" @click="toggleGroup('speechNew')">
-              <span class="group-icon" aria-hidden="true">🔄</span>
+              <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
               <span>话术训练(新)</span>
               <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
@@ -18,17 +18,17 @@
           </div>
           <!-- 占位菜单：暂无功能，去掉可点暗示 -->
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">🔄</span>
+            <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
             <span>话术训练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">👥</span>
+            <el-icon class="group-icon" aria-hidden="true"><User /></el-icon>
             <span>演讲训练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
           <div class="menu-item collapsed" title="敬请期待">
-            <span class="group-icon" aria-hidden="true">⚔️</span>
+            <el-icon class="group-icon" aria-hidden="true"><Trophy /></el-icon>
             <span>实战演练</span>
             <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
           </div>
@@ -131,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowDown, CaretRight } from '@element-plus/icons-vue'
+import { ArrowDown, CaretRight, Refresh, User, Trophy } from '@element-plus/icons-vue'
 import { ref, reactive, onMounted } from 'vue'
 import { toast } from '@/utils/toast'
 import { useRouter } from 'vue-router'
@@ -217,22 +217,22 @@ const handleCreate = async () => {
 .layout {
   display: flex;
   height: 100%;
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .side-menu {
   width: 200px;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid var(--color-rule);
 
   .menu-title {
     padding: 16px 20px;
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-ink);
     margin: 0;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--color-rule);
   }
 }
 
@@ -243,11 +243,11 @@ const handleCreate = async () => {
     gap: 8px;
     padding: 10px 20px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     cursor: pointer;
 
-    &:hover { background: #f5f5f5; }
-    &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+    &:hover { background: var(--color-paper-2); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
     .arrow { font-size: 10px; margin-left: auto; }
   }
 }
@@ -258,14 +258,14 @@ const handleCreate = async () => {
   gap: 8px;
   padding: 10px 20px 10px 40px;
   font-size: 14px;
-  color: #666;
+  color: var(--color-muted);
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   text-decoration: none;
 
-  &:hover { background: #f5f5f5; color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
-  &.active { background: #e6f7ff; color: #1890ff; border-right: 3px solid #1890ff; }
+  &:hover { background: var(--color-paper-2); color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  &.active { background: var(--color-accent-wash); color: var(--color-accent); border-right: 3px solid var(--color-accent); }
   &.collapsed {
     padding-left: 20px;
     /* 占位入口：暂无功能，不做可点暗示 */
@@ -295,9 +295,9 @@ const handleCreate = async () => {
   height: 32px;
   border-radius: 4px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-ink);
 
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
 }
 
 .filter-input { width: 200px; }
@@ -308,49 +308,36 @@ const handleCreate = async () => {
   font-size: 14px;
   cursor: pointer;
   transition: opacity 0.2s;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
 
-  &.btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
-  &.btn-default { background: #fff; color: #333; }
-  &.btn-link { background: none; border: none; color: #1890ff; padding: 0; }
+  &.btn-primary { background: var(--color-accent); color: var(--color-paper); border-color: var(--color-accent); }
+  &.btn-default { background: var(--color-paper); color: var(--color-ink); }
+  &.btn-link { background: none; border: none; color: var(--color-accent); padding: 0; }.btn-link { background: none; border: none; color: var(--color-accent-deep); padding: 0; }
   &:hover { opacity: 0.85; }
 }
 
 .template-table {
-  border: 1px solid #e8e8e8;
+  /* t23 表格规范：表头 paper-2 灰底+500 字、行 hairline+44px+hover wash、单元格 nowrap */
+  :deep(.el-table__header th) {
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  :deep(.el-table__row td) {
+    height: 44px;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  :deep(.el-table .cell) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :deep(.el-table__row:hover > td) { background: var(--color-accent-wash) !important; }
+  border: 1px solid var(--color-rule);
   border-radius: 4px;
   margin-bottom: 24px;
-
-  .table-header {
-    display: flex;
-    background: #fafafa;
-    padding: 12px 16px;
-    font-weight: 500;
-    font-size: 14px;
-    border-bottom: 1px solid #e8e8e8;
-  }
-
-  .table-row {
-    display: flex;
-    padding: 12px 16px;
-    border-bottom: 1px solid #e8e8e8;
-    align-items: center;
-
-    &:last-child { border-bottom: none; }
-    &:hover { background: #fafafa; }
-  }
-
-  .col-name { width: 200px; }
-  .col-time { width: 150px; }
-  .col-creator { width: 100px; }
-  .col-permission { width: 100px; }
-  .col-status { width: 100px; }
-  .col-desc { flex: 1; }
   .col-action { width: 200px; display: flex; gap: 12px; }
 }
 
 .template-link {
-  color: #1890ff;
+  color: var(--color-accent);
   cursor: pointer;
 
   &:hover { text-decoration: underline; }
@@ -361,9 +348,9 @@ const handleCreate = async () => {
   border-radius: 4px;
   font-size: 12px;
 
-  &.status-published { background: #f6ffed; color: #52c41a; }
-  &.status-draft { background: #f5f5f5; color: #999; }
-  &.status-withdrawn { background: #fffbe6; color: #faad14; }
+  &.status-published { background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); color: var(--color-success); }
+  &.status-draft { background: var(--color-paper-2); color: var(--color-muted); }
+  &.status-withdrawn { background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); color: var(--color-warning); }
 }
 
 .pagination {
@@ -372,7 +359,7 @@ const handleCreate = async () => {
   align-items: center;
   gap: 16px;
 
-  .total { font-size: 14px; color: #666; }
+  .total { font-size: 14px; color: var(--color-muted); }
 }
 
 .page-buttons { display: flex; gap: 8px; }
@@ -380,15 +367,15 @@ const handleCreate = async () => {
 .page-btn {
   width: 32px;
   height: 32px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   cursor: pointer;
   font-size: 14px;
 
-  &:hover { color: #1890ff; border-color: #1890ff; }
-  &.active { background: #1890ff; color: #fff; border-color: #1890ff; }
-  &:disabled { color: #d9d9d9; cursor: not-allowed; }
+  &:hover { color: var(--color-accent); border-color: var(--color-accent); }
+  &.active { background: var(--color-accent); color: var(--color-paper); border-color: var(--color-accent); }
+  &:disabled { color: var(--color-rule-2); cursor: not-allowed; }
 }
 
 // 弹窗样式
@@ -398,7 +385,7 @@ const handleCreate = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in oklab, var(--color-graphite) 50%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -406,7 +393,7 @@ const handleCreate = async () => {
 }
 
 .dialog {
-  background: #fff;
+  background: var(--color-paper);
   border-radius: 8px;
   width: 500px;
   max-height: 80vh;
@@ -417,10 +404,10 @@ const handleCreate = async () => {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--color-rule);
 
-    .dialog-title { font-size: 16px; font-weight: 500; color: #333; }
-    .close-btn { font-size: 20px; color: #999; cursor: pointer; }
+    .dialog-title { font-size: 16px; font-weight: 500; color: var(--color-ink); }
+    .close-btn { font-size: 20px; color: var(--color-muted); cursor: pointer; }
   }
 
   .dialog-content {
@@ -432,7 +419,7 @@ const handleCreate = async () => {
     justify-content: flex-end;
     gap: 12px;
     padding: 16px 24px;
-    border-top: 1px solid #e8e8e8;
+    border-top: 1px solid var(--color-rule);
   }
 }
 
@@ -442,12 +429,12 @@ const handleCreate = async () => {
   .form-label {
     display: block;
     font-size: 14px;
-    color: #333;
+    color: var(--color-ink);
     margin-bottom: 8px;
 
     &.required::after {
       content: ' *';
-      color: #f5222d;
+      color: var(--color-error);
     }
   }
 }
@@ -455,12 +442,12 @@ const handleCreate = async () => {
 .form-input, .form-textarea {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
   font-size: 14px;
   outline: none;
 
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
 }
 
 .form-textarea { resize: vertical; min-height: 100px; }

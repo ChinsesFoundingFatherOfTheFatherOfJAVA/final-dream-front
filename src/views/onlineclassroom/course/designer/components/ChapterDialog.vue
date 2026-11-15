@@ -96,12 +96,12 @@ function handleVisibleChange(visible: boolean) {
   .label {
     display: block;
     margin-bottom: 7px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
 
     em {
       margin-left: 2px;
-      color: #f45b69;
+      color: var(--color-accent-deep);
       font-style: normal;
     }
   }
@@ -116,7 +116,7 @@ function handleVisibleChange(visible: boolean) {
   .error {
     display: block;
     margin-top: 2px;
-    color: #f45b69;
+    color: var(--color-accent-deep);
     font-size: 12px;
   }
 }

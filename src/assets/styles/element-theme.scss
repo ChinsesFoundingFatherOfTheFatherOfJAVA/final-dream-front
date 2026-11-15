@@ -1,104 +1,226 @@
 @use './variables.scss';
+@use './hallmark-tokens.scss';
 
+/* Hallmark Cobalt → Element Plus 变量映射
+ * 颜色/字体一律引用 hallmark-tokens.scss 的 CSS 变量（Floor 1：颜色/字体全走 token），
+ * 单信号色：electric cobalt accent 只作 primary 信号（屏幕占比 <5%），冷区 hue 250-262。
+ */
 :root {
-  --el-color-primary: #1890ff;
-  --el-color-primary-light-3: #69c0ff;
-  --el-color-primary-light-5: #91d5ff;
-  --el-color-primary-light-7: #bae7ff;
-  --el-color-primary-light-8: #d6efff;
-  --el-color-primary-light-9: #e6f7ff;
-  --el-color-primary-dark-2: #096dd9;
+  /* 主色：cobalt accent → EP primary（含 EP 需要的梯度变体，均由 accent 同源派生） */
+  --el-color-primary: var(--color-accent);
+  --el-color-primary-light-3: var(--color-accent-2);
+  --el-color-primary-light-5: color-mix(in oklab, var(--color-accent) 55%, var(--color-paper));
+  --el-color-primary-light-7: color-mix(in oklab, var(--color-accent) 32%, var(--color-paper));
+  --el-color-primary-light-8: color-mix(in oklab, var(--color-accent) 20%, var(--color-paper));
+  --el-color-primary-light-9: color-mix(in oklab, var(--color-accent) 12%, var(--color-paper));
+  --el-color-primary-dark-2: var(--color-accent-deep);
 
-  --el-color-success: #52c41a;
-  --el-color-success-light-3: #95de64;
-  --el-color-success-light-5: #b7eb8f;
-  --el-color-success-light-7: #d9f7be;
-  --el-color-success-light-8: #e7ffd6;
-  --el-color-success-light-9: #f6ffed;
-  --el-color-success-dark-2: #389e0d;
+  /* 功能色：EP 语义保留，色相校准进冷区（hue 250-262） */
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-error);
+  --el-color-error: var(--color-error);
+  --el-color-info: var(--color-muted);
 
-  --el-color-warning: #faad14;
-  --el-color-warning-light-3: #ffd666;
-  --el-color-warning-light-5: #ffe58f;
-  --el-color-warning-light-7: #fff1b8;
-  --el-color-warning-light-8: #fff7d6;
-  --el-color-warning-light-9: #fffbe6;
-  --el-color-warning-dark-2: #d48806;
+  /* 文字与边框 */
+  --el-text-color-primary: var(--color-ink);
+  --el-text-color-regular: var(--color-ink-2);
+  --el-text-color-secondary: var(--color-muted);
+  --el-text-color-placeholder: var(--color-muted);
+  --el-border-color: var(--color-rule);
+  --el-border-color-light: var(--color-rule);
+  --el-border-color-lighter: var(--color-rule-2);
+  --el-border-color-dark: var(--color-muted);
 
-  --el-color-danger: #f5222d;
-  --el-color-danger-light-3: #ff7875;
-  --el-color-danger-light-5: #ffa39e;
-  --el-color-danger-light-7: #ffccc7;
-  --el-color-danger-light-8: #ffd8d6;
-  --el-color-danger-light-9: #fff1f0;
-  --el-color-danger-dark-2: #cf1322;
+  /* 背景与填充 */
+  --el-bg-color: var(--color-paper);
+  --el-bg-color-page: var(--color-paper-2);
+  --el-bg-color-overlay: var(--color-paper);
+  --el-fill-color: var(--color-paper-2);
+  --el-fill-color-light: var(--color-paper-2);
+  --el-fill-color-lighter: var(--color-paper-3);
 
-  --el-color-error: #f5222d;
-  --el-color-error-light-3: #ff7875;
-  --el-color-error-light-5: #ffa39e;
-  --el-color-error-light-7: #ffccc7;
-  --el-color-error-light-8: #ffd8d6;
-  --el-color-error-light-9: #fff1f0;
-  --el-color-error-dark-2: #cf1322;
-
-  --el-color-info: #1890ff;
-  --el-color-info-light-3: #69c0ff;
-  --el-color-info-light-5: #91d5ff;
-  --el-color-info-light-7: #bae7ff;
-  --el-color-info-light-8: #d6efff;
-  --el-color-info-light-9: #e6f7ff;
-  --el-color-info-dark-2: #096dd9;
-
-  --el-text-color-primary: #333333;
-  --el-text-color-regular: #333333;
-  --el-text-color-secondary: #666666;
-  --el-text-color-placeholder: #999999;
-  --el-text-color-disabled: #bfbfbf;
-  --el-border-color: #e8e8e8;
-  --el-border-color-light: #e8e8e8;
-  --el-border-color-lighter: #f0f0f0;
-  --el-border-color-extra-light: #f5f5f5;
-  --el-border-color-dark: #d9d9d9;
-  --el-border-color-darker: #bfbfbf;
-  --el-fill-color: #f5f5f5;
-  --el-fill-color-light: #fafafa;
-  --el-fill-color-lighter: #fcfcfc;
-  --el-fill-color-extra-light: #fdfdfd;
-  --el-fill-color-dark: #ebebeb;
-  --el-fill-color-darker: #e0e0e0;
-  --el-bg-color: #ffffff;
-  --el-bg-color-page: #f5f5f5;
-  --el-bg-color-overlay: #ffffff;
-
-  --el-border-radius-base: 4px;
+  /* 圆角 / 阴影 / 字体：全部引用 Cobalt token */
+  --el-border-radius-base: var(--radius-input);
   --el-border-radius-small: 4px;
-  --el-border-radius-round: 20px;
-  --el-box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --el-box-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --el-box-shadow-lighter: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --el-box-shadow-dark: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --el-box-shadow-base: var(--shadow-card);
+  --el-box-shadow-light: var(--shadow-key);
+  --el-box-shadow-lighter: var(--shadow-card);
+  --el-font-family: var(--font-body);
 
-  --el-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  --el-font-size-base: 14px;
-  --el-font-size-small: 12px;
-  --el-font-size-large: 16px;
-  --el-component-size: 32px;
-  --el-component-size-small: 24px;
-  --el-component-size-large: 40px;
-  --el-transition-duration: var(--transition-fast);
+  /* --el-font-size-* / --el-component-size-* / --el-transition-* 为 EP 默认刻度，与颜色/字体无关，保留默认 */
+
+  /* 批注10：radio/checkbox 默认态边框太浅看不清圆圈——三态显式校准 */
+  --el-radio-input-border-color: var(--color-rule-2);
+  --el-radio-input-border-color-hover: var(--color-accent-2);
+  --el-checkbox-input-border-color: var(--color-rule-2);
+  --el-checkbox-input-border-color-hover: var(--color-accent-2);
 }
 
+/* el-button 键帽化（Cobalt keycap）：统一在主题层映射，业务组件无需自己 :deep。
+ *
+ * 【按钮形态分级规则】（用户批注定版）
+ * 1. 每屏至多 1 个实心键帽（页面主操作，el-button--primary 实心态）；
+ * 2. 次要操作 = plain（accent-wash 底 + 深钴蓝字，字底分离保对比度）；
+ * 3. 危险操作 = danger plain（error-wash 底 + error-deep 字）；
+ * 4. 表格内行操作 = link（无底色），hover 只变字色，禁止变底色（修 hover 白底白字）；
+ * 5. text 键同 link 口径。
+ */
+.el-button {
 .el-button {
   font-weight: 500;
+  font-family: var(--font-display);
+  border: var(--rule-hair) solid var(--color-rule-2);
+  font-family: var(--font-display);
+  border: var(--rule-hair) solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  background-color: var(--color-key-face);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-key);
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+
+  &:hover {
+    transform: translateY(-1px);
+    background-color: var(--color-paper);
+    border-color: var(--color-rule-2);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-key);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-key-press);
+  }
+
+  // 主键：cobalt 实心键帽（唯一信号键）
+  &.el-button--primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent-edge);
+    color: var(--color-accent-ink);
+    box-shadow: var(--shadow-key-accent);
+
+    &:hover {
+      background-color: color-mix(in oklab, var(--color-accent) 88%, var(--color-accent-deep));
+      border-color: var(--color-accent-edge);
+      color: var(--color-accent-ink);
+      box-shadow: var(--shadow-key-accent);
+    }
+
+    // plain 态字底分离：wash 底 + 深钴蓝字（防 EP 默认 light-9 底 + accent 字对比度崩）
+    &.is-plain {
+      background-color: var(--color-accent-wash);
+      border-color: color-mix(in oklab, var(--color-accent) 30%, var(--color-paper));
+      color: var(--color-accent-deep);
+      box-shadow: none;
+
+      &:hover {
+        transform: none;
+        background-color: color-mix(in oklab, var(--color-accent) 20%, var(--color-paper));
+        border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-paper));
+        color: var(--color-accent-deep); /* 字色不变，只升底 */
+        box-shadow: none;
+      }
+
+      &:active {
+        transform: none;
+        background-color: color-mix(in oklab, var(--color-accent) 28%, var(--color-paper));
+        box-shadow: none;
+      }
+    }
+
+    &:active {
+      background-color: var(--color-accent-deep);
+      box-shadow: var(--shadow-key-press);
+    }
+  }
+
+  /* plain/text/link 键不做键帽立体。
+   * link/text hover 只变字色（accent-2 钴蓝提亮）+ 下划线，background 强制 transparent——
+   * 防 EP 默认 hover 用 light-9 洗底吃掉字色（用户批注：hover 白底白字）。
+   */
+  &.is-link,
+  &.is-text {
+    box-shadow: none;
+    background: transparent;
+    color: var(--color-accent-deep);
+    /* 键盘焦点信号收敛（批注13/14）：outline none + 柔和 wash 环，
+     * 防 reset 全局 outline 与 EP 自带 focus 规则叠加成深钴蓝「黑框一周」；
+     * tab 可达性不回退：环在，只是视觉柔和。 */
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--color-accent-wash);
+      border-radius: var(--radius-input);
+    }
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      background: transparent;
+      color: var(--color-accent-2);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    &:active {
+      transform: none;
+      box-shadow: none;
+      background: transparent;
+      color: var(--color-accent-deep);
+    }
+  }
+
+  // plain（非 primary 的 danger 等）：压平投影，字底分离在各自的 --plain 分支
+  &.is-plain {
+    box-shadow: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // danger plain：error-wash 底 + error-deep 字，同 primary plain 口径
+  &.el-button--danger.is-plain {
+    background-color: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+    border-color: color-mix(in oklab, var(--color-error) 30%, var(--color-paper));
+    color: var(--color-error-deep);
+
+    &:hover {
+      background-color: color-mix(in oklab, var(--color-error) 18%, var(--color-paper));
+      color: var(--color-error-deep); /* 字色不变，只升底 */
+    }
+  }
+
+  // danger link/text：hover 只变字色
+  &.el-button--danger.is-link,
+  &.el-button--danger.is-text {
+    color: var(--color-error-deep);
+
+    &:hover,
+    &:focus-visible {
+      background: transparent;
+      color: var(--color-error);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  // 禁用态压平：不投影、不位移
+  &.is-disabled,
+  &.is-disabled:hover,
+  &.is-disabled:active {
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 .el-table {
-  --el-table-header-bg-color: #fafafa;
-  --el-table-row-hover-bg-color: #f5faff;
-  --el-table-border-color: #e8e8e8;
-  --el-table-header-text-color: #333333;
-  --el-table-text-color: #333333;
+  --el-table-header-bg-color: var(--color-paper-2);
+  --el-table-row-hover-bg-color: color-mix(in oklab, var(--color-accent) 8%, var(--color-paper));
+  --el-table-border-color: var(--color-rule);
+  --el-table-header-text-color: var(--color-ink);
+  --el-table-text-color: var(--color-ink);
 
   // 表格大量数字对比场景用等宽数字，保证列内纵向对齐
   .cell {
@@ -108,11 +230,31 @@
 
 .el-pagination {
   --el-pagination-font-size: 14px;
-  --el-pagination-button-bg-color: #f5f5f5;
-  --el-pagination-hover-color: #1890ff;
+  --el-pagination-button-bg-color: var(--color-paper-2);
+  --el-pagination-hover-color: var(--color-accent-2);
 
   // 页码为数字对比场景，同样使用等宽数字
   font-variant-numeric: tabular-nums;
+}
+
+/* 批注10：radio/checkbox 选中态实心 + 白点/白勾，默认态边框已在 :root 加深 */
+.el-radio__input.is-checked {
+  .el-radio__inner {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+
+    &::after { background: var(--color-accent-ink); transform: scale(1); }
+  }
+}
+
+.el-checkbox__input.is-checked {
+  .el-checkbox__inner {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+
+    &::after { border-color: var(--color-accent-ink); }
+  }
+}
 }
 
 .el-dialog {
@@ -121,7 +263,7 @@
 
 .el-drawer__header {
   margin-bottom: 0;
-  color: #333333;
+  color: var(--color-ink);
   font-size: 16px;
   font-weight: 600;
 }

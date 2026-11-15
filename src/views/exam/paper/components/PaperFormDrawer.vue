@@ -192,13 +192,13 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 /* 原图抽屉是"半屏宽表单"，字段基本铺满，故比题库那个 440px 的抽屉宽 */
-.drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 720px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600;
+  padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 600;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 20px; }
@@ -206,68 +206,68 @@ onMounted(async () => {
 .form-item { margin-bottom: 18px; }
 
 .form-label {
-  display: block; font-size: 13px; color: #4a5368; margin-bottom: 6px;
-  &.required::after { content: ' *'; color: #f5222d; }
+  display: block; font-size: 13px; color: var(--color-ink-2); margin-bottom: 6px;
+  &.required::after { content: ' *'; color: var(--color-error); }
 }
 
 .catalog-select {
   position: relative;
   display: flex; align-items: center; justify-content: space-between;
-  border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px 10px;
+  border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 8px 10px;
   font-size: 13px; cursor: pointer;
 
-  &:hover { border-color: #1890ff; }
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
-  .placeholder { color: #b0b7c3; }
-  .select-arrow { color: #8a92a5; font-size: 11px; }
+  &:hover { border-color: var(--color-accent); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .placeholder { color: var(--color-rule-2); }
+  .select-arrow { color: var(--color-muted); font-size: 11px; }
 
   .catalog-dropdown {
     position: absolute; top: calc(100% + 4px); left: 0; right: 0;
     max-height: 240px; overflow-y: auto;
-    background: #fff; border: 1px solid #e6eaf1; border-radius: 6px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .12); z-index: 10; padding: 4px 0;
+    background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: 6px;
+    box-shadow: 0 4px 14px var(--shadow-card); z-index: 10; padding: 4px 0;
 
     .dropdown-node {
-      padding: 7px 12px; font-size: 12px; color: #4a5368; cursor: pointer;
-      &:hover { background: #f2f6ff; color: #1890ff; }
-      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; }
+      padding: 7px 12px; font-size: 12px; color: var(--color-ink-2); cursor: pointer;
+      &:hover { background: var(--color-accent-wash); color: var(--color-accent); }
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
     }
   }
 }
 
 input[type="text"], input:not([type]) {
-  width: 100%; border: 1px solid #d9d9d9; border-radius: 4px;
+  width: 100%; border: 1px solid var(--color-rule-2); border-radius: 4px;
   padding: 8px 10px; font-size: 13px; outline: none;
-  &:focus { border-color: #1890ff; }
+  &:focus { border-color: var(--color-accent); }
 }
 
-.char-count { text-align: right; font-size: 11px; color: #b0b7c3; margin-top: 3px; }
+.char-count { text-align: right; font-size: 11px; color: var(--color-rule-2); margin-top: 3px; }
 
 .radio-row { display: flex; align-items: center; gap: 22px; }
 
 /* 原图（截图22）里出卷方式/保密都是普通单选，不带方框 */
 .radio-item {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; color: #4a5368; cursor: pointer;
+  font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  input { margin: 0; accent-color: #1890ff; }
-  &:has(input:disabled) { color: #b0b7c3; cursor: not-allowed; }
+  input { margin: 0; accent-color: var(--color-accent); }
+  &:has(input:disabled) { color: var(--color-rule-2); cursor: not-allowed; }
 }
 
-.note-inline { font-style: normal; font-size: 12px; color: #a0a7b8; }
+.note-inline { font-style: normal; font-size: 12px; color: var(--color-rule-2); }
 
-.note { margin: 6px 0 0; font-size: 11px; color: #a0a7b8; }
+.note { margin: 6px 0 0; font-size: 11px; color: var(--color-rule-2); }
 
 .drawer-footer {
   display: flex; justify-content: flex-end; gap: 10px;
-  padding: 14px 20px; border-top: 1px solid #eee;
+  padding: 14px 20px; border-top: 1px solid var(--color-rule);
 }
 
 .btn {
-  padding: 7px 20px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; cursor: pointer;
+  padding: 7px 20px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

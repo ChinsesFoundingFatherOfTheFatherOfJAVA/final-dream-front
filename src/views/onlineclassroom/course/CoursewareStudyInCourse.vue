@@ -157,7 +157,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .study-page {
   min-height: calc(100vh - 104px);
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .detail-header {
@@ -166,11 +166,11 @@ onMounted(async () => {
   align-items: center;
   gap: 14px;
   padding: 0 24px;
-  border-bottom: 1px solid #e8ecf2;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 
   h1 {
     margin: 0;
-    color: #30384a;
+    color: var(--color-ink);
     font-size: 18px;
   }
 }
@@ -178,7 +178,7 @@ onMounted(async () => {
 .back-btn {
   border: none;
   background: transparent;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 30px;
   cursor: pointer;
 }
@@ -198,7 +198,7 @@ onMounted(async () => {
   .study-search {
     height: 38px;
     border-radius: 5px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 
@@ -234,15 +234,15 @@ onMounted(async () => {
 
   :deep(.el-table__header th) {
     height: 46px;
-    background: #f8fafc;
-    color: #30384a;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     font-size: 13px;
     font-weight: 600;
   }
 
   :deep(.el-table__row td) {
     height: 46px;
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
@@ -256,11 +256,11 @@ onMounted(async () => {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #2e7cf6;
+    background: var(--color-accent);
   }
 
   &.study-1 i {
-    background: #35b56a;
+    background: var(--color-success);
   }
 }
 

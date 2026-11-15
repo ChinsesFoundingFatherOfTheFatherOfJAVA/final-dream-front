@@ -106,10 +106,10 @@ function confirm() {
   right: 34px;
   top: 150px;
   padding: 22px 22px 18px;
-  border: 1px solid #e6eaf1;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 12px 34px rgba(30, 45, 70, 0.14);
+  background: var(--color-paper);
+  box-shadow: 0 12px 34px oklch(21% 0.028 262 / 0.14);
 }
 
 .filter-grid {
@@ -124,7 +124,7 @@ function confirm() {
   grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
   column-gap: 8px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   > span {
@@ -151,7 +151,7 @@ function confirm() {
   align-items: center;
 
   i {
-    color: #8b95a7;
+    color: var(--color-muted);
     text-align: center;
     font-style: normal;
   }
@@ -165,16 +165,16 @@ footer {
   button {
     height: 36px;
     padding: 0 20px;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule-2);
     border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     cursor: pointer;
 
     &.primary {
-      border-color: #2e7cf6;
-      background: #2e7cf6;
-      color: #fff;
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
     }
   }
 }

@@ -35,11 +35,11 @@
       <span v-if="type === 5" class="sub-count">含 {{ subDrafts.length }} 个小题</span>
       <span class="score">{{ score }}分</span>
       <div class="card-tools" @click.stop>
-        <span class="tool" title="拖拽调整顺序" aria-hidden="true">⠿</span>
+<span class="tool" title="拖拽调整顺序" aria-hidden="true"><el-icon><Rank /></el-icon></span>
         <span class="tool" title="复制此题" aria-label="复制此题" role="button" tabindex="0"
-              @click="emit('duplicate')" @keydown.enter.prevent.stop="emit('duplicate')">⧉</span>
+@click="emit('duplicate')" @keydown.enter.prevent.stop="emit('duplicate')"><el-icon><CopyDocument /></el-icon></span>
         <span class="tool danger" title="删除此题" aria-label="删除此题" role="button" tabindex="0"
-              @click="emit('remove')" @keydown.enter.prevent.stop="emit('remove')">🗑</span>
+@click="emit('remove')" @keydown.enter.prevent.stop="emit('remove')"><el-icon><Delete /></el-icon></span>
       </div>
     </div>
 
@@ -194,6 +194,7 @@
 </template>
 
 <script setup lang="ts">
+import { CopyDocument, Delete, Rank } from '@element-plus/icons-vue'
 import { computed, defineComponent, h, ref, watch } from 'vue'
 import { toast } from '@/utils/toast'
 import QuesBodyForm from '../../queslib/components/QuesBodyForm.vue'
@@ -743,43 +744,43 @@ function helpIcon(text: string) {
 
 <style scoped lang="scss">
 .q-card {
-  background: #fff; border: 1px solid #e8eaef; border-radius: 6px; margin-bottom: 12px;
+  background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: 6px; margin-bottom: 12px;
 
-  &.expanded { border-color: #adc6ff; }
+  &.expanded { border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-paper)); }
 }
 
 .card-collapsed {
   display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; cursor: pointer;
 
-  &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 6px; }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 6px; }
 
-  .idx { flex: 0 0 auto; font-size: 14px; color: #303133; }
+  .idx { flex: 0 0 auto; font-size: 14px; color: var(--color-ink); }
   .collapsed-main { flex: 1; min-width: 0; }
-  .stem { margin: 0 0 8px; font-size: 13px; color: #303133; word-break: break-word; }
-  .sub-count { flex: 0 0 auto; font-size: 12px; color: #8a92a5; margin-right: 10px; }
-  .score { flex: 0 0 auto; font-size: 13px; color: #303133; }
+  .stem { margin: 0 0 8px; font-size: 13px; color: var(--color-ink); word-break: break-word; }
+  .sub-count { flex: 0 0 auto; font-size: 12px; color: var(--color-muted); margin-right: 10px; }
+  .score { flex: 0 0 auto; font-size: 13px; color: var(--color-ink); }
 
   .opt-preview {
     margin: 0; padding: 0; list-style: none;
 
-    li { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; color: #4a5368; }
+    li { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; color: var(--color-ink-2); }
     .dot {
-      width: 12px; height: 12px; border-radius: 50%; border: 1px solid #c7d0de; flex: 0 0 auto;
-      &.on { border-color: #1890ff; box-shadow: inset 0 0 0 3px #1890ff; }
+      width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--color-rule-2); flex: 0 0 auto;
+      &.on { border-color: var(--color-accent); box-shadow: inset 0 0 0 3px var(--color-accent); }
     }
     .opt-text { word-break: break-word; }
   }
 
-  .answer-preview { margin: 0; font-size: 13px; color: #8a92a5; }
+  .answer-preview { margin: 0; font-size: 13px; color: var(--color-muted); }
 
   .card-tools {
     flex: 0 0 auto; display: flex; gap: 10px;
 
     .tool {
-      color: #8a92a5; cursor: pointer; font-size: 14px;
-      &:hover { color: #1890ff; }
-      &.danger:hover { color: #f5222d; }
-      &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 2px; }
+      color: var(--color-muted); cursor: pointer; font-size: 14px;
+      &:hover { color: var(--color-accent); }
+      &.danger:hover { color: var(--color-error); }
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 2px; }
     }
   }
 }
@@ -788,53 +789,53 @@ function helpIcon(text: string) {
 
 .block { margin-bottom: 14px; }
 .block-label {
-  display: block; margin-bottom: 6px; font-size: 13px; color: #4a5368;
-  &.required::after { content: ' *'; color: #f5222d; }
+  display: block; margin-bottom: 6px; font-size: 13px; color: var(--color-ink-2);
+  &.required::after { content: ' *'; color: var(--color-error); }
 }
 
 .stage-hint {
   margin: 4px 0 12px; padding: 10px 12px; border-radius: 4px;
-  background: #f5f8ff; border: 1px dashed #adc6ff; font-size: 12px; color: #2f54eb;
+  background: var(--color-accent-wash); border: 1px dashed color-mix(in oklab, var(--color-accent) 35%, var(--color-paper)); font-size: 12px; color: var(--color-accent-deep);
 }
 
 .sub-head {
   display: flex; align-items: baseline; gap: 12px; margin: 4px 0 10px;
 
-  .sub-title { font-size: 13px; color: #303133; }
-  .sub-total { font-size: 12px; color: #fa8c16; }
+  .sub-title { font-size: 13px; color: var(--color-ink); }
+  .sub-total { font-size: 12px; color: var(--color-warning); }
 }
 
-.sub-block { border: 1px solid #eef1f6; border-radius: 6px; margin-bottom: 8px; }
+.sub-block { border: 1px solid var(--color-rule); border-radius: 6px; margin-bottom: 8px; }
 
 .sub-row {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px; font-size: 13px;
 
   .sub-no {
-    width: 20px; height: 20px; border-radius: 50%; background: #f0f5ff; color: #2f54eb;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--color-accent-wash); color: var(--color-accent-deep);
     font-size: 11px; line-height: 20px; text-align: center; flex: 0 0 auto;
   }
-  .sub-tag { color: #8a92a5; font-size: 12px; }
-  .sub-stem { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #303133; }
-  .sub-score { color: #303133; }
-  .sub-del { color: #f5222d; cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid #1890ff; outline-offset: 2px; border-radius: 2px; } }
+  .sub-tag { color: var(--color-muted); font-size: 12px; }
+  .sub-stem { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-ink); }
+  .sub-score { color: var(--color-ink); }
+  .sub-del { color: var(--color-error); cursor: pointer; &:hover { text-decoration: underline; } &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; } }
 }
 
 .sub-editor {
-  border: 1px solid #adc6ff; border-radius: 6px; padding: 14px; margin-bottom: 10px;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-paper)); border-radius: 6px; padding: 14px; margin-bottom: 10px;
 
-  .sub-editor-title { margin: 0 0 10px; font-size: 13px; color: #2f54eb; }
+  .sub-editor-title { margin: 0 0 10px; font-size: 13px; color: var(--color-accent-deep); }
 }
 
 .sub-picker {
-  padding: 22px 16px; border: 1px dashed #d9e1ec; border-radius: 6px; text-align: center;
+  padding: 22px 16px; border: 1px dashed var(--color-rule-2); border-radius: 6px; text-align: center;
 
-  .picker-tip { margin: 0 0 12px; font-size: 12px; color: #a0a7b8; }
+  .picker-tip { margin: 0 0 12px; font-size: 12px; color: var(--color-rule-2); }
   .picker-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
   .picker-btn {
-    padding: 7px 16px; border: 1px solid #d9d9d9; border-radius: 4px;
-    background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+    padding: 7px 16px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+    background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-    &:hover { border-color: #1890ff; color: #1890ff; }
+    &:hover { border-color: var(--color-accent); color: var(--color-accent); }
   }
 }
 
@@ -842,12 +843,12 @@ function helpIcon(text: string) {
   /* 四组表单项按内容宽度紧凑排列，不用 flex:1 撑开：
      撑开会让「考核点」独占整行、其余三项被推到两端，视觉上很散 */
   display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px;
-  padding: 12px 0 4px; border-top: 1px dashed #eef1f6; margin-top: 8px;
+  padding: 12px 0 4px; border-top: 1px dashed var(--color-rule); margin-top: 8px;
 
   .setting-item {
     display: inline-flex; align-items: center; gap: 8px;
     flex: 0 0 auto;
-    font-size: 13px; color: #4a5368;
+    font-size: 13px; color: var(--color-ink-2);
 
     // 题库/难度下拉统一定宽，三列视觉上才对得齐
     .el-select { width: 180px; }
@@ -867,30 +868,30 @@ function helpIcon(text: string) {
 :deep(.miss-field) {
   display: flex; flex-direction: column; gap: 6px;
 
-  .miss-title { margin: 0; font-size: 12px; color: #4a5368; }
+  .miss-title { margin: 0; font-size: 12px; color: var(--color-ink-2); }
   .miss-radio {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 12px; color: #4a5368; cursor: pointer;
+    font-size: 12px; color: var(--color-ink-2); cursor: pointer;
 
-    input[type="radio"] { margin: 0; accent-color: #1890ff; }
+    input[type="radio"] { margin: 0; accent-color: var(--color-accent); }
     .miss-input {
-      width: 84px; border: 1px solid #d9d9d9; border-radius: 4px;
+      width: 84px; border: 1px solid var(--color-rule-2); border-radius: 4px;
       padding: 4px 6px; font-size: 12px; outline: none; margin-left: 4px;
     }
   }
 
   /* 自定义各选项得分：逐个正确选项设分 */
   .option-score-list {
-    margin-top: 8px; padding: 10px 12px; background: #fafbfc;
-    border: 1px dashed #e0e4ec; border-radius: 4px;
+  margin-top: 8px; padding: 10px 12px; background: var(--color-paper-2);
+    border: 1px dashed var(--color-accent-wash); border-radius: 4px;
   }
-  .option-score-tip { margin: 0 0 8px; font-size: 12px; color: #8a92a5; }
+  .option-score-tip { margin: 0 0 8px; font-size: 12px; color: var(--color-muted); }
   .option-score-row {
     display: inline-flex; align-items: center; gap: 6px; margin: 0 16px 6px 0;
-    font-size: 12px; color: #4a5368;
+    font-size: 12px; color: var(--color-ink-2);
     .option-key { font-weight: 600; }
     .miss-input {
-      width: 72px; border: 1px solid #d9d9d9; border-radius: 4px;
+      width: 72px; border: 1px solid var(--color-rule-2); border-radius: 4px;
       padding: 4px 6px; font-size: 12px; outline: none;
     }
   }
@@ -898,18 +899,18 @@ function helpIcon(text: string) {
   .miss-help {
     display: inline-flex; align-items: center; justify-content: center;
     width: 14px; height: 14px; margin-left: 4px; border-radius: 50%;
-    background: #e8eaef; color: #8a92a5; font-size: 10px; cursor: help;
+    background: var(--color-rule); color: var(--color-muted); font-size: 10px; cursor: help;
   }
-  .miss-help:focus-visible { outline: 2px solid #1890ff; outline-offset: 1px; }
+  .miss-help:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
 }
 
 .card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
 
 .btn {
-  padding: 6px 16px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 6px 16px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

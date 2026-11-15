@@ -45,14 +45,14 @@ function toggle(permission: PermissionNode, checked: boolean) {
 
 .permission-group {
   padding: 14px;
-  border: 1px solid #e9edf4;
+  border: 1px solid var(--color-rule);
   border-radius: 7px;
-  background: #fafbfd;
+  background: var(--color-paper-2);
 }
 
 .group-title {
   margin-bottom: 10px;
-  color: #253047;
+  color: var(--color-ink-2);
   font-size: 14px;
   font-weight: 600;
 }
@@ -61,22 +61,22 @@ function toggle(permission: PermissionNode, checked: boolean) {
   min-height: 34px;
   padding: 0 4px;
   border-radius: 5px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
   cursor: pointer;
 
   &:hover {
-    background: #f3f7ff;
+    background: var(--color-accent-wash);
   }
 
   :deep(.el-checkbox__label) {
-    color: #4d5568;
+    color: var(--color-ink-2);
     font-size: 13px;
   }
 }
 
 .empty-tree {
-  color: #9aa3b2;
+  color: var(--color-muted);
   font-size: 13px;
 }
 

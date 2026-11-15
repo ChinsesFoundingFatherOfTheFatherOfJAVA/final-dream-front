@@ -357,8 +357,8 @@ const selectUnit = (id: string) => {
   display: block;
   width: 240px;
   padding: 14px 12px;
-  background: #fff;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
   position: sticky;
   top: 0;
@@ -370,7 +370,7 @@ const selectUnit = (id: string) => {
     padding: 8px;
     font-size: 14px;
     line-height: 20px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   .unit-nav-list {
@@ -390,7 +390,7 @@ const selectUnit = (id: string) => {
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
-    color: #595959;
+    color: var(--color-muted);
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
 
@@ -400,7 +400,7 @@ const selectUnit = (id: string) => {
       font-size: 12px;
       font-weight: 600;
       line-height: 20px;
-      color: #8c8c8c;
+      color: var(--color-muted);
     }
 
     .unit-name {
@@ -410,16 +410,16 @@ const selectUnit = (id: string) => {
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    &:hover { background: #f5f7fa; }
+    &:hover { background: var(--color-paper-2); }
     &.active {
       height: 36px;
       min-height: 36px;
       font-weight: 600;
-      background: #f0f6ff;
-      color: #436bff;
-      .unit-idx { color: #436bff; }
+      background: var(--color-accent-wash);
+      color: var(--color-accent);
+      .unit-idx { color: var(--color-accent); }
     }
-    &:focus-visible { outline: 2px solid #436bff; outline-offset: -2px; }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
   }
 }
 
@@ -429,7 +429,7 @@ const selectUnit = (id: string) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .modebar {
@@ -446,18 +446,18 @@ const selectUnit = (id: string) => {
     height: 32px;
     padding: 4px 12px;
     margin: 0;
-    border: 1px solid #e9e9e9;
+    border: 1px solid var(--color-rule);
     border-radius: 999px;
     font-size: 13px;
     font-weight: 500;
     line-height: 22px;
-    color: #595959;
-    background: #fff;
+    color: var(--color-muted);
+    background: var(--color-paper);
 
     &.active {
-      color: #fff;
-      background: #436bff;
-      border-color: #436bff;
+      color: var(--color-paper);
+      background: var(--color-accent);
+      border-color: var(--color-accent);
     }
   }
 }
@@ -467,7 +467,7 @@ const selectUnit = (id: string) => {
   font-size: 15px;
   font-weight: 500;
   line-height: 24px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .overview-cards {
@@ -481,7 +481,7 @@ const selectUnit = (id: string) => {
   box-sizing: border-box;
   height: 82px;
   padding: 16px;
-  background: #fafafa;
+  background: var(--color-paper-2);
   border-radius: 12px;
 
   .ov-value {
@@ -489,14 +489,14 @@ const selectUnit = (id: string) => {
     font-size: 20px;
     font-weight: 700;
     line-height: 20px;
-    color: #262626;
+    color: var(--color-ink);
 
     i {
       font-size: 14px;
       font-style: normal;
       font-weight: 400;
       line-height: 14px;
-      color: #757575;
+      color: var(--color-muted);
     }
   }
 
@@ -505,7 +505,7 @@ const selectUnit = (id: string) => {
     margin-top: 8px;
     font-size: 14px;
     line-height: 22px;
-    color: #757575;
+    color: var(--color-muted);
   }
 }
 
@@ -520,7 +520,7 @@ const selectUnit = (id: string) => {
     font-size: 14px;
     font-weight: 600;
     line-height: 22px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .scope-select {
@@ -537,9 +537,9 @@ const selectUnit = (id: string) => {
     border-radius: 4px;
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
-    background: #fff;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    color: var(--color-muted);
+    background: var(--color-paper);
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
@@ -548,8 +548,8 @@ const selectUnit = (id: string) => {
   box-sizing: border-box;
   width: 100%;
   padding: 16px;
-  background: #fff;
-  border: 1px solid #e9e9e9;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
 }
 
@@ -568,7 +568,7 @@ const selectUnit = (id: string) => {
   font-size: 15px;
   font-weight: 500;
   line-height: 24px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .avg-tag,
@@ -576,17 +576,17 @@ const selectUnit = (id: string) => {
   height: 22px;
   font-size: 14px;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-muted);
 
   b {
     font-size: 14px;
     font-weight: 600;
     line-height: 22px;
-    color: #262626;
+    color: var(--color-ink);
   }
 }
 
-.panel-sub { color: #8c8c8c; }
+.panel-sub { color: var(--color-muted); }
 
 .dist-rows { margin-top: 16px; }
 
@@ -609,7 +609,7 @@ const selectUnit = (id: string) => {
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   .dist-bar-track {
@@ -617,13 +617,13 @@ const selectUnit = (id: string) => {
     flex: 1 1 auto;
     min-width: 0;
     height: 12px;
-    background: #f0f0f0;
+    background: var(--color-paper-2);
     border-radius: 3px;
     overflow: hidden;
 
     .dist-bar {
       height: 12px;
-      background: #436bff;
+      background: var(--color-accent);
       border-radius: 3px;
       transition: width 0.3s;
     }
@@ -635,7 +635,7 @@ const selectUnit = (id: string) => {
     height: 22px;
     font-size: 14px;
     line-height: 22px;
-    color: #757575;
+    color: var(--color-muted);
   }
 }
 
@@ -656,13 +656,13 @@ const selectUnit = (id: string) => {
       font-size: 14px;
       font-weight: 600;
       line-height: 22px;
-      color: #262626;
+      color: var(--color-ink);
     }
 
     .mastery-avg {
       font-size: 14px;
       line-height: 22px;
-      color: #757575;
+      color: var(--color-muted);
     }
   }
 
@@ -671,7 +671,7 @@ const selectUnit = (id: string) => {
     width: 100%;
     height: 18px;
     margin-top: 8px;
-    background: #f0f0f0;
+    background: var(--color-paper-2);
     border-radius: 5px;
     overflow: hidden;
 
@@ -680,12 +680,12 @@ const selectUnit = (id: string) => {
       font-size: 12px;
       font-weight: 700;
       line-height: 22px;
-      color: #fff;
+      color: var(--color-paper);
       transition: width 0.3s;
     }
-    .seg-low { background: #f43f5e; }
-    .seg-mid { background: #436bff; }
-    .seg-high { background: #059669; }
+    .seg-low { background: var(--color-error); }
+    .seg-mid { background: var(--color-accent); }
+    .seg-high { background: var(--color-success); }
   }
 
   .mastery-foot {
@@ -708,29 +708,29 @@ const selectUnit = (id: string) => {
     height: 9px;
     border-radius: 3px;
 
-    &.low { background: #f43f5e; }
-    &.mid { background: #436bff; }
-    &.high { background: #059669; }
+    &.low { background: var(--color-error); }
+    &.mid { background: var(--color-accent); }
+    &.high { background: var(--color-success); }
   }
 
   .band-range {
     font-size: 14px;
     line-height: 22px;
-    color: #757575;
+    color: var(--color-muted);
   }
 
   .band-val {
     font-size: 14px;
     font-weight: 700;
     line-height: 22px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .mastery-empty {
     padding: 6px 0;
     text-align: center;
     font-size: 13px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 
@@ -741,16 +741,16 @@ const selectUnit = (id: string) => {
   gap: 12px;
   height: 32px;
   font-size: 14px;
-  color: #595959;
+  color: var(--color-muted);
 
   .cv-endpoint__label {
     height: 22px;
     /* 原平台实测：对比终点标签与「统计范围」标签同规格（14px/600/#262626），
-       两个控件复用同一套 label 样式类，所以这里不能按普通说明文字写 400/#595959 */
+       两个控件复用同一套 label 样式类，所以这里不能按普通说明文字写 400/var(--color-muted) */
     font-size: 14px;
     font-weight: 600;
     line-height: 22px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .cv-endpoint__select {
@@ -767,9 +767,9 @@ const selectUnit = (id: string) => {
     border-radius: 4px;
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
-    background: #fff;
-    box-shadow: 0 0 0 1px #d9d9d9 inset;
+    color: var(--color-muted);
+    background: var(--color-paper);
+    box-shadow: 0 0 0 1px var(--color-rule-2) inset;
   }
 }
 
@@ -786,7 +786,7 @@ const selectUnit = (id: string) => {
   height: 36px;
   padding: 7px 8px;
   margin: 8px 0 0 -8px;
-  background: #fafafa;
+  background: var(--color-paper-2);
   border-radius: 6px;
 }
 
@@ -801,7 +801,7 @@ const selectUnit = (id: string) => {
   font-size: 14px;
   font-weight: 600;
   line-height: 22px;
-  color: #262626;
+  color: var(--color-ink);
 }
 
 .change-nums {
@@ -809,16 +809,16 @@ const selectUnit = (id: string) => {
   flex: 0 0 108px;
   font-size: 14px;
   line-height: 22px;
-  color: #757575;
+  color: var(--color-muted);
 }
 
 .change-head .change-name {
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .change-head .change-nums {
   font-weight: 600;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .change-track-head {
@@ -826,22 +826,22 @@ const selectUnit = (id: string) => {
   font-size: 14px;
   font-weight: 600;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-muted);
 }
 
 .change-track {
   flex: 1;
   min-width: 0;
   height: 8px;
-  background: #f5f5f5;
+  background: var(--color-paper-2);
   border-radius: 4px;
   overflow: hidden;
 
   .change-fill {
     height: 100%;
     border-radius: 4px;
-    &.up { background: #059669; }
-    &.down { background: #f43f5e; }
+    &.up { background: var(--color-success); }
+    &.down { background: var(--color-error); }
   }
 }
 
@@ -852,9 +852,9 @@ const selectUnit = (id: string) => {
   height: 22px;
   font-size: 14px;
   line-height: 22px;
-  color: #bfbfbf;
+  color: var(--color-rule-2);
 
-  &.up { color: #059669; }
-  &.down { color: #f43f5e; }
+  &.up { color: var(--color-success); }
+  &.down { color: var(--color-error); }
 }
 </style>

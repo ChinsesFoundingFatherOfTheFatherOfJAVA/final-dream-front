@@ -54,7 +54,7 @@ function changeSize(size: number) {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  color: #667085;
+  color: var(--color-muted);
   font-size: 13px;
 
   :deep(.el-pagination) {

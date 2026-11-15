@@ -1348,8 +1348,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-$run-bg: #12141d;
-$run-panel: rgba(13, 17, 30, 0.82);
+$run-bg: var(--color-graphite);
+$run-panel: color-mix(in oklab, var(--color-graphite) 82%, transparent);
 
 .dm-attempt {
   position: relative;
@@ -1364,8 +1364,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
   transform: translateX(-50%);
   padding: 10px 18px;
   border-radius: 8px;
-  background: #fff1f0;
-  color: #cf1322;
+  background: color-mix(in oklab, var(--color-error) 10%, var(--color-paper));
+  color: var(--color-error);
   font-size: 14px;
   z-index: 30;
 }
@@ -1377,8 +1377,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
   justify-content: center;
   width: 100%;
   min-height: 100vh;
-  background: radial-gradient(circle at 50% 30%, #1b1f38 0%, #0c1020 60%);
-  color: #fff;
+  background: radial-gradient(circle at 50% 30%, var(--color-graphite-2) 0%, var(--color-graphite) 60%);
+  color: var(--color-paper);
 
   &__card {
     width: 560px;
@@ -1393,8 +1393,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: rgba(139, 92, 246, 0.18);
-    color: #a78bfa;
+    background: color-mix(in oklab, var(--color-accent) 18%, transparent);
+    color: var(--color-accent-2);
   }
 
   &__title {
@@ -1408,7 +1408,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     margin: 8px 0 0;
     font-size: 14px;
     line-height: 22px;
-    color: rgba(255, 255, 255, 0.65);
+    color: color-mix(in oklab, var(--color-accent-ink) 65%, transparent);
   }
 
   &__pill {
@@ -1416,8 +1416,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     margin-top: 20px;
     padding: 6px 16px;
     border-radius: 999px;
-    background: rgba(139, 92, 246, 0.14);
-    color: #c4b5fd;
+    background: color-mix(in oklab, var(--color-accent) 14%, transparent);
+    color: var(--color-accent-2);
     font-size: 13px;
   }
 
@@ -1435,17 +1435,17 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 12px;
     padding: 12px 16px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.04);
+    background: color-mix(in oklab, var(--color-accent-ink) 4%, transparent);
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.62);
+    color: color-mix(in oklab, var(--color-accent-ink) 62%, transparent);
 
     &.is-active {
-      background: rgba(99, 102, 241, 0.18);
-      color: #fff;
+      background: color-mix(in oklab, var(--color-accent) 18%, transparent);
+      color: var(--color-paper);
     }
 
     &.is-done {
-      color: rgba(255, 255, 255, 0.42);
+      color: color-mix(in oklab, var(--color-accent-ink) 42%, transparent);
     }
   }
 
@@ -1453,27 +1453,27 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 120px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.16);
+    background: color-mix(in oklab, var(--color-accent-ink) 16%, transparent);
     overflow: hidden;
 
     i {
       display: block;
       height: 100%;
-      background: #8b5cf6;
+      background: var(--color-accent);
     }
   }
 
   &__step-ok {
     font-size: 12px;
-    color: #34d399;
+    color: var(--color-accent-2);
   }
 }
 
 /* ===== 练习准备页（浅色） ===== */
 .dm-prepare {
   min-height: 100vh;
-  background: #f5f5f7;
-  color: #333;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
   padding-bottom: 108px;
 
   &__top {
@@ -1482,8 +1482,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     align-items: center;
     justify-content: center;
     min-height: 108px;
-    background: #fff;
-    border-bottom: 1px solid #e9e9e9;
+    background: var(--color-paper);
+    border-bottom: 1px solid var(--color-rule);
   }
 
   &__back {
@@ -1495,8 +1495,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 32px;
     border: 0;
     border-radius: 50%;
-    background: #f5f5f5;
-    color: #595959;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1512,14 +1512,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
     font-size: 16px;
     font-weight: 800;
     line-height: 24px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   &__top-sub {
     margin: 6px 0 0;
     font-size: 13px;
     line-height: 20px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__scroll {
@@ -1535,7 +1535,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__goal {
     padding: 24px;
     border-radius: 12px;
-    background: #f0f6ff;
+    background: var(--color-accent-wash);
 
     h2 {
       display: flex;
@@ -1545,28 +1545,28 @@ $run-panel: rgba(13, 17, 30, 0.82);
       font-size: 16px;
       font-weight: 800;
       line-height: 24px;
-      color: #2e4dd9;
+      color: var(--color-accent);
     }
 
     p {
       margin: 12px 0 0;
       font-size: 15px;
       line-height: 24px;
-      color: #595959;
+      color: var(--color-muted);
     }
   }
 
   &__card {
     padding: 24px;
     border-radius: 12px;
-    background: #fff;
+    background: var(--color-paper);
 
     h2 {
       margin: 0;
       font-size: 16px;
       font-weight: 800;
       line-height: 24px;
-      color: #262626;
+      color: var(--color-ink);
     }
   }
 
@@ -1594,8 +1594,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 20px;
     margin-top: 2px;
     border-radius: 6px;
-    background: #e8f0ff;
-    color: #436bff;
+    background: var(--color-accent-wash);
+    color: var(--color-accent);
     font-size: 12px;
     font-weight: 700;
   }
@@ -1603,14 +1603,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__guide-text {
     font-size: 15px;
     line-height: 24px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__para {
     margin: 12px 0 0;
     font-size: 15px;
     line-height: 24px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__roles {
@@ -1632,18 +1632,18 @@ $run-panel: rgba(13, 17, 30, 0.82);
   }
 
   &__role--me {
-    background: #f0f6ff;
+    background: var(--color-accent-wash);
 
     h3 {
-      color: #2e4dd9;
+      color: var(--color-accent);
     }
   }
 
   &__role--ai {
-    background: #faf5ff;
+    background: var(--color-accent-wash);
 
     h3 {
-      color: #7e22ce;
+      color: var(--color-accent-deep);
     }
   }
 
@@ -1660,8 +1660,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #436bff;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 16px;
     font-weight: 700;
     /* AI 侧换成形象图时同样 40px 圆、cover 裁切（U2）；用户侧仍是首字 */
@@ -1669,29 +1669,29 @@ $run-panel: rgba(13, 17, 30, 0.82);
   }
 
   &__avatar--ai {
-    background: #7e22ce;
+    background: var(--color-accent-deep);
   }
 
   &__role-name {
     font-size: 16px;
     font-weight: 800;
     line-height: 24px;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   &__role-desc {
     margin: 12px 0 0;
     font-size: 15px;
     line-height: 24px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__tone {
     margin-top: 12px;
     padding: 6px 12px;
     border-radius: 6px;
-    background: #eadcff;
-    color: #7e22ce;
+    background: var(--color-accent-wash);
+    color: var(--color-accent-deep);
     font-size: 13px;
     font-weight: 500;
     line-height: 22px;
@@ -1701,7 +1701,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     margin: 12px 0 16px;
     font-size: 14px;
     line-height: 22px;
-    color: #86909c;
+    color: var(--color-muted);
   }
 
   &__dim {
@@ -1717,7 +1717,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
   &__dim-desc {
     margin: 4px 0 0;
-    color: #595959;
+    color: var(--color-muted);
     font-size: 13px;
     line-height: 21px;
   }
@@ -1726,13 +1726,13 @@ $run-panel: rgba(13, 17, 30, 0.82);
     flex: none;
     width: 64px;
     font-size: 13px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__dim-name {
     font-size: 16px;
     font-weight: 800;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   &__footer {
@@ -1746,14 +1746,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: #fff;
-    border-top: 1px solid #e9e9e9;
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-rule);
   }
 
   &__limit {
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__start {
@@ -1762,8 +1762,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 48px;
     border: 0;
     border-radius: 12px;
-    background: linear-gradient(90deg, #436bff, #8b5cf6);
-    color: #fff;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent));
+    color: var(--color-paper);
     font-size: 16px;
     font-weight: 800;
     cursor: pointer;
@@ -1785,7 +1785,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
   box-sizing: border-box;
   overflow: hidden;
   background: $run-bg;
-  color: #fff;
+  color: var(--color-paper);
 
   &__main {
     display: flex;
@@ -1802,7 +1802,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     min-height: 0;
     border-radius: 16px;
     overflow: hidden;
-    background: radial-gradient(circle at 50% 40%, #2b3350 0%, #10131f 72%);
+    background: radial-gradient(circle at 50% 40%, var(--color-graphite) 0%, var(--color-graphite) 72%);
   }
 
   &__actor {
@@ -1827,8 +1827,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 36px;
     border: 0;
     border-radius: 50%;
-    background: rgba(10, 14, 26, 0.55);
-    color: #fff;
+    background: color-mix(in oklab, var(--color-graphite) 55%, transparent);
+    color: var(--color-paper);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1861,14 +1861,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
   &__timer {
     font-weight: 800;
-    background: rgba(10, 14, 26, 0.55);
+    background: color-mix(in oklab, var(--color-graphite) 55%, transparent);
   }
 
   &__progress {
     min-width: 67px;
     font-weight: 800;
-    background: rgba(10, 14, 26, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: color-mix(in oklab, var(--color-graphite) 60%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 14%, transparent);
   }
 
   /* 录音识别语言胶囊：原平台与「对话模式」同尺寸同外形（宽 88 / 高 34 / 圆角 10） */
@@ -1881,29 +1881,29 @@ $run-panel: rgba(13, 17, 30, 0.82);
     min-width: 88px;
     font-weight: 400;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #fff;
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 14%, transparent);
+    color: var(--color-paper);
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid rgba(139, 92, 246, 0.9);
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
 
     &.is-open {
-      background: rgba(10, 14, 26, 0.6);
+      background: color-mix(in oklab, var(--color-graphite) 60%, transparent);
     }
   }
 
   &__mode-icon {
     flex: none;
-    color: rgba(255, 255, 255, 0.82);
+    color: color-mix(in oklab, var(--color-accent-ink) 82%, transparent);
   }
 
   &__mode-caret {
     margin-left: 2px;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in oklab, var(--color-accent-ink) 72%, transparent);
     vertical-align: -2px;
     transition: transform 0.16s ease;
   }
@@ -1921,9 +1921,9 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 208px;
     padding: 6px;
     border-radius: 12px;
-    background: rgba(16, 20, 34, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    background: color-mix(in oklab, var(--color-graphite) 98%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
+    box-shadow: 0 12px 32px color-mix(in oklab, var(--color-graphite) 45%, transparent);
   }
 
   &__lang-option {
@@ -1937,16 +1937,16 @@ $run-panel: rgba(13, 17, 30, 0.82);
     border: 0;
     border-radius: 8px;
     background: transparent;
-    color: #fff;
+    color: var(--color-paper);
     text-align: left;
     cursor: pointer;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: color-mix(in oklab, var(--color-accent-ink) 8%, transparent);
     }
 
     &.is-active {
-      background: rgba(99, 102, 241, 0.22);
+      background: color-mix(in oklab, var(--color-accent) 22%, transparent);
     }
   }
 
@@ -1959,7 +1959,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__lang-option-hint {
     font-size: 11px;
     line-height: 16px;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in oklab, var(--color-accent-ink) 55%, transparent);
   }
 
   &__lang-option-check {
@@ -1967,7 +1967,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     right: 10px;
     top: 10px;
     font-size: 12px;
-    color: #a78bfa;
+    color: var(--color-accent-2);
   }
 
   /* 首次进入的说明气泡（原平台同位置的气泡文案：挂在语种胶囊下方并带小尖角） */
@@ -1979,8 +1979,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 236px;
     padding: 12px 14px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #7c3aed, #3b82f6);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent));
+    box-shadow: 0 12px 28px color-mix(in oklab, var(--color-graphite) 40%, transparent);
 
     /* 指向胶囊的小菱形尖角（纯装饰，读屏忽略） */
     &::before {
@@ -1991,7 +1991,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
       width: 10px;
       height: 10px;
       border-radius: 2px;
-      background: #7c3aed;
+      background: var(--color-accent);
       transform: rotate(45deg);
     }
 
@@ -1999,7 +1999,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
       margin: 0;
       font-size: 13px;
       line-height: 20px;
-      color: #fff;
+      color: var(--color-paper);
     }
   }
 
@@ -2009,8 +2009,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     padding: 4px 12px;
     border: 0;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #3b2c9b;
+    background: color-mix(in oklab, var(--color-accent-ink) 92%, transparent);
+    color: var(--color-accent-deep);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -2022,22 +2022,22 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 34px;
     border: 1px solid transparent;
     border-radius: 10px;
-    background: rgba(10, 14, 26, 0.6);
-    color: rgba(255, 255, 255, 0.9);
+    background: color-mix(in oklab, var(--color-graphite) 60%, transparent);
+    color: color-mix(in oklab, var(--color-accent-ink) 90%, transparent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid rgba(139, 92, 246, 0.9);
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
 
     &.is-active {
-      background: #6366f1;
-      border-color: rgba(255, 255, 255, 0.22);
-      color: #fff;
+      background: var(--color-accent);
+      border-color: color-mix(in oklab, var(--color-accent-ink) 22%, transparent);
+      color: var(--color-paper);
     }
   }
 
@@ -2064,14 +2064,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
     font-size: 13px;
     font-weight: 900;
     line-height: 20px;
-    color: #fbbf24;
+    color: var(--color-warning);
   }
 
   &__scene-text {
     margin-top: 6px;
     font-size: 13px;
     line-height: 23px;
-    color: rgba(255, 255, 255, 0.9);
+    color: color-mix(in oklab, var(--color-accent-ink) 90%, transparent);
   }
 
   &__bubbles {
@@ -2103,8 +2103,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 34px;
     border-radius: 50%;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.14);
-    color: rgba(255, 255, 255, 0.86);
+    background: color-mix(in oklab, var(--color-accent-ink) 14%, transparent);
+    color: color-mix(in oklab, var(--color-accent-ink) 86%, transparent);
     font-size: 13px;
     font-weight: 700;
 
@@ -2129,8 +2129,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
+    background: color-mix(in oklab, var(--color-accent-ink) 12%, transparent);
+    color: var(--color-paper);
     vertical-align: -5px;
     cursor: pointer;
 
@@ -2140,7 +2140,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     }
 
     &:focus-visible {
-      outline: 2px solid #8b5cf6;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -2150,26 +2150,26 @@ $run-panel: rgba(13, 17, 30, 0.82);
     max-width: 748px;
     padding: 11px 14px;
     border-radius: 4px 14px 14px;
-    background: rgba(13, 17, 30, 0.7);
+    background: color-mix(in oklab, var(--color-graphite) 70%, transparent);
     font-size: 13px;
     line-height: 20px;
-    color: #fff;
+    color: var(--color-paper);
     white-space: pre-wrap;
 
     &.is-thinking {
-      color: rgba(255, 255, 255, 0.6);
+      color: color-mix(in oklab, var(--color-accent-ink) 60%, transparent);
     }
   }
 
   &__bubble-row.is-user &__bubble {
-    background: rgba(67, 107, 255, 0.72);
+    background: var(--color-accent);
     border-radius: 14px 4px 14px 14px;
   }
 
   &__bubble-row.is-coach &__bubble {
-    background: rgba(250, 140, 22, 0.18);
-    border: 1px solid rgba(250, 140, 22, 0.4);
-    color: #ffd591;
+    background: color-mix(in oklab, var(--color-warning) 18%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-warning) 40%, transparent);
+    color: color-mix(in oklab, var(--color-warning) 35%, var(--color-paper));
   }
 
   &__input-area {
@@ -2185,7 +2185,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 8px;
     padding: 12px 14px;
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in oklab, var(--color-accent-ink) 5%, transparent);
 
     textarea {
       width: calc(100% - 2px);
@@ -2196,13 +2196,13 @@ $run-panel: rgba(13, 17, 30, 0.82);
       resize: none;
       overflow-y: auto;
       background: transparent;
-      color: #f3f4f6;
+      color: var(--color-paper-2);
       font-family: inherit;
       font-size: 15px;
       line-height: 24px;
 
       &::placeholder {
-        color: rgba(255, 255, 255, 0.5);
+        color: color-mix(in oklab, var(--color-accent-ink) 50%, transparent);
       }
     }
   }
@@ -2227,8 +2227,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 38px;
     border: 0;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.85);
+    background: color-mix(in oklab, var(--color-accent-ink) 6%, transparent);
+    color: color-mix(in oklab, var(--color-accent-ink) 85%, transparent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2245,8 +2245,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
 
     /* 录音中：红色脉冲，学员一眼能看出"正在录"而不是"已发送" */
     &.is-recording {
-      background: #ff4d4f;
-      color: #fff;
+      background: var(--color-error);
+      color: var(--color-paper);
       animation: dm-rec-pulse 1.2s ease-in-out infinite;
     }
 
@@ -2261,7 +2261,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     text-align: center;
     font-size: 12px;
     line-height: 18px;
-    color: rgba(255, 255, 255, 0.32);
+    color: color-mix(in oklab, var(--color-accent-ink) 32%, transparent);
   }
 
   &__aside {
@@ -2271,8 +2271,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     display: flex;
     flex-direction: column;
     border-radius: 16px;
-    background: #fff;
-    color: #1d2129;
+    background: var(--color-paper);
+    color: var(--color-ink);
     overflow: hidden;
   }
 
@@ -2283,14 +2283,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
     justify-content: space-between;
     height: 50px;
     padding: 0 16px;
-    border-bottom: 1px solid #f0f1f4;
+    border-bottom: 1px solid var(--color-paper-2);
   }
 
   &__aside-title {
     font-size: 14px;
     font-weight: 800;
     line-height: 22px;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   &__aside-close {
@@ -2299,7 +2299,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     border: 0;
     border-radius: 8px;
     background: transparent;
-    color: #86909c;
+    color: var(--color-muted);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2321,7 +2321,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     font-size: 16px;
     font-weight: 850;
     line-height: 24px;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   &__aside-section {
@@ -2333,7 +2333,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
       margin: 0;
       font-size: 14px;
       line-height: 24px;
-      color: #4e5969;
+      color: var(--color-ink-2);
     }
   }
 
@@ -2344,7 +2344,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     font-size: 14px;
     font-weight: 800;
     line-height: 22px;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   &__aside-badge {
@@ -2354,8 +2354,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 18px;
     height: 18px;
     border-radius: 6px;
-    background: #3b82f6;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 11px;
     font-weight: 700;
   }
@@ -2366,13 +2366,13 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 8px;
     padding: 12px;
     border-radius: 12px;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
   }
 
   &__role-tag {
     font-size: 12px;
     line-height: 18px;
-    color: #86909c;
+    color: var(--color-muted);
   }
 
   &__role-line {
@@ -2381,7 +2381,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 10px;
     font-size: 14px;
     line-height: 22px;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   &__role-avatar {
@@ -2392,8 +2392,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #436bff;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-paper);
     font-size: 13px;
     font-weight: 700;
     /* AI 侧换成形象图时同样 32px 圆、cover 裁切（U3）；用户侧仍是首字 */
@@ -2401,14 +2401,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
   }
 
   &__role-avatar--ai {
-    background: #7e22ce;
+    background: var(--color-accent-deep);
   }
 
   &__role-name {
     font-size: 14px;
     font-weight: 700;
     line-height: 22px;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   /* R6-1：角色卡的细分字段（身份/公司/年龄段/性格/描述） */
@@ -2430,14 +2430,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
       width: 52px;
       font-size: 12px;
       line-height: 20px;
-      color: #86909c;
+      color: var(--color-muted);
     }
 
     dd {
       margin: 0;
       font-size: 13px;
       line-height: 20px;
-      color: #4e5969;
+      color: var(--color-ink-2);
     }
   }
 
@@ -2450,7 +2450,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     dd {
       font-size: 13px;
       line-height: 21px;
-      color: #4e5969;
+      color: var(--color-ink-2);
     }
   }
 
@@ -2466,27 +2466,27 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 12px;
     font-size: 12px;
     line-height: 18px;
-    color: #86909c;
+    color: var(--color-muted);
   }
 
   &__chat-copy {
     flex: none;
     padding: 2px 10px;
-    border: 1px solid #d9dce1;
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
-    background: #fff;
-    color: #4e5969;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     font-size: 12px;
     line-height: 18px;
     cursor: pointer;
 
     &:hover {
-      border-color: #436bff;
-      color: #436bff;
+      border-color: var(--color-accent);
+      color: var(--color-accent);
     }
 
     &:focus-visible {
-      outline: 2px solid rgba(67, 107, 255, 0.6);
+      outline: 2px solid var(--color-accent);
       outline-offset: 1px;
     }
   }
@@ -2494,10 +2494,10 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__chat-empty {
     padding: 16px 12px;
     border-radius: 12px;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
     font-size: 13px;
     line-height: 21px;
-    color: #86909c;
+    color: var(--color-muted);
   }
 
   &__chat-row {
@@ -2506,15 +2506,15 @@ $run-panel: rgba(13, 17, 30, 0.82);
     gap: 6px;
     padding: 10px 12px;
     border-radius: 12px;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
 
     &.is-user {
-      background: #f0f6ff;
+      background: var(--color-accent-wash);
     }
 
     &.is-coach {
-      background: #fff7e6;
-      border: 1px solid #ffe7ba;
+      background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+      border: 1px solid color-mix(in oklab, var(--color-warning) 30%, var(--color-paper));
     }
   }
 
@@ -2528,14 +2528,14 @@ $run-panel: rgba(13, 17, 30, 0.82);
     font-size: 12px;
     font-weight: 700;
     line-height: 18px;
-    color: #4e5969;
+    color: var(--color-ink-2);
   }
 
   &__chat-tag {
     padding: 0 6px;
     border-radius: 4px;
-    background: #ffe7ba;
-    color: #ad6800;
+    background: color-mix(in oklab, var(--color-warning) 30%, var(--color-paper));
+    color: var(--color-warning);
     font-size: 11px;
     line-height: 16px;
   }
@@ -2543,7 +2543,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__chat-text {
     font-size: 13px;
     line-height: 21px;
-    color: #1d2129;
+    color: var(--color-ink);
     white-space: pre-wrap;
   }
 
@@ -2553,7 +2553,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     height: 21px;
     font-size: 14px;
     line-height: 21px;
-    color: #4e5969;
+    color: var(--color-ink-2);
   }
 
   &__progress-track {
@@ -2561,13 +2561,13 @@ $run-panel: rgba(13, 17, 30, 0.82);
     width: 100%;
     height: 5px;
     border-radius: 5px;
-    background: #f0f1f4;
+    background: var(--color-paper-2);
     overflow: hidden;
 
     i {
       display: block;
       height: 100%;
-      background: #6366f1;
+      background: var(--color-accent);
     }
   }
 }
@@ -2578,20 +2578,20 @@ $run-panel: rgba(13, 17, 30, 0.82);
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f5f5f7;
+  background: var(--color-paper-2);
 
   &__card {
     width: 420px;
     padding: 32px;
     border-radius: 12px;
-    background: #fff;
+    background: var(--color-paper);
     text-align: center;
 
     h1 {
       margin: 0;
       font-size: 20px;
       font-weight: 700;
-      color: #262626;
+      color: var(--color-ink);
     }
   }
 
@@ -2599,7 +2599,7 @@ $run-panel: rgba(13, 17, 30, 0.82);
     margin: 12px 0 0;
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__actions {
@@ -2612,17 +2612,17 @@ $run-panel: rgba(13, 17, 30, 0.82);
   &__btn {
     height: 36px;
     padding: 0 20px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--color-rule-2);
     border-radius: 6px;
-    background: #fff;
-    color: #595959;
+    background: var(--color-paper);
+    color: var(--color-muted);
     font-size: 14px;
     cursor: pointer;
 
     &--primary {
-      border-color: #436bff;
-      background: #436bff;
-      color: #fff;
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      color: var(--color-paper);
     }
   }
 }
@@ -2658,39 +2658,39 @@ $run-panel: rgba(13, 17, 30, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.45);
+  background: color-mix(in oklab, var(--color-graphite) 45%, transparent);
 
   &__card {
     width: 420px;
     max-width: calc(100vw - 32px);
     padding: 24px;
     border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    background: var(--color-paper);
+    box-shadow: 0 12px 40px color-mix(in oklab, var(--color-graphite) 18%, transparent);
   }
 
   &__title {
     margin: 0 0 12px;
     font-size: 20px;
     font-weight: 700;
-    color: #1d2129;
+    color: var(--color-ink);
   }
 
   &__goal {
     margin: 0 0 16px;
     font-size: 14px;
     line-height: 22px;
-    color: #4e5969;
+    color: var(--color-ink-2);
   }
 
   &__progress {
     margin-bottom: 16px;
     padding: 10px 12px;
     border-radius: 10px;
-    background: #fff7e8;
+    background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
     font-size: 14px;
     font-weight: 600;
-    color: #fa8c16;
+    color: var(--color-warning);
   }
 
   &__btn {
@@ -2699,8 +2699,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     padding: 12px 16px;
     border: 0;
     border-radius: 10px;
-    background: #f2f3f5;
-    color: #1d2129;
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2717,8 +2717,8 @@ $run-panel: rgba(13, 17, 30, 0.82);
     }
 
     &--primary {
-      background: #6f5ef9;
-      color: #fff;
+      background: var(--color-accent);
+      color: var(--color-paper);
     }
   }
 
@@ -2737,10 +2737,10 @@ $run-panel: rgba(13, 17, 30, 0.82);
 @keyframes dm-rec-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.55);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-error) 55%, transparent);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(255, 77, 79, 0);
+    box-shadow: 0 0 0 6px transparent;
   }
 }
 </style>

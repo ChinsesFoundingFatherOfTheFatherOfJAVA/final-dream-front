@@ -68,8 +68,9 @@ export function coursewareStatusText(status: number): string {
 export interface CoursewareTypeOption {
   type: number
   label: string
-  /** 圆角方块配色（附录D：各类型配色见截图09） */
+  /** 圆角方块配色（t21：token 变量字符串，冷区 Cobalt 层级） */
   color: string
+  /** t21：glyph 已废弃（图标走 TaskTypeBar 的 EP 组件映射），保留字段兼容旧引用 */
   glyph: string
   /** true=可点；false=置灰占位（悬浮"功能建设中"） */
   enabled: boolean
@@ -81,19 +82,20 @@ export interface CoursewareTypeOption {
  * 占位置灰=微课5/练习/考试；不显示=讨论/问卷/签署/作业/实战演练。
  */
 export const TASK_TYPE_ITEMS: CoursewareTypeOption[] = [
-  { type: 1, label: '文档', color: '#f45b69', glyph: 'P', enabled: true },
-  { type: 2, label: '视频', color: '#6b7cff', glyph: '▶', enabled: true },
-  { type: 3, label: '音频', color: '#27b788', glyph: '♫', enabled: true },
-  { type: 4, label: '压缩文件', color: '#f59f2f', glyph: '▣', enabled: true },
-  { type: 6, label: 'SCORM', color: '#13b5b1', glyph: 'SC', enabled: true },
-  { type: 7, label: 'HTML', color: '#8b95a7', glyph: '<>', enabled: true },
-  { type: 8, label: '外链课', color: '#2e7cf6', glyph: '↗', enabled: true },
+  // t21：底座色全冷区（与 Home.vue hue 体系同款 Cobalt 层级），glyph 仅为无障碍兜底、图标走 EP 组件
+  { type: 1, label: '文档', color: 'var(--color-accent-deep)', glyph: '', enabled: true },
+  { type: 2, label: '视频', color: 'var(--color-accent)', glyph: '', enabled: true },
+  { type: 3, label: '音频', color: 'var(--color-accent-2)', glyph: '', enabled: true },
+  { type: 4, label: '压缩文件', color: 'var(--color-accent-2)', glyph: '', enabled: true },
+  { type: 6, label: 'SCORM', color: 'var(--color-accent-deep)', glyph: '', enabled: true },
+  { type: 7, label: 'HTML', color: 'var(--color-graphite)', glyph: '', enabled: true },
+  { type: 8, label: '外链课', color: 'var(--color-accent)', glyph: '', enabled: true },
   // 本地上传（type=0）：新窗口打开课件发布页，非选课件入口
-  { type: 0, label: '本地上传', color: '#4d5568', glyph: '⇧', enabled: true },
+  { type: 0, label: '本地上传', color: 'var(--color-accent-deep)', glyph: '', enabled: true },
   // 占位：依赖模块未做
-  { type: 5, label: '微课', color: '#c7cdd7', glyph: '✦', enabled: false },
-  { type: -1, label: '练习', color: '#c7cdd7', glyph: '✎', enabled: false },
-  { type: -2, label: '考试', color: '#c7cdd7', glyph: '✍', enabled: false }
+  { type: 5, label: '微课', color: 'var(--color-rule-2)', glyph: '', enabled: false },
+  { type: -1, label: '练习', color: 'var(--color-rule-2)', glyph: '', enabled: false },
+  { type: -2, label: '考试', color: 'var(--color-rule-2)', glyph: '', enabled: false }
 ]
 
 /** 任务类型 → 中文名（任务表类型列用） */
@@ -107,7 +109,7 @@ export function coursewareTypeLabel(type: number): string {
 /** 任务行类型图标配色（同图标行） */
 export function coursewareTypeColor(type: number): string {
   const found = TASK_TYPE_ITEMS.find(item => item.type === type)
-  return found ? found.color : '#8b95a7'
+  return found ? found.color : 'var(--color-rule-2)'
 }
 
 export interface CatalogFlatNode {

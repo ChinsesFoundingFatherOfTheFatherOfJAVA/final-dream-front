@@ -185,28 +185,28 @@ const confirm = async () => {
 </script>
 
 <style scoped lang="scss">
-.drawer { width: 720px; height: 100%; background: #fff; display: flex; flex-direction: column; }
+.drawer { width: 720px; height: 100%; background: var(--color-paper); display: flex; flex-direction: column; }
 
 .drawer-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 500;
+  padding: 16px 20px; border-bottom: 1px solid var(--color-rule); font-size: 15px; font-weight: 500;
 
-  .close-btn { font-size: 22px; color: #999; cursor: pointer; &:focus-visible { outline: 2px solid #1890ff; outline-offset: -2px; border-radius: 4px; } }
+  .close-btn { font-size: 22px; color: var(--color-muted); cursor: pointer; &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 4px; } }
 }
 
 .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; }
 
 .block { margin-bottom: 26px; }
 .block-label {
-  margin: 0 0 10px; font-size: 13px; color: #4a5368;
-  &.required::before { content: '＊'; color: #f5222d; margin-right: 2px; }
+  margin: 0 0 10px; font-size: 13px; color: var(--color-ink-2);
+  &.required::before { content: '＊'; color: var(--color-error); margin-right: 2px; }
 }
-.total-text { margin: 0; font-size: 13px; color: #303133; }
+.total-text { margin: 0; font-size: 13px; color: var(--color-ink); }
 
 .mode-radio {
   display: flex; align-items: center; gap: 6px; padding: 6px 0;
-  font-size: 13px; color: #4a5368; cursor: pointer;
-  input { margin: 0; accent-color: #1890ff; }
+  font-size: 13px; color: var(--color-ink-2); cursor: pointer;
+  input { margin: 0; accent-color: var(--color-accent); }
   // EP 空 label 占位与默认 margin-right 会撑大圆点与文字的距离，同全站口径清除
   :deep(.el-radio) { margin-right: 0; }
   :deep(.el-radio__label) { display: none; }
@@ -214,32 +214,32 @@ const confirm = async () => {
 
 .band {
   display: flex; gap: 40px; margin-top: 12px; padding: 16px 20px;
-  background: #f5f6f8; border-radius: 6px;
+  background: var(--color-paper-2); border-radius: 6px;
 
   .band-cell { min-width: 120px; &.wide { min-width: 200px; } }
-  .band-title { margin: 0 0 10px; font-size: 13px; color: #4a5368; }
+  .band-title { margin: 0 0 10px; font-size: 13px; color: var(--color-ink-2); }
   .band-input {
     display: flex; align-items: center; gap: 8px;
 
     input {
-      width: 96px; border: 1px solid #d9d9d9; border-radius: 4px;
+      width: 96px; border: 1px solid var(--color-rule-2); border-radius: 4px;
       padding: 6px 8px; font-size: 13px; outline: none;
-      &:focus { border-color: #1890ff; }
+      &:focus { border-color: var(--color-accent); }
     }
   }
-  .max-hint { font-size: 12px; color: #8a92a5; }
+  .max-hint { font-size: 12px; color: var(--color-muted); }
 }
 
 .drawer-footer {
   display: flex; justify-content: flex-end; gap: 10px;
-  padding: 14px 24px; border-top: 1px solid #eee;
+  padding: 14px 24px; border-top: 1px solid var(--color-rule);
 }
 
 .btn {
-  padding: 7px 22px; border: 1px solid #d9d9d9; border-radius: 4px;
-  background: #fff; font-size: 13px; color: #4a5368; cursor: pointer;
+  padding: 7px 22px; border: 1px solid var(--color-rule-2); border-radius: 4px;
+  background: var(--color-paper); font-size: 13px; color: var(--color-ink-2); cursor: pointer;
 
-  &.primary { background: #1890ff; border-color: #1890ff; color: #fff; }
+  &.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
   &:disabled { opacity: .6; cursor: not-allowed; }
 }
 </style>

@@ -93,7 +93,7 @@ const submit = async () => {
   display: grid;
   grid-template-columns: 100px 1fr;
   gap: 10px;
-  color: #4d5568;
+  color: var(--color-ink-2);
   font-size: 13px;
 
   :deep(.el-input__wrapper) {
@@ -115,8 +115,8 @@ const submit = async () => {
 .tips {
   padding: 12px 14px;
   border-radius: 7px;
-  background: #f8fafc;
-  color: #7a8396;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 1.7;
 
@@ -132,15 +132,15 @@ const submit = async () => {
   cursor: pointer;
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #e75487;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

@@ -256,7 +256,7 @@
                 @click="openProfile(profile)"
                 @keydown.enter.prevent="openProfile(profile)"
               >
-                <span class="dm-material__icon dm-material__icon--profile">📦</span>
+                <el-icon class="dm-material__icon dm-material__icon--profile"><Box /></el-icon>
                 <span class="dm-material__body">
                   <span class="dm-material__name">{{ profile.name }}</span>
                   <span class="dm-material__meta">{{ profile.description || '暂无简介' }}</span>
@@ -376,6 +376,7 @@ import {
 } from '@/api/actStudent'
 import { renderMarkdown } from '@/views/admin/AICombat/ActualTraining/Assistant/utils/markdown'
 import ScenarioPrepareDialog from './components/ScenarioPrepareDialog.vue'
+import { Box } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -529,11 +530,11 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 // 全部数值来自原平台实测：front-end/visual/measured/drillmate-theme-detail.json
-$primary: #436bff;
-$text-1: #262626;
-$text-2: #757575;
-$text-3: #8c8c8c;
-$border: #e9e9e9;
+$primary: var(--color-accent);
+$text-1: var(--color-ink);
+$text-2: var(--color-muted);
+$text-3: var(--color-muted);
+$border: var(--color-rule);
 
 .dm-detail {
   padding: 0 0 24px;
@@ -563,10 +564,10 @@ $border: #e9e9e9;
     cursor: pointer;
   }
   &__sep {
-    color: #c0c4cc;
+    color: var(--color-muted);
   }
   &__current {
-    color: #1a1a1a;
+    color: var(--color-graphite);
   }
 }
 
@@ -574,8 +575,8 @@ $border: #e9e9e9;
   border-radius: 12px;
   overflow: hidden;
   background:
-    radial-gradient(120% 140% at 88% 12%, rgba(122, 158, 255, 0.3) 0%, rgba(122, 158, 255, 0) 58%),
-    linear-gradient(150deg, #eef4ff 0%, #e8f0ff 55%, #f5f6fa 100%);
+    radial-gradient(120% 140% at 88% 12%, color-mix(in oklab, var(--color-accent) 30%, transparent) 0%, transparent 58%),
+    linear-gradient(150deg, var(--color-accent-wash) 0%, var(--color-accent-wash) 55%, var(--color-paper-2) 100%);
 
   &__pad {
     padding: 24px;
@@ -607,7 +608,7 @@ $border: #e9e9e9;
     color: $text-3;
   }
   &__sep {
-    color: #d9d9d9;
+    color: var(--color-rule-2);
   }
   h1 {
     margin: 0 0 6px;
@@ -623,7 +624,7 @@ $border: #e9e9e9;
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
-    color: #595959;
+    color: var(--color-muted);
   }
 }
 
@@ -637,7 +638,7 @@ $border: #e9e9e9;
   font-size: 12px;
   font-weight: 500;
   line-height: 22px;
-  color: #fff;
+  color: var(--color-paper);
   white-space: nowrap;
 }
 
@@ -674,7 +675,7 @@ $border: #e9e9e9;
 .dm-grid section {
   padding: 24px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-paper);
 }
 
 .dm-section__head {
@@ -723,14 +724,14 @@ $border: #e9e9e9;
   align-items: center;
   gap: 16px;
   padding: 16px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-paper-2);
   border-radius: 8px;
-  background: #f7f8fa;
+  background: var(--color-paper-2);
   cursor: pointer;
   transition: border-color 0.15s ease;
 
   &:hover {
-    border-color: #c9d6ff;
+    border-color: var(--color-accent-wash);
   }
 
   &__index {
@@ -742,11 +743,11 @@ $border: #e9e9e9;
     height: 32px;
     border: 1px solid $border;
     border-radius: 10px;
-    background: #fff;
+    background: var(--color-paper);
     font-size: 13px;
     font-weight: 750;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__main {
@@ -785,15 +786,15 @@ $border: #e9e9e9;
 
     &.is-not_started {
       color: $text-3;
-      background: #f0f0f0;
+      background: var(--color-paper-2);
     }
     &.is-in_progress {
-      color: #fa8c16;
-      background: #fff7e6;
+      color: var(--color-warning);
+      background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
     }
     &.is-passed {
-      color: #52c41a;
-      background: #f6ffed;
+      color: var(--color-success);
+      background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper));
     }
   }
 
@@ -859,11 +860,11 @@ $border: #e9e9e9;
     background: $primary;
     font-size: 13px;
     line-height: 32px;
-    color: #fff;
+    color: var(--color-paper);
     cursor: pointer;
 
     &:disabled {
-      background: #d9d9d9;
+      background: var(--color-rule-2);
       cursor: not-allowed;
     }
   }
@@ -929,8 +930,8 @@ $border: #e9e9e9;
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: #f0f0f0;
-    color: #f5222d;
+    background: var(--color-paper-2);
+    color: var(--color-error);
 
     &--profile {
       font-size: 18px;
@@ -969,11 +970,11 @@ $border: #e9e9e9;
     margin-top: 4px;
     padding: 0 4px;
     border-radius: 4px;
-    background: #f0f0f0;
+    background: var(--color-paper-2);
     font-size: 12px;
     font-weight: 500;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 }
 
@@ -990,7 +991,7 @@ $border: #e9e9e9;
 
   &__more {
     padding-top: 14px;
-    border-top: 1px dashed #ededed;
+    border-top: 1px dashed var(--color-rule);
     text-align: center;
 
     span {
@@ -1045,10 +1046,10 @@ $border: #e9e9e9;
     line-height: 20px;
 
     &.is-passed {
-      color: #52c41a;
+      color: var(--color-success);
     }
     &.is-failed {
-      color: #f5222d;
+      color: var(--color-error);
     }
     &.is-running {
       color: $primary;
@@ -1158,14 +1159,14 @@ $border: #e9e9e9;
   code {
     padding: 1px 4px;
     border-radius: 4px;
-    background: #f5f5f5;
+    background: var(--color-paper-2);
     font-size: 13px;
   }
   pre {
     overflow: auto;
     padding: 12px;
     border-radius: 8px;
-    background: #f5f5f5;
+    background: var(--color-paper-2);
   }
   table {
     width: 100%;
@@ -1175,7 +1176,7 @@ $border: #e9e9e9;
     th,
     td {
       padding: 6px 8px;
-      border: 1px solid #ededed;
+      border: 1px solid var(--color-rule);
       font-size: 13px;
       text-align: left;
     }
@@ -1183,8 +1184,8 @@ $border: #e9e9e9;
   blockquote {
     margin: 0 0 10px;
     padding: 8px 12px;
-    border-left: 3px solid #e9e9e9;
-    color: #757575;
+    border-left: 3px solid var(--color-rule);
+    color: var(--color-muted);
   }
 }
 </style>

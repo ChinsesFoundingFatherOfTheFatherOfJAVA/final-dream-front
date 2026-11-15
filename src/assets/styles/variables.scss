@@ -1,47 +1,51 @@
 :root {
-  // 主色调
-  --color-primary: #1890ff;
-  --color-primary-light: #e6f7ff;
-  --color-primary-dark: #096dd9;
+  /* 主色调（Cobalt：映射到 hallmark-tokens.scss 的钴蓝色板，不再写裸色值） */
+  --color-primary: var(--color-accent);
+  --color-primary-light: color-mix(in oklab, var(--color-accent) 12%, var(--color-paper));
+  --color-primary-dark: var(--color-accent-deep);
 
-  // 中性色
-  --color-text-primary: #333333;
-  --color-text-secondary: #666666;
-  --color-text-placeholder: #999999;
-  --color-border: #e8e8e8;
-  --color-background: #f5f5f5;
-  --color-background-light: #fafafa;
+  /* 中性色（Cobalt 冷灰纸面/墨色体系） */
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-muted);
+  --color-text-placeholder: var(--color-muted);
+  --color-border: var(--color-rule);
+  --color-background: var(--color-paper-2);
+  --color-background-light: var(--color-paper-2);
 
-  // 功能色
-  --color-success: #52c41a;
-  --color-warning: #faad14;
-  --color-error: #f5222d;
-  --color-info: #1890ff;
+  /* 功能色（success/error/warning 走 hallmark-tokens 冷区校准值；info 用 muted 中性） */
 
-  // 间距
+  --color-warning: var(--color-warning);
+
+  --color-info: var(--color-muted);
+
+  /* 间距 */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
-  // 圆角
+  /* 圆角 */
   --radius-sm: 4px;
-  --radius-md: 8px;
+  --radius-md: var(--radius-card);
   --radius-lg: 12px;
 
-  // 阴影
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  /* 阴影（keycap/卡片投影 token 化） */
+  --shadow-sm: var(--shadow-card);
+  --shadow-md: var(--shadow-key);
 
-  // 过渡
+  /* 过渡 */
   --transition-fast: 0.2s;
   --transition-normal: 0.3s;
 
-  // 字体
+  /* 字号 */
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-md: 16px;
   --font-size-lg: 20px;
   --font-size-xl: 24px;
+
+  /* 字体（Familjen Grotesk 标题，IBM Plex Sans 正文，JetBrains Mono 机器值） */
+  --font-body: var(--font-display);
+  --font-mono: var(--font-outlier);
 }

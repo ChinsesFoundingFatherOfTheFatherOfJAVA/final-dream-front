@@ -85,18 +85,18 @@ const hiddenFields = computed(() => [
 <style scoped lang="scss">
 .tab-desc {
   font-size: 13px;
-  color: #8a8f98;
+  color: var(--color-muted);
   line-height: 1.7;
   margin: 0 0 14px;
 }
 
 .layer {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
   overflow: hidden;
 
-  &.layer-visible { background: #f7fbff; border-color: #d8e8fb; }
-  &.layer-hidden { background: #faf8ff; border-color: #e3ddfb; }
+  &.layer-visible { background: var(--color-paper-2); border-color: var(--color-accent-wash); }
+  &.layer-hidden { background: var(--color-accent-wash); border-color: var(--color-accent-wash); }
 }
 
 .layer-head {
@@ -104,20 +104,20 @@ const hiddenFields = computed(() => [
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-graphite) 5%, transparent);
 
   .layer-badge {
     font-size: 13px;
     font-weight: 600;
-    color: #1890ff;
-    background: #e6f7ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
     border-radius: 4px;
     padding: 2px 10px;
 
-    &.hidden { color: #6b5ce7; background: #f0edff; }
+    &.hidden { color: var(--color-accent); background: var(--color-accent-wash); }
   }
 
-  .layer-sub { font-size: 12px; color: #8a8f98; }
+  .layer-sub { font-size: 12px; color: var(--color-muted); }
 }
 
 .layer-body {
@@ -136,11 +136,11 @@ const hiddenFields = computed(() => [
 .layer-field {
   .field-label {
     font-size: 12px;
-    color: #8a8f98;
+    color: var(--color-muted);
     margin-bottom: 6px;
   }
 
-  .field-empty { font-size: 13px; color: #c0c4cc; }
+  .field-empty { font-size: 13px; color: var(--color-muted); }
 }
 
 .pill-cloud {
@@ -156,22 +156,22 @@ const hiddenFields = computed(() => [
 
   /* 水面以上：蓝/绿两族，按序微调深浅 */
   .pill-blue {
-    &.shade-0 { color: #1d6fd0; background: #e3f0ff; }
-    &.shade-1 { color: #2b7fd8; background: #ebf5ff; }
-    &.shade-2 { color: #1565c0; background: #dbeaff; }
+    &.shade-0 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.shade-1 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.shade-2 { color: var(--color-accent-deep); background: var(--color-accent-wash); }
   }
 
   .pill-green {
-    &.shade-0 { color: #2e7d32; background: #e8f7e8; }
-    &.shade-1 { color: #388e3c; background: #eefbee; }
-    &.shade-2 { color: #1b5e20; background: #dff2df; }
+    &.shade-0 { color: var(--color-success); background: color-mix(in oklab, var(--color-success) 10%, var(--color-paper)); }
+    &.shade-1 { color: var(--color-success); background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper)); }
+    &.shade-2 { color: var(--color-success); background: color-mix(in oklab, var(--color-success) 12%, var(--color-paper)); }
   }
 
   /* 水面以下：紫族 */
   .pill-purple {
-    &.shade-0 { color: #5b4bd6; background: #ece8ff; }
-    &.shade-1 { color: #6b5ce7; background: #f0edff; }
-    &.shade-2 { color: #4a3fc0; background: #e6e1ff; }
+    &.shade-0 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.shade-1 { color: var(--color-accent); background: var(--color-accent-wash); }
+    &.shade-2 { color: var(--color-accent-deep); background: var(--color-accent-wash); }
   }
 }
 
@@ -185,12 +185,12 @@ const hiddenFields = computed(() => [
   .line {
     flex: 1;
     height: 0;
-    border-top: 2px dashed #9fc6ee;
+    border-top: 2px dashed var(--color-accent-2);
   }
 
   .line-label {
     font-size: 12px;
-    color: #5b8bc4;
+    color: var(--color-accent);
     letter-spacing: 2px;
     white-space: nowrap;
   }
@@ -199,16 +199,16 @@ const hiddenFields = computed(() => [
 .model-note {
   margin-top: 14px;
   padding: 12px 14px;
-  background: #fafbfc;
-  border: 1px solid #eef0f3;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-paper-2);
   border-radius: 8px;
 
-  .note-title { font-size: 13px; font-weight: 600; color: #1f2329; margin-bottom: 6px; }
+  .note-title { font-size: 13px; font-weight: 600; color: var(--color-ink); margin-bottom: 6px; }
 
   .note-text {
     margin: 0;
     font-size: 13px;
-    color: #646a73;
+    color: var(--color-ink-2);
     line-height: 1.8;
   }
 }

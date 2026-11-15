@@ -100,7 +100,7 @@ watch(() => [props.visible, props.catalogId], ([visible]) => {
 
   h4 {
     margin: 0 0 14px;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 14px;
   }
 }
@@ -111,19 +111,19 @@ watch(() => [props.visible, props.catalogId], ([visible]) => {
   grid-template-columns: 120px 1fr;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #eef1f6;
-  color: #6f788a;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-muted);
   font-size: 13px;
 
   strong {
-    color: #394253;
+    color: var(--color-ink-2);
     font-weight: 500;
     word-break: break-word;
   }
 }
 
 .permission-view span {
-  color: #596274;
+  color: var(--color-ink-2);
 }
 
 .btn {
@@ -133,15 +133,15 @@ watch(() => [props.visible, props.catalogId], ([visible]) => {
   cursor: pointer;
 
   &.ghost {
-    border: 1px solid #d9deea;
-    background: #fff;
-    color: #596274;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink-2);
   }
 
   &.primary {
     border: none;
-    background: #e75487;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 </style>

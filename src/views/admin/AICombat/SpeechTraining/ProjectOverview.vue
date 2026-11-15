@@ -302,16 +302,16 @@ const renderTimesChart = () => {
       xAxis: {
         type: 'category',
         data: timesAverages.value.map((item) => item.times),
-        axisLabel: { formatter: (value: string) => `第${value}次`, color: '#7a8396' },
-        axisLine: { lineStyle: { color: '#e4e8f0' } },
+        axisLabel: { formatter: (value: string) => `第${value}次`, color: 'var(--color-ink-2)' },
+        axisLine: { lineStyle: { color: 'var(--color-rule)' } },
         axisTick: { show: false }
       },
       yAxis: {
         type: 'value',
         min: 0,
         max: 100,
-        axisLabel: { color: '#7a8396' },
-        splitLine: { lineStyle: { color: '#eef1f6' } }
+        axisLabel: { color: 'var(--color-ink-2)' },
+        splitLine: { lineStyle: { color: 'var(--color-rule)' } }
       },
       series: [
         {
@@ -319,7 +319,7 @@ const renderTimesChart = () => {
           data: timesAverages.value.map((item) => Number(item.average.toFixed(1))),
           barMaxWidth: 36,
           itemStyle: {
-            color: '#4a7dff',
+            color: 'var(--color-accent)',
             borderRadius: [5, 5, 0, 0]
           }
         }
@@ -349,18 +349,18 @@ const renderActiveChart = () => {
         boundaryGap: false,
         data: hours,
         axisLabel: {
-          color: '#7a8396',
+          color: 'var(--color-ink-2)',
           formatter: (value: string) => `${String(value).padStart(2, '0')}:00`,
           interval: 2
         },
-        axisLine: { lineStyle: { color: '#e4e8f0' } },
+        axisLine: { lineStyle: { color: 'var(--color-rule)' } },
         axisTick: { show: false }
       },
       yAxis: {
         type: 'value',
         minInterval: 1,
-        axisLabel: { color: '#7a8396' },
-        splitLine: { lineStyle: { color: '#eef1f6' } }
+        axisLabel: { color: 'var(--color-ink-2)' },
+        splitLine: { lineStyle: { color: 'var(--color-rule)' } }
       },
       series: [
         {
@@ -368,9 +368,9 @@ const renderActiveChart = () => {
           smooth: true,
           symbolSize: 6,
           data: hours.map((hour) => countMap.get(hour) ?? 0),
-          lineStyle: { color: '#22b8a6', width: 2 },
-          itemStyle: { color: '#22b8a6' },
-          areaStyle: { color: 'rgba(34, 184, 166, 0.12)' }
+          lineStyle: { color: 'var(--color-accent-2)', width: 2 },
+          itemStyle: { color: 'var(--color-accent-2)' },
+          areaStyle: { color: 'var(--color-accent-wash)' }
         }
       ]
     },
@@ -499,10 +499,10 @@ onBeforeUnmount(() => {
 .summary-card,
 .chart-panel,
 .table-panel {
-  border: 1px solid #edf0f5;
+  border: 1px solid var(--color-paper-2);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(24, 39, 75, 0.04);
+  background: var(--color-paper);
+  box-shadow: 0 2px 10px color-mix(in oklab, var(--color-graphite) 4%, transparent);
 }
 
 .summary-card {
@@ -511,13 +511,13 @@ onBeforeUnmount(() => {
 
 .summary-label {
   margin: 0 0 10px;
-  color: #6b7280;
+  color: var(--color-muted);
   font-size: 14px;
 }
 
 .summary-value {
   margin: 0;
-  color: #1f2937;
+  color: var(--color-ink);
   font-size: 28px;
   font-weight: 700;
   line-height: 1.1;
@@ -525,7 +525,7 @@ onBeforeUnmount(() => {
 
 .summary-foot {
   margin: 10px 0 0;
-  color: #98a1b2;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -551,7 +551,7 @@ onBeforeUnmount(() => {
 
   h3 {
     margin: 0;
-    color: #253047;
+    color: var(--color-ink);
     font-size: 16px;
     font-weight: 600;
   }
@@ -561,7 +561,7 @@ onBeforeUnmount(() => {
   display: inline-flex;
   padding: 3px;
   border-radius: 7px;
-  background: #f2f4f8;
+  background: var(--color-paper-2);
 
   button {
     min-width: 68px;
@@ -570,14 +570,14 @@ onBeforeUnmount(() => {
     border: none;
     border-radius: 5px;
     background: transparent;
-    color: #6b7280;
+    color: var(--color-muted);
     font-size: 13px;
     cursor: pointer;
 
     &.active {
-      background: #fff;
-      color: #2e7cf6;
-      box-shadow: 0 1px 4px rgba(24, 39, 75, 0.1);
+      background: var(--color-paper);
+      color: var(--color-accent);
+      box-shadow: 0 1px 4px color-mix(in oklab, var(--color-graphite) 10%, transparent);
     }
   }
 }
@@ -603,7 +603,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   margin: 0;
-  color: #9aa3b2;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -642,10 +642,10 @@ onBeforeUnmount(() => {
   .primary-btn {
     height: 34px;
     box-sizing: border-box;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     font-size: 13px;
     outline: none;
   }
@@ -660,7 +660,7 @@ onBeforeUnmount(() => {
 
     &:focus,
     select:focus {
-      border-color: #2e7cf6;
+      border-color: var(--color-accent);
     }
   }
 
@@ -671,20 +671,34 @@ onBeforeUnmount(() => {
 
   .primary-btn {
     padding: 0 18px;
-    border-color: #2e7cf6;
-    background: #2e7cf6;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
     cursor: pointer;
   }
 }
 
 .table-wrap {
   overflow-x: auto;
-  border: 1px solid #eef1f6;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
 }
 
 .data-table {
+  /* t23 表格规范 */
+  :deep(.el-table__header th) {
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  :deep(.el-table__row td) {
+    height: 44px;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  :deep(.el-table .cell) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :deep(.el-table__row:hover > td) { background: var(--color-accent-wash) !important; }
+
   width: 100%;
   min-width: 980px;
   border-collapse: collapse;
@@ -693,20 +707,20 @@ onBeforeUnmount(() => {
   th,
   td {
     padding: 11px 12px;
-    border-bottom: 1px solid #f1f3f7;
-    color: #4d5568;
+    border-bottom: 1px solid var(--color-paper-2);
+    color: var(--color-ink-2);
     text-align: left;
     white-space: nowrap;
   }
 
   th {
-    background: #fafbfd;
-    color: #6b7280;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
     font-weight: 600;
   }
 
   tbody tr:hover {
-    background: #f8fbff;
+    background: var(--color-paper-2);
   }
 
   tbody tr:last-child td {
@@ -721,7 +735,7 @@ onBeforeUnmount(() => {
 }
 
 .name-cell {
-  color: #253047;
+  color: var(--color-ink);
   font-weight: 500;
 }
 
@@ -737,31 +751,31 @@ onBeforeUnmount(() => {
 
 .status-chip.disabled {
   margin-left: 6px;
-  background: #fff7e6;
-  color: #d46b08;
+  background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper));
+  color: var(--color-error);
 }
 
 .finish-chip {
   &.done {
-    background: #eafaf0;
-    color: #2f9e52;
+    background: color-mix(in oklab, var(--color-success) 10%, var(--color-paper));
+    color: var(--color-success);
   }
 
   &.doing {
-    background: #eef4ff;
-    color: #2e7cf6;
+    background: var(--color-accent-wash);
+    color: var(--color-accent);
   }
 
   &.pending {
-    background: #f4f5f7;
-    color: #8a92a5;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
   }
 }
 
 .empty-cell {
   height: 120px;
   text-align: center !important;
-  color: #9aa3b2 !important;
+  color: var(--color-muted) !important;
 }
 
 .pagination {
@@ -769,7 +783,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding-top: 14px;
-  color: #7a8396;
+  color: var(--color-ink-2);
   font-size: 12px;
 }
 
@@ -781,14 +795,14 @@ onBeforeUnmount(() => {
   button {
     height: 30px;
     padding: 0 12px;
-    border: 1px solid #d9deea;
+    border: 1px solid var(--color-rule);
     border-radius: 6px;
-    background: #fff;
-    color: #4d5568;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
     cursor: pointer;
 
     &:disabled {
-      color: #b8bfcc;
+      color: var(--color-muted);
       cursor: not-allowed;
     }
   }

@@ -51,7 +51,7 @@
     <div v-if="showInitBanner" class="init-banner" :class="initBannerClass">
       <div class="banner-main">
         <span v-if="progressStatus === 1" class="banner-spinner"></span>
-        <span v-else-if="progressFailed" class="banner-icon" aria-hidden="true">⚠️</span>
+        <span v-else-if="progressFailed" class="banner-icon" aria-hidden="true"><el-icon><WarningFilled /></el-icon></span>
         <span v-else class="banner-icon" aria-hidden="true">✓</span>
         <span class="banner-text">{{ initBannerText }}</span>
       </div>
@@ -173,6 +173,7 @@ import type { AssistantScriptProgressResp } from '@/types/assistant'
 import ConfirmDialog from './ConfirmDialog.vue'
 import { initNotified, readInitProgress, writeInitProgress, clearInitProgress } from './initProgress'
 import { comingSoon, showToast } from './ui'
+import { WarningFilled } from '@element-plus/icons-vue'
 import {
   averageOf as modeAverage,
   isDualMode as modeIsDual,
@@ -463,7 +464,7 @@ const doAction = async () => {
     font-size: 24px;
     font-weight: 700;
     line-height: 32px;
-    color: #262626;
+    color: var(--color-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -474,7 +475,7 @@ const doAction = async () => {
     max-width: 658px;
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__time {
@@ -484,7 +485,7 @@ const doAction = async () => {
     height: 22px;
     font-size: 14px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   &__actions {
@@ -502,46 +503,46 @@ const doAction = async () => {
   align-items: center;
   height: 22px;
   padding: 2px 8px;
-  border: 1px solid #a7f3d0;
+  border: 1px solid color-mix(in oklab, var(--color-success) 30%, var(--color-paper));
   border-radius: 4px;
-  background: #ecfdf5;
+  background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper));
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
-  color: #047857;
+  color: var(--color-success);
   white-space: nowrap;
 
-  & + & { border-color: #bdd2ff; background: #f0f6ff; color: #2e4dd9; }
-  & + & + & { border-color: #fde68a; background: #fffbeb; color: #b45309; }
-  & + & + & + & { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+  & + & { border-color: var(--color-accent-wash); background: var(--color-accent-wash); color: var(--color-accent); }
+  & + & + & { border-color: color-mix(in oklab, var(--color-warning) 40%, var(--color-paper)); background: color-mix(in oklab, var(--color-warning) 12%, var(--color-paper)); color: var(--color-warning); }
+  & + & + & + & { border-color: var(--color-accent-wash); background: var(--color-accent-wash); color: var(--color-accent-deep); }
 }
 
 .dm-btn {
   height: 32px;
   padding: 0 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 4px;
-  background: #fff;
+  background: var(--color-paper);
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
-  color: #595959;
+  color: var(--color-muted);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
 
-  &:hover:not(:disabled) { border-color: #436bff; color: #436bff; }
-  &:disabled { color: #bfbfbf; cursor: not-allowed; }
+  &:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent); }
+  &:disabled { color: var(--color-rule-2); cursor: not-allowed; }
 
-  &--danger { border-color: #fca5a5; color: #dc2626; }
+  &--danger { border-color: color-mix(in oklab, var(--color-error) 30%, var(--color-paper)); color: var(--color-error); }
 
   &--primary {
-    border-color: #436bff;
-    background: #436bff;
-    color: #fff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
 
-    &:hover:not(:disabled) { border-color: #3358e0; background: #3358e0; color: #fff; }
+    &:hover:not(:disabled) { border-color: var(--color-accent); background: var(--color-accent); color: var(--color-paper); }
   }
 }
 
@@ -554,9 +555,9 @@ const doAction = async () => {
   font-size: 14px;
   line-height: 22px;
 
-  &.banner-running { background: #f0f6ff; color: #2e4dd9; }
-  &.banner-done { background: #ecfdf5; color: #047857; }
-  &.banner-error { background: #fef2f2; color: #dc2626; }
+  &.banner-running { background: var(--color-accent-wash); color: var(--color-accent); }
+  &.banner-done { background: color-mix(in oklab, var(--color-success) 8%, var(--color-paper)); color: var(--color-success); }
+  &.banner-error { background: color-mix(in oklab, var(--color-error) 8%, var(--color-paper)); color: var(--color-error); }
 
   .banner-main {
     display: flex;
@@ -593,7 +594,7 @@ const doAction = async () => {
     margin-top: 8px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(46, 77, 217, 0.15);
+    background: color-mix(in oklab, var(--color-accent) 15%, transparent);
     overflow: hidden;
   }
 
@@ -625,15 +626,15 @@ const doAction = async () => {
     flex: 1;
     min-width: 0;
     padding: 16px;
-    border: 1px solid #e9e9e9;
+    border: 1px solid var(--color-rule);
     border-radius: 12px;
-    background: #fff;
+    background: var(--color-paper);
   }
 
   &__label {
     font-size: 14px;
     line-height: 22px;
-    color: #595959;
+    color: var(--color-muted);
   }
 
   &__value {
@@ -641,7 +642,7 @@ const doAction = async () => {
     font-size: 20px;
     font-weight: 700;
     line-height: 20px;
-    color: #0891b2;
+    color: var(--color-accent-2);
     font-variant-numeric: tabular-nums;
   }
 
@@ -649,7 +650,7 @@ const doAction = async () => {
     margin-top: 6px;
     font-size: 13px;
     line-height: 22px;
-    color: #757575;
+    color: var(--color-muted);
   }
 }
 
@@ -658,7 +659,7 @@ const doAction = async () => {
   .publish-theme {
     font-size: 16px;
     font-weight: 600;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .publish-stats {
@@ -671,19 +672,19 @@ const doAction = async () => {
     flex: 1;
     padding: 12px;
     border-radius: 8px;
-    background: #f7f8fa;
+    background: var(--color-paper-2);
   }
 
   .publish-label {
     font-size: 13px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 
   .publish-value {
     margin-top: 4px;
     font-size: 18px;
     font-weight: 600;
-    color: #262626;
+    color: var(--color-ink);
   }
 
   .publish-notes {
@@ -691,7 +692,7 @@ const doAction = async () => {
     padding-left: 18px;
     font-size: 13px;
     line-height: 22px;
-    color: #8c8c8c;
+    color: var(--color-muted);
   }
 }
 

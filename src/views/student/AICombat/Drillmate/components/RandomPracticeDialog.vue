@@ -45,7 +45,7 @@
                 width="13"
                 height="13"
                 viewBox="0 0 24 24"
-                :fill="star <= level.value ? '#fa8c16' : '#d9d9d9'"
+                :fill="star <= level.value ? 'var(--color-warning)' : 'var(--color-rule-2)'"
               >
                 <path
                   d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
@@ -60,7 +60,7 @@
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#436bff"
+              stroke="var(--color-accent)"
               stroke-width="2.4"
               aria-hidden="true"
             >
@@ -162,15 +162,15 @@ function confirm() {
     flex: none;
     padding: 2px 8px;
     border-radius: 4px;
-    color: #436bff;
-    background: #f0f4ff;
+    color: var(--color-accent);
+    background: var(--color-accent-wash);
     font-size: 12px;
     line-height: 20px;
   }
 
   &__title {
     overflow: hidden;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 18px;
     font-weight: 700;
     line-height: 26px;
@@ -180,7 +180,7 @@ function confirm() {
 
   &__sub {
     margin: 8px 0 0;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
@@ -193,7 +193,7 @@ function confirm() {
 
   &__title {
     margin: 0;
-    color: #262626;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
@@ -201,7 +201,7 @@ function confirm() {
 
   &__hint {
     margin: 6px 0 16px;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
@@ -215,9 +215,9 @@ function confirm() {
 
 .dm-rand-card {
   padding: 14px 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-rule-2);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-paper);
   cursor: pointer;
   box-sizing: border-box;
   transition:
@@ -225,12 +225,12 @@ function confirm() {
     background-color 0.2s ease;
 
   &.is-active {
-    border-color: #436bff;
-    background: #f7f9ff;
+    border-color: var(--color-accent);
+    background: var(--color-paper-2);
   }
 
   &:focus-visible {
-    outline: 2px solid #436bff;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -246,7 +246,7 @@ function confirm() {
   }
 
   &__label {
-    color: #262626;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
@@ -258,14 +258,14 @@ function confirm() {
 
   &__desc {
     margin: 10px 0 0;
-    color: #8c8c8c;
+    color: var(--color-muted);
     font-size: 12px;
     line-height: 20px;
   }
 
   &__honor {
     margin: 8px 0 0;
-    color: #fa8c16;
+    color: var(--color-warning);
     font-size: 12px;
     line-height: 20px;
   }
@@ -273,9 +273,9 @@ function confirm() {
 
 .dm-rand-locked {
   padding: 16px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--color-rule);
   border-radius: 8px;
-  background: #fafafa;
+  background: var(--color-paper-2);
 }
 
 .dm-rand-actions {
@@ -296,15 +296,15 @@ function confirm() {
   font-weight: 500;
 
   &--cancel {
-    border-color: #d9d9d9;
-    background: #ffffff;
-    color: #595959;
+    border-color: var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-muted);
   }
 
   &--primary {
-    border-color: #436bff;
-    background: #436bff;
-    color: #ffffff;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
   }
 }
 </style>
@@ -319,7 +319,7 @@ function confirm() {
   margin: calc((100vh - 624px) / 2) auto 0;
   padding: 0;
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--color-paper);
 
   .el-dialog__header {
     display: flex;
