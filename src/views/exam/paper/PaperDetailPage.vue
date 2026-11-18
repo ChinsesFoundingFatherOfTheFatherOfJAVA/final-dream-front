@@ -113,6 +113,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/utils/toast'
 import { confirmDialog } from '@/utils/confirmDialog'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import PaperFormDrawer from './components/PaperFormDrawer.vue'
 import {
   getPaperDetail, getPaperOverview, getPaperQuesList, releasePaper,
@@ -189,7 +190,7 @@ const renderRing = (
 ) => {
   if (!el) return chart
   const instance = chart ?? echarts.init(el)
-  instance.setOption({
+  instance.setOption(resolveChartColors({
     tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
     legend: { orient: 'vertical', right: 0, top: 'center', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11 } },
     series: [{
@@ -204,7 +205,7 @@ const renderRing = (
       labelLine: { show: false },
       data: items.map(i => ({ name: i.name, value: i.count }))
     }]
-  })
+  }))
   return instance
 }
 

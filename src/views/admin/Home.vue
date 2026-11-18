@@ -113,21 +113,21 @@
       </div>
 
       <!-- 时间筛选标签 -->
-      <el-radio-group v-model="selectedTime" size="small" class="time-filter">
-        <el-radio-button
-          v-for="item in timeOptions"
-          :key="item"
-          :value="item"
-        >
+      <el-radio-group :model-value="selectedTime" size="small" class="time-filter" @change="onTimeChange">
+        <el-radio-button v-for="item in TIME_OPTIONS" :key="item" :value="item">
           {{ item }}
         </el-radio-button>
       </el-radio-group>
+      <!-- 区间被后端上限截断时如实告知，避免把「截断后的数」当成「累计数」 -->
+      <p v-if="truncated" class="time-hint">统计区间已按上限截断</p>
+      <!-- 任一域取数失败：如实提示，避免把「部分域的 0」当成完整口径 -->
+      <p v-if="degraded" class="time-hint">部分数据源暂时不可用，相关指标显示为「—」</p>
 
       <!-- 数据统计卡片：记分牌（数字是本页最响的类型） -->
       <div class="stats-cards">
         <div class="stat-card cut family-headcount">
           <div class="stat-label">活跃人数 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">94</div>
+          <div class="stat-value">{{ fmtInt(activeUsers) }}</div>
           <div class="stat-trend">
             <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path class="stroke-series-a" d="M0,30 Q25,10 50,25 T100,20" fill="none" stroke-width="2"/>
@@ -136,7 +136,7 @@
         </div>
         <div class="stat-card cut family-headcount">
           <div class="stat-label">学习人数 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">37</div>
+          <div class="stat-value">{{ fmtInt(studiedUsers) }}</div>
           <div class="stat-trend">
             <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path class="stroke-series-b" d="M0,35 Q25,15 50,30 T100,25" fill="none" stroke-width="2"/>
@@ -145,14 +145,14 @@
         </div>
         <div class="stat-card cut family-headcount">
           <div class="stat-label">启用人数 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">974</div>
+          <div class="stat-value">{{ fmtInt(staffEnabled) }}</div>
           <div class="stat-bar">
-            <div class="bar-fill" style="width: 70%"></div>
+            <div class="bar-fill" :style="{ width: staffBarWidth }"></div>
           </div>
         </div>
         <div class="stat-card cut family-duration">
           <div class="stat-label">活跃时长 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">157.31<span class="stat-unit">h</span></div>
+          <div class="stat-value">{{ fmtHour(activeHours) }}<span class="stat-unit">h</span></div>
           <div class="stat-trend">
             <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path class="stroke-series-a" d="M0,20 Q25,35 50,15 T100,25" fill="none" stroke-width="2"/>
@@ -161,7 +161,7 @@
         </div>
         <div class="stat-card cut family-duration">
           <div class="stat-label">学习时长 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">55.54<span class="stat-unit">h</span></div>
+          <div class="stat-value">{{ fmtHour(studyHours) }}<span class="stat-unit">h</span></div>
           <div class="stat-trend">
             <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path class="stroke-series-b" d="M0,25 Q25,10 50,30 T100,20" fill="none" stroke-width="2"/>
@@ -170,7 +170,7 @@
         </div>
         <div class="stat-card cut family-credit">
           <div class="stat-label">总学分 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></div>
-          <div class="stat-value">198.3</div>
+          <div class="stat-value placeholder">—</div>
           <div class="stat-trend">
             <svg aria-hidden="true" width="100" height="40" viewBox="0 0 100 40">
               <path class="stroke-series-a" d="M0,30 Q25,20 50,35 T100,15" fill="none" stroke-width="2"/>
@@ -183,16 +183,7 @@
       <div class="charts-row">
         <div class="chart-card">
           <h3 class="chart-title">活跃人数/学习人数</h3>
-          <div class="chart-placeholder">
-            <svg aria-hidden="true" width="100%" height="200" viewBox="0 0 400 200">
-              <path class="stroke-series-a" d="M50,150 Q100,50 150,120 T250,80 T350,100" fill="none" stroke-width="2"/>
-              <path class="stroke-series-b" d="M50,180 Q100,100 150,150 T250,120 T350,140" fill="none" stroke-width="2"/>
-              <text class="tick-label" x="50" y="195" font-size="12">08.26</text>
-              <text class="tick-label" x="150" y="195" font-size="12">08.30</text>
-              <text class="tick-label" x="250" y="195" font-size="12">09.03</text>
-              <text class="tick-label" x="350" y="195" font-size="12">09.09</text>
-            </svg>
-          </div>
+          <div ref="chartUsersRef" class="chart-box"></div>
           <div class="chart-legend">
             <span class="legend-item">
               <span class="legend-color legend-a"></span>
@@ -206,16 +197,7 @@
         </div>
         <div class="chart-card">
           <h3 class="chart-title">活跃时长/学习时长 (h)</h3>
-          <div class="chart-placeholder">
-            <svg aria-hidden="true" width="100%" height="200" viewBox="0 0 400 200">
-              <path class="stroke-series-a" d="M50,100 Q100,180 150,80 T250,120 T350,60" fill="none" stroke-width="2"/>
-              <path class="stroke-series-b" d="M50,150 Q100,120 150,160 T250,100 T350,130" fill="none" stroke-width="2"/>
-              <text class="tick-label" x="50" y="195" font-size="12">08.26</text>
-              <text class="tick-label" x="150" y="195" font-size="12">08.30</text>
-              <text class="tick-label" x="250" y="195" font-size="12">09.03</text>
-              <text class="tick-label" x="350" y="195" font-size="12">09.09</text>
-            </svg>
-          </div>
+          <div ref="chartHoursRef" class="chart-box"></div>
           <div class="chart-legend">
             <span class="legend-item">
               <span class="legend-color legend-a"></span>
@@ -234,28 +216,24 @@
         <div class="detail-card cut">
           <div class="card-header">
             <h3 class="card-title">课程情况 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></h3>
-            <el-radio-group v-model="courseScope" size="small" class="card-tabs">
-              <el-radio-button value="全部">全部</el-radio-button>
-              <el-radio-button value="内部">内部</el-radio-button>
-              <el-radio-button value="外部">外部</el-radio-button>
-            </el-radio-group>
           </div>
           <div class="card-content">
-            <div class="stat-row"><span class="stat-label">课程总量</span><span class="stat-num fig">1,358</span></div>
-            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">学习人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">学习时长 (h)</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">完成人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">评论数</span><span class="stat-num fig">0</span></div>
+            <div class="stat-row"><span class="stat-label">课程总量</span><span class="stat-num fig">{{ fmtInt(kngCards?.courseTotal) }}</span></div>
+            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">{{ fmtInt(kngCards?.courseNew) }}</span></div>
+            <div class="stat-row"><span class="stat-label">学习人次</span><span class="stat-num fig">{{ fmtInt(kngCards?.studyVisits) }}</span></div>
+            <div class="stat-row"><span class="stat-label">学习时长 (h)</span><span class="stat-num fig">{{ fmtHour(kngCards?.studyHours) }}</span></div>
+            <div class="stat-row"><span class="stat-label">完成人次</span><span class="stat-num fig">{{ fmtInt(kngCards?.finishedVisits) }}</span></div>
+            <!-- 评论数无数据表，恒 0（契约 DER-03），保留行位以便后续接入 -->
+            <div class="stat-row"><span class="stat-label">评论数</span><span class="stat-num fig">{{ fmtInt(kngCards?.commentCount) }}</span></div>
           </div>
           <div class="card-chart">
             <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke-width="20" class="stroke-rule"/>
-              <circle cx="60" cy="60" r="50" fill="none" stroke-width="20" stroke-dasharray="314" stroke-dashoffset="78.5" transform="rotate(-90 60 60)" class="stroke-series-a"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke-width="20" stroke-dasharray="314" :stroke-dashoffset="314 * (1 - (courseFinishRate ?? 0))" transform="rotate(-90 60 60)" class="stroke-series-a"/>
+              <text class="center-label" x="60" y="65" text-anchor="middle" font-size="14">{{ fmtPct(courseFinishRate) }}</text>
             </svg>
             <div class="chart-legend-vertical">
-              <span class="legend-item"><span class="legend-color legend-a"></span>指派学习时长</span>
-              <span class="legend-item"><span class="legend-color legend-b"></span>自主学习时长</span>
+              <span class="legend-item"><span class="legend-color legend-a"></span>完课率</span>
             </div>
           </div>
         </div>
@@ -265,18 +243,18 @@
             <h3 class="card-title">项目情况 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></h3>
           </div>
           <div class="card-content">
-            <div class="stat-row"><span class="stat-label">项目总量</span><span class="stat-num fig">38</span></div>
-            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">覆盖人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">学习人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">完成人次</span><span class="stat-num fig">0</span></div>
+            <div class="stat-row"><span class="stat-label">项目总量</span><span class="stat-num fig">{{ fmtInt(speechCards?.projectTotal) }}</span></div>
+            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">{{ fmtInt(speechCards?.projectNew) }}</span></div>
+            <div class="stat-row"><span class="stat-label">覆盖人次</span><span class="stat-num fig">{{ fmtInt(speechCards?.coveredUsers) }}</span></div>
+            <div class="stat-row"><span class="stat-label">学习人次</span><span class="stat-num fig">{{ fmtInt(speechCards?.studyVisits) }}</span></div>
+            <div class="stat-row"><span class="stat-label">完成人次</span><span class="stat-num fig">{{ fmtInt(speechCards?.finishedVisits) }}</span></div>
           </div>
           <div class="card-chart">
             <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <polygon points="20,20 100,20 80,60 40,60" class="fill-series-a" opacity="0.8"/>
               <polygon points="40,60 80,60 70,100 50,100" class="fill-series-b" opacity="0.8"/>
-              <text class="on-fill-label" x="60" y="45" text-anchor="middle" font-size="12">0%</text>
-              <text class="on-fill-label" x="60" y="85" text-anchor="middle" font-size="12">0%</text>
+              <text class="on-fill-label" x="60" y="45" text-anchor="middle" font-size="12">{{ fmtPct(speechCards?.studyRate) }}</text>
+              <text class="on-fill-label" x="60" y="85" text-anchor="middle" font-size="12">{{ fmtPct(speechCards?.finishRate) }}</text>
             </svg>
             <div class="chart-legend-vertical">
               <span class="legend-item"><span class="legend-color legend-a"></span>学习率</span>
@@ -290,20 +268,20 @@
             <h3 class="card-title">考试情况 <el-icon class="tip" aria-hidden="true"><InfoFilled /></el-icon></h3>
           </div>
           <div class="card-content">
-            <div class="stat-row"><span class="stat-label">考试总量</span><span class="stat-num fig">1,981</span></div>
-            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">覆盖人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">参考人次</span><span class="stat-num fig">0</span></div>
-            <div class="stat-row"><span class="stat-label">通过人次</span><span class="stat-num fig">0</span></div>
+            <div class="stat-row"><span class="stat-label">考试总量</span><span class="stat-num fig">{{ fmtInt(examCards?.examTotal) }}</span></div>
+            <div class="stat-row"><span class="stat-label">本期新增</span><span class="stat-num fig">{{ fmtInt(examCards?.examNew) }}</span></div>
+            <div class="stat-row"><span class="stat-label">覆盖人次</span><span class="stat-num fig">{{ fmtInt(examCards?.coveredUsers) }}</span></div>
+            <div class="stat-row"><span class="stat-label">参考人次</span><span class="stat-num fig">{{ fmtInt(examCards?.attemptVisits) }}</span></div>
+            <div class="stat-row"><span class="stat-label">通过人次</span><span class="stat-num fig">{{ fmtInt(examCards?.passedVisits) }}</span></div>
           </div>
           <div class="card-chart">
             <svg aria-hidden="true" width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke-width="15" class="stroke-rule"/>
-              <circle cx="60" cy="60" r="50" fill="none" stroke-width="15" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" class="stroke-series-a"/>
-              <text class="center-label" x="60" y="65" text-anchor="middle" font-size="14">0%</text>
+              <circle cx="60" cy="60" r="50" fill="none" stroke-width="15" stroke-dasharray="314" :stroke-dashoffset="314 * (1 - (examPassRate ?? 0))" transform="rotate(-90 60 60)" class="stroke-series-a"/>
+              <text class="center-label" x="60" y="65" text-anchor="middle" font-size="14">{{ fmtPct(examPassRate) }}</text>
             </svg>
             <div class="chart-legend-vertical">
-              <span class="legend-item"><span class="legend-color legend-a"></span>考试通过率 0%</span>
+              <span class="legend-item"><span class="legend-color legend-a"></span>考试通过率 {{ fmtPct(examPassRate) }}</span>
             </div>
           </div>
         </div>
@@ -313,9 +291,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import * as echarts from 'echarts'
+import { chartColor } from '@/utils/chartColor'
 import { useAuthStore } from '@/stores/auth'
+import { TIME_OPTIONS, usePlatformOverview } from '@/composables/usePlatformOverview'
 import ChatIcon from '@/components/icons/ChatIcon.vue'
 import TrophyIcon from '@/components/icons/TrophyIcon.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
@@ -326,9 +307,204 @@ import { ChatDotRound, Trophy, EditPen, Reading, Setting, InfoFilled, User, Pric
 
 const router = useRouter()
 const auth = useAuthStore()
-const selectedTime = ref('当月')
-const courseScope = ref('全部')
-const timeOptions = ['上月', '当月', '上季度', '当季度', '上一年', '当年', '累计']
+
+/**
+ * 平台总览取数：时间标签换算、四域并发、失败降级与竞态丢弃都在 composable 内，
+ * 组件只负责展示（契约见 D:/JACK/plan/平台预览看板/01-需求文档.md 第 4 节）。
+ */
+const overview = usePlatformOverview()
+const {
+  selectedTime,
+  truncated,
+  degraded,
+  activeUsers,
+  activeHours,
+  studiedUsers,
+  studyHours,
+  kng: kngDomain,
+  speech: speechDomain,
+  exam: examDomain,
+  staff: staffDomain,
+  buckets,
+  activeUsersSeries,
+  activeHoursSeries,
+  studiedUsersSeries,
+  studyHoursSeries,
+  init,
+  selectTime
+} = overview
+
+/** 各域卡片数据；域失败时为 null，模板显示占位符而不是 0，避免把「查不到」读成「没有」 */
+const kngCards = computed(() => kngDomain.value.data?.cards ?? null)
+const speechCards = computed(() => speechDomain.value.data?.cards ?? null)
+const examCards = computed(() => examDomain.value.data?.cards ?? null)
+
+/** 启用人数：账号口径，不随统计期变化 */
+/** 启用人数/总数：账号口径，不随统计期变化；域失败时返回 null 让模板显示「—」而不是 0 */
+const staffEnabled = computed<number | null>(() =>
+  staffDomain.value.failed ? null : (staffDomain.value.data?.enabledUsers ?? 0)
+)
+const staffTotal = computed<number | null>(() =>
+  staffDomain.value.failed ? null : (staffDomain.value.data?.totalUsers ?? 0)
+)
+
+/** 启用率进度条宽度；启用数或总数为空（域失败）时退回 0 宽度，避免 NaN% */
+const staffBarWidth = computed(() => {
+  const enabled = staffEnabled.value
+  const total = staffTotal.value
+  if (enabled === null || !total) return '0%'
+  return `${Math.min(100, Math.round((enabled / total) * 100))}%`
+})
+
+/** 完课率 = 完成人次 / 学习人次；域失败返回 null（显示「—」），学习人次为 0 时返回 0 而不是 NaN */
+const courseFinishRate = computed<number | null>(() => {
+  const c = kngCards.value
+  if (!c) return null
+  if (!c.studyVisits) return 0
+  return c.finishedVisits / c.studyVisits
+})
+
+/** 考试通过率由后端给出（后端按参考人次口径算）；域失败返回 null，不伪装成 0% */
+const examPassRate = computed<number | null>(() =>
+  examCards.value ? (examCards.value.passRate ?? 0) : null
+)
+
+/** 整数千分位；空值显示占位符而不是 0 */
+function fmtInt(v: number | null | undefined): string {
+  if (v === null || v === undefined) return '—'
+  return v.toLocaleString('zh-CN')
+}
+
+/** 小时数保留 2 位；空值显示占位符 */
+function fmtHour(v: number | null | undefined): string {
+  if (v === null || v === undefined) return '—'
+  return v.toFixed(2)
+}
+
+/** 比率转百分比，保留 1 位；空值显示占位符 */
+function fmtPct(v: number | null | undefined): string {
+  if (v === null || v === undefined) return '—'
+  return `${(v * 100).toFixed(1)}%`
+}
+
+/** 切标签：走 composable 的统一入口，内部丢弃过期响应 */
+function onTimeChange(value: string | number | boolean | undefined) {
+  if (typeof value === 'string') void selectTime(value as (typeof TIME_OPTIONS)[number])
+}
+
+/* ===== 折线图：改用 echarts 后点数才能随统计期变化（原来的固定 SVG 只能画死数据） ===== */
+const chartUsersRef = ref<HTMLElement>()
+const chartHoursRef = ref<HTMLElement>()
+let chartUsers: echarts.ECharts | null = null
+let chartHours: echarts.ECharts | null = null
+
+/* ===== 颜色：token → echarts 认得的格式（实现见 @/utils/chartColor） ===== */
+
+
+/**
+ * 系列颜色一律取 Hallmark Cobalt token（front-end AGENTS 第 4 节禁裸色值），
+ * 经共享的 chartColor 归一化成 rgba 后交给 echarts（oklch 在 echarts 内部算不了色）。
+ *
+ * 不设 hex 兜底：token 层由 main.ts 全局引入，取不到只可能是样式没加载；
+ * 此时返回空串，交给 echarts 回落到它自己的默认调色板，比在组件里埋一份重复的颜色定义更安全
+ * ——埋了兜底，将来 token 改了而兜底没改，就会出现「主题换了但图没换」的静默不一致。
+ */
+function tokenColor(name: string): string {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return raw ? chartColor(raw) : ''
+}
+
+/** 两张折线图共用同一份样式底座：坐标轴、网格、提示框口径一致，只换数据 */
+function baseLineOption(bucketList: string[], series: { name: string; data: number[]; color: string }[]) {
+  return {
+    grid: { left: 8, right: 12, top: 16, bottom: 8, containLabel: true },
+    tooltip: { trigger: 'axis' as const },
+    xAxis: {
+      type: 'category' as const,
+      data: bucketList,
+      boundaryGap: false,
+      axisLine: { lineStyle: { color: tokenColor('--color-rule') } },
+      axisTick: { show: false },
+      axisLabel: { color: tokenColor('--color-muted'), fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value' as const,
+      splitLine: { lineStyle: { color: tokenColor('--color-paper-2') } },
+      axisLabel: { color: tokenColor('--color-muted'), fontSize: 11 }
+    },
+    series: series.map((s) => ({
+      name: s.name,
+      type: 'line' as const,
+      smooth: true,
+      showSymbol: false,
+      data: s.data,
+      lineStyle: { width: 2, color: s.color },
+      itemStyle: { color: s.color },
+      areaStyle: { opacity: 0.08, color: s.color },
+      // hover 只让被指的那条线加粗，不淡化其他系列（默认 focus='none'，这里显式声明，
+      // 免得将来换 echarts 版本默认值变化导致「鼠标一上去另一条线看不清」）
+      emphasis: { focus: 'none' as const, scale: false }
+    }))
+  }
+}
+
+/** 把当前数据刷进两张图；容器未挂载时直接返回，避免 echarts 拿不到 DOM */
+function renderCharts() {
+  if (!chartUsersRef.value || !chartHoursRef.value) return
+  if (!chartUsers) chartUsers = echarts.init(chartUsersRef.value)
+  if (!chartHours) chartHours = echarts.init(chartHoursRef.value)
+
+  const bucketList = buckets.value
+  chartUsers.setOption(
+    baseLineOption(bucketList, [
+      { name: '活跃人数', data: activeUsersSeries.value, color: tokenColor('--color-accent') },
+      { name: '学习人数', data: studiedUsersSeries.value, color: tokenColor('--color-accent-2') }
+    ]),
+    true
+  )
+  chartHours.setOption(
+    baseLineOption(bucketList, [
+      { name: '活跃时长', data: activeHoursSeries.value, color: tokenColor('--color-accent') },
+      { name: '学习时长', data: studyHoursSeries.value, color: tokenColor('--color-accent-2') }
+    ]),
+    true
+  )
+}
+
+/**
+ * 数据变化后重画；nextTick 保证容器已完成布局。
+ *
+ * 依赖里必须带上两个「学习」序列：它们只来自在线课堂域，当该域单独失败/恢复时
+ * buckets 与活跃序列可能整体不变，只靠前三个依赖会漏掉这次重画，图上的学习线就停在旧值。
+ */
+watch([buckets, activeUsersSeries, activeHoursSeries, studiedUsersSeries, studyHoursSeries], () => {
+  void nextTick(renderCharts)
+})
+
+/** 容器尺寸变化时让 echarts 重算（侧栏折叠、窗口缩放都会改变宽度） */
+function handleResize() {
+  chartUsers?.resize()
+  chartHours?.resize()
+}
+
+onMounted(async () => {
+  window.addEventListener('resize', handleResize)
+  await nextTick()
+  renderCharts()
+  // 首屏按「当月」取数；账号计数只取一次，四域并发
+  await init()
+  await nextTick()
+  renderCharts()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+  chartUsers?.dispose()
+  chartHours?.dispose()
+  chartUsers = null
+  chartHours = null
+})
+
 const hasKngAccess = computed(() =>
   auth.hasPermission('kng:catalog') ||
   auth.hasPermission('kng:courseware') ||
@@ -501,6 +677,13 @@ const goToOnlineClassroom = () => {
 }
 
 /* 平台总览 */
+/* 截断/降级提示：与时间筛选同排说明，弱化但可读 */
+.time-hint {
+  margin: -8px 0 12px 0;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
 .time-filter {
   margin-bottom: 20px;
 
@@ -601,7 +784,10 @@ const goToOnlineClassroom = () => {
   padding: 16px;
 
   .chart-title { font-size: 14px; font-weight: 500; color: var(--color-ink); margin: 0 0 16px 0; }
-  .chart-placeholder { background: var(--color-paper-2); border-radius: var(--radius-input); margin-bottom: 12px; }
+  /* echarts 容器必须有显式高度：div 默认高度为 0，echarts.init 会量到 0 高，
+     画布虽已创建却看不见——这正是「代码接了图但页面上没图」的原因。
+     200px 与改造前那张固定 SVG 的高度一致，视觉节奏不变。 */
+  .chart-box { position: relative; height: 200px; }
 }
 
 .chart-legend {

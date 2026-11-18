@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import { getPaperOverview, type PaperOverview } from '@/api/paper'
 
 const props = defineProps<{ paperId: string }>()
@@ -46,7 +47,7 @@ const renderRing = (
 ): echarts.ECharts | null => {
   if (!el) return chart
   const instance = chart ?? echarts.init(el)
-  instance.setOption({
+  instance.setOption(resolveChartColors({
     color: PALETTE,
     tooltip: { trigger: 'item' },
     legend: {
@@ -82,7 +83,7 @@ const renderRing = (
       labelLine: { show: false },
       data: items.map(i => ({ name: i.name, value: i.count }))
     }]
-  })
+  }))
   return instance
 }
 

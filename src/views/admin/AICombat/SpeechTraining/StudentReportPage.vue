@@ -165,6 +165,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import RadarChart from '@/views/student/AICombat/RadarChart.vue'
 import ReportDrawer from './components/ReportDrawer.vue'
 import {
@@ -250,7 +251,7 @@ const renderAnalysis = async () => {
   }
   await nextTick()
   analysisChart ??= echarts.init(analysisChartRef.value)
-  analysisChart.setOption(
+  analysisChart.setOption(resolveChartColors<echarts.EChartsCoreOption>(
     {
       grid: { left: 44, right: 24, top: 26, bottom: 36 },
       tooltip: {
@@ -291,9 +292,8 @@ const renderAnalysis = async () => {
           areaStyle: { color: 'color-mix(in oklab, var(--color-accent) 12%, transparent)' }
         }
       ]
-    },
-    true
-  )
+    }
+  ), true)
 }
 
 const loadAnalysis = async () => {

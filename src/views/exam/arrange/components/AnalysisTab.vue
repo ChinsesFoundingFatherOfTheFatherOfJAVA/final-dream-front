@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import {
   getArrangeAnalysisOverview, getArrangeAnalysisScore, getArrangeCorrectRate,
   type ArrangeOverviewBaseInfo, type ArrangeRateItem, type ArrangeScoreInfo
@@ -95,7 +96,7 @@ const renderChart = async () => {
   if (!chartRef.value) return
   chart = chart ?? echarts.init(chartRef.value)
   const data = items.value
-  chart.setOption({
+  chart.setOption(resolveChartColors({
     grid: { left: 50, right: 20, top: 24, bottom: 46 },
     tooltip: {
       trigger: 'axis',
@@ -114,7 +115,7 @@ const renderChart = async () => {
       itemStyle: { color: '#3059d4', borderRadius: [3, 3, 0, 0] },
       label: { show: true, position: 'top', formatter: (p: any) => formatRate(Number(p.value)) }
     }]
-  }, true)
+  }), true)
 }
 
 const switchDimension = async (d: 'type' | 'level' | 'point') => {

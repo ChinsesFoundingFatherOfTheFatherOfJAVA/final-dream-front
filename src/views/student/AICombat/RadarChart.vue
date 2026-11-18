@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import { lastScoresFor, scoredDimensions } from './reportRadar'
 import type { LastDimension, ReportDimension } from '@/types/student'
 
@@ -75,7 +76,7 @@ const render = async () => {
     })
   }
 
-  chart.setOption(
+  chart.setOption(resolveChartColors<echarts.EChartsCoreOption>(
     {
       tooltip: {
         formatter: (params: { value?: unknown }) => {
@@ -129,9 +130,8 @@ const render = async () => {
           data: seriesData
         }
       ] as echarts.SeriesOption[]
-    },
-    true
-  )
+    }
+  ), true)
 }
 
 watch(() => [props.dimensions, props.lastDimensions], () => void render(), { deep: true })

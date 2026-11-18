@@ -185,6 +185,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import * as echarts from 'echarts'
+import { resolveChartColors } from '@/utils/chartColor'
 import RadarChart from '@/views/student/AICombat/RadarChart.vue'
 import FilterPickerDialog from './components/FilterPickerDialog.vue'
 import {
@@ -289,7 +290,7 @@ const renderTimesChart = () => {
     return
   }
   timesChart ??= echarts.init(timesChartRef.value)
-  timesChart.setOption(
+  timesChart.setOption(resolveChartColors<echarts.EChartsCoreOption>(
     {
       grid: { left: 44, right: 20, top: 24, bottom: 34 },
       tooltip: {
@@ -324,9 +325,8 @@ const renderTimesChart = () => {
           }
         }
       ]
-    },
-    true
-  )
+    }
+  ), true)
 }
 
 const renderActiveChart = () => {
@@ -334,7 +334,7 @@ const renderActiveChart = () => {
   activeChart ??= echarts.init(activeChartRef.value)
   const hours = Array.from({ length: 24 }, (_, hour) => hour)
   const countMap = new Map(activeItems.value.map((item) => [Number(item.hour), Number(item.count)]))
-  activeChart.setOption(
+  activeChart.setOption(resolveChartColors<echarts.EChartsCoreOption>(
     {
       grid: { left: 44, right: 24, top: 24, bottom: 34 },
       tooltip: {
@@ -373,9 +373,8 @@ const renderActiveChart = () => {
           areaStyle: { color: 'var(--color-accent-wash)' }
         }
       ]
-    },
-    true
-  )
+    }
+  ), true)
 }
 
 const loadSummary = async () => {
