@@ -862,6 +862,28 @@ $border: var(--color-rule);
     line-height: 32px;
     color: var(--color-paper);
     cursor: pointer;
+    /* 批注（2026-11-20）：开始练习按钮加悬停/按下反馈——
+     * 悬停底色加深 + 抬 1px + 投影，按下回落下沉去影；过渡走 token。 */
+    transition:
+      translate var(--dur-short) var(--ease-out),
+      background-color var(--dur-short) var(--ease-out),
+      box-shadow var(--dur-short) var(--ease-out);
+
+    &:hover:not(:disabled) {
+      translate: 0 -1px;
+      background: color-mix(in oklab, #{$primary} 86%, var(--color-graphite));
+      box-shadow: 0 4px 12px color-mix(in oklab, var(--color-graphite) 18%, transparent);
+    }
+
+    &:active:not(:disabled) {
+      translate: 0 1px;
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
 
     &:disabled {
       background: var(--color-rule-2);

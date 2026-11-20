@@ -11,17 +11,14 @@
               <span>话术训练(新)</span>
               <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
-            <div v-if="openGroups.speechNew" class="menu-group-items">
-              <router-link to="/sparring/newmanage" class="menu-item">话术训练中心</router-link>
-              <router-link to="/sparring/newtemplate" class="menu-item active">话术模版</router-link>
-            </div>
+            <ExpandTransition>
+              <div v-if="openGroups.speechNew" class="menu-group-items">
+                <router-link to="/sparring/newmanage" class="menu-item">话术训练中心</router-link>
+                <router-link to="/sparring/newtemplate" class="menu-item active">话术模版</router-link>
+              </div>
+            </ExpandTransition>
           </div>
           <!-- 占位菜单：暂无功能，去掉可点暗示 -->
-          <div class="menu-item collapsed" title="敬请期待">
-            <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
-            <span>话术训练</span>
-            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
-          </div>
           <div class="menu-item collapsed" title="敬请期待">
             <el-icon class="group-icon" aria-hidden="true"><User /></el-icon>
             <span>演讲训练</span>
@@ -137,6 +134,7 @@ import { toast } from '@/utils/toast'
 import { useRouter } from 'vue-router'
 import { getTemplateList, createTemplate } from '@/api/template'
 import { toTemplateCard } from '@/utils/convert'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 import type { TemplateCard } from '@/utils/convert'
 
 const router = useRouter()

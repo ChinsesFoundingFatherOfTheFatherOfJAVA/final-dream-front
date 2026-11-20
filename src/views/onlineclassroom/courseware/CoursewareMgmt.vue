@@ -6,23 +6,26 @@
       v-model:include-child-catalog="includeChildCatalog"
       :tree="catalogTree"
       :total="page.total"
+      :show-footer="false"
       @change="reload(1)"
       @collapse="treeCollapsed = true"
     />
 
     <section class="courseware-content">
-      <el-button
-        v-if="treeCollapsed"
-        class="tree-expand"
-        aria-label="展开分类树"
-        title="展开分类树"
-        @click="treeCollapsed = false"
-      >
-        <el-icon><Menu /></el-icon>
-      </el-button>
 
       <header class="top-actions">
         <div class="left-actions">
+          <!-- 批注（2026-11-20）：展开按钮改为流内元素放在左组首位。
+               原来绝对定位在 top:14/left:8，侧栏收起后会盖住「发布课件」按钮。 -->
+          <el-button
+            v-if="treeCollapsed"
+            class="tree-expand"
+            aria-label="展开分类树"
+            title="展开分类树"
+            @click="treeCollapsed = false"
+          >
+            <el-icon><Menu /></el-icon>
+          </el-button>
           <el-dropdown trigger="click" @command="handlePublishCommand">
             <el-button class="primary-btn">
               发布课件 <span class="caret" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
@@ -175,12 +178,19 @@
         </el-table>
       </div>
 
-      <PaginationBar
-        v-model:page="pageNo"
-        v-model:page-size="pageSize"
-        :total="page.total"
-        @change="reload()"
-      />
+      <!-- 批注（2026-11-20）：范围单选从侧栏底部挪到列表底部工具条，与「共 N 条」+ 分页同一行 -->
+      <footer class="list-footer">
+        <el-radio-group v-model="includeChildCatalog" class="scope-options" @change="reload(1)">
+          <el-radio :value="1">包含子分类</el-radio>
+          <el-radio :value="0">仅当前分类</el-radio>
+        </el-radio-group>
+        <PaginationBar
+          v-model:page="pageNo"
+          v-model:page-size="pageSize"
+          :total="page.total"
+          @change="reload()"
+        />
+      </footer>
     </section>
 
     <FilterDrawer
@@ -586,13 +596,28 @@ function handleMoreCommand(command: string, row: CoursewareListItem) {
   padding: 18px 20px 0;
 }
 
+/* 批注（2026-11-20）：列表底部工具条——左侧分类范围单选，右侧「共 N 条」+ 分页 */
+.list-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+
+  .scope-options {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
 .tree-expand {
-  position: absolute;
-  left: 8px;
-  top: 14px;
-  z-index: 2;
+  /* 流内元素（不再绝对定位），随 top-actions 排版，永远不会压住其它按钮 */
+  flex-shrink: 0;
   width: 30px;
   height: 30px;
+  padding: 0;
   border: 1px solid var(--color-rule-2);
   border-radius: var(--radius-input);
   background: var(--color-paper);

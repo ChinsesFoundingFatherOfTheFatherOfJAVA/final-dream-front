@@ -64,12 +64,6 @@
                 <h2 class="page-title">待学习</h2>
                 <span class="task-count">学习任务 <strong>{{ tasks.length }}</strong></span>
               </div>
-              <div class="header-right">
-                <el-select model-value="all" class="filter-select"><el-option label="全部分类" value="all" /></el-select>
-                <el-select model-value="all" class="filter-select"><el-option label="全部状态" value="all" /></el-select>
-                <el-select model-value="priority" class="filter-select"><el-option label="优先级从高到低" value="priority" /></el-select>
-                <el-select model-value="all" class="filter-select"><el-option label="全部时间" value="all" /></el-select>
-              </div>
             </div>
 
             <div class="task-list">
@@ -228,10 +222,8 @@ const getTagClass = (tag: string) => {
   .header-left { display: flex; align-items: center; gap: 16px; }
   .page-title { font-size: 20px; font-weight: 600; color: var(--color-ink); margin: 0; }
   .task-count { font-size: 14px; color: var(--color-muted); strong { color: var(--color-error); } }
-  .header-right { display: flex; gap: 12px; }
 }
 
-.filter-select { height: 32px; font-size: 14px; color: var(--color-ink); }
 
 .task-list { display: flex; flex-direction: column; gap: 16px; }
 

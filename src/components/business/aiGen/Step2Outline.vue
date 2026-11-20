@@ -62,22 +62,24 @@
           :disabled="generating || !valid"
           @click="openMenu = !openMenu"
         ><el-icon class="btn-caret"><MagicStick /></el-icon> 确认无误，生成{{ language === 'en' ? '英语' : '普通话' }}话术<el-icon class="btn-caret"><ArrowDown /></el-icon></el-button>
-        <div v-if="openMenu" class="lang-menu" @click.self="openMenu = false">
-          <div
-            :class="{ active: language === 'zh' }"
-            role="button"
-            tabindex="0"
-            @click="choose('zh')"
-            @keydown.enter.prevent="choose('zh')"
-          >普通话</div>
-          <div
-            :class="{ active: language === 'en' }"
-            role="button"
-            tabindex="0"
-            @click="choose('en')"
-            @keydown.enter.prevent="choose('en')"
-          >英语</div>
-        </div>
+        <ExpandTransition>
+          <div v-if="openMenu" class="lang-menu" @click.self="openMenu = false">
+            <div
+              :class="{ active: language === 'zh' }"
+              role="button"
+              tabindex="0"
+              @click="choose('zh')"
+              @keydown.enter.prevent="choose('zh')"
+            >普通话</div>
+            <div
+              :class="{ active: language === 'en' }"
+              role="button"
+              tabindex="0"
+              @click="choose('en')"
+              @keydown.enter.prevent="choose('en')"
+            >英语</div>
+          </div>
+        </ExpandTransition>
       </div>
     </div>
   </div>
@@ -87,6 +89,7 @@
 import { ArrowDown, MagicStick } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import type { OutlineItem } from '@/api/aiGen'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 
 /**
  * 第二步大纲编辑（SG-05）：环节数即话术轮数（无独立轮次参数）；

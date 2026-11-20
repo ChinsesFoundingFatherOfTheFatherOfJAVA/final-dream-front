@@ -312,7 +312,7 @@ export function mockGetThemeSettings(id: string): ActThemeSettings {
   const units = unitStore[theme.currentVersionNo] || []
   const iceberg = new Set<string>()
   const dimNames = new Set<string>()
-  units.forEach(u => {
+  units.forEach((u: ActScenarioUnit) => {
     u.icebergElements.forEach(e => iceberg.add(e))
     u.dimensions.forEach(d => dimNames.add(d.dimensionName))
   })

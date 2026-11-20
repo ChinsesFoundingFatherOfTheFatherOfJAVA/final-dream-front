@@ -23,17 +23,23 @@
     </div>
 
     <div class="analysis-content">
-      <div class="modebar">
-        <el-button
+      <div class="modebar" role="tablist" aria-label="数据类型">
+        <button
+          type="button"
+          role="tab"
           class="mode-tab"
-          :class="{ active: studyMode === 'training' }"
+          :class="{ 'is-active': studyMode === 'training' }"
+          :aria-selected="studyMode === 'training'"
           @click="studyMode = 'training'"
-        >训练数据</el-button>
-        <el-button
+        >训练数据</button>
+        <button
+          type="button"
+          role="tab"
           class="mode-tab"
-          :class="{ active: studyMode === 'exam' }"
+          :class="{ 'is-active': studyMode === 'exam' }"
+          :aria-selected="studyMode === 'exam'"
           @click="studyMode = 'exam'"
-        >考核数据</el-button>
+        >考核数据</button>
       </div>
 
       <div class="section-title">总体概览</div>
@@ -432,33 +438,37 @@ const selectUnit = (id: string) => {
   background: var(--color-paper);
 }
 
+/* 批注（2026-11-20）：训练/考核数据切换改成与主题详情一致的「下划线 tab」风格，
+ * 不再用胶囊按钮；底边 2px 只在选中时点亮，切换走 token 过渡。 */
 .modebar {
   display: flex;
-  gap: 8px;
-  height: 32px;
+  gap: 32px;
+  /* 用内阴影画一条发丝基线，tab 底边压在上面 */
+  box-shadow: inset 0 -1px 0 var(--color-rule);
+}
 
-  .mode-tab {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 78px;
-    height: 32px;
-    padding: 4px 12px;
-    margin: 0;
-    border: 1px solid var(--color-rule);
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 22px;
-    color: var(--color-muted);
-    background: var(--color-paper);
+.mode-tab {
+  height: 38px;
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
 
-    &.active {
-      color: var(--color-paper);
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-    }
+  &:hover { color: var(--color-accent); }
+
+  &.is-active {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 }
 

@@ -92,11 +92,11 @@
             <span>通过分数方式</span>
             <em class="switch-value">{{ form.passScoreType === 2 ? '总分比例' : '固定分数' }}</em>
             <span v-if="form.passScoreType === 1" class="inline-input">
-              <el-input-number v-model="form.passScore" :min="0" :step="0.5" :disabled="published" :controls="false" />
+              <el-input-number v-model="form.passScore" :min="0" :step="0.5" :disabled="published" controls-position="right" />
               <em>分</em>
             </span>
             <span v-else class="inline-input">
-              <el-input-number v-model="form.passRatio" :min="0" :max="100" :step="1" :disabled="published" :controls="false" />
+              <el-input-number v-model="form.passRatio" :min="0" :max="100" :step="1" :disabled="published" controls-position="right" />
               <em>%</em>
             </span>
           </div>
@@ -114,13 +114,13 @@
           <div class="reward-box">
             <label class="reward-line">
               获得
-              <el-input-number v-model="form.rewardCredit" :min="0" :step="0.5" :disabled="published" :controls="false" />
+              <el-input-number v-model="form.rewardCredit" :min="0" :step="0.5" :disabled="published" controls-position="right" />
               学分
               <i class="help" title="考试完成后发放的学分">?</i>
             </label>
             <label class="reward-line">
               获得
-              <el-input-number v-model="form.rewardPoints" :min="0" :step="1" :disabled="published" :controls="false" />
+              <el-input-number v-model="form.rewardPoints" :min="0" :step="1" :disabled="published" controls-position="right" />
               积分
               <i class="help" title="考试完成后发放的积分">?</i>
             </label>
@@ -177,11 +177,11 @@
             <span>优秀分数方式</span>
             <em class="switch-value">{{ form.excellentScoreType === 2 ? '总分比例' : '固定分数' }}</em>
             <span v-if="form.excellentScoreType === 1" class="inline-input">
-              <el-input-number v-model="form.excellentScore" :min="0" :step="0.5" :controls="false" />
+              <el-input-number v-model="form.excellentScore" :min="0" :step="0.5" controls-position="right" />
               <em>分</em>
             </span>
             <span v-else class="inline-input">
-              <el-input-number v-model="form.excellentRatio" :min="0" :max="100" :step="1" :controls="false" />
+              <el-input-number v-model="form.excellentRatio" :min="0" :max="100" :step="1" controls-position="right" />
               <em>%</em>
             </span>
           </div>
@@ -305,7 +305,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.durationEnabled" />
                 <span>统一考试时长</span>
                 <span v-if="advanced.examSetting.durationEnabled" class="inline-input">
-                  <el-input-number v-model="advanced.examSetting.durationMin" :min="1" :controls="false" />
+                  <el-input-number v-model="advanced.examSetting.durationMin" :min="1" controls-position="right" />
                   <em>分钟</em>
                 </span>
                 <i class="help" title="从开考起计时，到时自动交卷">?</i>
@@ -314,7 +314,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.minAnswerEnabled" />
                 <span>最短答题时长</span>
                 <span v-if="advanced.examSetting.minAnswerEnabled" class="inline-input">
-                  <el-input-number v-model="advanced.examSetting.minAnswerMin" :min="0" :controls="false" />
+                  <el-input-number v-model="advanced.examSetting.minAnswerMin" :min="0" controls-position="right" />
                   <em>分钟</em>
                 </span>
                 <i class="help" title="未满最短答题时长不允许交卷">?</i>
@@ -327,7 +327,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.repeatEnabled" />
                 <span>允许重复考试次数</span>
                 <span v-if="advanced.examSetting.repeatEnabled" class="inline-input">
-                  <el-input-number v-model="advanced.examSetting.repeatLimit" :min="2" :controls="false" />
+                  <el-input-number v-model="advanced.examSetting.repeatLimit" :min="2" controls-position="right" />
                   <em>次</em>
                 </span>
                 <i class="help" title="开启后可多次参加，取最高成绩">?</i>
@@ -340,7 +340,7 @@
                 <ToggleSwitch v-model="advanced.examSetting.lateLimitEnabled" />
                 <span>允许迟到</span>
                 <span v-if="advanced.examSetting.lateLimitEnabled" class="inline-input">
-                  <el-input-number v-model="advanced.examSetting.lateLimitMin" :min="0" :controls="false" />
+                  <el-input-number v-model="advanced.examSetting.lateLimitMin" :min="0" controls-position="right" />
                   <em>分钟</em>
                 </span>
               </div>
@@ -450,7 +450,7 @@
                 <ToggleSwitch v-model="advanced.antiCheat.screenSwitchEnabled" :disabled="published" />
                 <span>考试切屏限制</span>
                 <span v-if="advanced.antiCheat.screenSwitchEnabled" class="inline-input">
-                  <el-input-number v-model="advanced.antiCheat.screenSwitchLimit" :min="1" :disabled="published" :controls="false" />
+                  <el-input-number v-model="advanced.antiCheat.screenSwitchLimit" :min="1" :disabled="published" controls-position="right" />
                   <em>次</em>
                 </span>
                 <i class="help" title="超过限制次数自动交卷">?</i>

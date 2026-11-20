@@ -4,36 +4,35 @@
       <router-link to="/homepage" class="logo">
         <span class="logo-text">JACK <em class="logo-accent">杰克</em></span>
       </router-link>
-      <nav class="nav-menu">
-        <router-link
-          to="/study/userhome"
-          class="nav-item"
-          :class="{ active: currentRoute === '/study/userhome' }"
-        >
-          我的陪练
-        </router-link>
+      <nav ref="navMenu" class="nav-menu nav-underline">
+        <span class="nav-indicator" :style="indicatorStyle" aria-hidden="true"></span>
         <router-link
           to="/study/home"
           class="nav-item"
           :class="{ active: currentRoute === '/study/home' }"
         >
-          首页
+          <NavFlipLabel text="首页" />
         </router-link>
-        <span class="nav-item disabled" title="敬请期待">话术目录</span>
-        <span class="nav-item disabled" title="敬请期待">课程中心</span>
+        <router-link
+          to="/study/userhome"
+          class="nav-item"
+          :class="{ active: currentRoute === '/study/userhome' }"
+        >
+          <NavFlipLabel text="我的陪练" />
+        </router-link>
         <router-link
           to="/sparring/web/speech/list"
           class="nav-item"
           :class="{ active: currentRoute === '/sparring/web/speech/list' }"
         >
-          AI对练
+          <NavFlipLabel text="AI对练" />
         </router-link>
         <router-link
           to="/sparring/web/drillmate"
           class="nav-item"
           :class="{ active: currentRoute.startsWith('/sparring/web/drillmate') }"
         >
-          AI实战训练场
+          <NavFlipLabel text="AI实战训练场" />
         </router-link>
         <!-- 契约 02 §8B.1：学员考试入口紧跟「AI实战训练场」右侧。
              用 startsWith 而不是 === ：入考场后还有 /entry、/attempts/:id 等子页面，
@@ -43,29 +42,22 @@
           class="nav-item"
           :class="{ active: currentRoute.startsWith('/exam/student') }"
         >
-          考试
+          <NavFlipLabel text="考试" />
         </router-link>
-        <span class="nav-item disabled" title="敬请期待">陪练看板</span>
-        <el-dropdown trigger="hover">
-          <span class="nav-item"
-            >更多
-            <span class="arrow"
-              ><el-icon><ArrowDown /></el-icon></span
-          ></span>
-          <template #dropdown>
-            <el-dropdown-menu class="more-menu cut">
-              <el-dropdown-item disabled>学习路径</el-dropdown-item>
-              <el-dropdown-item disabled>知识图谱</el-dropdown-item>
-              <el-dropdown-item disabled>学习社区</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <span class="nav-item disabled" title="敬请期待"><NavFlipLabel text="话术目录" /></span>
+        <span class="nav-item disabled" title="敬请期待"><NavFlipLabel text="课程中心" /></span>
       </nav>
     </div>
     <div class="nav-right">
-      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Brush /></el-icon></span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Search /></el-icon></span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Bell /></el-icon></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"
+        ><el-icon><Brush /></el-icon
+      ></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"
+        ><el-icon><Search /></el-icon
+      ></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"
+        ><el-icon><Bell /></el-icon
+      ></span>
       <el-dropdown trigger="hover" @command="handleUserCommand">
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
@@ -90,14 +82,24 @@
 
 <script setup lang="ts">
 import { ArrowDown, Brush, Search, Bell } from '@element-plus/icons-vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import NavFlipLabel from '@/components/common/NavFlipLabel.vue'
+import { useNavUnderline } from '@/utils/useNavUnderline'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
+const navMenu = ref<HTMLElement | null>(null)
+const { x: indX, width: indW, shown: indShown } = useNavUnderline(navMenu)
+// 指示器几何由 composable 测量，这里只负责写内联样式，过渡交给 CSS
+const indicatorStyle = computed(() => ({
+  width: `${indW.value}px`,
+  transform: `translateX(${indX.value}px)`,
+  opacity: indShown.value ? 1 : 0,
+}))
 
 const logout = () => {
   auth.logout()
@@ -175,7 +177,7 @@ const handleUserCommand = (command: string) => {
   // 下划线用透明边框常驻占位：激活只换颜色不改盒子高度，否则激活项多出的
   // 2px 会经 flex 拉伸让整排文字基线跳动（实测 1.2px）
   border-bottom: 2px solid transparent;
-  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+  transition: color var(--dur-micro) var(--ease-out);
   cursor: pointer;
   position: relative;
   white-space: nowrap;
@@ -194,10 +196,9 @@ const handleUserCommand = (command: string) => {
     }
   }
 
-  // 批注18：激活态去底色块——字变深钴蓝+下边信号条+加重字重，全程无底色
+  // 批注3（2026-11-20）：激活态只换字色+字重；下边信号条改由导航容器里的单条滑动指示器统一点亮
   &.active {
     color: var(--color-accent-deep);
-    border-bottom-color: var(--color-accent);
     font-weight: 600;
   }
 }
@@ -258,10 +259,6 @@ const handleUserCommand = (command: string) => {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.more-menu {
-  min-width: 120px;
 }
 
 .user-menu {

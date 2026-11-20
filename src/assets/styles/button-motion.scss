@@ -1,0 +1,159 @@
+/* 全站按钮交互层（全局）：悬停 / 按下 / 处理中三态动画，不止变色。
+ * 2026-11-20 用户批注：所有按钮统一动效，纯文字/边框变色「太低级」。
+ *
+ * 两个关键取舍：
+ * 1) 用 translate 而不是 transform 做位移——业务里不少按钮/居中元素拿 transform 做定位，
+ *    覆盖 transform 会把它们挪位；translate 是独立属性，与 transform 复合，互不干扰。
+ * 2) 过渡声明带 !important——各页 scoped 样式普遍写了 `transition: opacity` 或自定义 hover，
+ *    要「全站统一」就得在层叠上压过它们；只压过渡与三态表现，不改各按钮自己的配色。
+ */
+
+/* ---------- 0) 基础：统一过渡与可定位 ---------- */
+/* position: relative 只为涟漪层做定位基准，用 :where 保持 0 特异性，业务样式可随时覆盖 */
+:where(button, .el-button, .btn, .action-btn, .key) {
+  position: relative;
+}
+
+button,
+.el-button,
+.btn,
+.action-btn,
+.key {
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out),
+    filter var(--dur-short) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out) !important;
+}
+
+/* ---------- 1) 悬停：抬 1px + 微提亮 + 光泽扫过 ---------- */
+button:not(:disabled):not(.is-disabled):not(.is-loading):hover,
+.el-button:not(.is-disabled):not(.is-loading):hover,
+.btn:not(:disabled):not(.is-disabled):not(.is-loading):hover,
+.action-btn:not(:disabled):not(.is-disabled):not(.is-loading):hover,
+.key:not(:disabled):not(.is-disabled):hover {
+  translate: 0 -1px;
+  filter: brightness(1.03);
+}
+
+/* 悬停光泽：一条斜向高光横扫而过（不占布局，pointer-events 关闭） */
+button:not(:disabled):not(.is-disabled):not(.is-loading):hover::after,
+.el-button:not(.is-disabled):not(.is-loading):hover::after,
+.btn:not(:disabled):not(.is-disabled):not(.is-loading):hover::after,
+.action-btn:not(:disabled):not(.is-disabled):not(.is-loading):hover::after,
+.key:not(:disabled):not(.is-disabled):hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in oklab, var(--color-accent-ink) 42%, transparent) 50%,
+    transparent 70%
+  );
+  animation: btn-hover-sheen 620ms var(--ease-out) 1;
+}
+
+@keyframes btn-hover-sheen {
+  from { opacity: 0; transform: translateX(-60%); }
+  35% { opacity: 1; }
+  to { opacity: 0; transform: translateX(60%); }
+}
+
+/* ---------- 2) 按下：沉 2px + 压暗 + 中心涟漪 ---------- */
+button:not(:disabled):not(.is-disabled):not(.is-loading):active,
+.el-button:not(.is-disabled):not(.is-loading):active,
+.btn:not(:disabled):not(.is-disabled):not(.is-loading):active,
+.action-btn:not(:disabled):not(.is-disabled):not(.is-loading):active,
+.key:not(:disabled):not(.is-disabled):active {
+  translate: 0 2px;
+  filter: brightness(0.97);
+}
+
+button:not(:disabled):not(.is-disabled):not(.is-loading):active::after,
+.el-button:not(.is-disabled):not(.is-loading):active::after,
+.btn:not(:disabled):not(.is-disabled):not(.is-loading):active::after,
+.action-btn:not(:disabled):not(.is-disabled):not(.is-loading):active::after,
+.key:not(:disabled):not(.is-disabled):active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--color-accent) 26%, transparent) 0%,
+    transparent 65%
+  );
+  animation: btn-press-ripple 380ms var(--ease-out) 1;
+}
+
+@keyframes btn-press-ripple {
+  from { opacity: 0.9; transform: scale(0.55); }
+  to { opacity: 0; transform: scale(1.05); }
+}
+
+/* ---------- 3) 处理中：扫光 + 禁用悬停位移 ---------- */
+/* 兼容三种写法：EP 的 .is-loading、无障碍的 [aria-busy="true"]、自定义 .btn--loading */
+.is-loading,
+[aria-busy="true"],
+.btn--loading {
+  position: relative;
+  overflow: hidden;
+  cursor: progress !important;
+  translate: 0 0 !important;
+  filter: none !important;
+}
+
+.is-loading::after,
+[aria-busy="true"]::after,
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in oklab, var(--color-accent-ink) 55%, transparent) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: btn-processing-sweep 1150ms linear infinite;
+}
+
+@keyframes btn-processing-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* ---------- 4) 分组/轨道内的按钮不抬升，避免整排跳动 ---------- */
+:is(.tab-switch, .modebar, .el-radio-group, .el-pagination, .el-tabs, .el-input-group, .el-button-group, .el-segmented)
+  :is(button, .el-button, .btn, .action-btn):hover {
+  translate: 0 0;
+  filter: none;
+}
+
+/* ---------- 5) 降低动效偏好 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .el-button,
+  .btn,
+  .action-btn,
+  .key {
+    transition: none !important;
+  }
+
+  button::after,
+  .el-button::after,
+  .btn::after,
+  .action-btn::after,
+  .key::after {
+    animation: none !important;
+    content: none !important;
+  }
+}

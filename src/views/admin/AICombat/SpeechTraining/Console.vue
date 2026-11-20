@@ -264,10 +264,20 @@ onMounted(loadProject)
     font-size: 14px;
     color: var(--color-muted);
     text-decoration: none;
-    transition: background 0.2s, color 0.2s;
+    // 批注5（2026-11-20）：选中态要过渡不要硬切。右边信号条常驻 3px 透明占位，
+    // 否则激活瞬间多出的 3px 会把文字顶左跳一下；背景/字色/条色三处同时补间
+    border-right: 3px solid transparent;
+    transition:
+      background-color var(--dur-short) var(--ease-out),
+      color var(--dur-short) var(--ease-out),
+      border-color var(--dur-short) var(--ease-out);
 
     &:hover { background: var(--color-paper-2); color: var(--color-accent); }
-    &.active { color: var(--color-accent); border-right: 3px solid var(--color-accent); background: var(--color-accent-wash); }
+    &.active {
+      color: var(--color-accent);
+      border-right-color: var(--color-accent);
+      background: var(--color-accent-wash);
+    }
   }
 }
 

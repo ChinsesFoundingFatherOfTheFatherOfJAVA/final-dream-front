@@ -8,18 +8,21 @@
       <span class="toggle-link">{{ expanded ? '收起' : '展开' }}</span>
     </el-button>
 
-    <div v-if="expanded" class="section-body">
-      <slot />
-      <div v-if="showApply" class="section-footer">
-        <el-button class="apply-btn" :disabled="loading" @click="emit('apply')">
-          {{ loading ? '保存中...' : '应用' }}
-        </el-button>
+    <ExpandTransition>
+      <div v-if="expanded" class="section-body">
+        <slot />
+        <div v-if="showApply" class="section-footer">
+          <el-button class="apply-btn" :disabled="loading" @click="emit('apply')">
+            {{ loading ? '保存中...' : '应用' }}
+          </el-button>
+        </div>
       </div>
-    </div>
+    </ExpandTransition>
   </section>
 </template>
 
 <script setup lang="ts">
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 withDefaults(defineProps<{
   title: string
   expanded: boolean

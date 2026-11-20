@@ -1,0 +1,35 @@
+/* 全站数字规则（2026-11-20 批注）
+ * 1) 数字占位等宽：html 级 tabular-nums，展示数字的盒子不会因 0/1/8 宽度差反复抖动；
+ *    用 html 而不是逐个组件，是为了覆盖表格、统计卡、进度、计时器等所有数字位。
+ * 2) 数字输入统一 el-input-number（带加减）。EP 默认加减在输入框两侧，会把带固定宽度的
+ *    窄字段挤爆；这里把控件列收到 18px 并配合 controls-position="right"（竖排加减），
+ *    保证「加了加减按钮后总宽度与原 el-input 一致」。
+ */
+html {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+:root {
+  --el-input-number-controls-width: 18px;
+}
+
+/* 加减按钮的图标在 18px 列里会溢出，统一缩小字号并居中 */
+.el-input-number .el-input-number__decrease,
+.el-input-number .el-input-number__increase {
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* 右侧控件列：输入区右侧留 22px，数字不贴按钮 */
+.el-input-number.is-controls-right .el-input__wrapper {
+  padding-right: 22px;
+}
+
+/* 数字输入默认吃满容器宽度（与 el-input 默认行为一致），
+ * 具体字段自己的 width 类（如 .score-num 62px）优先级更高，宽度保持不变。 */
+/* 宽度默认吃满容器（与 el-input 默认一致）；具体字段的 width 类优先级更高，宽度保持不变。
+ * 高度不动：EP 的加减控件是绝对定位，不会改变 .el-input-number 的盒高。 */
+.el-input-number {
+  width: 100%;
+}

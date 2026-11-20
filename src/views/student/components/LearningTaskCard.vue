@@ -213,7 +213,8 @@ const loadCombat = async () => {
         // 「N 个场景」比计划时间更能说明任务量（后端已给 scenarioCount）
         meta: `${theme.scenarioCount} 个场景`,
         extra: theme.progress > 0 ? `进度 ${theme.progress}%` : undefined,
-        path: '/sparring/web/speech/list'
+        // 实战训练卡应进学员端实战详情，原来错指到话术训练列表（会造成点进去看到别的模块）
+        path: `/sparring/web/drillmate/detail/${theme.themeId}`
       }
     })
   } catch {
@@ -310,11 +311,23 @@ $brand: var(--color-accent);
   border-radius: 8px;
   background: var(--color-paper-2);
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  // 批注（2026-11-20）：训练/考试/实战任务卡片统一悬停与按下动效，
+  // 与话术训练/实战训练的项目卡同一套数值（悬停抬 2px + 投影加深，按下回落收影）。
+  // 用 translate 而不是 transform，避免与卡片自身可能的定位变换互相覆盖。
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
 
   &:hover {
+    translate: 0 -2px;
     border-color: $brand;
-    box-shadow: 0 2px 8px color-mix(in oklab, var(--color-accent) 12%, transparent);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-graphite) 12%, transparent);
+  }
+
+  &:active {
+    translate: 0 0;
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   }
 
   &:focus-visible {

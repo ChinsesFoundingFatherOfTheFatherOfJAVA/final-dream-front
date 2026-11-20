@@ -33,7 +33,7 @@
           <el-radio value="custom">单独设置学分</el-radio>
         </el-radio-group>
         <div v-if="scoreMode === 'custom'" class="inline-control">
-          <el-input-number v-model="studyScore" :min="0.1" :step="0.1" :controls="false" />
+          <el-input-number v-model="studyScore" :min="0.1" :step="0.1" controls-position="right" />
           <span>学分</span>
         </div>
       </div>
@@ -41,9 +41,9 @@
       <div class="field">
         <span class="label">标准时长</span>
         <div class="inline-control">
-          <el-input-number v-model="standardMinutes" :min="0" :controls="false" />
+          <el-input-number v-model="standardMinutes" :min="0" controls-position="right" />
           <span>分</span>
-          <el-input-number v-model="standardSeconds" :min="0" :max="59" :controls="false" />
+          <el-input-number v-model="standardSeconds" :min="0" :max="59" controls-position="right" />
           <span>秒</span>
         </div>
       </div>

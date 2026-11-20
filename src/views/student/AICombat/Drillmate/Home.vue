@@ -489,11 +489,22 @@ onMounted(load)
   padding: 12px 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   color: var(--color-accent);
+  /* 批注（2026-11-20）：快捷入口（练习历程/竞技场等）也要悬停与按下反馈 */
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
 
   &:hover {
+    translate: 0 -1px;
     background: var(--color-accent-wash);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--color-graphite) 10%, transparent);
+  }
+
+  &:active {
+    translate: 0 1px;
+    box-shadow: none;
   }
 }
 
@@ -547,10 +558,22 @@ onMounted(load)
   border: 1px solid var(--color-rule);
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  /* 批注（2026-11-20）：训练主题卡统一悬停/按下动效（与项目卡同一套数值）。
+   * 用 translate 而非 transform，避免和卡片自身定位变换互相覆盖。 */
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
 
   &:hover {
-    border-color: var(--color-accent);
+    translate: 0 -2px;
+    border-color: var(--color-accent-wash);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-graphite) 12%, transparent);
+  }
+
+  &:active {
+    translate: 0 0;
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   }
 }
 
@@ -730,10 +753,21 @@ onMounted(load)
   border: 1px solid var(--color-rule);
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  /* 最近一次练习卡：与训练主题卡同一套悬停/按下反馈 */
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
 
   &:hover {
-    border-color: var(--color-accent);
+    translate: 0 -2px;
+    border-color: var(--color-accent-wash);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-graphite) 12%, transparent);
+  }
+
+  &:active {
+    translate: 0 0;
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   }
 }
 

@@ -1,0 +1,69 @@
+/* 全站「展开/进入」动效层（全局）。
+ * 2026-11-20 用户批注：所有带展开/进入逻辑的（展开表单、抽屉等）都要有展开过渡动画。
+ *
+ * 注意（2026-11-20 修复「抽屉展开两次」）：不要给 .el-overlay / .el-drawer / .el-dialog 加兜底 CSS 动画。
+ * 原因：EP 打开时先用自己的 Transition 播一次；过渡类（-enter-active）撤走后，
+ * 兜底规则里 `animation: none` 的压制同时消失，animation-name 从 none 变成动画名，动画才「开始」→ 又播一次。
+ * 所以这里只做两件事：① 把 EP 过渡节奏收敛到 token；② 抽屉正文的错峰进入。
+ * 挂载式（v-if）打开的抽屉由 EP 自己的过渡负责，无需 CSS 动画兜底。
+ */
+
+/* EP 过渡时长统一收敛到 token（默认 0.3s 裸值） */
+:root {
+  --el-transition-duration: var(--dur-short);
+}
+
+/* ---------- 1) 抽屉：面板滑入节奏 + 正文错峰 ---------- */
+.el-drawer-fade-enter-active .el-drawer,
+.el-drawer-fade-leave-active .el-drawer {
+  transition: transform var(--dur-long) var(--ease-out);
+}
+
+/* 正文/页头在面板到位后上浮 8px 淡入。只在元素插入时播一次，不会和 EP 过渡叠加 */
+.el-drawer__header {
+  animation: x-enter-up var(--dur-long) var(--ease-out) 40ms both;
+}
+
+.el-drawer__body {
+  animation: x-enter-up var(--dur-long) var(--ease-out) 80ms both;
+}
+
+@keyframes x-enter-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 2) 自定义折叠区（v-if 插入即展开）----------
+ * 这些是项目里自写的、仍用 v-if 直接挂载的折叠块；已改 <ExpandTransition> 的块不在此列，
+ * 否则 CSS 动画会与 JS 高度过渡叠加。
+ */
+.yxt-select__panel {
+  transform-origin: top center;
+  animation: x-expand-in var(--dur-short) var(--ease-out) both;
+}
+
+@keyframes x-expand-in {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.96); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+/* 通用工具类：以后新增折叠块直接挂 .x-expand-in（无收起动画的轻量场景用） */
+.x-expand-in {
+  transform-origin: top center;
+  animation: x-expand-in var(--dur-short) var(--ease-out) both;
+}
+
+/* ---------- 3) 降级 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .el-drawer__header,
+  .el-drawer__body,
+  .yxt-select__panel,
+  .x-expand-in {
+    animation: none !important;
+  }
+
+  .el-drawer-fade-enter-active .el-drawer,
+  .el-drawer-fade-leave-active .el-drawer {
+    transition: none;
+  }
+}

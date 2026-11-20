@@ -101,7 +101,7 @@
               <span class="capacity-note cap-note">剩余企业容量：{{ remainingCapacity }} 次</span>
             </div>
             <div class="input-with-unit sf-num">
-              <el-input-number v-model="form.access.totalDrillCount" :min="1" :controls="false" />
+              <el-input-number v-model="form.access.totalDrillCount" :min="1" controls-position="right" />
               <span class="unit">次</span>
             </div>
             <p class="field-hint cap-note">学员在本主题内可练习的总演练次数</p>
@@ -116,7 +116,7 @@
               <el-input-number
                 v-model="perSceneLimitInput"
                 :min="1"
-                :controls="false"
+                controls-position="right"
                 :disabled="perSceneUnlimited"
                 class="sf-num"
               />
@@ -296,7 +296,7 @@
                   <el-input-number
                     v-model="form.strategy.antiCheat.screenSwitchLimit"
                     :min="0"
-                    :controls="false"
+                    controls-position="right"
                     :disabled="form.strategy.antiCheat.screenSwitchMode !== 'allow'"
                     class="sf-num"
                   />
@@ -387,7 +387,7 @@
                   <el-input-number
                     v-model="form.passStandard.scenePassCount"
                     :min="1"
-                    :controls="false"
+                    controls-position="right"
                     class="sf-num"
                   />
                   <span class="pass-config-text">次，即通过该场景</span>

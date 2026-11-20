@@ -33,7 +33,7 @@
             <div v-for="lv in LEVELS" :key="lv.value" class="band-cell">
               <p class="band-title">{{ lv.label }}</p>
               <div class="band-input">
-                <el-input-number v-model="values[lv.value]" :min="0" :controls="false" />
+                <el-input-number v-model="values[lv.value]" :min="0" controls-position="right" />
                 <span class="max-hint">≤{{ maxOfLevel(lv.value) }}</span>
               </div>
             </div>
@@ -44,7 +44,7 @@
             <div v-for="t in TYPE_KEYS" :key="t.key" class="band-cell">
               <p class="band-title">{{ t.label }}</p>
               <div class="band-input">
-                <el-input-number v-model="typeValues[t.key]" :min="0" :controls="false" />
+                <el-input-number v-model="typeValues[t.key]" :min="0" controls-position="right" />
                 <span class="max-hint">≤{{ maxOfType(t.key) }}</span>
               </div>
             </div>
@@ -55,7 +55,7 @@
             <div class="band-cell wide">
               <p class="band-title">抽题数量</p>
               <div class="band-input">
-                <el-input-number v-model="needValue" :min="0" :controls="false" />
+                <el-input-number v-model="needValue" :min="0" controls-position="right" />
                 <span class="max-hint">≤{{ maxOfNeed }}</span>
               </div>
             </div>

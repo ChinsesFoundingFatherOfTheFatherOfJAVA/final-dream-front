@@ -57,7 +57,8 @@
       <p v-if="keyword && !rows.length" class="empty-tip">未找到匹配分类</p>
     </div>
 
-    <footer class="tree-footer">
+    <!-- 批注（2026-11-20）：范围单选与总数允许由页面挪到底部工具条，这里用开关保留兼容（课程管理页仍在侧栏用） -->
+    <footer v-if="showFooter" class="tree-footer">
       <div class="scope-options">
         <el-radio-group v-model="scope">
           <el-radio :value="1">包含子分类</el-radio>
@@ -79,9 +80,12 @@ const props = withDefaults(defineProps<{
   modelValue: string
   includeChildCatalog: number
   total: number
+  /** 是否在侧栏底部显示「包含子分类/仅当前分类 + 共 N 条」；课件页把它挪到了内容区底部分页行 */
+  showFooter?: boolean
 }>(), {
   modelValue: '',
   includeChildCatalog: 1,
+  showFooter: true,
   total: 0
 })
 

@@ -17,11 +17,153 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 import { studentExamMockRoutes } from './studentExamMock.ts'
+import {
+  mockGetScenarioUnits,
+  mockGetThemeList,
+  mockGetThemeDetail,
+  mockGetThemeSettings,
+  mockGetThemeVersions
+} from '../src/views/admin/AICombat/ActualTraining/mock/actThemeMock'
 
 /** 统一成功信封 */
 const ok = (data: unknown) => ({ code: 0, message: 'ok', data })
 
 const wait = (ms = 120) => new Promise<void>((r) => setTimeout(r, ms))
+
+/** 从 /act/admin/theme/<id>… 取出主题 id；离线数据与 id 无关，取到即可 */
+const themeIdOf = (path: string) => path.split('/')[4] ?? ''
+
+/** 学员端实战训练：首页卡片（形状对应 StudentThemeCard） */
+const studentActThemeCard = {
+  themeId: 'seed-theme-001',
+  name: '柔性智造销售话术训练',
+  description: '基于六大场景知识库，训练销售精准讲解方案价值并应对客户质疑',
+  trainingModeEnabled: 1,
+  assessmentModeEnabled: 0,
+  practiceMethods: 'case',
+  planStartTime: '2026-09-01 00:00:00',
+  planEndTime: '2030-12-31 23:59:59',
+  publishedVersionNo: 2,
+  myTrainingCount: 1,
+  scenarioCount: 3,
+  progress: 33,
+  myPassedScenarios: 1,
+  myExamRemaining: -1,
+  status: 'in_progress'
+}
+
+/** 学员端实战训练：主题详情（形状对应 StudentThemeDetail，含分组结构 + 扁平兼容字段） */
+const studentActScenarios = [
+  {
+    scenarioId: 'sc-1',
+    name: '初次拜访：系统定位与六大场景全景介绍',
+    sortOrder: 1,
+    audience: ['新入职销售'],
+    businessGoal: '在首次客户沟通中清晰传达柔性智造的定位与六大场景价值',
+    timeLimitMinutes: 15,
+    passScore: 60,
+    dimensions: [{ name: '业务目标', weight: 40 }, { name: '话术表达', weight: 35 }, { name: '异议处理', weight: 25 }],
+    attemptCount: 1,
+    myTrainingCount: 1,
+    myExamCount: 0,
+    myTrainingPassed: true,
+    myExamPassed: false,
+    myHighestScore: 82,
+    myHighestExamScore: null,
+    status: 'passed',
+    statusText: '已通过',
+    // 没有 trainingAction 时按钮是 disabled（页面按 enabled 判定），造数据必须给上
+    trainingAction: { enabled: true, reason: null }
+  },
+  {
+    scenarioId: 'sc-2',
+    name: '客户关注产前效益：物料齐套方案深度解析',
+    sortOrder: 2,
+    audience: ['新入职销售'],
+    businessGoal: '讲清物料齐套对客户产前计划的价值',
+    timeLimitMinutes: 12,
+    passScore: 60,
+    dimensions: [{ name: '业务目标', weight: 50 }, { name: '话术表达', weight: 50 }],
+    attemptCount: 0,
+    myTrainingCount: 0,
+    myExamCount: 0,
+    myTrainingPassed: false,
+    myExamPassed: false,
+    myHighestScore: null,
+    myHighestExamScore: null,
+    status: 'not_started',
+    statusText: '未开始',
+    trainingAction: { enabled: true, reason: null }
+  },
+  {
+    scenarioId: 'sc-3',
+    name: '处理关键异议：分拣准确性与仓储性能验证',
+    sortOrder: 3,
+    audience: ['新入职销售'],
+    businessGoal: '用数据回应客户对分拣准确率与仓储吞吐的质疑',
+    timeLimitMinutes: 13,
+    passScore: 60,
+    dimensions: [{ name: '业务目标', weight: 40 }, { name: '异议处理', weight: 60 }],
+    attemptCount: 0,
+    myTrainingCount: 0,
+    myExamCount: 0,
+    myTrainingPassed: false,
+    myExamPassed: false,
+    myHighestScore: null,
+    myHighestExamScore: null,
+    status: 'not_started',
+    statusText: '未开始',
+    trainingAction: { enabled: true, reason: null }
+  }
+]
+
+const studentActThemeDetail = {
+  theme: {
+    id: 'seed-theme-001',
+    name: '柔性智造销售话术训练',
+    description: '基于六大场景知识库，训练销售精准讲解方案价值并应对客户质疑',
+    mode: 1,
+    modeText: '日常训练',
+    difficulty: 2,
+    difficultyText: '正常',
+    scenarioCount: 3,
+    passedScenarioCount: 1,
+    progress: 33,
+    examUnlocked: false,
+    planStartTime: '2026-09-01 00:00:00',
+    planEndTime: '2030-12-31 23:59:59',
+    publishedVersionNo: 2,
+    startable: true,
+    stopReason: null
+  },
+  studyPolicy: {
+    trainingEnabled: true,
+    examEnabled: false,
+    dialogModes: ['voice', 'text'],
+    practiceMethods: ['case'],
+    allowCustomDifficulty: false,
+    minTrainCountToUnlockExam: null,
+    maxExamCount: null
+  },
+  evaluationCriteria: [
+    { passScore: 60, dimensions: [{ name: '业务目标', weight: 40 }, { name: '话术表达', weight: 35 }, { name: '异议处理', weight: 25 }] }
+  ],
+  productProfiles: [],
+  recentRecords: [],
+  themeId: 'seed-theme-001',
+  name: '柔性智造销售话术训练',
+  description: '基于六大场景知识库，训练销售精准讲解方案价值并应对客户质疑',
+  publishedVersionNo: 2,
+  trainingModeEnabled: 1,
+  assessmentModeEnabled: 0,
+  practiceMethods: 'case',
+  difficulty: 2,
+  allowCustomDifficulty: 0,
+  planStartTime: '2026-09-01 00:00:00',
+  planEndTime: '2030-12-31 23:59:59',
+  scenarios: studentActScenarios,
+  materials: []
+}
 
 // ==================== 样例数据（仅供渲染走查，不做业务正确性保证） ====================
 
@@ -192,6 +334,21 @@ const routes: Array<[string, RegExp, MockHandler]> = [
   })],
   ['GET', /^\/sm\/auth\/me$/, () => ok({ userId: '1001', fullname: '杰克管理员', permissions: ['*'] })],
 
+  // ---- AI实战训练场（ACT）：列表/详情/场景单元/设置/版本统一复用前端自带的离线 mock 数据 ----
+  // 这份数据对 id 有校验（id !== theme.id 会抛「主题不存在」），所以列表必须与详情同源，
+  // 否则手写列表卡片点进详情会 500。
+  ['GET', /^\/act\/admin\/theme\/list$/, (_b, _p, q) =>
+    ok(
+      mockGetThemeList({
+        page: 1,
+        pageSize: 100,
+        status: q?.status ? Number(q.status) : undefined,
+        themeMode: q?.themeMode ? Number(q.themeMode) : undefined,
+        keyword: q?.keyword
+      } as Parameters<typeof mockGetThemeList>[0])
+    )
+  ],
+
   // ---- SM（组织/角色）：SmList{list} / SmPage{list,total,page,size} ----
   ['GET', /^\/sm\/admin\/users$/, () => ok({ list: smUsers, total: smUsers.length, page: 1, size: smUsers.length })],
   ['GET', /^\/sm\/admin\/positions$/, () => ok({ list: [{ id: 'p1', name: '讲师' }, { id: 'p2', name: '销售顾问' }, { id: 'p3', name: '教研' }], total: 3, page: 1, size: 3 })],
@@ -316,9 +473,26 @@ const routes: Array<[string, RegExp, MockHandler]> = [
 
   // ---- AI 实战训练 / 话术训练（ST/ACT，id 为 number）：{records,total} ----
   ['GET', /^\/act\/admin\/theme\/list$/, () => ok({ records: actThemes, total: actThemes.length })],
-  ['GET', /^\/act\/admin\/theme\/[^/]+$/, () => ok(actThemes[0])],
-  ['GET', /^\/act\/admin\/theme\/[^/]+\/(settings|script-progress)$/, () => ok({})],
-  ['GET', /^\/act\/admin\/theme\/[^/]+\/(scenario-units|versions)$/, () => ok([])],
+  // 详情 / 场景单元 / 设置 / 版本：复用前端自带的离线 mock（src/views/.../mock/actThemeMock.ts），
+  // 形状与真实 DTO 一致，主题详情页才能渲染出头部+场景单元；原来的实现详情只回列表卡片、单元回空数组。
+  ['GET', /^\/act\/admin\/theme\/[^/]+$/, (_b, path) => ok(mockGetThemeDetail(themeIdOf(path)))],
+  ['GET', /^\/act\/admin\/theme\/[^/]+\/settings$/, (_b, path) => ok(mockGetThemeSettings(themeIdOf(path)))],
+  ['GET', /^\/act\/admin\/theme\/[^/]+\/script-progress$/, () => ok({})],
+  ['GET', /^\/act\/admin\/theme\/[^/]+\/scenario-units$/, (_b, path) => ok(mockGetScenarioUnits(themeIdOf(path)))],
+
+  // ---- 学员端实战训练（ACT）：首页聚合 + 主题详情 ----
+  // 目的：让学员端 /study/home 的「实战训练」tab 能出现真实项目卡，并点进学员端主题详情页。
+  ['GET', /^\/act\/student\/home\/summary$/, () =>
+    ok({
+      user: { userId: '1001', name: '杰克管理员', departmentName: '杰克科技股份', positionName: '培训管理员', avatar: null },
+      stats: { totalHours: 0.5, practiceCount: 1, themeCount: 1, honorScore: 20 },
+      themes: [studentActThemeCard],
+      opportunities: [],
+      recentPractice: null
+    })
+  ],
+  ['GET', /^\/act\/student\/themes\/[^/]+$/, () => ok(studentActThemeDetail)],
+  ['GET', /^\/act\/admin\/theme\/[^/]+\/versions$/, (_b, path) => ok(mockGetThemeVersions(themeIdOf(path)))],
   ['GET', /^\/admin\/training-project\/list$/, () => ok({ records: [{ id: 1, name: '异议处理训练', status: 1, studentQty: 20, createdAt: '2026-09-10 09:00:00' }], total: 1 })],
   ['GET', /^\/admin\/speech-template\/list$/, () => ok({ records: [{ id: 1, name: '标准接待模板', nodeQty: 9, updatedAt: '2026-09-12 16:00:00' }], total: 1 })],
 

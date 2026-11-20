@@ -1,6 +1,7 @@
 <template>
   <div class="enterprise-layout">
-    <aside class="enterprise-sidebar">
+    <aside ref="sideRef" class="enterprise-sidebar">
+      <span class="menu-indicator" :style="indicatorStyle" aria-hidden="true"></span>
       <div class="sidebar-title">我的企业</div>
       <el-menu :default-active="route.path" router class="sidebar-menu">
         <el-menu-item
@@ -20,12 +21,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useActiveIndicator } from '@/utils/useActiveIndicator'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const auth = useAuthStore()
+
+// 批注（2026-11-20）：侧栏 tab 改「纵向滑动侧边线」——激活项之间一条指示线滑动过渡
+const sideRef = ref<HTMLElement | null>(null)
+const { position: sideY, size: sideH, shown: sideShown } = useActiveIndicator(sideRef, {
+  axis: 'y',
+  itemSelector: '.menu-item.is-active'
+})
+const indicatorStyle = computed(() => ({
+  transform: `translateY(${sideY.value + 6}px)`,
+  height: `${Math.max(0, sideH.value - 12)}px`,
+  opacity: sideShown.value ? 1 : 0
+}))
 
 const menus = [
   { label: '员工名册', path: '/enterprise/staff', match: '/enterprise/staff', permission: 'org:employee' },
@@ -54,6 +68,8 @@ const visibleMenus = computed(() =>
 }
 
 .enterprise-sidebar {
+  /* 指示线定位基准 */
+  position: relative;
   min-height: 0;
   padding: 20px 12px;
   border-right: 1px solid var(--color-rule);
@@ -67,6 +83,21 @@ const visibleMenus = computed(() =>
   color: var(--color-ink);
   font-size: var(--text-md);
   font-weight: 700;
+}
+
+/* 纵向滑动指示线：原本每项 ::before 的左侧静态条，现在由这一条统一滑动 */
+.menu-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  pointer-events: none;
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    height var(--dur-short) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
 }
 
 .sidebar-menu {
@@ -83,20 +114,8 @@ const visibleMenus = computed(() =>
   font-size: var(--text-sm);
   // 过渡只列具体属性，禁 transition: all
   transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-  // 左信号条：伪元素常驻占位，激活/悬停只改颜色，不产生布局位移
+  // 左信号条由容器里的单条滑动指示线给出（见 .menu-indicator），这里不再挂伪元素
   position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 6px;
-    bottom: 6px;
-    width: 3px;
-    border-radius: var(--radius-pill);
-    background: transparent;
-    transition: background-color var(--dur-micro) var(--ease-out);
-  }
 
   &:hover {
     background: var(--color-accent-wash);
@@ -105,13 +124,11 @@ const visibleMenus = computed(() =>
     box-shadow: var(--shadow-card);
   }
 
-  // 钴蓝只做激活信号：wash 底 + 左信号条 + 深钴蓝文字
+  // 钴蓝只做激活信号：wash 底 + 滑动指示线（容器级）+ 深钴蓝文字
   &.is-active {
     background: var(--color-accent-wash);
     color: var(--color-accent-2);
     font-weight: 600;
-
-    &::before { background: var(--color-accent); }
   }
 }
 

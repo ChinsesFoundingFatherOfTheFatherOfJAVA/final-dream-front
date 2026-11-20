@@ -58,7 +58,8 @@
         </button>
 
         <!-- 展开态：按原平台分组顺序（业务目标 → 冰山要素 → 影响/代价 → 冲突 → 失败模式/挑战 → 禁止行为/时间 → 评估标准） -->
-        <div v-if="expandedKeys.has(unit.id)" class="unit-detail">
+        <ExpandTransition>
+          <div v-if="expandedKeys.has(unit.id)" class="unit-detail">
           <div class="sc-block sc-block--neutral">
             <div class="sc-block__head">
               <el-icon class="sc-block__icon"><Aim /></el-icon>
@@ -172,6 +173,7 @@
             </div>
           </div>
         </div>
+        </ExpandTransition>
       </div>
     </div>
   </div>
@@ -193,6 +195,7 @@ import {
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ActEvaluationDimension, ActScenarioUnit } from '@/types/actTheme'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 
 const props = defineProps<{ units: ActScenarioUnit[]; themeId?: string }>()
 

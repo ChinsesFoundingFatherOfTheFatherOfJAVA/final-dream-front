@@ -32,7 +32,7 @@
             <template #default="{ row: typeRow }">
                 <div class="cell-score">
                   <el-input-number v-model="cellOf(typeRow.value, lv.value).score" :min="0" :step="0.5" class="num"
-                         @input="clampCell(cellOf(typeRow.value, lv.value))" :controls="false" />
+                         @input="clampCell(cellOf(typeRow.value, lv.value))" controls-position="right" />
                   <span class="unit">分</span>
                 </div>
 
@@ -41,7 +41,7 @@
                   <div class="miss-row">
                     <span class="miss-label">漏选</span>
                     <el-input-number v-model="cellOf(typeRow.value, lv.value).missScore" :min="0" :max="cellOf(typeRow.value, lv.value).score" :step="0.5" class="num small"
-                           @input="clampCell(cellOf(typeRow.value, lv.value))" :controls="false" />
+                           @input="clampCell(cellOf(typeRow.value, lv.value))" controls-position="right" />
                     <span class="unit">分</span>
                   </div>
                   <label class="miss-radio">

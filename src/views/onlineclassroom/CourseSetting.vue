@@ -12,9 +12,9 @@
           <div class="rule-formula">
             <span class="rule-label">视频/音频：</span>
             <span>每</span>
-            <el-input-number v-model="form.scoreConf.videoAudio.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.videoAudio.standardMinutes" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>分钟计</span>
-            <el-input-number v-model="form.scoreConf.videoAudio.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.videoAudio.score" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分（视频和音频上传时会自动获取时长）</span>
           </div>
           <el-radio-group v-model="form.scoreConf.videoAudio.applyToAll" class="rule-scope">
@@ -27,15 +27,15 @@
           <div class="rule-formula">
             <span class="rule-label">文档：</span>
             <span>每</span>
-            <el-input-number v-model="form.scoreConf.document.pagesPerScore" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.document.pagesPerScore" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>页，计</span>
-            <el-input-number v-model="form.scoreConf.document.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.document.score" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分</span>
             <span>标准学习时长</span>
-            <el-input-number v-model="form.scoreConf.document.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.document.standardMinutes" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>分钟</span>
             <span>每个文档最高学分不超过</span>
-            <el-input-number v-model="form.scoreConf.document.maxScore" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.document.maxScore" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分</span>
           </div>
           <el-radio-group v-model="form.scoreConf.document.applyToAll" class="rule-scope">
@@ -48,11 +48,11 @@
           <div class="rule-formula">
             <span class="rule-label">微课：</span>
             <span>每</span>
-            <el-input-number v-model="form.scoreConf.microcourse.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.microcourse.standardMinutes" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>分钟计</span>
-            <el-input-number v-model="form.scoreConf.microcourse.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.microcourse.score" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分，每个微课最高学分不超过</span>
-            <el-input-number v-model="form.scoreConf.microcourse.maxScore" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.microcourse.maxScore" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分</span>
           </div>
           <el-radio-group v-model="form.scoreConf.microcourse.applyToAll" class="rule-scope">
@@ -65,9 +65,9 @@
           <div class="rule-formula">
             <span class="rule-label">Scorm：</span>
             <span>每</span>
-            <el-input-number v-model="form.scoreConf.scorm.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.scorm.standardMinutes" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>分钟计</span>
-            <el-input-number v-model="form.scoreConf.scorm.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.scorm.score" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分</span>
           </div>
           <el-radio-group v-model="form.scoreConf.scorm.applyToAll" class="rule-scope">
@@ -80,9 +80,9 @@
           <div class="rule-formula">
             <span class="rule-label">HTML：</span>
             <span>每</span>
-            <el-input-number v-model="form.scoreConf.html.standardMinutes" class="score-num" :min="1" :controls="false" :max="1440" />
+            <el-input-number v-model="form.scoreConf.html.standardMinutes" class="score-num" :min="1" controls-position="right" :max="1440" />
             <span>分钟计</span>
-            <el-input-number v-model="form.scoreConf.html.score" class="score-num" :min="0.1" :controls="false" :step="0.1" />
+            <el-input-number v-model="form.scoreConf.html.score" class="score-num" :min="0.1" controls-position="right" :step="0.1" />
             <span>个学分</span>
           </div>
           <el-radio-group v-model="form.scoreConf.html.applyToAll" class="rule-scope">
@@ -140,7 +140,7 @@
             v-model="form.cheatConf.checkMinutes"
             :min="1"
             :max="60"
-            :controls="false"
+            controls-position="right"
             :disabled="!form.cheatConf.antiIdleEnabled"
           />
           <span>分钟确认学员是否在线，如不在线则停止播放</span>
@@ -154,7 +154,7 @@
             v-model="form.cheatConf.checkMinutes"
             :min="1"
             :max="60"
-            :controls="false"
+            controls-position="right"
             :disabled="!form.cheatConf.antiIdleEnabled"
           />
           <span>分钟确认学员是否在线，学员需要在</span>
@@ -162,7 +162,7 @@
             v-model="form.cheatConf.confirmSeconds"
             :min="30"
             :max="600"
-            :controls="false"
+            controls-position="right"
             :disabled="!form.cheatConf.antiIdleEnabled || form.cheatConf.mode !== 2"
           />
           <span>秒内点击确认，如未确认本次学习无效（已学完的课程不存在回退学习进度，触发防挂机时系统会暂停播放）</span>

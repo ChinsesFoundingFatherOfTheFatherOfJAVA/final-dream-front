@@ -4,69 +4,54 @@
       <router-link to="/homepage" class="logo">
         <span class="logo-text">JACK <em class="logo-accent">杰克</em></span>
       </router-link>
-      <nav class="nav-menu">
-        <router-link to="/homepage" class="nav-item" :class="{ active: currentRoute === '/homepage' }">
-          首页
+      <nav ref="navMenu" class="nav-menu nav-underline">
+        <span class="nav-indicator" :style="indicatorStyle" aria-hidden="true"></span>
+        <router-link
+          to="/homepage"
+          class="nav-item"
+          :class="{ active: currentRoute === '/homepage' }"
+        >
+          <NavFlipLabel text="首页" />
         </router-link>
-        <el-dropdown trigger="hover">
-          <span class="nav-item">全部应用 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
-          <template #dropdown>
-            <div class="apps-menu cut">
-            <div
-              v-for="app in allApps"
-              :key="app.id"
-              class="app-grid-item"
-              role="button"
-              tabindex="0"
-              @click="handleAppClick(app)"
-              @keydown.enter.prevent="handleAppClick(app)"
-            >
-              <div class="app-icon" :style="{ background: app.color }">
-                <span class="app-icon-text" aria-hidden="true">{{ app.title.charAt(0) }}</span>
-              </div>
-              <div class="app-info">
-                <div class="app-name">{{ app.title }}</div>
-                <div class="app-desc">{{ app.description }}</div>
-              </div>
-            </div>
-            </div>
-          </template>
-        </el-dropdown>
-        <span class="nav-item disabled" title="敬请期待">平台运营</span>
+        <span class="nav-item disabled" title="敬请期待"><NavFlipLabel text="平台运营" /></span>
         <router-link
           v-if="hasEnterpriseAccess"
           to="/enterprise"
           class="nav-item"
           :class="{ active: currentRoute.startsWith('/enterprise') }"
         >
-          我的企业
+          <NavFlipLabel text="我的企业" />
         </router-link>
-        <span class="nav-item disabled" title="敬请期待">报表中心</span>
       </nav>
     </div>
     <div class="nav-right">
-      <span class="nav-item">绚星云学习 <span class="arrow"><el-icon><ArrowDown /></el-icon></span></span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Brush /></el-icon></span>
-      <span class="nav-icon" aria-hidden="true" title="敬请期待"><el-icon><Bell /></el-icon></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"
+        ><el-icon><Brush /></el-icon
+      ></span>
+      <span class="nav-icon" aria-hidden="true" title="敬请期待"
+        ><el-icon><Bell /></el-icon
+      ></span>
       <el-dropdown trigger="hover" @command="handleUserCommand">
         <span class="user-info">
           <span class="user-avatar">{{ auth.userInitial }}</span>
           <span class="user-name">{{ auth.displayName }}</span>
-          <span class="arrow"><el-icon><ArrowDown /></el-icon></span>
+          <span class="arrow"
+            ><el-icon><ArrowDown /></el-icon
+          ></span>
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-menu cut">
             <el-dropdown-item command="student">前往学员端</el-dropdown-item>
             <el-dropdown-item disabled>用户中心</el-dropdown-item>
             <el-dropdown-item command="password">修改密码</el-dropdown-item>
-            <el-dropdown-item disabled>显示语言 <span class="arrow-right">›</span></el-dropdown-item>
+            <el-dropdown-item disabled
+              >显示语言 <span class="arrow-right">›</span></el-dropdown-item
+            >
             <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span class="nav-item workbench">
-        <WorkbenchIcon :size="14" /> 工作台
-      </span>
+      <span class="nav-item workbench"> <WorkbenchIcon :size="14" /> 工作台 </span>
     </div>
   </header>
 
@@ -97,7 +82,13 @@
         />
       </el-form-item>
     </el-form>
-    <el-alert v-if="passwordError" :title="passwordError" type="error" :closable="false" show-icon />
+    <el-alert
+      v-if="passwordError"
+      :title="passwordError"
+      type="error"
+      :closable="false"
+      show-icon
+    />
     <template #footer>
       <el-button @click="passwordVisible = false">取消</el-button>
       <el-button type="primary" :loading="passwordSubmitting" @click="submitPassword">
@@ -111,38 +102,40 @@
 import { ArrowDown, Brush, Bell } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { mockApps } from '@/mock/data'
 import { changePassword } from '@/api/sm'
 import { useAuthStore } from '@/stores/auth'
 import { toast } from '@/utils/toast'
 import WorkbenchIcon from '@/components/icons/WorkbenchIcon.vue'
+import NavFlipLabel from '@/components/common/NavFlipLabel.vue'
+import { useNavUnderline } from '@/utils/useNavUnderline'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const currentRoute = computed(() => route.path)
+const navMenu = ref<HTMLElement | null>(null)
+const { x: indX, width: indW, shown: indShown } = useNavUnderline(navMenu)
+// 指示器几何由 composable 测量，这里只负责写内联样式，过渡交给 CSS
+const indicatorStyle = computed(() => ({
+  width: `${indW.value}px`,
+  transform: `translateX(${indX.value}px)`,
+  opacity: indShown.value ? 1 : 0,
+}))
 const passwordVisible = ref(false)
 const passwordSubmitting = ref(false)
 const passwordError = ref('')
 const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
 })
-const allApps = mockApps
 const hasEnterpriseAccess = computed(
   () =>
     auth.isSuperAdmin ||
     auth.permissions.includes('org:employee') ||
     auth.permissions.includes('org:department') ||
-    auth.permissions.includes('role:mgmt')
+    auth.permissions.includes('role:mgmt'),
 )
-
-const handleAppClick = (app: any) => {
-  if (app.title === 'AI对练') {
-    router.push('/sparring/newmanage')
-  }
-}
 
 const logout = () => {
   auth.logout()
@@ -255,7 +248,7 @@ const submitPassword = async () => {
   // 下划线用透明边框常驻占位：激活只换颜色不改盒子高度，否则激活项多出的
   // 2px 会经 flex 拉伸让整排文字基线跳动（实测 1.2px）
   border-bottom: 2px solid transparent;
-  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+  transition: color var(--dur-micro) var(--ease-out);
   cursor: pointer;
   position: relative;
   white-space: nowrap;
@@ -274,18 +267,11 @@ const submitPassword = async () => {
     }
   }
 
-  // 批注18：激活态去底色块——字变深钴蓝+下边信号条+加重字重，全程无底色
+  // 批注3（2026-11-20）：激活态只换字色+字重；下边信号条改由导航容器里的单条滑动指示器统一点亮
   &.active {
     color: var(--color-accent-deep);
-    border-bottom-color: var(--color-accent);
     font-weight: 600;
   }
-}
-
-// el-dropdown 包裹的菜单项（全部应用）：与相邻项统一盒模型，文字保持同一水平线
-.nav-menu > .el-dropdown {
-  display: flex;
-  align-items: center;
 }
 
 .arrow {
@@ -348,15 +334,6 @@ const submitPassword = async () => {
   }
 }
 
-// 全部应用网格
-.apps-menu {
-  width: 520px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  padding: 12px;
-}
-
 .password-form {
   :deep(.el-form-item) {
     margin-bottom: 16px;
@@ -367,66 +344,6 @@ const submitPassword = async () => {
     color: var(--color-muted);
     font-size: 13px;
     line-height: 1.2;
-  }
-}
-
-.app-grid-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-card);
-  cursor: pointer;
-  // 仅背景色参与过渡，避免 transition: all 带来的意外属性动画
-  transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
-
-  // role=button 的键盘可达性：焦点环仅键盘导航时出现
-  &:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 1px;
-  }
-
-  // 按压态（keycap）：hover 抬起 1px，按下沉入键帽投影
-  &:hover {
-    background: var(--color-paper-2);
-    box-shadow: var(--shadow-card);
-  }
-
-  &:active {
-    box-shadow: var(--shadow-key-press);
-  }
-
-  .app-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--color-paper);
-    font-size: 16px;
-    font-weight: 500;
-  }
-
-  .app-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .app-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-ink);
-    margin-bottom: 2px;
-  }
-
-  .app-desc {
-    font-size: var(--text-xs);
-    color: var(--color-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 

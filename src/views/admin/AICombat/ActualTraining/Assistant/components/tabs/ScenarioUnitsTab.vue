@@ -25,7 +25,8 @@
       </div>
 
       <!-- 展开态：13 项内容 + 案例卡 -->
-      <div v-if="expanded.has(unit.id)" class="unit-detail">
+      <ExpandTransition>
+        <div v-if="expanded.has(unit.id)" class="unit-detail">
         <!-- 1. 业务目标 -->
         <div class="block block-goal">
           <div class="block-title"><el-icon aria-hidden="true"><Aim /></el-icon> 业务目标</div>
@@ -181,6 +182,7 @@
           </div>
         </div>
       </div>
+      </ExpandTransition>
     </div>
 
     <!-- 换形象弹窗：复用 AvatarGenField（AI 生成 / 本地上传 / 移除），保存后刷新 artifact -->
@@ -201,6 +203,7 @@ import { computed, reactive, ref } from 'vue'
 import { ACT_DIFFICULTY_TEXT } from '@/types/actTheme'
 import { normalizeCriteria, useAssistantStore } from '../../composables/useAssistantStore'
 import type { ArtifactDimension, ArtifactScenario } from '@/types/assistant'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 import CaseAvatarDialog from './CaseAvatarDialog.vue'
 import { avatarPreviewUrl, type CaseAvatarField } from './caseAvatar'
 

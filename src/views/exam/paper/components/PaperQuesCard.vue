@@ -108,7 +108,7 @@
             <div class="setting-row">
               <label class="setting-item">
                 <span>此题分值</span>
-                <el-input-number v-model="editingSub.score" :min="0" :step="0.5" class="num" :controls="false" />
+                <el-input-number v-model="editingSub.score" :min="0" :step="0.5" class="num" controls-position="right" />
                 <span>分</span>
               </label>
               <template v-if="editingSub.type === 1">
@@ -166,7 +166,7 @@
             </label>
             <label class="setting-item">
               <span>此题分值</span>
-              <el-input-number v-model="score" :min="0" :step="0.5" class="num" :controls="false" />
+              <el-input-number v-model="score" :min="0" :step="0.5" class="num" controls-position="right" />
               <span>分</span>
             </label>
             <!-- 同组合题：div 包裹，避免 label 把点击转发给抽屉里的按钮 -->
@@ -750,7 +750,7 @@ function helpIcon(text: string) {
 }
 
 .card-collapsed {
-  display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; cursor: pointer;
+  display: flex; align-items: flex-start; gap: 10px; padding: 16px 24px; cursor: pointer;
 
   &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 6px; }
 
@@ -785,7 +785,7 @@ function helpIcon(text: string) {
   }
 }
 
-.card-expanded { padding: 16px; }
+.card-expanded { padding: 20px 24px; }
 
 .block { margin-bottom: 14px; }
 .block-label {

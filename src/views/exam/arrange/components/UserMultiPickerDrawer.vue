@@ -22,18 +22,20 @@
               <span :class="{ placeholder: !selectedDeptId }">{{ selectedDeptName }}</span>
               <span class="select-arrow" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </el-button>
-            <div v-if="showDeptPicker" class="dept-dropdown" @click.stop>
-              <DeptTree
-                :model-value="selectedDeptId"
-                :data="deptTreeData"
-                mode="single"
-                searchable
-                show-count
-                include-all
-                search-placeholder="部门名称"
-                @change="onDeptPicked"
-              />
-            </div>
+            <ExpandTransition>
+              <div v-if="showDeptPicker" class="dept-dropdown" @click.stop>
+                <DeptTree
+                  :model-value="selectedDeptId"
+                  :data="deptTreeData"
+                  mode="single"
+                  searchable
+                  show-count
+                  include-all
+                  search-placeholder="部门名称"
+                  @change="onDeptPicked"
+                />
+              </div>
+            </ExpandTransition>
           </div>
 
           <el-select v-model="searchField" class="field-select">
@@ -134,6 +136,7 @@ import {
 } from '@/api/arrange'
 import { toast } from '@/utils/toast'
 import type { DepartmentTreeSource } from '@/utils/departmentTree'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 
 interface TreeDepartment extends DepartmentTreeSource {
   userCount: number

@@ -11,17 +11,14 @@
               <span>话术训练(新)</span>
               <span class="arrow" :class="{ open: openGroups.speechNew }" aria-hidden="true"><el-icon><ArrowDown /></el-icon></span>
             </div>
-            <div v-if="openGroups.speechNew" class="menu-group-items">
-              <router-link to="/sparring/newmanage" class="menu-item active">话术训练中心</router-link>
-              <router-link to="/sparring/newtemplate" class="menu-item">话术模版</router-link>
-            </div>
+            <ExpandTransition>
+              <div v-if="openGroups.speechNew" class="menu-group-items">
+                <router-link to="/sparring/newmanage" class="menu-item active">话术训练中心</router-link>
+                <router-link to="/sparring/newtemplate" class="menu-item">话术模版</router-link>
+              </div>
+            </ExpandTransition>
           </div>
           <!-- 占位菜单：暂无功能，去掉可点暗示 -->
-          <div class="menu-item collapsed" title="敬请期待">
-            <el-icon class="group-icon" aria-hidden="true"><Refresh /></el-icon>
-            <span>话术训练</span>
-            <span class="arrow" aria-hidden="true"><el-icon><CaretRight /></el-icon></span>
-          </div>
           <div class="menu-item collapsed" title="敬请期待">
             <el-icon class="group-icon" aria-hidden="true"><User /></el-icon>
             <span>演讲训练</span>
@@ -126,6 +123,7 @@ import { useRouter } from 'vue-router'
 import { getProjectList } from '@/api/project'
 import { toProjectCard } from '@/utils/convert'
 import type { ProjectCard } from '@/utils/convert'
+import ExpandTransition from '@/components/common/ExpandTransition.vue'
 
 const router = useRouter()
 const openGroups = reactive({ speechNew: true })
@@ -297,9 +295,18 @@ const goToConsole = (id: number) => {
   overflow: hidden;
   box-shadow: 0 2px 8px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   cursor: pointer;
-  transition: box-shadow 0.3s, transform 0.3s;
-
-  &:hover { box-shadow: 0 4px 16px color-mix(in oklab, var(--color-graphite) 15%, transparent); transform: translateY(-2px); }
+  // 批注6（2026-11-20）：话术训练项目卡片 → 与实战训练 TopicList.vue 同一套悬停/按下数值
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-graphite) 15%, transparent);
+  }
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-graphite) 12%, transparent);
+  }
   &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
   .card-cover {

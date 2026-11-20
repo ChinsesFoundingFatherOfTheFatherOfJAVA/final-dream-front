@@ -11,7 +11,8 @@
       </div>
     </header>
     <div class="exam-body">
-      <aside class="exam-sidebar">
+      <aside ref="sideRef" class="exam-sidebar">
+        <span class="menu-indicator" :style="indicatorStyle" aria-hidden="true"></span>
         <div class="menu-group">
           <p class="group-title">题库</p>
           <router-link to="/exam/queslib" class="menu-item" :class="{ active: route.path.startsWith('/exam/queslib') }">
@@ -70,10 +71,24 @@
 
 <script setup lang="ts">
 import { ArrowLeft, CaretRight, EditPen, Files, List, Menu, Notebook } from '@element-plus/icons-vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useActiveIndicator } from '@/utils/useActiveIndicator'
 
 const route = useRoute()
 const router = useRouter()
+
+// 批注（2026-11-20）：侧栏 tab 改「纵向滑动侧边线」——激活项之间一条指示线滑动过渡
+const sideRef = ref<HTMLElement | null>(null)
+const { position: sideY, size: sideH, shown: sideShown } = useActiveIndicator(sideRef, {
+  axis: 'y',
+  itemSelector: '.menu-item.active'
+})
+const indicatorStyle = computed(() => ({
+  transform: `translateY(${sideY.value + 8}px)`,
+  height: `${Math.max(0, sideH.value - 16)}px`,
+  opacity: sideShown.value ? 1 : 0
+}))
 
 /**
  * 未建设菜单（点击 PlaceholderPage「功能建设中」，01 §2）。
@@ -126,7 +141,23 @@ const pendingMenus = [
   display: flex;
 }
 
+/* 纵向滑动指示线：原本每项 ::before 的左侧静态条，现在由这一条统一滑动 */
+.menu-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  pointer-events: none;
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    height var(--dur-short) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
+}
+
 .exam-sidebar {
+  position: relative;
   width: 200px;
   flex-shrink: 0;
   background: var(--color-paper);
@@ -174,21 +205,13 @@ const pendingMenus = [
     outline-offset: -2px;
   }
 
+  /* 激活条由容器里的单条滑动指示线统一给出，这里只换底色/字色 */
   &.active {
     background: var(--color-accent-wash);
     color: var(--color-accent-deep);
     font-weight: 500;
 
     .menu-icon { color: var(--color-accent); }
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 8px; bottom: 8px;
-      width: 3px;
-      border-radius: 2px;
-      background: var(--color-accent);
-    }
   }
 }
 

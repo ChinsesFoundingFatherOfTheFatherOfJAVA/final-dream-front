@@ -131,6 +131,10 @@ defineProps<{
   gap: 2px;
   margin: 0;
   color: var(--color-ink);
+  /* 批注（2026-11-20）：四格必须水平对齐。原来只写 line-height，带单位（分/次）的格子
+   * 行盒会被 16px 单位按 baseline 撑高 7px，.metric 又是 align-items:center，
+   * 于是「是否通过」比「考试成绩/考试用时/本次考试排名」高 4px。固定 40px 行盒即可对齐。 */
+  height: 40px;
   line-height: 40px;
 }
 
@@ -142,6 +146,7 @@ defineProps<{
 
 .metric__unit {
   font-size: 16px;
+  line-height: 40px;
 }
 
 /* 未出分：整格弱化，学员一眼能看出「这不是最终成绩」 */

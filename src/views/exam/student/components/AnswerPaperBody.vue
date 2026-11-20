@@ -411,6 +411,9 @@ const showInfoBlock = (card: PaperCard) =>
 
 .ap-section {
   background: var(--color-paper);
+  /* 批注（2026-11-20）：题干/选项/打分区原来直接贴卡片左右边缘（容器 padding 为 0），
+   * 统一给分节 24px 水平内边距，让所有题面内容一起内收。 */
+  padding: 0 24px;
 }
 
 .ap-section__head {
@@ -460,10 +463,11 @@ const showInfoBlock = (card: PaperCard) =>
   color: var(--color-muted);
 }
 
-/* 三行信息块：原平台实测 #FAFAFA / 圆角 4px / padding 8px 24px / margin-top 10px */
+/* 三行信息块：原平台 #FAFAFA / 圆角 4px / margin-top 10px。
+ * 水平 padding 由 .ap-section 的 24px 统一提供，这里不再二次缩进 */
 .ap-info {
   margin-top: 10px;
-  padding: 8px 24px;
+  padding: 8px 0;
   border-radius: 4px;
   background: var(--color-paper-2);
 }

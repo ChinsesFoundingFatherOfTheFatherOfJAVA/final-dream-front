@@ -554,14 +554,24 @@ function formatUpdatedAt(time: string | null): string {
   border-radius: 12px;
   background: var(--color-paper);
   cursor: pointer;
-
+  // 批注6（2026-11-20）：实战训练项目卡片 → 悬停抬 2px + 投影加深 + 边框提亮，按下回落收影。
+  // 与话术训练 index.vue 的 .project-card 保持同一套数值；只列具体属性，禁 transition: all
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
   &:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
-
   &:hover {
+    transform: translateY(-2px);
     border-color: var(--color-accent-wash);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--color-graphite) 12%, transparent);
+  }
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-graphite) 10%, transparent);
   }
 }
 

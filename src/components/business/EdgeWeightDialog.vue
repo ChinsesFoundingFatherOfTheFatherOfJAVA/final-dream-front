@@ -18,13 +18,13 @@
         </p>
         <div class="form-item">
           <label class="form-label" for="edge-weight-input">权重</label>
-          <input
+          <el-input-number
             id="edge-weight-input"
-            type="number"
             class="form-input"
-            v-model.number="weight"
-            min="1"
-            step="1"
+            v-model="weight"
+            :min="1"
+            :step="1"
+            controls-position="right"
             placeholder="请输入正整数"
           />
         </div>

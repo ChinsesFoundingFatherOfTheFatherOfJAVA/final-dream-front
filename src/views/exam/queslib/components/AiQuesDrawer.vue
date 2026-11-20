@@ -83,7 +83,7 @@
           <div class="count-grid">
             <label v-for="item in COUNT_ITEMS" :key="item.key" class="count-item">
               <span>{{ item.label }}</span>
-              <el-input-number v-model="counts[item.key]" :min="0" :max="35" :controls="false" />
+              <el-input-number v-model="counts[item.key]" :min="0" :max="35" controls-position="right" />
             </label>
           </div>
 
@@ -301,7 +301,7 @@
                         :min="0"
                         :max="100"
                         class="score-input"
-                        :controls="false"
+                        controls-position="right"
                       />
                       <span class="percent">%</span>
                       <el-button class="link danger" @click="card.data.keywords.splice(i, 1)"

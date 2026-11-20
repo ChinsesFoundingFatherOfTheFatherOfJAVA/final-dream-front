@@ -81,7 +81,7 @@
                   v-model="form.standardMinutes"
                   :min="0"
                   :max="1440"
-                  :controls="false"
+                  controls-position="right"
                   :disabled="durationMode === 'follow'"
                 />
                 <span>分</span>
@@ -89,7 +89,7 @@
                   v-model="form.standardSeconds"
                   :min="0"
                   :max="59"
-                  :controls="false"
+                  controls-position="right"
                   :disabled="durationMode === 'follow'"
                 />
                 <span>秒</span>
@@ -106,7 +106,7 @@
                 </el-radio>
                 <el-radio value="custom">单独设置学分</el-radio>
                 <div v-if="scoreMode === 'custom'" class="inline-control compact">
-                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" :controls="false" />
+                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" controls-position="right" />
                   <span>学分</span>
                 </div>
               </el-radio-group>

@@ -1,0 +1,76 @@
+/* 顶部导航统一动效层（全局，非 scoped）
+ * 2026-11-20 批注 3：tab 点击统一改为滑动下划线；tab 文字 hover 加 3D 翻转 + 颜色变换。
+ * 两项能力都放在全局层，AdminTopNav / StudentTopNav 共用同一份实现，避免各写一套走样。
+ * 颜色/时长/缓动全部引用 hallmark-tokens.scss 的 CSS 变量（Floor 1：不写裸色值、不写裸时长）。
+ */
+
+/* ---- 1) 滑动下划线指示器 ----
+ * 指示器几何由 useNavUnderline 测量后以内联 width/transform 写入，CSS 只负责过渡。
+ * 只动 transform/width（合成层）不动 left，避免整条导航每帧重排。
+ */
+.nav-menu.nav-underline {
+  position: relative;
+}
+
+.nav-menu.nav-underline .nav-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  pointer-events: none;
+  will-change: transform, width;
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    width var(--dur-short) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
+}
+
+/* ---- 2) 导航文字 3D 翻转 ----
+ * 结构：.nav-flip 包正面/背面两层同一文案，hover/focus 时容器绕 X 轴转 180°。
+ * 两面都挂 backface-visibility: hidden，任何时刻只有一面可见，避免翻到一半出现镜像重影。
+ * perspective 写在 transform 里（600px）而不是靠父级，避免父级加 perspective 波及其他绝对定位子元素。
+ */
+.nav-flip {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  transition: transform var(--dur-long) var(--ease-out);
+}
+
+.nav-flip__front,
+.nav-flip__back {
+  display: block;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.nav-flip__front {
+  /* Firefox 需要元素本身有 3D 变换才应用 backface-visibility，否则翻转后正面会以镜像叠在背面之上 */
+  transform: rotateX(0deg);
+}
+
+.nav-flip__back {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(180deg);
+}
+
+/* disabled 项（敬请期待）没有跳转语义，不做翻转，避免给出「可以点」的错觉 */
+.nav-item:not(.disabled):hover .nav-flip,
+.nav-item:not(.disabled):focus-visible .nav-flip {
+  transform: perspective(600px) rotateX(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-menu.nav-underline .nav-indicator,
+  .nav-flip {
+    transition: none;
+  }
+
+  .nav-item:not(.disabled):hover .nav-flip,
+  .nav-item:not(.disabled):focus-visible .nav-flip {
+    transform: none;
+  }
+}

@@ -20,6 +20,11 @@
     // Include Node.js types and avoid accidentally including other `@types/*` packages.
     "types": ["node"],
 
+    // mock/devApiMock.ts 会 import src 下的离线 mock 数据，需要与 app 一致的 @ 别名
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     // Disable emitting output during `vue-tsc --build`, which is used for type-checking only.
     "noEmit": true,
 

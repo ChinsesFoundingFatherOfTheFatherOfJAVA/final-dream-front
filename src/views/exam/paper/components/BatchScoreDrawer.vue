@@ -29,14 +29,14 @@
             <label class="field">
               <span>每题分值</span>
               <el-input-number v-model="item.score" :min="0" :step="0.5"
-                     :disabled="!item.checked" @input="clampMiss(item)" :controls="false" />
+                     :disabled="!item.checked" @input="clampMiss(item)" controls-position="right" />
             </label>
 
             <template v-if="item.sectionIndex === 1">
               <label class="field">
                 <span>漏选得分</span>
                 <el-input-number v-model="item.missScore" :min="0" :max="item.score" :step="0.5"
-                       :disabled="!item.checked" @input="clampMiss(item)" :controls="false" />
+                       :disabled="!item.checked" @input="clampMiss(item)" controls-position="right" />
               </label>
               <div class="radio-row">
                 <label><el-radio v-model.number="item.missScoreType" :value="0" :disabled="!item.checked" /> 不漏选得分</label>

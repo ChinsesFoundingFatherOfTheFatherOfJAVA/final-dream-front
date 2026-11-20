@@ -32,19 +32,32 @@
       <article class="chart-panel">
         <header class="panel-header">
           <h3>学习雷达</h3>
-          <div class="tab-switch">
-            <el-button
-              :class="{ active: radarTab === 'overall' }"
+          <div class="tab-switch" role="tablist" aria-label="雷达数据口径">
+            <span
+              class="tab-switch__thumb"
+              :style="{ transform: radarTab === 'first' ? 'translateX(100%)' : 'translateX(0)' }"
+              aria-hidden="true"
+            />
+            <button
+              type="button"
+              role="tab"
+              class="tab-switch__item"
+              :class="{ 'is-active': radarTab === 'overall' }"
+              :aria-selected="radarTab === 'overall'"
               @click="radarTab = 'overall'"
             >
               总均分
-            </el-button>
-            <el-button
-              :class="{ active: radarTab === 'first' }"
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="tab-switch__item"
+              :class="{ 'is-active': radarTab === 'first' }"
+              :aria-selected="radarTab === 'first'"
               @click="radarTab = 'first'"
             >
               记录
-            </el-button>
+            </button>
           </div>
         </header>
         <RadarChart
@@ -68,13 +81,32 @@
 
     <section class="table-panel">
       <header class="panel-header table-header">
-        <div class="tab-switch">
-          <el-button :class="{ active: tableMode === 'student' }" @click="switchTableMode('student')">
+        <div class="tab-switch" role="tablist" aria-label="统计口径">
+          <span
+            class="tab-switch__thumb"
+            :style="{ transform: tableMode === 'dept' ? 'translateX(100%)' : 'translateX(0)' }"
+            aria-hidden="true"
+          />
+          <button
+            type="button"
+            role="tab"
+            class="tab-switch__item"
+            :class="{ 'is-active': tableMode === 'student' }"
+            :aria-selected="tableMode === 'student'"
+            @click="switchTableMode('student')"
+          >
             学员模式
-          </el-button>
-          <el-button :class="{ active: tableMode === 'dept' }" @click="switchTableMode('dept')">
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab-switch__item"
+            :class="{ 'is-active': tableMode === 'dept' }"
+            :aria-selected="tableMode === 'dept'"
+            @click="switchTableMode('dept')"
+          >
             部门模式
-          </el-button>
+          </button>
         </div>
       </header>
 
@@ -556,13 +588,33 @@ onBeforeUnmount(() => {
   }
 }
 
+/* 批注（2026-11-20）：学习雷达「总均分/记录」与学员表「学员模式/部门模式」都做成 tab 切换；
+ * 选中态用一块滑块（thumb）位移来「转移」，而不是整块底色硬切。
+ * 两个实例都是 2 项，取 50% 宽 + translateX(100%) 即可精确落位。 */
 .tab-switch {
+  position: relative;
   display: inline-flex;
   padding: 3px;
   border-radius: 7px;
   background: var(--color-paper-2);
 
-  button {
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 5px;
+    background: var(--color-paper);
+    box-shadow: 0 1px 4px color-mix(in oklab, var(--color-graphite) 10%, transparent);
+    pointer-events: none;
+    transition: transform var(--dur-short) var(--ease-out);
+  }
+
+  &__item {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
     min-width: 68px;
     height: 28px;
     padding: 0 12px;
@@ -572,12 +624,9 @@ onBeforeUnmount(() => {
     color: var(--color-muted);
     font-size: 13px;
     cursor: pointer;
+    transition: color var(--dur-short) var(--ease-out);
 
-    &.active {
-      background: var(--color-paper);
-      color: var(--color-accent);
-      box-shadow: 0 1px 4px color-mix(in oklab, var(--color-graphite) 10%, transparent);
-    }
+    &.is-active { color: var(--color-accent); }
   }
 }
 

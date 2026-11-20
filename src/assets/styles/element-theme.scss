@@ -67,10 +67,7 @@
  * 5. text 键同 link 口径。
  */
 .el-button {
-.el-button {
   font-weight: 500;
-  font-family: var(--font-display);
-  border: var(--rule-hair) solid var(--color-rule-2);
   font-family: var(--font-display);
   border: var(--rule-hair) solid var(--color-rule-2);
   border-radius: var(--radius-input);
@@ -142,6 +139,9 @@
   &.is-text {
     box-shadow: none;
     background: transparent;
+    // 批注（2026-11-20）：表格「操作」列的 link/text 按钮不能带边框——
+    // 用 transparent 而不是 none，保留 1px 占位，去掉边框时不会让按钮宽度/基线跳动
+    border-color: transparent;
     color: var(--color-accent-deep);
     /* 键盘焦点信号收敛（批注13/14）：outline none + 柔和 wash 环，
      * 防 reset 全局 outline 与 EP 自带 focus 规则叠加成深钴蓝「黑框一周」；
@@ -255,10 +255,8 @@
     &::after { border-color: var(--color-accent-ink); }
   }
 }
-}
 
 .el-dialog {
-  border-radius: 8px;
 }
 
 .el-drawer__header {

@@ -378,5 +378,7 @@ export const studentExamMockRoutes: Array<[string, RegExp, MockHandler]> = [
       grades: []
     })
   }],
+  // 待批阅队列：批阅页首屏会先拉队列，没有这条时页面停在空态（离线走查需要）
+  ['GET', /^\/exam\/mark\/paper\/[^/]+\/queue$/, () => ok({ attemptIds: ['at-demo-1', 'at-demo-2'], currentIndex: 1, total: 2 })],
   ['POST', /^\/exam\/mark\/paper\/[^/]+$/, () => ok(null)]
 ]

@@ -57,7 +57,7 @@
               <el-table-column label="考核点" width="140" show-overflow-tooltip><template #default="{ row }">{{ row.mainPointName || '--' }}</template></el-table-column>
               <el-table-column label="分值" width="110">
                 <template #default="{ row }">
-                  <el-input-number v-model="scores[row.id]" :min="0" :step="0.5" class="score-input" :controls="false" />
+                  <el-input-number v-model="scores[row.id]" :min="0" :step="0.5" class="score-input" controls-position="right" />
                 </template>
               </el-table-column>
             </el-table>

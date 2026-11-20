@@ -7,6 +7,10 @@ import router from './router'
 import 'element-plus/dist/index.css'
 import './assets/styles/reset.scss'
 import './assets/styles/element-theme.scss'
+import './assets/styles/button-motion.scss'
+import './assets/styles/numbers.scss'
+import './assets/styles/expand-motion.scss'
+import './assets/styles/nav-motion.scss'
 
 const app = createApp(App)
 

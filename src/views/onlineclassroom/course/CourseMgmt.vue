@@ -12,18 +12,20 @@
     />
 
     <section class="course-content">
-      <el-button
-        v-if="treeCollapsed"
-        class="tree-expand"
-        aria-label="展开分类树"
-        title="展开分类树"
-        @click="treeCollapsed = false"
-      >
-        <el-icon><Menu /></el-icon>
-      </el-button>
 
       <header class="top-actions">
         <div class="left-actions">
+          <!-- 批注（2026-11-20）：展开按钮改为流内元素放在左组首位，
+               原来绝对定位在 top:14/left:8，侧栏收起后会盖住「创建课程」按钮。 -->
+          <el-button
+            v-if="treeCollapsed"
+            class="tree-expand"
+            aria-label="展开分类树"
+            title="展开分类树"
+            @click="treeCollapsed = false"
+          >
+            <el-icon><Menu /></el-icon>
+          </el-button>
           <div class="create-wrap">
             <el-button class="primary-btn" @click.stop="goCreate">创建课程</el-button>
           </div>
@@ -503,12 +505,11 @@ function handleMoreCommand(command: string, row: CourseListItem) {
 }
 
 .tree-expand {
-  position: absolute;
-  left: 8px;
-  top: 14px;
-  z-index: 2;
+  /* 流内元素（不再绝对定位），随 top-actions 排版，永远不会压住其它按钮 */
+  flex-shrink: 0;
   width: 30px;
   height: 30px;
+  padding: 0;
   border: 1px solid var(--color-rule-2);
   border-radius: var(--radius-input);
   background: var(--color-paper);

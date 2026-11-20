@@ -91,7 +91,7 @@
           <div class="form-item" v-if="isTrain">
             <label class="form-label required">完成标准</label>
             <div class="input-with-unit">
-              <el-input-number v-model="form.completionStandard" :min="1" :controls="false" />
+              <el-input-number v-model="form.completionStandard" :min="1" controls-position="right" />
               <span class="unit">次训练</span>
             </div>
           </div>
@@ -99,7 +99,7 @@
           <div class="form-item" v-else>
             <label class="form-label required">达标分数</label>
             <div class="input-with-unit">
-              <el-input-number v-model="form.passScore" :min="0" :max="100" :controls="false" />
+              <el-input-number v-model="form.passScore" :min="0" :max="100" controls-position="right" />
               <span class="unit">分</span>
             </div>
           </div>
@@ -203,7 +203,7 @@
                     class="metric-param-input"
                     placeholder="150"
                     :disabled="!dim.enabled"
-                    :controls="false"
+                    controls-position="right"
                   />
                   <span>~</span>
                   <el-input-number
@@ -211,7 +211,7 @@
                     class="metric-param-input"
                     placeholder="250"
                     :disabled="!dim.enabled"
-                    :controls="false"
+                    controls-position="right"
                   />
                   <span>字/分</span>
                 </div>
@@ -221,7 +221,7 @@
                     class="metric-param-input"
                     placeholder="20"
                     :disabled="!dim.enabled"
-                    :controls="false"
+                    controls-position="right"
                   />
                   <span>分/次</span>
                 </div>
@@ -243,7 +243,7 @@
                   :min="0"
                   :max="100"
                   :disabled="!dim.enabled"
-                  :controls="false"
+                  controls-position="right"
                 />
                 <span>%</span>
               </div>

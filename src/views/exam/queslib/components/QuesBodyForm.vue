@@ -77,7 +77,7 @@
             :min="0"
             :step="0.5"
             class="blank-score-input"
-            :controls="false"
+            controls-position="right"
             @update:model-value="(v: number | undefined) => setBlankScore(index, v)"
           />
           <span class="percent">分</span>
@@ -127,7 +127,7 @@
       <label class="block-label">关键词及占比</label>
       <div v-for="(kw, index) in body.keywords" :key="index" class="option-row">
         <el-input v-model.trim="kw.keyword" placeholder="关键词" />
-        <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" :controls="false" />
+        <el-input-number v-model="kw.scoreRatio" :min="0" :max="100" class="score-input" controls-position="right" />
         <span class="percent">%</span>
         <el-button class="icon-btn danger" @click="body.keywords.splice(index, 1)">
           <el-icon><Close /></el-icon>

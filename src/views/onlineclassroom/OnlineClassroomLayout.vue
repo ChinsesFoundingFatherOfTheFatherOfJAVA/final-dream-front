@@ -10,7 +10,8 @@
       </div>
     </header>
     <div class="kng-body">
-      <aside class="kng-sidebar">
+      <aside ref="sideRef" class="kng-sidebar">
+        <span class="kng-indicator" :style="indicatorStyle" aria-hidden="true"></span>
         <el-menu :default-active="route.path" router class="kng-menu">
           <el-menu-item
             v-for="item in visibleMenus"
@@ -31,15 +32,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Back, Notebook, Reading, FolderOpened, Setting } from '@element-plus/icons-vue'
 import { markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useActiveIndicator } from '@/utils/useActiveIndicator'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+
+// 批注（2026-11-20）：侧栏 tab 改「纵向滑动侧边线」——激活项之间用一条指示线滑动过渡，
+// 与顶栏的下划线同一套测量逻辑（useActiveIndicator 的 y 轴模式）。
+const sideRef = ref<HTMLElement | null>(null)
+const { position: sideY, size: sideH, shown: sideShown } = useActiveIndicator(sideRef, {
+  axis: 'y',
+  itemSelector: '.menu-item.is-active'
+})
+const indicatorStyle = computed(() => ({
+  /* 激活条在条目内上下各留 8px，和原来的静态条同高 */
+  transform: `translateY(${sideY.value + 8}px)`,
+  height: `${Math.max(0, sideH.value - 16)}px`,
+  opacity: sideShown.value ? 1 : 0
+}))
 
 // t21：emoji 图标改 EP 图标组件（markRaw 避免组件对象被响应式代理）
 const menus = [
@@ -104,6 +120,7 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
 }
 
 .kng-sidebar {
+  position: relative;
   width: 200px;
   flex-shrink: 0;
   padding: 14px 10px;
@@ -114,6 +131,21 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
 .kng-menu {
   border-right: none;
   background: transparent;
+}
+
+/* 批注（2026-11-20）：纵向滑动侧边线——一条 2px 指示线在激活项之间滑动，替代每项自带静态条 */
+.kng-indicator {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  width: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  pointer-events: none;
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    height var(--dur-short) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
 }
 
 /* t21 侧栏宽行：hover wash+抬升，激活 accent 字色+左信号条（无底色块口径） */
@@ -133,21 +165,10 @@ const visibleMenus = computed(() => menus.filter(item => auth.hasPermission(item
     transform: translateY(-1px);
   }
 
+  /* 激活态只换字色/字重；左边信号条由容器里的单条滑动指示线统一给出 */
   &.is-active {
     color: var(--color-accent);
     font-weight: 500;
-
-    /* 左缘 2px 族标信号条 */
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 8px;
-      bottom: 8px;
-      width: 2px;
-      border-radius: var(--radius-pill);
-      background: var(--color-accent);
-    }
   }
 }
 

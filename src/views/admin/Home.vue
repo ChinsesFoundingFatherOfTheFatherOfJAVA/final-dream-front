@@ -69,13 +69,6 @@
             <p class="app-desc">专业的企业学习资源运营</p>
           </div>
         </div>
-        <div class="app-guide cut">
-          <div class="guide-text">
-            <span class="guide-title">我需要</span>
-            <span class="guide-content">课程内容 ></span>
-            <CourseIcon class="guide-icon" :size="20" />
-          </div>
-        </div>
       </div>
     </section>
 
@@ -301,7 +294,6 @@ import ChatIcon from '@/components/icons/ChatIcon.vue'
 import TrophyIcon from '@/components/icons/TrophyIcon.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
 import ReadingIcon from '@/components/icons/ReadingIcon.vue'
-import CourseIcon from '@/components/icons/CourseIcon.vue'
 // 批注18/t17：emoji 图标全部组件化（gate30a），统一 @element-plus/icons-vue 一处图标库
 import { ChatDotRound, Trophy, EditPen, Reading, Setting, InfoFilled, User, PriceTag, Bell } from '@element-plus/icons-vue'
 
@@ -636,23 +628,6 @@ const goToOnlineClassroom = () => {
 .app-info {
   .app-title { font-size: 14px; font-weight: 500; color: var(--color-ink); margin: 0 0 4px 0; }
   .app-desc { font-size: 12px; color: var(--color-muted); margin: 0; }
-}
-
-/* t17：CTA 卡改 graphite 深板（全页唯一一处 graphite） */
-.app-guide {
-  margin-left: auto;
-  width: 200px;
-  height: 120px;
-  background: var(--color-graphite);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .guide-text {
-    text-align: center;
-    .guide-title { font-size: 14px; color: var(--color-graphite-ink); display: block; }
-    .guide-content { font-size: 16px; font-weight: 500; color: var(--color-accent-2); display: block; }
-  }
 }
 
 /* 常用功能 */

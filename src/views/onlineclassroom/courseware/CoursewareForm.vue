@@ -187,9 +187,9 @@
                 </el-radio-group>
               </template>
               <div class="duration-input">
-                <el-input-number v-model="form.standardMinutes" :min="0" :max="1440" :controls="false" />
+                <el-input-number v-model="form.standardMinutes" :min="0" :max="1440" controls-position="right" />
                 <span>分</span>
-                <el-input-number v-model="form.standardSeconds" :min="0" :max="59" :controls="false" />
+                <el-input-number v-model="form.standardSeconds" :min="0" :max="59" controls-position="right" />
                 <span>秒</span>
                 <small>（获得学分所需的学习时长）</small>
               </div>
@@ -204,7 +204,7 @@
                 </el-radio>
                 <el-radio value="custom">单独设置学分</el-radio>
                 <div v-if="scoreMode === 'custom'" class="inline-control compact">
-                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" :controls="false" />
+                  <el-input-number v-model="form.studyScore" :min="0.1" :step="0.1" controls-position="right" />
                   <span>学分</span>
                 </div>
               </el-radio-group>

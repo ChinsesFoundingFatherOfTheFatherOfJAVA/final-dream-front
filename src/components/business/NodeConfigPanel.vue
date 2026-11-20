@@ -76,13 +76,13 @@
             <label class="condition-item">
               <input type="radio" value="any_n" v-model="localData.passCondition.type" />
               <span>命中任意</span>
-              <input
-                type="number"
+              <el-input-number
                 class="num-input"
-                v-model.number="localData.passCondition.n"
-                min="1"
+                v-model="localData.passCondition.n"
+                :min="1"
                 :max="localData.keyPoints.length || 1"
                 :disabled="localData.passCondition.type !== 'any_n'"
+                controls-position="right"
               />
               <span>个要点</span>
             </label>
